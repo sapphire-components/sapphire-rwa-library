@@ -1,0 +1,14 @@
+.responsive-grid {
+	> div {
+		display: grid;
+		gap: var(--responsive-grid-gap);
+		grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-minimum-width), 1fr));
+	}
+}
+
+.responsive-grid-item {
+	min-width: 0;
+	> div > .card-basic {
+		height: 100%;
+	}
+}

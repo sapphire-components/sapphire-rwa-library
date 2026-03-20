@@ -1,0 +1,42 @@
+{
+	// Editor Settings
+	"diffEditor.ignoreTrimWhitespace": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"editor.insertSpaces": false,
+	"editor.minimap.maxColumn": 200,
+	"editor.tabSize": 2,
+	"editor.wordWrap": "off",
+	"editor.wordWrapColumn": 200,
+	"editor.multiCursorModifier": "alt",
+	// Code Actions
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit",
+		"source.fixAll.stylelint": "explicit"
+	},
+	// Language-Specific Formatters
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[scss]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	// Linting
+	"eslint.validate": ["javascript", "typescript"],
+	"stylelint.validate": ["css", "scss"],
+	// File & Explorer Settings
+	"files.autoSave": "off",
+	"explorer.compactFolders": false
+}

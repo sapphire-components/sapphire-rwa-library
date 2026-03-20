@@ -1,0 +1,23 @@
+{
+	"name": "sapphire-rwa-library",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "concurrently \"npm run serve:dist\" \"npm run build:watch\"",
+		"serve:dist": "vite preview --port 4173 --strictPort",
+		"build:watch": "vite build --watch --mode dev",
+		"build": "tsc && vite build --mode prod",
+		"build:icons": "node build-icon-sprite.mjs"
+	},
+	"dependencies": {
+		"concurrently": "^9.2.1",
+		"prettier": "^3.8.1",
+		"sass": "^1.81.0",
+		"stylelint": "^17.1.0",
+		"stylelint-order": "^7.0.1",
+		"typescript": "~5.9.3",
+		"vite": "^7.2.4",
+		"vite-plugin-mkcert": "^1.17.9"
+	}
+}

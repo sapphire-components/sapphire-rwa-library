@@ -1,0 +1,11 @@
+body {
+	font-size: var(--font-size-base);
+}
+
+body .ThemeGrid_MarginGutter {
+	margin-left: 0;
+}
+
+.btn + .btn {
+	margin-inline-start: var(--space-s);
+}

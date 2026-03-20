@@ -1,0 +1,26 @@
+@use '../../../src/01-foundations/styles/colors' as *;
+
+div[data-block$='SVGIcon'] {
+	display: contents;
+}
+
+.svg-icon {
+	align-items: center;
+	display: inline-flex;
+	justify-content: center;
+}
+
+.svg-icon {
+	background-color: var(--bgcolor);
+	color: var(--iconcolor);
+}
+
+@each $name, $value in $colors {
+	.svg-icon[data-bgcolor='#{""+ $name}'] {
+		--bgcolor: #{$value};
+		--bgcolor-transparent: color-mix(in srgb, #{$value} 20%, transparent);
+	}
+	.svg-icon[data-iconcolor='#{""+ $name}'] {
+		--iconcolor: #{$value};
+	}
+}

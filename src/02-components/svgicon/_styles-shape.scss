@@ -1,0 +1,15 @@
+.svg-icon[data-shape=''] {
+	background-color: transparent;
+}
+
+.svg-icon[data-shape='none'] {
+	border-radius: 0;
+}
+
+.svg-icon[data-shape='soft'] {
+	border-radius: 8px;
+}
+
+.svg-icon[data-shape='rounded'] {
+	border-radius: 9999px;
+}

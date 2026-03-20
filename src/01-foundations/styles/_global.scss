@@ -1,0 +1,10 @@
+:root {
+	--color-primary: #00bfa5;
+}
+
+html,
+body {
+	font-size: var(--font-size-base);
+	height: 100%;
+	margin: 0;
+}
