@@ -15,9 +15,9 @@ div[data-block$='LayoutAside'] {
 		flex: 1 1 auto;
 		min-height: 0;
 		overflow-y: auto;
-		padding: 8px;
+		padding: 12px;
 	}
 	&-bottom-below {
-		border-top: 1px solid #ddd;
+		border-top: 1px solid var(--color-neutral-5);
 	}
 }

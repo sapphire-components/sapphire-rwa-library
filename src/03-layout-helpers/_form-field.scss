@@ -1,0 +1,18 @@
+div[data-block$='FormField'] {
+	display: contents;
+}
+
+.form-field {
+	display: inline-flex;
+	gap: 8px;
+}
+
+.form-field[data-orientation='horizontal'] {
+	.form-field-label {
+		padding-top: 4px;
+	}
+}
+
+.form-field[data-orientation='vertical'] {
+	flex-direction: column;
+}

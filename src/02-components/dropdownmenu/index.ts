@@ -9,7 +9,7 @@ interface DropdownMenuInit extends BaseComponentInit {
 }
 
 export default class DropdownMenu extends BaseComponent {
-	private actions: DropdownMenuInit['actions'];
+	private actions!: DropdownMenuInit['actions'];
 	private mutationObserver?: MutationObserver;
 
 	constructor(init: DropdownMenuInit) {

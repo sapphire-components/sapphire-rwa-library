@@ -1,17 +1,11 @@
-$color-sapphire-background: #181a1f;
-$color-sapphire-surface: #24262c;
-$color-sapphire-interactive: #2f323a;
-$color-sapphire-text: #f9fafb;
-$color-sapphire-text-secondary: #777f8d;
-
-$color-border-default: #464b56;
+$color-sapphire-background: #f1f1f1;
+$color-sapphire-surface: #f5f5f5;
+$color-sapphire-blue: #2a5a6e;
 
 $colors: (
 	sapphire-background: $color-sapphire-background,
 	sapphire-surface: $color-sapphire-surface,
-	sapphire-interactive: $color-sapphire-interactive,
-	sapphire-text: $color-sapphire-text,
-	sapphire-text-secondary: $color-sapphire-text-secondary,
+	sapphire-blue: $color-sapphire-blue,
 	primary: var(--color-primary),
 	//
 	error: var(--color-error),
@@ -32,3 +26,15 @@ $colors: (
 	neutral-9: var(--color-neutral-9),
 	transparent: transparent,
 );
+
+@each $name, $value in $colors {
+	.text-#{'' + $name} {
+		color: #{$value};
+	}
+	.background-#{'' + $name} {
+		background-color: #{$value};
+	}
+	.border-#{'' + $name} {
+		border-color: #{$value};
+	}
+}

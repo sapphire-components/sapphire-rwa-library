@@ -1,3 +1,5 @@
+@use "../_colors.scss" as *;
+
 .screen-container {
 	scrollbar-gutter: stable;
 }
@@ -7,15 +9,15 @@ div[data-block$='LayoutBlank'] {
 }
 
 body:has(.layoutwrapper) {
-	background-color: #f1f1f1;
+	background-color: $color-sapphire-background;
 }
 
 .layoutwrapper {
 	align-items: flex-start;
 	display: flex;
 	&-aside {
-		background-color: #fff;
-		border-right: 1px solid #ddd;
+		background-color: var(--color-neutral-0);
+		border-right: 1px solid var(--color-neutral-5);
 		height: 100vh;
 		position: sticky;
 		top: 0;

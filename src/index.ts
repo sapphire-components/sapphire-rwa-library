@@ -1,4 +1,4 @@
-const scssModules = import.meta.glob(['./01-foundations/**/*.scss', './02-components/**/_styles*.scss', './09-utils/**/*.scss']);
+const scssModules = import.meta.glob(['./01-foundations/**/*.scss', './02-components/**/_styles*.scss', './03-layout-helpers/**/*.scss', './09-utils/**/*.scss']);
 
 Object.keys(scssModules)
 	.sort()
@@ -10,17 +10,19 @@ import { injectIconSprite } from './core/iconsSprite';
 
 import DropdownMenu from './02-components/dropdownmenu';
 import ResponsiveGrid from './02-components/responsive-grid';
+import SapphireInput from './02-components/sapphireinput';
 
 function init(): void {
 	injectIconSprite();
-	console.log('SapphireBackofficeLibrary initialized', new Date());
+	console.log('SapphireRWALibrary initialized', new Date());
 }
 
-const SapphireBackofficeLibrary = {
+const SapphireRWALibrary = {
 	DropdownMenu,
 	ResponsiveGrid,
+	SapphireInput,
 	init,
 };
 
-window.SapphireBackofficeLibrary = SapphireBackofficeLibrary;
-window.SapphireBackofficeLibrary.init();
+window.SapphireRWALibrary = SapphireRWALibrary;
+window.SapphireRWALibrary.init();

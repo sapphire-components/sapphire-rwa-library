@@ -1,8 +1,9 @@
 import { BaseComponent, type BaseComponentInit } from '../../core/base';
 
 interface ResponsiveGridInit extends BaseComponentInit {
-	minimumWidth: number;
 	gridGap: number;
+	maxColWidth: number;
+	minColWidth: number;
 }
 
 export default class ResponsiveGrid extends BaseComponent {
@@ -16,9 +17,10 @@ export default class ResponsiveGrid extends BaseComponent {
 			return;
 		}
 
-		console.log(init);
-
-		this.widgetEl.style.setProperty('--responsive-grid-minimum-width', `${init.minimumWidth}px`);
+		this.widgetEl.style.setProperty('--responsive-grid-min-col-width', `${init.minColWidth}px`);
+		if (init.maxColWidth) {
+			this.widgetEl.style.setProperty('--responsive-grid-max-col-width', `${init.maxColWidth}px`);
+		}
 		this.widgetEl.style.setProperty('--responsive-grid-gap', `${init.gridGap}px`);
 
 		this.gridPlaceholder = this.widgetEl.querySelector<HTMLElement>(':scope > div')!;

@@ -1,9 +1,11 @@
 :root {
 	--color-primary: #00bfa5;
+	--color-secondary: fuchsia;
 }
 
 html,
 body {
+	font-family: 'Lato';
 	font-size: var(--font-size-base);
 	height: 100%;
 	margin: 0;

@@ -1,0 +1,11 @@
+div[data-widthcomponent] {
+	width: 100%;
+}
+
+div[data-widthcomponent='auto'] {
+	width: fit-content;
+}
+
+div[data-widthcomponent='full'] {
+	width: 100%;
+}

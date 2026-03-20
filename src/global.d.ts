@@ -1,6 +1,6 @@
 declare global {
 	interface Window {
-		SapphireBackofficeLibrary: SapphireBackofficeLibraryAPI;
+		SapphireRWALibrary: SapphireRWALibraryAPI;
 	}
 }
 
