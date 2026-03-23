@@ -22,6 +22,9 @@ export default class DropdownMenu extends BaseComponent {
 
 		this.actions = init.actions;
 
+		const isRootLevel = this.widgetEl.parentElement?.closest('.dropdownmenu') === null;
+		this.widgetEl.dataset.rootlevel = isRootLevel ? 'true' : 'false';
+
 		this.mutationObserver = new MutationObserver(() => {
 			const isOpen = this.widgetEl.getAttribute('data-isopen') === 'true';
 			Helpers.writeToLocalStorage(`dropdownmenu-${this.runtimeId}`, isOpen);

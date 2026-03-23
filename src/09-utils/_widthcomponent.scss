@@ -6,6 +6,14 @@ div[data-widthcomponent='auto'] {
 	width: fit-content;
 }
 
+div[data-widthcomponent='s'] {
+	max-width: 200px;
+}
+
+div[data-widthcomponent='m'] {
+	max-width: 300px;
+}
+
 div[data-widthcomponent='full'] {
 	width: 100%;
 }
