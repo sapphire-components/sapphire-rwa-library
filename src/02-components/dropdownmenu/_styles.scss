@@ -6,7 +6,7 @@ div[data-block$='DropdownMenu'] {
 	user-select: none;
 	&-header {
 		align-items: flex-start;
-		border-left: solid 3px #fff;
+		border-left: solid 3px var(--color-neutral-0);
 		cursor: pointer;
 		display: flex;
 		gap: 8px;
@@ -34,7 +34,7 @@ div[data-block$='DropdownMenu'] {
 	}
 	&-items {
 		display: none;
-		padding-left: 44px;
+		padding-left: 40px;
 		a {
 			color: #5c5c5c;
 			display: block;

@@ -1,7 +1,7 @@
 .svg-icon[data-size='xs'] {
 	&[data-shape]:not([data-shape='']) {
-		height: 22px;
-		width: 22px;
+		height: 12px;
+		width: 12px;
 		svg {
 			height: 11px;
 			width: 11px;
@@ -15,35 +15,50 @@
 
 .svg-icon[data-size='s'] {
 	&[data-shape]:not([data-shape='']) {
-		height: 22px;
-		width: 22px;
+		height: 16px;
+		width: 16px;
 		svg {
-			height: 11px;
-			width: 11px;
+			height: 12px;
+			width: 12px;
 		}
 	}
 	svg {
-		height: 20px;
-		width: 20px;
+		height: 16px;
+		width: 16px;
 	}
 }
 
 .svg-icon[data-size='m'] {
 	&[data-shape]:not([data-shape='']) {
-		height: 28px;
-		width: 28px;
+		height: 24px;
+		width: 24px;
 		svg {
-			height: 14px;
-			width: 14px;
+			height: 18px;
+			width: 18px;
 		}
 	}
 	svg {
-		height: 30px;
-		width: 30px;
+		height: 24px;
+		width: 24px;
 	}
 }
 
 .svg-icon[data-size='l'] {
+	&[data-shape]:not([data-shape='']) {
+		height: 32px;
+		width: 32px;
+		svg {
+			height: 22px;
+			width: 22px;
+		}
+	}
+	svg {
+		height: 32px;
+		width: 32px;
+	}
+}
+
+.svg-icon[data-size='xl'] {
 	&[data-shape]:not([data-shape='']) {
 		height: 40px;
 		width: 40px;
