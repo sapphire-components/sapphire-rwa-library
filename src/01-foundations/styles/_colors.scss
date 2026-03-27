@@ -1,12 +1,12 @@
 $color-sapphire-background: #f1f1f1;
 $color-sapphire-surface: #f5f5f5;
-$color-sapphire-blue: #2a5a6e;
+$color-secondary: #2a5a6e;
 
 $colors: (
+	primary: var(--color-primary),
 	sapphire-background: $color-sapphire-background,
 	sapphire-surface: $color-sapphire-surface,
-	sapphire-blue: $color-sapphire-blue,
-	primary: var(--color-primary),
+	secondary: var(--color-secondary),
 	//
 	error: var(--color-error),
 	info: var(--color-info),

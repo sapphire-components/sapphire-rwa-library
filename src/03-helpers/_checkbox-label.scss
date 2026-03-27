@@ -1,0 +1,16 @@
+div[data-block$='CheckboxLabel'] {
+	display: contents;
+}
+
+.checkboxlabel {
+	label {
+		display: inline-flex;
+		gap: 8px;
+	}
+	&-checkbox {
+	}
+	&-label {
+		cursor: pointer;
+		flex: 1 1 0;
+	}
+}

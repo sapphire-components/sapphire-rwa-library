@@ -1,3 +1,5 @@
+@use '../09-utils/_widthcomponent.scss' as *;
+
 div[data-block$='FormField'] {
 	display: contents;
 }
@@ -9,10 +11,21 @@ div[data-block$='FormField'] {
 
 .form-field[data-orientation='horizontal'] {
 	.form-field-label {
-		padding-top: 4px;
+		padding-top: 6px;
+	}
+	.form-field-control {
+		flex: 1 1 0;
 	}
 }
 
 .form-field[data-orientation='vertical'] {
 	flex-direction: column;
+}
+
+@each $name, $size in $widthcomponent-sizes {
+	.form-field[data-labelwidth='#{$name}'] {
+		.form-field-label {
+			width: $size;
+		}
+	}
 }

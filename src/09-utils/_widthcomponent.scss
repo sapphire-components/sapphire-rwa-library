@@ -6,12 +6,24 @@ div[data-widthcomponent='auto'] {
 	width: fit-content;
 }
 
-div[data-widthcomponent='s'] {
-	max-width: 200px;
-}
+$widthcomponent-sizes: (
+	'xs2': 48px,
+	'xs': 80px,
+	's': 120px,
+	'm': 160px,
+	'l': 240px,
+	'xl': 320px,
+	'xl2': 480px,
+	'xl3': 640px,
+);
 
-div[data-widthcomponent='m'] {
-	max-width: 300px;
+@each $name, $size in $widthcomponent-sizes {
+	div[data-widthcomponent='#{$name}'] {
+		max-width: $size;
+	}
+	.width-#{$name} {
+		width: $size;
+	}
 }
 
 div[data-widthcomponent='full'] {

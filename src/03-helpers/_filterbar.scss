@@ -1,0 +1,16 @@
+.filterbar {
+	display: flex;
+	gap: 12px;
+	width: 100%;
+	&-above {
+		align-items: center;
+		display: flex;
+		flex: 1 1 auto;
+		gap: 12px;
+		min-width: 0;
+	}
+	&-actions {
+		flex: 0 0 auto;
+		white-space: nowrap;
+	}
+}

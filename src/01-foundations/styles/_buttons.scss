@@ -1,9 +1,37 @@
+@use 'sass:color';
+@use '../../01-foundations/styles/_colors.scss' as *;
+
 .btn-transparent {
 	background-color: transparent;
 	border-color: transparent;
 }
 
 .btn {
+	border-radius: 100px;
 	display: inline-flex;
 	gap: 8px;
+
+	&:hover {
+		background-color: #f2fcfa;
+	}
+
+	span.btn-animation {
+		display: none;
+	}
+}
+
+.btn-small {
+	padding-inline: 16px;
+}
+
+.btn-primary:hover {
+	background-color: #009884;
+}
+
+.btn-secondary {
+	background-color: var(--color-secondary);
+	color: var(--color-neutral-0);
+	&:hover {
+		background-color: color.scale($color-secondary, $lightness: -40%);
+	}
 }

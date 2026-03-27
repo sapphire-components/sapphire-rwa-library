@@ -1,0 +1,56 @@
+$sapphire-spacing:
+	'none' 0,
+	'xs' 4px,
+	's' 8px,
+	'base' 16px,
+	'm' 24px,
+	'l' 32px,
+	'xl' 40px,
+	'xxl' 48px,
+	'xxxl' 64px;
+
+@each $key, $value in $sapphire-spacing {
+	.margin-#{$key} {
+		margin: $value !important;
+	}
+
+	.margin-inline-#{$key} {
+		margin-inline: $value !important;
+	}
+
+	.margin-block-#{$key} {
+		margin-block: $value !important;
+	}
+
+	.margin-inline-start-#{$key} {
+		margin-inline-start: $value !important;
+	}
+
+	.margin-inline-end-#{$key} {
+		margin-inline-end: $value !important;
+	}
+
+	.margin-block-start-#{$key} {
+		margin-block-start: $value !important;
+	}
+
+	.margin-block-end-#{$key} {
+		margin-block-end: $value !important;
+	}
+
+	.margin-top-#{$key} {
+		margin-top: $value !important;
+	}
+
+	.margin-right-#{$key} {
+		margin-right: $value !important;
+	}
+
+	.margin-bottom-#{$key} {
+		margin-bottom: $value !important;
+	}
+
+	.margin-left-#{$key} {
+		margin-left: $value !important;
+	}
+}
