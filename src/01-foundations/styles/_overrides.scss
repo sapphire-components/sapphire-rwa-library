@@ -1,11 +1,41 @@
-body {
-	font-size: var(--font-size-base);
+@use 'sass:color';
+
+:root {
+	--color-primary: #00bfa5;
+	--color-primary-hover: #009e88;
+	--color-secondary: #2a5a6e;
+	--color-secondary-hover: #214757;
+
+	--space-xxs: 2px;
 }
 
-body .ThemeGrid_MarginGutter {
-	margin-left: 0;
+html,
+body {
+	font-family: 'Lato';
+	font-size: var(--font-size-base);
+	height: 100%;
+	margin: 0;
+	text-align: start;
+}
+
+body .ThemeGrid_MarginGutter,
+body.is-rtl .ThemeGrid_MarginGutter {
+	margin-left: unset;
+	margin-right: unset;
 }
 
 .btn + .btn {
 	margin-inline-start: var(--space-s);
+}
+
+.is-rtl {
+	.btn + .btn {
+		margin-left: unset;
+	}
+}
+
+.display-inline-flex {
+	> .btn + .btn {
+		margin-inline-start: 0;
+	}
 }

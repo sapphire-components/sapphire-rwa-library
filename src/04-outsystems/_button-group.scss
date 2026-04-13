@@ -1,0 +1,25 @@
+.button-group {
+	display: inline-flex;
+	.button-group-item {
+		overflow-wrap: normal;
+		white-space: nowrap;
+		word-break: normal;
+		.svg-icon {
+			vertical-align: middle;
+		}
+	}
+}
+
+.button-group.small {
+	.button-group-item {
+		height: 30px;
+	}
+}
+
+.button-group.xsmall {
+	.button-group-item {
+		font-size: var(--font-size-xs);
+		height: 20px;
+		padding-inline: var(--space-s);
+	}
+}

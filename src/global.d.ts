@@ -1,7 +1,19 @@
 declare global {
 	interface Window {
-		SapphireRWALibrary: SapphireRWALibraryAPI;
+		SapphireRWALibrary: SapphireRWALibrary;
+		SapphireRWAInstances: SapphireRWAInstances;
+		tippy: any;
 	}
+
+	type TippyInstance = {
+		hide: () => void;
+		popper: HTMLElement;
+		popperInstance: any;
+		reference: HTMLElement;
+		show: () => void;
+		state: any;
+		destroy: () => void;
+	};
 }
 
 // “When I import a file whose path ends with .svg?raw, treat that import as a string.”

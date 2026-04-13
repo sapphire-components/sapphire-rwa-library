@@ -1,0 +1,125 @@
+@use '../../01-foundations/styles/_colors.scss' as *;
+
+div[data-block$='SapphireInput'] {
+	display: contents;
+}
+
+.sapphireinput {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	&-icon {
+		display: grid;
+		height: 20px;
+		inset-inline-start: 10px;
+		place-items: center;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 20px;
+	}
+	&-clear {
+		cursor: pointer;
+		display: none;
+		height: 20px;
+		inset-inline-end: 10px;
+		place-items: center;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 20px;
+	}
+	.form-control[data-input] {
+		padding-block: 0;
+		padding-inline-end: 16px;
+		padding-inline-start: 36px;
+		width: 100%;
+		&::placeholder {
+			color: var(--color-neutral-6);
+		}
+	}
+}
+
+.sapphireinput-above {
+	display: inline-flex;
+	position: relative;
+	width: 100%;
+	> div:not(.sapphireinput-icon):not(.sapphireinput-clear) {
+		width: 100%;
+	}
+}
+
+.sapphireinput-hint {
+	color: var(--color-neutral-7);
+	font-size: var(--font-size-xs);
+	padding-inline: var(--space-xs);
+	&:empty {
+		display: none;
+	}
+}
+
+.sapphireinput[data-isvalid] .sapphireinput-invalid {
+	background-color: var(--color-error-light);
+	border: solid 1px var(--color-error);
+	color: var(--color-error);
+	display: none;
+	font-size: var(--font-size-xs);
+	padding: var(--space-xs) var(--space-s);
+	&:empty {
+		display: none;
+	}
+}
+
+.sapphireinput[data-isvalid='false'] {
+	.form-control[data-input] {
+		border-color: var(--color-error);
+	}
+	.sapphireinput-invalid {
+		display: flex;
+		gap: 4px;
+	}
+}
+
+.sapphireinput-invalid:has(.sapphireinput-invalid-message:empty) {
+	display: none;
+}
+
+.sapphireinput[data-iconname=''] {
+	.form-control[data-input] {
+		padding-inline-start: var(--space-base);
+	}
+}
+
+.sapphireinput[data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 36px;
+	}
+}
+
+.sapphireinput[data-hascontent='true'][data-hasclear='true'] {
+	.sapphireinput-clear {
+		display: grid;
+	}
+}
+
+.sapphireinput[data-theme='filter'] {
+	.form-control[data-input] {
+		background-color: $color-sapphire-interactive;
+		border-radius: 100px;
+	}
+}
+
+.sapphireinput[data-enabled='false'] {
+	cursor: not-allowed;
+	.sapphireinput-icon,
+	.sapphireinput-clear {
+		color: var(--color-neutral-6);
+		pointer-events: none;
+	}
+	.form-control[data-input] {
+		background-color: var(--color-neutral-2);
+		color: var(--color-neutral-6);
+		pointer-events: none;
+	}
+}

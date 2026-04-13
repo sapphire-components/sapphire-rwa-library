@@ -1,0 +1,33 @@
+@use '../../01-foundations/styles/_colors.scss' as *;
+
+.screen-container {
+	scrollbar-gutter: stable;
+}
+
+div[data-block$='LayoutBlank'] {
+	display: contents;
+}
+
+body:has(.layoutwrapper) {
+	background-color: $color-sapphire-background;
+}
+
+.layoutwrapper {
+	align-items: flex-start;
+	display: flex;
+	&-aside {
+		background-color: var(--color-neutral-0);
+		border-right: 1px solid var(--color-neutral-5);
+		height: 100vh;
+		position: sticky;
+		top: 0;
+	}
+	&-body {
+		flex: 1;
+		padding: 48px 24px;
+		&-content {
+			margin-inline: auto;
+			max-width: 1300px;
+		}
+	}
+}

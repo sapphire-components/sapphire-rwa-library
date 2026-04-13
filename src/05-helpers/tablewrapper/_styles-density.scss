@@ -1,0 +1,13 @@
+.tablewrapper[data-density='compact'] {
+	table thead {
+		height: unset;
+	}
+	.table-header th {
+		height: unset;
+		padding: var(--space-xs) var(--space-s);
+	}
+	.table-row td {
+		height: unset;
+		padding: var(--space-xs) var(--space-s);
+	}
+}

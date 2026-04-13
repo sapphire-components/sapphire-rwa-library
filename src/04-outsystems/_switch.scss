@@ -1,0 +1,24 @@
+span:has(> [data-switch]) {
+	display: contents;
+}
+
+input[data-switch] {
+	vertical-align: bottom;
+	&.small {
+		height: 22px;
+		width: 36px;
+		&:empty:before {
+			height: 20px;
+			width: 34px;
+		}
+		&:empty:after {
+			height: 15px;
+			top: 3px;
+			transform: translateX(3px) translateZ(0);
+			width: 15px;
+		}
+		&:checked:after {
+			transform: translateX(16px) translateZ(0);
+		}
+	}
+}

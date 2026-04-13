@@ -1,0 +1,87 @@
+.toast {
+	align-items: center;
+	animation-duration: 0.5s;
+	animation-name: toast-slidein;
+	animation-timing-function: ease-out;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-s);
+	left: 50%;
+	position: fixed;
+	top: 24px;
+	transform: translateX(-50%);
+	transition: all 300ms ease-out;
+	z-index: 401;
+
+	&-notification {
+		align-items: center;
+		animation-duration: 0.2s;
+		animation-name: toast-creation;
+		animation-timing-function: ease-out;
+		border-radius: 8px;
+		color: var(--color-neutral-0);
+		display: flex;
+		overflow: hidden;
+		padding: var(--space-base) var(--space-m);
+		position: relative;
+		width: 648px;
+
+		&.is-removing {
+			animation-duration: 320ms;
+			animation-name: toast-destruction;
+			animation-timing-function: ease-out;
+		}
+
+		&-content {
+			display: flex;
+			flex: 1;
+			gap: 16px;
+
+			&-icon {
+				height: 24px;
+				width: 24px;
+			}
+
+			&-text {
+				flex: 1;
+				word-break: break-word;
+				&-title {
+					font-weight: 700;
+				}
+				a {
+					&,
+					&:active,
+					&:focus,
+					&:visited {
+						color: var(--color-neutral-0);
+						cursor: pointer;
+						margin-inline-start: 8px;
+						text-decoration: underline;
+					}
+					&:hover {
+						text-decoration: none;
+					}
+				}
+			}
+
+			&-close {
+				cursor: pointer;
+				height: 24px;
+				margin-inline-start: var(--space-sm);
+				width: 24px;
+			}
+		}
+
+		&-progress {
+			animation-duration: var(--time-to-live);
+			animation-name: toast-progress;
+			animation-timing-function: linear;
+			bottom: 0;
+			content: '';
+			height: 4px;
+			inset-inline-start: 0;
+			position: absolute;
+			width: 0;
+		}
+	}
+}

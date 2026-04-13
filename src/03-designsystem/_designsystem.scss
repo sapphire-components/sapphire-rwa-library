@@ -1,0 +1,17 @@
+.configuration-selector {
+	background-color: var(--color-neutral-0);
+	border: solid 1px var(--color-neutral-5);
+	border-radius: 8px;
+	inset-inline-start: 12px;
+	padding: 8px;
+	position: fixed;
+	top: -38px;
+	transition: top 0.3s ease-in-out;
+	width: 50px;
+	z-index: 1;
+
+	&:hover {
+		top: -4px;
+		width: auto;
+	}
+}

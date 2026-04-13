@@ -1,0 +1,24 @@
+.dropdown-container {
+	> select.dropdown-display {
+		padding-right: 28px;
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+		&::-webkit-scrollbar-thumb {
+			background: var(--color-neutral-7);
+			border-radius: 999px;
+		}
+		&::-webkit-scrollbar-track {
+			background: transparent;
+		}
+		&.small {
+			height: 30px;
+		}
+	}
+}
+
+.dropdown-container:has(.dropdown-display.small) {
+	&:after {
+		top: 9px;
+	}
+}

@@ -1,0 +1,20 @@
+div[data-block$='ResponsiveGrid'] {
+	display: contents;
+}
+
+.responsive-grid {
+	display: grid;
+	gap: var(--responsive-grid-gap);
+	grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-min-col-width), 1fr));
+	> div {
+		display: contents;
+	}
+}
+
+.responsive-grid-item {
+	max-width: var(--responsive-grid-max-col-width, unset);
+	min-width: 0;
+	> div > .card-basic {
+		height: 100%;
+	}
+}

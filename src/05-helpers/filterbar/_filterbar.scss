@@ -1,0 +1,54 @@
+@use '../../01-foundations/styles/_colors.scss' as *;
+
+div[data-block$='FilterBar'] {
+	display: contents;
+}
+
+.filterbar {
+	position: relative;
+	width: 100%;
+
+	&-wrapper {
+		background-color: $color-sapphire-surface;
+		border: solid 1px var(--color-neutral-5);
+		border-radius: var(--border-radius-soft);
+		display: flex;
+		gap: 12px;
+		margin-top: calc(-1 * var(--filterbar-height));
+		padding: 24px;
+		position: relative;
+		width: 100%;
+	}
+
+	&-above {
+		align-items: center;
+		display: flex;
+		flex: 1 1 auto;
+		gap: 12px;
+		min-width: 0;
+	}
+	&-actions {
+		flex: 0 0 auto;
+		white-space: nowrap;
+	}
+	&-placeholder {
+		height: var(--filterbar-height);
+		pointer-events: none;
+		width: 100%;
+	}
+	&-sentinel {
+		height: 0;
+		pointer-events: none;
+		width: 0;
+	}
+}
+
+.filterbar[data-isfixed='true'] {
+	.filterbar-wrapper {
+		border-radius: 0;
+		margin-top: 0;
+		position: fixed;
+		width: calc(var(--filterbar-width) + 1px);
+		z-index: 1;
+	}
+}

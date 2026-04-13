@@ -1,0 +1,1 @@
+"['check-bold', 'check-circle-bold', 'check-circle-fill', 'check-circle', 'check-fill', 'check', 'checks', 'seal-warning', 'shield-warning', 'warning-circle', 'warning-diamond', 'warning-fill', 'warning-octagon', 'warning']"

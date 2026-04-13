@@ -1,0 +1,1 @@
+"['arrow-circle-right', 'arrow-fat-right', 'arrow-line-right', 'arrow-right', 'caret-circle-double-right', 'caret-circle-right', 'caret-double-right', 'caret-down-fill', 'caret-down', 'caret-right']"

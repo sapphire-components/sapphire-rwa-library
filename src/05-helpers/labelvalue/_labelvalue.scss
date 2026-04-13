@@ -1,0 +1,39 @@
+@use '../../01-foundations/styles/_typography.scss' as *;
+@use '../../09-utils/_widthcomponent.scss' as *;
+
+div[data-block$='LabelValue'] {
+	display: contents;
+}
+
+.labelvalue {
+	display: inline-flex;
+	gap: 8px;
+	&-label {
+		font-size: var(--font-size-s);
+	}
+	&-value {
+		// overflow-wrap: anywhere;
+		// word-break: break-word;
+	}
+}
+
+.labelvalue[data-orientation='horizontal'] {
+	.labelvalue-label {
+		padding-top: var(--label-top-padding);
+	}
+	.labelvalue-value {
+		flex: 1 1 0;
+	}
+}
+
+.labelvalue[data-orientation='vertical'] {
+	flex-direction: column;
+}
+
+@each $name, $size in $widthcomponent-sizes {
+	.labelvalue[data-orientation='horizontal'][data-labelwidth='#{$name}'] {
+		.labelvalue-label {
+			width: $size;
+		}
+	}
+}

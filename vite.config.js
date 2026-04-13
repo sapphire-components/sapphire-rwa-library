@@ -42,7 +42,9 @@ export default defineConfig(({ command, mode }) => {
 					assetFileNames: 'sapphire-rwa-library.css',
 				},
 			},
-			sourcemap: false,
+			// Dev/watch + preview: emit maps so DevTools map bundled output to sources.
+			// Prod stays without maps (smaller, no shipped sources).
+			sourcemap: !isProdBuild,
 			target: 'baseline-widely-available',
 			write: true,
 		},

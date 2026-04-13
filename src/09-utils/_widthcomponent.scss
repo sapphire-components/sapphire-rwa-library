@@ -15,17 +15,39 @@ $widthcomponent-sizes: (
 	'xl': 320px,
 	'xl2': 480px,
 	'xl3': 640px,
+	'full': 100%,
+	'auto': fit-content,
 );
 
 @each $name, $size in $widthcomponent-sizes {
 	div[data-widthcomponent='#{$name}'] {
 		max-width: $size;
 	}
+	.max-width-#{$name} {
+		max-width: $size;
+	}
+	.min-width-#{$name} {
+		min-width: $size;
+	}
 	.width-#{$name} {
 		width: $size;
 	}
 }
 
-div[data-widthcomponent='full'] {
-	width: 100%;
+.tablewrapper[data-columnfixedwidths='false'] {
+	@each $name, $size in $widthcomponent-sizes {
+		.width-#{$name} {
+			width: unset;
+		}
+	}
+}
+
+.tablewrapper[data-columnfixedwidths='true'] {
+	@each $name, $size in $widthcomponent-sizes {
+		th.width-#{$name},
+		td.width-#{$name} {
+			min-width: $size;
+			width: $size;
+		}
+	}
 }

@@ -1,0 +1,49 @@
+body:has(.layoutwrapper[data-theme='login']) {
+	background-color: #fff;
+}
+
+.layoutwrapper[data-theme='login'] {
+	.layoutwrapper-aside {
+		display: none;
+	}
+	.layoutwrapper-body {
+		padding: 0;
+	}
+	.layoutwrapper-body-content {
+		max-width: unset;
+	}
+}
+
+.login-giant-image {
+	height: 100vh;
+	left: 0;
+	max-width: 60%;
+	position: fixed;
+	top: 0;
+	img {
+		width: 100%;
+	}
+}
+
+.login-floating-content {
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+	left: unset;
+	max-width: 400px;
+	padding: 24px;
+	position: fixed;
+	right: 10%;
+	top: 50%;
+	transform: translateY(-70%);
+}
+
+@media (max-width: 800px) {
+	.login-floating-content {
+		left: 50%;
+		max-width: 70%;
+		right: unset;
+		transform: translate(-50%, -50%);
+		width: 100%;
+	}
+}

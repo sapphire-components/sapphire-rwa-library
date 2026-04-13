@@ -1,0 +1,12 @@
+.is-rtl {
+	.svg-icon[data-iconname='caret-double-right'],
+	.svg-icon[data-iconname='caret-circle-right'],
+	.svg-icon[data-iconname='caret-circle-double-right'],
+	.svg-icon[data-iconname='arrow-right'],
+	.svg-icon[data-iconname='arrow-line-right'],
+	.svg-icon[data-iconname='arrow-circle-right'],
+	.svg-icon[data-iconname='arrow-fat-right'],
+	.svg-icon[data-iconname='caret-right'] {
+		transform: scaleX(-1);
+	}
+}
