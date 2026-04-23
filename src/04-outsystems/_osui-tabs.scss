@@ -1,0 +1,8 @@
+.osui-tabs {
+	overflow: unset;
+}
+
+.osui-tabs--is-horizontal > .osui-tabs__header {
+	overflow-x: unset;
+	overflow-y: unset;
+}

@@ -1,3 +1,5 @@
+@use '../01-foundations/styles/_mixins.scss' as *;
+
 div[data-block$='CheckboxLabel'] {
 	display: contents;
 }
@@ -6,8 +8,6 @@ div[data-block$='CheckboxLabel'] {
 	label {
 		display: inline-flex;
 		gap: 8px;
-	}
-	&-checkbox {
 	}
 	&-label {
 		cursor: pointer;

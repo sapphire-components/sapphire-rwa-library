@@ -13,4 +13,8 @@ export class BaseComponent {
 		this.runtimeId = init.runtimeId!;
 		this.widgetEl = document.getElementById(this.runtimeId)!;
 	}
+
+	parametersChanged(_payload?: BaseComponentInit): void {}
+
+	destroy(): void {}
 }

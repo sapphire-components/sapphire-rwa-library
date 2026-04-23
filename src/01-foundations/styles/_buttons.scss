@@ -15,6 +15,13 @@
 		background-color: #e6faf6;
 	}
 
+	&:focus-visible {
+		box-shadow:
+			0 0 0 2px white,
+			0 0 0 4px var(--focus-ring-outer);
+		outline: none;
+	}
+
 	span.btn-animation {
 		display: none;
 	}
@@ -34,4 +41,13 @@
 	&:hover {
 		background-color: var(--color-secondary-hover);
 	}
+}
+
+.btn-icon {
+	border-radius: 4px;
+	padding: 8px;
+}
+
+.btn-squared {
+	border-radius: 4px;
 }

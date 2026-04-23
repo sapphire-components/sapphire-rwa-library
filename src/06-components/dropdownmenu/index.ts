@@ -3,15 +3,25 @@ import { BaseComponent, type BaseComponentInit } from '../../core/base';
 import { LocalStorageKeys } from '../../09-utils/local-storage-keys';
 
 interface DropdownMenuInit extends BaseComponentInit {
-	actions: {
-		SetIsOpen: (isOpen: boolean) => void;
-	};
 	isOpen: boolean;
 }
 
 export default class DropdownMenu extends BaseComponent {
-	private actions!: DropdownMenuInit['actions'];
-	private mutationObserver?: MutationObserver;
+	private headerEl!: HTMLElement;
+	private isOpen!: boolean;
+
+	private readonly onClickHeader = (): void => {
+		this.isOpen = !this.isOpen;
+		this.widgetEl.dataset.isopen = this.isOpen ? 'true' : 'false';
+		Helpers.writeToLocalStorage(LocalStorageKeys.dropdownMenu(this.runtimeId), this.isOpen);
+	};
+
+	private readonly onKeyDownHeader = (event: KeyboardEvent): void => {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			this.onClickHeader();
+		}
+	};
 
 	constructor(init: DropdownMenuInit) {
 		super(init);
@@ -21,48 +31,42 @@ export default class DropdownMenu extends BaseComponent {
 			return;
 		}
 
-		this.actions = init.actions;
+		this.isOpen = init.isOpen;
+		this.headerEl = this.widgetEl.querySelector('.dropdownmenu-header') as HTMLElement;
 
 		const isRootLevel = this.widgetEl.parentElement?.closest('.dropdownmenu') === null;
 		this.widgetEl.dataset.rootlevel = isRootLevel ? 'true' : 'false';
 
-		this.mutationObserver = new MutationObserver(() => {
-			const isOpen = this.widgetEl.getAttribute('data-isopen') === 'true';
-			Helpers.writeToLocalStorage(LocalStorageKeys.dropdownMenu(this.runtimeId), isOpen);
-		});
+		this.isOpen = Helpers.readFromLocalStorage<boolean>(LocalStorageKeys.dropdownMenu(this.runtimeId)) ?? false;
 
-		this.mutationObserver.observe(this.widgetEl, {
-			attributes: true,
-			attributeFilter: ['data-isopen', 'class'],
-			childList: true,
-			subtree: true,
-		});
-
-		const isOpen = Helpers.readFromLocalStorage<boolean>(LocalStorageKeys.dropdownMenu(this.runtimeId));
-		if (isOpen) {
-			this.widgetEl.setAttribute('data-isopen', 'true');
-			this.actions.SetIsOpen(true);
+		console.log('DropdownMenu', this.runtimeId, this.isOpen);
+		if (this.isOpen) {
+			this.widgetEl.dataset.isopen = 'true';
 		}
 
 		setTimeout(() => {
 			if (this.checkAnyActiveChild()) {
-				this.widgetEl.setAttribute('data-isactive', 'true');
-				this.widgetEl.setAttribute('data-isopen', 'true');
-				this.actions.SetIsOpen(true);
+				this.widgetEl.dataset.isactive = 'true';
+				this.widgetEl.dataset.isopen = 'true';
 			}
 		}, 0);
+
+		this.bindEvents();
+	}
+
+	bindEvents(): void {
+		this.headerEl.addEventListener('click', this.onClickHeader);
+		this.headerEl.addEventListener('keydown', this.onKeyDownHeader);
 	}
 
 	checkAnyActiveChild(): boolean {
 		return !!this.widgetEl.querySelector('a.active');
 	}
 
-	parametersChanged(payload: DropdownMenuInit): void {
-		console.log(payload);
-	}
+	parametersChanged(): void {}
 
 	destroy() {
-		this.mutationObserver?.disconnect();
-		this.mutationObserver = undefined;
+		this.headerEl.removeEventListener('click', this.onClickHeader);
+		this.headerEl.removeEventListener('keydown', this.onKeyDownHeader);
 	}
 }

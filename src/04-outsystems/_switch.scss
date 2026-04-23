@@ -1,8 +1,11 @@
+@use '../01-foundations/styles/_mixins.scss' as *;
+
 span:has(> [data-switch]) {
 	display: contents;
 }
 
 input[data-switch] {
+	@include focus-visible();
 	vertical-align: bottom;
 	&.small {
 		height: 22px;

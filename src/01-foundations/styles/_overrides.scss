@@ -6,6 +6,8 @@
 	--color-secondary: #2a5a6e;
 	--color-secondary-hover: #214757;
 
+	--focus-ring-outer: color-mix(in srgb, var(--color-primary) 35%, white);
+
 	--space-xxs: 2px;
 }
 
@@ -16,6 +18,13 @@ body {
 	height: 100%;
 	margin: 0;
 	text-align: start;
+}
+
+html[lang^='ar'] {
+	font-family: 'Tajawal';
+	body {
+		font-family: 'Tajawal';
+	}
 }
 
 body .ThemeGrid_MarginGutter,

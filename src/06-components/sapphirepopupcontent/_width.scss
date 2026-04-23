@@ -1,0 +1,15 @@
+.sapphire-popup-content[data-width='s'] {
+	width: min(400px, calc(100vw - 48px));
+}
+
+.sapphire-popup-content[data-width='m'] {
+	width: min(600px, calc(100vw - 48px));
+}
+
+.sapphire-popup-content[data-width='l'] {
+	width: min(960px, calc(100vw - 48px));
+}
+
+.sapphire-popup-content[data-width='xl'] {
+	width: min(1200px, calc(100vw - 48px));
+}

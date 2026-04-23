@@ -28,6 +28,7 @@ import LayoutWrapper from './02-core/layoutwrapper';
 import ResponsiveGrid from './06-components/responsive-grid';
 import SapphireInput from './06-components/sapphireinput';
 import SapphireIntl from './02-core/SapphireIntl';
+import SapphirePopupContent from './06-components/sapphirepopupcontent';
 import TableWrapper from './05-helpers/tablewrapper';
 import TippyTooltip from './06-components/tippytooltip';
 import Toast from './06-components/toast';
@@ -52,6 +53,7 @@ const SapphireRWALibrary = {
 	ResponsiveGrid,
 	SapphireInput,
 	SapphireIntl,
+	SapphirePopupContent,
 	TableWrapper,
 	TippyTooltip,
 	Toast: new Toast(),

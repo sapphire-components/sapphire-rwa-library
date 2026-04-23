@@ -1,3 +1,5 @@
+@use '../../01-foundations/styles/_mixins.scss' as *;
+
 div[data-block$='DropdownMenu'] {
 	display: contents;
 }
@@ -5,6 +7,7 @@ div[data-block$='DropdownMenu'] {
 .dropdownmenu {
 	user-select: none;
 	&-header {
+		@include focus-visible();
 		align-items: flex-start;
 		border-inline-start: solid 3px var(--color-neutral-0);
 		cursor: pointer;
@@ -34,7 +37,8 @@ div[data-block$='DropdownMenu'] {
 	&-items {
 		display: none;
 		a {
-			color: #5c5c5c;
+			@include focus-visible();
+			color: var(--color-neutral-9);
 			display: block;
 			font-size: 14px;
 			min-height: 30px;

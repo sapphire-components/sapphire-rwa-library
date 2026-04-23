@@ -1,0 +1,8 @@
+@mixin focus-visible($width: 1px, $color: var(--color-primary)) {
+	&:focus-visible {
+		box-shadow:
+			0 0 0 2px white,
+			0 0 0 4px var(--focus-ring-outer);
+		outline: none;
+	}
+}

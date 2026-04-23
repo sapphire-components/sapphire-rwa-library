@@ -1,0 +1,10 @@
+@use '../../01-foundations/styles/_mixins.scss' as *;
+
+a,
+.btn,
+input[data-checkbox],
+input[data-input],
+input[data-switch],
+.osui-tabs__header-item.osui-tabs--is-active {
+	@include focus-visible();
+}

@@ -1,6 +1,9 @@
+@use '../01-foundations/styles/_mixins.scss' as *;
+
 .button-group {
 	display: inline-flex;
 	.button-group-item {
+		@include focus-visible();
 		overflow-wrap: normal;
 		white-space: nowrap;
 		word-break: normal;
