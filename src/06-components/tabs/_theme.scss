@@ -1,0 +1,43 @@
+.sapphire-tabs[data-theme='button'] {
+	> .sapphire-tabs-header {
+		.sapphire-tabheader-content {
+			border: none;
+			border-radius: 8px;
+			margin-bottom: 8px;
+		}
+	}
+	> .sapphire-tabs-header .sapphire-tabheader[data-active='true'] {
+		.sapphire-tabheader-content {
+			background-color: var(--color-primary-lighter);
+			color: var(--color-primary);
+		}
+	}
+}
+
+.sapphire-tabs[data-theme='pills'] {
+	> .sapphire-tabs-header {
+		border: none;
+
+		.sapphire-tabs-header-items {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+
+		.sapphire-tabs-header-button {
+			display: none;
+		}
+
+		.sapphire-tabheader-content {
+			background-color: var(--color-neutral-2);
+			border: none;
+			border-radius: 99px;
+		}
+	}
+	> .sapphire-tabs-header .sapphire-tabheader[data-active='true'] {
+		.sapphire-tabheader-content {
+			background-color: var(--color-primary-lighter);
+			color: var(--color-primary);
+		}
+	}
+}

@@ -1,7 +1,6 @@
 declare global {
 	interface Window {
 		SapphireRWALibrary: SapphireRWALibrary;
-		SapphireRWAInstances: SapphireRWAInstances;
 		tippy: any;
 	}
 

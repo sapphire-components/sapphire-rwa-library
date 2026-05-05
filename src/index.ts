@@ -1,20 +1,9 @@
 import './core/init-bootstrap';
 
-const scssModules = import.meta.glob([
-	'./01-foundations/**/*.scss',
-	'./02-core/**/*.scss',
-	'./03-designsystem/**/*.scss',
-	'./04-outsystems/**/*.scss',
-	'./05-helpers/**/*.scss',
-	'./06-components/**/*.scss',
-	'./09-utils/**/*.scss',
-]);
-
-Object.keys(scssModules)
-	.sort()
-	.forEach((path) => {
-		scssModules[path]();
-	});
+// SCSS partials are compiled into dist/sapphire-rwa-library.css by the
+// `scss-bundle` Vite plugin (see vite.config.js). They are intentionally NOT
+// imported here — Vite's lib + cssCodeSplit:false path drops CSS source maps,
+// so the plugin owns SCSS compilation end-to-end.
 
 import { injectIconSprite } from './core/iconsSprite';
 import { installBodyPlatformClassStripper } from './core/stripBodyPlatformClasses';
@@ -33,6 +22,7 @@ import TableWrapper from './05-helpers/tablewrapper';
 import TippyTooltip from './06-components/tippytooltip';
 import Toast from './06-components/toast';
 import { LocalStorageKeys } from './09-utils/local-storage-keys';
+import { Tabs, TabHeader, TabContent } from './06-components/tabs';
 
 function init(): void {
 	injectIconSprite();
@@ -54,7 +44,10 @@ const SapphireRWALibrary = {
 	SapphireInput,
 	SapphireIntl,
 	SapphirePopupContent,
+	TabContent,
+	TabHeader,
 	TableWrapper,
+	Tabs,
 	TippyTooltip,
 	Toast: new Toast(),
 	init,

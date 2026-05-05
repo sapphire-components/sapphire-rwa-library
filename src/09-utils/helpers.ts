@@ -32,4 +32,60 @@ export default class Helpers {
 		const fixedTableHeaderHeight = root.querySelector<HTMLDivElement>('.table[data-isfixed="true"] .table-header')?.getBoundingClientRect().height || 0;
 		return fixedFilterBarHeight + fixedTableHeaderHeight;
 	}
+
+	static areTheyEqual(incoming: any, existing: any): boolean {
+		// Strict equality covers primitives and reference equality
+		if (incoming === existing) {
+			return true;
+		}
+
+		// Handle cases where one is null/undefined and the other is not
+		if (incoming == null || existing == null) {
+			return false;
+		}
+
+		// Arrays
+		if (Array.isArray(incoming) || Array.isArray(existing)) {
+			if (!Array.isArray(incoming) || !Array.isArray(existing)) {
+				return false;
+			}
+
+			if (incoming.length !== existing.length) {
+				return false;
+			}
+
+			for (let i = 0; i < incoming.length; i++) {
+				if (!Helpers.areTheyEqual(incoming[i], existing[i])) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		// Objects (deep comparison)
+		if (typeof incoming === 'object' && typeof existing === 'object') {
+			const incomingKeys = Object.keys(incoming);
+			const existingKeys = Object.keys(existing);
+
+			if (incomingKeys.length !== existingKeys.length) {
+				return false;
+			}
+
+			for (const key of incomingKeys) {
+				if (!Object.prototype.hasOwnProperty.call(existing, key)) {
+					return false;
+				}
+
+				if (!Helpers.areTheyEqual((incoming as any)[key], (existing as any)[key])) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		// Fallback for numbers / strings / booleans of different types
+		return false;
+	}
 }

@@ -41,6 +41,11 @@ export default class SapphirePopupContent extends BaseComponent {
 
 		this.bindEvents();
 		this.renderVariables();
+
+		setTimeout(() => {
+			console.log('SapphirePopupContent: focus', this.runtimeId);
+			this.widgetEl.focus();
+		}, 0);
 	}
 
 	bindEvents(): void {

@@ -39,7 +39,6 @@ export default class DropdownMenu extends BaseComponent {
 
 		this.isOpen = Helpers.readFromLocalStorage<boolean>(LocalStorageKeys.dropdownMenu(this.runtimeId)) ?? false;
 
-		console.log('DropdownMenu', this.runtimeId, this.isOpen);
 		if (this.isOpen) {
 			this.widgetEl.dataset.isopen = 'true';
 		}

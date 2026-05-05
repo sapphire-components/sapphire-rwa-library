@@ -6,8 +6,6 @@ interface LayoutWrapperInit extends BaseComponentInit {
 	density: string;
 }
 
-window.SapphireRWALibrary.Instances.LayoutWrapper = new WeakMap<HTMLElement, LayoutWrapper>();
-
 export default class LayoutWrapper extends BaseComponent {
 	private filterBarEl: HTMLDivElement | null = null;
 	private layoutWrapperEl: HTMLDivElement | null;
@@ -16,8 +14,6 @@ export default class LayoutWrapper extends BaseComponent {
 
 	constructor(init: LayoutWrapperInit) {
 		super(init);
-
-		window.SapphireRWALibrary.Instances.LayoutWrapper.set(this.widgetEl, this);
 
 		this.layoutWrapperEl = document.querySelector<HTMLDivElement>('.layoutwrapper');
 		this.screenContainerEl = document.querySelector<HTMLDivElement>('.screen-container');
@@ -74,10 +70,6 @@ export default class LayoutWrapper extends BaseComponent {
 	}
 
 	destroy(): void {
-		window.SapphireRWALibrary.Instances.LayoutWrapper.delete(this.widgetEl);
-	}
-
-	static getInstance(element: HTMLElement): LayoutWrapper | undefined {
-		return window.SapphireRWALibrary.Instances.LayoutWrapper.get(element);
+		super.destroy();
 	}
 }

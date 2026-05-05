@@ -15,13 +15,13 @@ input[data-switch] {
 			width: 34px;
 		}
 		&:empty:after {
-			height: 15px;
-			top: 3px;
+			height: 14px;
+			top: 4px;
 			transform: translateX(3px) translateZ(0);
-			width: 15px;
+			width: 14px;
 		}
 		&:checked:after {
-			transform: translateX(16px) translateZ(0);
+			transform: translateX(18px) translateZ(0);
 		}
 	}
 }
