@@ -14,10 +14,10 @@
 		"concurrently": "^9.2.1",
 		"prettier": "^3.8.3",
 		"sass": "^1.99.0",
-		"stylelint": "^17.9.1",
+		"stylelint": "^17.11.0",
 		"stylelint-order": "^8.1.1",
 		"typescript": "~6.0.3",
-		"vite": "^8.0.10",
+		"vite": "^8.0.11",
 		"vite-plugin-mkcert": "^2.0.0"
 	},
 	"devDependencies": {

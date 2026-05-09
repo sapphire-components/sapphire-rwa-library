@@ -1,0 +1,39 @@
+.tippy-box[data-customtheme='buttondropdown'] {
+	min-width: var(--trigger-width);
+}
+
+.tippy-box[data-customtheme='error'] {
+	background-color: var(--color-error);
+	border-color: var(--color-error);
+	color: var(--color-neutral-0);
+	.tippy-arrow:before {
+		color: var(--color-error);
+	}
+}
+
+.tippy-box[data-customtheme='info'] {
+	background-color: var(--color-info);
+	border-color: var(--color-info);
+	color: var(--color-neutral-0);
+	.tippy-arrow:before {
+		color: var(--color-info);
+	}
+}
+
+.tippy-box[data-customtheme='success'] {
+	background-color: var(--color-success);
+	border-color: var(--color-success);
+	color: var(--color-neutral-0);
+	.tippy-arrow:before {
+		color: var(--color-success);
+	}
+}
+
+.tippy-box[data-customtheme='warning'] {
+	background-color: var(--color-warning);
+	border-color: var(--color-warning);
+	color: var(--color-neutral-0);
+	.tippy-arrow:before {
+		color: var(--color-warning);
+	}
+}

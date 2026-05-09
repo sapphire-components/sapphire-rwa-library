@@ -1,0 +1,8 @@
+body.overlay-iframe-auto-size,
+body.overlay-iframe-auto-size .layout,
+body.overlay-iframe-auto-size .layout .content {
+	margin: 0;
+	min-width: 0;
+	padding: 0;
+	width: max-content;
+}

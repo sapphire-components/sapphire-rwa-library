@@ -1,0 +1,19 @@
+.tippy-box[data-padding='none'] .tippy-content {
+	padding: 0;
+}
+
+.tippy-box[data-padding='s'] .tippy-content {
+	padding: var(--space-s);
+}
+
+.tippy-box[data-padding='base'] .tippy-content {
+	padding: var(--space-base);
+}
+
+.tippy-box[data-padding='m'] .tippy-content {
+	padding: var(--space-m);
+}
+
+.tippy-box[data-padding] .tippy-content:has(iframe) {
+	padding: 0;
+}

@@ -12,6 +12,11 @@ body:has(.layoutwrapper) {
 	background-color: $color-sapphire-background;
 }
 
+body.overlay-iframe,
+body.overlay-iframe-auto-size {
+	background-color: transparent;
+}
+
 .layoutwrapper {
 	align-items: flex-start;
 	display: flex;

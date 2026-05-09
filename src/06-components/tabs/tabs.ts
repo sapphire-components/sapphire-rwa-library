@@ -1,4 +1,5 @@
 import Helpers from '../../09-utils/helpers';
+import Overlay from '../overlay';
 import { BaseComponent, type BaseComponentInit } from '../../core/base';
 
 interface TabsConfigOptions extends BaseComponentInit {
@@ -16,13 +17,13 @@ interface TabsConfigOptions extends BaseComponentInit {
 export default class Tabs extends BaseComponent {
 	private activeTab!: number;
 	private configOptions!: TabsConfigOptions;
+	private moreWidth!: number;
+	private resizeObserver!: ResizeObserver;
 	private tabsHeaderButton!: HTMLDivElement;
 	private tabsHeaderContainer!: HTMLDivElement;
-	private tabsHeaderOverflow!: HTMLDivElement;
 	private tabsHeaderItemsContainer!: HTMLDivElement;
-	private tippyInstance!: TippyInstance;
-	private resizeObserver!: ResizeObserver;
-	private moreWidth!: number;
+	private tabsHeaderOverflow!: HTMLDivElement;
+	private tippyTooltipEl!: HTMLDivElement;
 
 	constructor(configOptions: TabsConfigOptions) {
 		super(configOptions);
@@ -36,14 +37,17 @@ export default class Tabs extends BaseComponent {
 		this.activeTab = configOptions.activeTab;
 
 		this.tabsHeaderButton = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header-button`)!;
-		this.tabsHeaderOverflow = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header-overflow`)!;
 		this.tabsHeaderContainer = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header`)!;
 		this.tabsHeaderItemsContainer = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header-items`)!;
+		this.tabsHeaderOverflow = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header-overflow`)!;
+		this.tippyTooltipEl = this.tabsHeaderContainer.querySelector<HTMLDivElement>(`.overlay`)!;
 
 		this.moreWidth = this.tabsHeaderButton.offsetWidth + 8;
 
 		this.setCSSProperties();
-		this.instanciateTippy();
+
+		Overlay.getInstance(this.tippyTooltipEl)?.initializeTippy();
+
 		this.render();
 
 		this.resizeObserver = new ResizeObserver(() => {
@@ -62,17 +66,6 @@ export default class Tabs extends BaseComponent {
 		if (this.configOptions.minHeight) {
 			this.widgetEl.style.setProperty('--tabs-min-height', `${this.configOptions.minHeight}px`);
 		}
-	}
-
-	instanciateTippy(): void {
-		this.tippyInstance = window.tippy(this.tabsHeaderButton, {
-			appendTo: () => document.body,
-			arrow: false,
-			content: this.tabsHeaderOverflow,
-			interactive: true,
-			placement: 'top-end',
-			trigger: 'click',
-		});
 	}
 
 	render(): void {
@@ -102,7 +95,7 @@ export default class Tabs extends BaseComponent {
 		this.tabsHeaderButton.style.display = 'none';
 		const overflowedItems = Array.from(this.tabsHeaderOverflow.querySelectorAll<HTMLElement>('.sapphire-tabheader'));
 		for (const item of overflowedItems) {
-			item.classList.remove('is-overflowed');
+			item.classList.remove('is-overflowed', 'overlay-item');
 			this.tabsHeaderItemsContainer.appendChild(item);
 		}
 
@@ -129,7 +122,8 @@ export default class Tabs extends BaseComponent {
 		if (overflowItems.length > 0) {
 			this.tabsHeaderButton.style.display = 'flex';
 			overflowItems.forEach((item) => {
-				item.classList.add('is-overflowed');
+				item.classList.add('is-overflowed', 'overlay-item');
+				item.tabIndex = 0;
 				this.tabsHeaderOverflow.appendChild(item);
 			});
 		}
@@ -153,8 +147,8 @@ export default class Tabs extends BaseComponent {
 	}
 
 	setTabIndex(index_in: number): void {
-		this.tippyInstance.hide();
 		this.activeTab = index_in;
+		Overlay.getInstance(this.tippyTooltipEl)?.tippyInstance.hide();
 		this.configOptions.actions.OnChange(this.activeTab);
 		this.render();
 	}

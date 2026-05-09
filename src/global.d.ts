@@ -5,13 +5,14 @@ declare global {
 	}
 
 	type TippyInstance = {
+		destroy: () => void;
 		hide: () => void;
 		popper: HTMLElement;
 		popperInstance: any;
 		reference: HTMLElement;
+		setProps: (props: any) => void;
 		show: () => void;
 		state: any;
-		destroy: () => void;
 	};
 }
 

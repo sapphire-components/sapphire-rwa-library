@@ -13,6 +13,10 @@
 	--space-xxs: 2px;
 }
 
+* {
+	scrollbar-width: thin;
+}
+
 html,
 body {
 	font-family: 'Lato';

@@ -50,22 +50,3 @@ div[data-block$='ButtonDropdown'] {
 	min-width: 100%;
 	padding: 4px 8px;
 }
-
-.tippy-box[data-theme='buttondropdown'] {
-	font-size: var(--font-size-base);
-	min-width: var(--trigger-width);
-	.tippy-content {
-		padding: var(--space-s) 0;
-	}
-	a {
-		color: var(--color-neutral-9);
-		display: flex;
-		gap: 8px;
-		padding: var(--space-xs) var(--space-base);
-		&:hover {
-			background-color: var(--color-neutral-3);
-			color: var(--color-neutral-10);
-			text-decoration: none;
-		}
-	}
-}

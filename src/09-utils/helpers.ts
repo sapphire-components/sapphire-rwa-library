@@ -33,6 +33,11 @@ export default class Helpers {
 		return fixedFilterBarHeight + fixedTableHeaderHeight;
 	}
 
+	static isRTL(): boolean {
+		console.log(document.body.classList.contains('is-rtl'));
+		return document.body.classList.contains('is-rtl');
+	}
+
 	static areTheyEqual(incoming: any, existing: any): boolean {
 		// Strict equality covers primitives and reference equality
 		if (incoming === existing) {
@@ -87,5 +92,16 @@ export default class Helpers {
 
 		// Fallback for numbers / strings / booleans of different types
 		return false;
+	}
+
+	static toNumber(value: number | string | undefined): number | null {
+		if (typeof value === 'number') return value;
+
+		if (typeof value === 'string') {
+			const parsed = Number.parseFloat(value);
+			return Number.isFinite(parsed) ? parsed : null;
+		}
+
+		return null;
 	}
 }

@@ -1,3 +1,5 @@
+@use '../../01-foundations/styles/_mixins.scss' as *;
+
 div[data-block$='Tabs'],
 div[data-block$='TabHeader'],
 div[data-block$='TabContent'] {
@@ -17,8 +19,12 @@ div[data-block$='TabContent'] {
 			display: flex;
 			flex: 1;
 			flex-wrap: wrap;
+			.list.list-group {
+				display: contents;
+			}
 		}
 		&-button {
+			@include focus-visible();
 			align-items: center;
 			color: var(--color-neutral-7);
 			cursor: pointer;
@@ -26,7 +32,6 @@ div[data-block$='TabContent'] {
 			font-weight: 700;
 			gap: 4px;
 			padding-block: 8px;
-
 			&.is-active {
 				color: var(--color-primary);
 			}
@@ -39,25 +44,34 @@ div[data-block$='TabContent'] {
 	}
 }
 
+.overlay-content .sapphire-tabs-header-overflow {
+	display: contents;
+}
+
 .sapphire-tabheader-content {
+	align-items: center;
 	appearance: none;
 	background: transparent;
 	border: 0;
 	border-block-end: 2px solid transparent;
-	color: var(--color-neutral-7);
+	color: var(--color-neutral-8);
 	cursor: pointer;
+	display: flex;
 	font-weight: 700;
+	gap: 8px;
 	padding-block: 8px;
 	padding-inline: 16px;
+
 	span[data-expression] {
 		white-space: unset;
 	}
 	&:hover {
-		color: var(--color-neutral-10);
+		color: var(--color-neutral-9);
 	}
 }
 
 .sapphire-tabheader {
+	@include focus-visible();
 	width: fit-content;
 }
 

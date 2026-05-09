@@ -16,6 +16,35 @@ export default class TabHeader extends BaseComponent {
 		Tabs.getInstance(this.tabsEL)?.setTabIndex(this.index);
 	};
 
+	private readonly onTabHeaderKeydown = (event: KeyboardEvent): void => {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			Tabs.getInstance(this.tabsEL)?.setTabIndex(this.index);
+			return;
+		}
+
+		if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+		event.preventDefault();
+
+		const tabs = Array.from(this.tabsHeaderContainerEl.querySelectorAll<HTMLDivElement>('.sapphire-tabheader'));
+		if (tabs.length === 0) return;
+
+		const currentIndex = tabs.indexOf(this.widgetEl as HTMLDivElement);
+		const offset = event.key === 'ArrowRight' ? 1 : -1;
+		const nextTab = tabs[(currentIndex + offset + tabs.length) % tabs.length];
+
+		tabs.forEach((tab) => {
+			tab.tabIndex = -1;
+		});
+		nextTab.tabIndex = 0;
+		nextTab.focus();
+
+		const targetIndex = Number(nextTab.dataset.index);
+		if (!Number.isNaN(targetIndex)) {
+			Tabs.getInstance(this.tabsEL)?.setTabIndex(targetIndex);
+		}
+	};
+
 	constructor(configOptions: TabHeaderConfigOptions) {
 		super(configOptions);
 
@@ -31,6 +60,12 @@ export default class TabHeader extends BaseComponent {
 		this.index = all.indexOf(this.widgetEl);
 		this.widgetEl.dataset.index = this.index.toString();
 
+		if (this.index === 0) {
+			this.widgetEl.tabIndex = 0;
+		} else {
+			this.widgetEl.tabIndex = -1;
+		}
+
 		this.bindEvents();
 
 		this.unwrapParent();
@@ -38,6 +73,7 @@ export default class TabHeader extends BaseComponent {
 
 	bindEvents(): void {
 		this.widgetEl.addEventListener('click', this.onTabHeaderClick);
+		this.widgetEl.addEventListener('keydown', this.onTabHeaderKeydown);
 	}
 
 	parametersChanged(payload: TabHeaderConfigOptions): void {
@@ -46,6 +82,7 @@ export default class TabHeader extends BaseComponent {
 
 	destroy() {
 		this.widgetEl.removeEventListener('click', this.onTabHeaderClick);
+		this.widgetEl.removeEventListener('keydown', this.onTabHeaderKeydown);
 		super.destroy();
 	}
 

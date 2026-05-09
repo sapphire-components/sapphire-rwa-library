@@ -1,0 +1,76 @@
+@use '../../01-foundations/styles/_mixins.scss' as *;
+
+div[data-block$='Overlay'] {
+	display: contents;
+}
+
+.overlay {
+	display: inline-flex;
+	&-trigger {
+		@include focus-visible();
+		&:empty {
+			display: none;
+		}
+	}
+}
+
+.overlay[data-trigger*='click'] {
+	.overlay-trigger {
+		cursor: pointer;
+	}
+}
+
+.tippy-box {
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-4);
+	box-shadow:
+		0 4px 8px rgba(0, 0, 0, 0.08),
+		0 12px 24px rgba(0, 0, 0, 0.12);
+	color: var(--color-neutral-9);
+	.overlay-close {
+		background-color: var(--color-neutral-0);
+		cursor: pointer;
+		position: absolute;
+		right: 4px;
+		top: 4px;
+		z-index: 1;
+	}
+	.tippy-content {
+		transition: none;
+	}
+	.tippy-arrow {
+		&:before {
+			color: var(--color-neutral-0);
+			filter: drop-shadow(0 0 0 #000);
+		}
+	}
+}
+
+.overlay-item,
+a.overlay-item {
+	align-items: center;
+	color: var(--color-neutral-8);
+	display: flex;
+	font-size: var(--font-size-base);
+	gap: 8px;
+	padding: var(--space-xs);
+	&:hover {
+		background-color: var(--color-neutral-3);
+		color: var(--color-neutral-9);
+		text-decoration: none;
+	}
+	&.sapphire-tabheader {
+		width: unset;
+	}
+	.sapphire-tabheader-content {
+		border: none;
+		color: inherit;
+		padding: 0;
+	}
+}
+
+.overlay-content:has(.overlay-item) {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
