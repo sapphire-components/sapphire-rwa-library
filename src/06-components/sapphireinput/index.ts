@@ -1,10 +1,11 @@
 import { BaseComponent, type BaseComponentInit } from '../../core/base';
 import Helpers from '../../09-utils/helpers';
 
-interface SapphireInputTypeOptions {
+interface SapphireInputNumericOptions {
 	DecimalScale: number;
 	Max: string;
 	Min: string;
+	Step: number;
 }
 
 interface SapphireInputInit extends BaseComponentInit {
@@ -12,13 +13,16 @@ interface SapphireInputInit extends BaseComponentInit {
 		OnChange: (value: string) => void;
 		OnClear: () => void;
 		OnEnterKey: () => void;
+		SetIsValid: (isValid: boolean) => void;
 	};
 	debounceChange: number;
 	enabled: boolean;
+	hasSteps: boolean;
+	isValid: boolean;
+	numericOptions: SapphireInputNumericOptions;
 	placeholder: string;
 	theme: string;
 	type: 'text' | 'integer' | 'decimal';
-	typeOptions: SapphireInputTypeOptions;
 	value: string;
 }
 
@@ -31,6 +35,9 @@ export default class SapphireInput extends BaseComponent {
 	private inputEl!: HTMLInputElement;
 	private max: number | null = null;
 	private min: number | null = null;
+	private minusEl!: HTMLDivElement;
+	private plusEl!: HTMLDivElement;
+	private step!: number;
 	private type!: SapphireInputInit['type'];
 	private value!: string;
 
@@ -73,11 +80,69 @@ export default class SapphireInput extends BaseComponent {
 		this.actions?.OnClear();
 	};
 
-	private readonly handleEnterKey = (event: KeyboardEvent): void => {
+	private readonly handleClearKeyDown = (event: KeyboardEvent): void => {
 		if (event.key !== 'Enter') {
 			return;
 		}
-		this.actions?.OnEnterKey();
+		this.handleClearClick(event);
+	};
+
+	private readonly handleKeyDown = (event: KeyboardEvent): void => {
+		if (event.key === 'Enter') {
+			this.actions?.OnEnterKey();
+			return;
+		}
+		if (event.key === 'ArrowUp' && this.plusEl) {
+			this.handlePlusClick(event);
+			return;
+		}
+		if (event.key === 'ArrowDown' && this.minusEl) {
+			this.handleMinusClick(event);
+		}
+	};
+
+	private readonly handlePlusClick = (event: Event): void => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const next = Number(this.value) + this.step;
+		if (this.max !== null && next > this.max) {
+			return;
+		}
+
+		this.value = String(next);
+		this.updateDisplayValue();
+		this.updateHasContent();
+		this.updateStepsButtons();
+		this.actions?.OnChange(this.value);
+	};
+
+	private readonly handleMinusClick = (event: Event): void => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const next = Number(this.value) - this.step;
+		if (this.min !== null && next < this.min) {
+			return;
+		}
+
+		this.value = String(next);
+		this.updateDisplayValue();
+		this.updateHasContent();
+		this.updateStepsButtons();
+		this.actions?.OnChange(this.value);
+	};
+
+	private readonly handleStepKeyDown = (event: KeyboardEvent): void => {
+		if (event.key !== 'Enter') {
+			return;
+		}
+
+		if (event.currentTarget === this.plusEl) {
+			this.handlePlusClick(event);
+		} else if (event.currentTarget === this.minusEl) {
+			this.handleMinusClick(event);
+		}
 	};
 
 	constructor(init: SapphireInputInit) {
@@ -91,28 +156,45 @@ export default class SapphireInput extends BaseComponent {
 		this.actions = init.actions;
 		this.clearEl = this.widgetEl.querySelector<HTMLElement>('.sapphireinput-clear')!;
 		this.debounceChange = init.debounceChange;
+		this.decimalScale = init.numericOptions.DecimalScale;
+		this.max = SapphireInput.parseBound(init.numericOptions?.Max);
+		this.min = SapphireInput.parseBound(init.numericOptions?.Min);
+		this.minusEl = this.widgetEl.querySelector<HTMLDivElement>('.sapphireinput-minus')!;
+		this.plusEl = this.widgetEl.querySelector<HTMLDivElement>('.sapphireinput-plus')!;
+		this.step = init.numericOptions.Step;
 		this.type = init.type;
-		this.decimalScale = init.typeOptions.DecimalScale;
-		this.min = SapphireInput.parseBound(init.typeOptions?.Min);
-		this.max = SapphireInput.parseBound(init.typeOptions?.Max);
 
-		this.value = this.maskValue(init.value ?? '');
+		// Initial value is "external" — accept it verbatim. Validity is checked at
+		// the end of the constructor; user typing later will mask/clamp on the fly.
+		this.value = init.value ?? '';
 
 		this.inputEl = this.widgetEl.querySelector<HTMLInputElement>('input[data-input]')!;
+
 		this.inputEl.autocapitalize = 'off';
 		this.inputEl.autocomplete = 'off';
 		this.inputEl.autocorrect = false;
+		this.inputEl.name = `input-${init.runtimeId}`;
 		this.inputEl.placeholder = init.placeholder;
 		this.inputEl.spellcheck = false;
-		this.inputEl.name = `input-${init.runtimeId}`;
 
-		this.inputEl.addEventListener('input', this.handleInput);
-		this.inputEl.addEventListener('blur', this.handleBlur);
-		this.inputEl.addEventListener('keydown', this.handleEnterKey);
 		this.clearEl?.addEventListener('click', this.handleClearClick);
+		this.clearEl?.addEventListener('keydown', this.handleClearKeyDown);
+		this.inputEl.addEventListener('blur', this.handleBlur);
+		this.inputEl.addEventListener('input', this.handleInput);
+		this.inputEl.addEventListener('keydown', this.handleKeyDown);
+		this.minusEl?.addEventListener('click', this.handleMinusClick);
+		this.minusEl?.addEventListener('keydown', this.handleStepKeyDown);
+		this.plusEl?.addEventListener('click', this.handlePlusClick);
+		this.plusEl?.addEventListener('keydown', this.handleStepKeyDown);
 
 		this.updateDisplayValue();
 		this.updateHasContent();
+		this.updateStepsButtons();
+		this.checkValidity();
+	}
+
+	private updateDisplayValue(): void {
+		this.inputEl.value = this.toDisplay(this.value);
 	}
 
 	private updateHasContent(): void {
@@ -124,26 +206,99 @@ export default class SapphireInput extends BaseComponent {
 		}
 	}
 
-	updateDisplayValue(): void {
-		this.inputEl.value = this.toDisplay(this.value);
+	private updateStepsButtons(): void {
+		if (this.minusEl) {
+			this.minusEl.dataset.enabled = this.min === null || Number(this.value) > this.min ? 'true' : 'false';
+		}
+
+		if (this.plusEl) {
+			this.plusEl.dataset.enabled = this.max === null || Number(this.value) < this.max ? 'true' : 'false';
+		}
 	}
 
 	parametersChanged(payload: SapphireInputInit): void {
-		const incoming = this.maskValue(payload.value ?? '');
-		if (!Helpers.areTheyEqual(incoming, this.value)) {
-			this.value = incoming;
-			this.updateDisplayValue();
-		}
-
-		const nextMin = SapphireInput.parseBound(payload.typeOptions?.Min);
+		// Bounds first — validity check below depends on min/max being current.
+		const nextMin = SapphireInput.parseBound(payload.numericOptions?.Min);
 		if (nextMin !== this.min) {
 			this.min = nextMin;
 		}
 
-		const nextMax = SapphireInput.parseBound(payload.typeOptions?.Max);
+		const nextMax = SapphireInput.parseBound(payload.numericOptions?.Max);
 		if (nextMax !== this.max) {
 			this.max = nextMax;
 		}
+
+		// External value: accept verbatim. We don't mask or clamp — the value
+		// will be flagged invalid below if it doesn't fit the rules.
+		const incoming = payload.value ?? '';
+		if (!Helpers.areTheyEqual(incoming, this.value)) {
+			this.value = incoming;
+			this.updateDisplayValue();
+			this.updateHasContent();
+			this.updateStepsButtons();
+		}
+
+		if (payload.isValid === false) {
+			this.setValidity(false);
+		} else {
+			this.checkValidity();
+		}
+	}
+
+	destroy(): void {
+		super.destroy();
+		this.inputEl.removeEventListener('input', this.handleInput);
+		this.inputEl.removeEventListener('blur', this.handleBlur);
+		this.inputEl.removeEventListener('keydown', this.handleKeyDown);
+		this.clearEl?.removeEventListener('click', this.handleClearClick);
+		this.clearEl?.removeEventListener('keydown', this.handleClearKeyDown);
+		this.plusEl?.removeEventListener('click', this.handlePlusClick);
+		this.plusEl?.removeEventListener('keydown', this.handleStepKeyDown);
+		this.minusEl?.removeEventListener('click', this.handleMinusClick);
+		this.minusEl?.removeEventListener('keydown', this.handleStepKeyDown);
+	}
+
+	private checkValidity(): void {
+		this.setValidity(this.computeValidity());
+	}
+
+	// True when `this.value` is well-formed for the current type and bounds.
+	// Empty is treated as valid (required-field semantics live elsewhere).
+	private computeValidity(): boolean {
+		if (this.type === 'text') {
+			return true;
+		}
+
+		const trimmed = String(this.value).trim();
+		if (trimmed === '') {
+			return true;
+		}
+
+		const numeric = Number(trimmed.replace(',', '.'));
+		if (!Number.isFinite(numeric)) {
+			return false;
+		}
+
+		// Round-trip integrity: masking the raw value must not change its
+		// numeric meaning. Catches integer-with-decimals and over-scale decimals.
+		const masked = this.maskValue(trimmed);
+		const maskedNumeric = masked === '' ? NaN : Number(masked);
+		if (!Number.isFinite(maskedNumeric) || maskedNumeric !== numeric) {
+			return false;
+		}
+
+		if (this.min !== null && numeric < this.min) {
+			return false;
+		}
+		if (this.max !== null && numeric > this.max) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private setValidity(next: boolean): void {
+		this.actions?.SetIsValid(next);
 	}
 
 	// Parses an inbound bound string. Empty / whitespace / non-numeric => null (no constraint).
@@ -230,6 +385,7 @@ export default class SapphireInput extends BaseComponent {
 		const next = this.clampValue(internal);
 
 		const nextDisplay = this.toDisplay(next);
+
 		if (nextDisplay !== this.inputEl.value) {
 			this.inputEl.value = nextDisplay;
 			this.updateHasContent();
@@ -239,6 +395,11 @@ export default class SapphireInput extends BaseComponent {
 			this.value = next;
 			this.actions?.OnChange(this.value);
 		}
+
+		// User-typed path: maskValue + clampValue guarantee the stored value is
+		// well-formed and within bounds, so it's valid by construction. This
+		// also flips validity back to true after a previously-invalid external.
+		this.setValidity(true);
 	}
 
 	private toDisplay(internal: string): string {

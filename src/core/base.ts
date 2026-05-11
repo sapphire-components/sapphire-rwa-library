@@ -26,6 +26,7 @@ export class BaseComponent {
 
 	destroy(): void {
 		if (this.widgetEl) {
+			console.log('destroying...', this.runtimeId);
 			BaseComponent.getRegistry(this.constructor as BaseComponentConstructor<this>).delete(this.widgetEl);
 		}
 	}

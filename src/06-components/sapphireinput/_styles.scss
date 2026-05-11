@@ -1,4 +1,5 @@
 @use '../../01-foundations/styles/_colors.scss' as *;
+@use '../../01-foundations/styles/_mixins.scss' as *;
 
 div[data-block$='SapphireInput'] {
 	display: contents;
@@ -8,7 +9,28 @@ div[data-block$='SapphireInput'] {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-
+	&-minus,
+	&-plus {
+		@include focus-visible();
+		cursor: pointer;
+		display: grid;
+		height: 20px;
+		place-items: center;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 20px;
+		&[data-enabled='false'] {
+			opacity: 0.2;
+			pointer-events: none;
+		}
+	}
+	&-minus {
+		inset-inline-start: 10px;
+	}
+	&-plus {
+		inset-inline-end: 10px;
+	}
 	&-icon {
 		display: grid;
 		height: 20px;
@@ -20,6 +42,7 @@ div[data-block$='SapphireInput'] {
 		width: 20px;
 	}
 	&-clear {
+		@include focus-visible();
 		cursor: pointer;
 		display: none;
 		height: 20px;
@@ -91,9 +114,35 @@ div[data-block$='SapphireInput'] {
 	}
 }
 
+.sapphireinput[data-hassteps='true'] {
+	.sapphireinput-icon {
+		inset-inline-start: 30px;
+	}
+	.form-control[data-input] {
+		padding-inline-end: 36px;
+		padding-inline-start: 36px;
+	}
+
+	.sapphireinput-clear {
+		inset-inline-end: 30px;
+	}
+}
+
+.sapphireinput[data-hassteps='true'][data-hasicon='true'] {
+	.form-control[data-input] {
+		padding-inline-start: 56px;
+	}
+}
+
 .sapphireinput[data-hasclear='true'] {
 	.form-control[data-input] {
 		padding-inline-end: 36px;
+	}
+}
+
+.sapphireinput[data-hassteps='true'][data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 56px;
 	}
 }
 
