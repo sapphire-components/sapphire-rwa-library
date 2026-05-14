@@ -104,4 +104,27 @@ export default class Helpers {
 
 		return null;
 	}
+
+	static dataList(element: HTMLElement, attribute: string) {
+		return {
+			add(value: string) {
+				const current = element.dataset[attribute] || '';
+				const values = new Set(current.split(/\s+/).filter(Boolean));
+				values.add(value);
+				element.dataset[attribute] = [...values].join(' ');
+			},
+			remove(value: string) {
+				const current = element.dataset[attribute] || '';
+				element.dataset[attribute] = current
+					.split(/\s+/)
+					.filter(Boolean)
+					.filter((item) => item !== value)
+					.join(' ');
+			},
+			contains(value: string) {
+				const current = element.dataset[attribute] || '';
+				return current.split(/\s+/).includes(value);
+			},
+		};
+	}
 }

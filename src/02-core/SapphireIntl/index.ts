@@ -40,8 +40,6 @@ export default class SapphireIntl {
 			Object.assign(options, additionalOptions);
 		}
 
-		console.log('SapphireIntl.DateTimeFormat options:', options);
-
 		try {
 			return new Intl.DateTimeFormat(locale, options).format(dateTime);
 		} catch (error) {

@@ -183,9 +183,7 @@ export default class Overlay extends BaseComponent {
 
 				tooltip.style.setProperty('--trigger-width', `${triggerWidth}px`);
 
-				if (this.isClickTrigger) {
-					document.addEventListener('keydown', this.handleDocumentKeydown);
-				}
+				document.addEventListener('keydown', this.handleDocumentKeydown);
 
 				this.actions.OnShow();
 			},
@@ -226,6 +224,8 @@ export default class Overlay extends BaseComponent {
 
 				if (this.configOptions.iframeURL) {
 					box.insertAdjacentHTML('afterbegin', '<div class="tippytooltip-loading"><div class="lds-ring"><div></div></div>');
+
+					Helpers.dataList(box, 'customtheme').add('light');
 
 					const iframe = _instance.popper.querySelector('iframe') as HTMLIFrameElement;
 					iframe.setAttribute('scrolling', 'no');

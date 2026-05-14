@@ -161,6 +161,8 @@ div[data-block$='SapphireInput'] {
 
 .sapphireinput[data-enabled='false'] {
 	cursor: not-allowed;
+	.sapphireinput-minus,
+	.sapphireinput-plus,
 	.sapphireinput-icon,
 	.sapphireinput-clear {
 		color: var(--color-neutral-6);

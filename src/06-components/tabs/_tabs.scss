@@ -30,10 +30,18 @@ div[data-block$='TabContent'] {
 			cursor: pointer;
 			display: flex;
 			font-weight: 700;
-			gap: 4px;
 			padding-block: 8px;
 			&.is-active {
 				color: var(--color-primary);
+				.sapphire-tabs-header-button-dot {
+					visibility: visible;
+				}
+			}
+			&-dot {
+				display: block;
+				font-size: 7px;
+				padding: 3px;
+				visibility: hidden;
 			}
 		}
 	}
@@ -100,4 +108,14 @@ div[data-block$='TabContent'] {
 
 .sapphire-tabs-content {
 	max-height: var(--tabs-max-height);
+}
+
+.sapphire-tabs-header-extra {
+	.overlay-trigger[aria-expanded='true'] {
+		.sapphire-tabs-header-button {
+			.svg-icon {
+				transform: rotate(180deg);
+			}
+		}
+	}
 }

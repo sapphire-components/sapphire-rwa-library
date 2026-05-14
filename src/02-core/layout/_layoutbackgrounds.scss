@@ -1,0 +1,73 @@
+@use '../../01-foundations/styles/_colors.scss' as *;
+
+body[data-background='primary']:has(.layoutwrapper) {
+	background-color: var(--color-primary);
+}
+
+body[data-background='secondary']:has(.layoutwrapper) {
+	background-color: var(--color-secondary);
+}
+
+body[data-background='sapphire-background']:has(.layoutwrapper) {
+	background-color: $color-sapphire-background;
+}
+
+body[data-background='sapphire-surface']:has(.layoutwrapper) {
+	background-color: $color-sapphire-surface;
+}
+
+body[data-background='info']:has(.layoutwrapper) {
+	background-color: var(--color-info);
+}
+
+body[data-background='success']:has(.layoutwrapper) {
+	background-color: var(--color-success);
+}
+
+body[data-background='warning']:has(.layoutwrapper) {
+	background-color: var(--color-warning);
+}
+
+body[data-background='error']:has(.layoutwrapper) {
+	background-color: var(--color-error);
+}
+
+body[data-background='neutral-0']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-0);
+}
+
+body[data-background='neutral-1']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-1);
+}
+
+body[data-background='neutral-2']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-2);
+}
+
+body[data-background='neutral-3']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-3);
+}
+
+body[data-background='neutral-4']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-4);
+}
+
+body[data-background='neutral-5']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-5);
+}
+
+body[data-background='neutral-6']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-6);
+}
+
+body[data-background='neutral-7']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-7);
+}
+
+body[data-background='neutral-8']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-8);
+}
+
+body[data-background='neutral-9']:has(.layoutwrapper) {
+	background-color: var(--color-neutral-9);
+}

@@ -1,6 +1,5 @@
 .buttondropdown[data-isvalid='False'] {
 	outline-color: var(--color-error);
-
 	.buttondropdown-label,
 	.buttondropdown-arrow,
 	.buttondropdown-label:hover,
@@ -17,14 +16,12 @@
 
 .buttondropdown[data-enabled='False'] {
 	pointer-events: none;
-
 	.buttondropdown-label,
 	.buttondropdown-arrow {
 		background-color: var(--color-neutral-3) !important;
 		border-color: var(--color-neutral-8);
 		color: var(--color-neutral-8);
 	}
-
 	.svg-icon {
 		color: var(--color-neutral-8);
 	}

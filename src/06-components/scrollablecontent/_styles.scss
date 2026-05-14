@@ -1,0 +1,31 @@
+div[data-block$='ScrollableContent'] {
+	display: contents;
+}
+
+.scrollablecontent {
+	display: flex;
+	flex-direction: column;
+	height: var(--scrollablecontent-height);
+	max-height: var(--scrollablecontent-maxHeight);
+	position: relative;
+	&-header {
+		flex: 0 0 auto;
+		&:empty {
+			display: none;
+		}
+	}
+	&-body {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: auto;
+		scrollbar-gutter: stable;
+		scrollbar-width: thin;
+	}
+	&-footer {
+		flex: 0 0 auto;
+		padding-top: 8px;
+		&:empty {
+			display: none;
+		}
+	}
+}
