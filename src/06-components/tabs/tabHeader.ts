@@ -3,6 +3,7 @@ import Tabs from './tabs';
 
 interface TabHeaderConfigOptions extends BaseComponentInit {
 	enabled: boolean;
+	identifier: string;
 }
 
 export default class TabHeader extends BaseComponent {
@@ -13,13 +14,13 @@ export default class TabHeader extends BaseComponent {
 	private readonly onTabHeaderClick = (event: MouseEvent): void => {
 		event.preventDefault();
 		event.stopPropagation();
-		Tabs.getInstance(this.tabsEL)?.setTabIndex(this.index);
+		Tabs.getInstance(this.tabsEL)?.setTabIndex(this.index, this.identifier);
 	};
 
 	private readonly onTabHeaderKeydown = (event: KeyboardEvent): void => {
 		if (event.key === 'Enter') {
 			event.preventDefault();
-			Tabs.getInstance(this.tabsEL)?.setTabIndex(this.index);
+			Tabs.getInstance(this.tabsEL)?.setTabIndex(this.index, this.identifier);
 			return;
 		}
 
@@ -41,7 +42,7 @@ export default class TabHeader extends BaseComponent {
 
 		const targetIndex = Number(nextTab.dataset.index);
 		if (!Number.isNaN(targetIndex)) {
-			Tabs.getInstance(this.tabsEL)?.setTabIndex(targetIndex);
+			Tabs.getInstance(this.tabsEL)?.setTabIndex(targetIndex, this.identifier);
 		}
 	};
 
@@ -53,6 +54,7 @@ export default class TabHeader extends BaseComponent {
 			return;
 		}
 
+		this.identifier = configOptions.identifier;
 		this.tabsHeaderContainerEl = this.widgetEl.closest('.sapphire-tabs-header') as HTMLDivElement;
 		this.tabsEL = this.widgetEl.closest('.sapphire-tabs') as HTMLDivElement;
 

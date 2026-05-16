@@ -28,7 +28,8 @@ function init(): void {
 	window.SapphireRWALibrary.State.locale = storedLocale['localeCode'];
 	window.SapphireRWALibrary.State.isRTL = storedLocale['isRTL'];
 
-	console.log('SapphireRWALibrary initialized', new Date());
+	const style1 = 'color: #FFA500; font-weight: bold;';
+	console.log(`%cSapphireRWALibrary | ${__APP_VERSION__} | ${window.location.pathname}`, style1);
 }
 
 const SapphireRWALibrary = {

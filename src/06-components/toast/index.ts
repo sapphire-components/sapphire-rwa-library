@@ -67,6 +67,9 @@ export default class Toast {
 			case 'alert-warning':
 				toastMessageIcon.innerHTML = Helpers.placeIcon('warning', 'm');
 				break;
+			default:
+				toastMessageIcon.innerHTML = Helpers.placeIcon('info', 'm');
+				break;
 		}
 
 		this.elToastContainer.prepend(toastMessage);

@@ -26,6 +26,7 @@ $widthcomponent-sizes: (
 @each $name, $size in $widthcomponent-sizes {
 	div[data-widthcomponent='#{$name}'] {
 		max-width: $size;
+		width: 100%;
 	}
 	.max-width-#{$name} {
 		max-width: $size;

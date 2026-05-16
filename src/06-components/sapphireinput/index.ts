@@ -28,8 +28,8 @@ interface SapphireInputInit extends BaseComponentInit {
 
 export default class SapphireInput extends BaseComponent {
 	private actions!: SapphireInputInit['actions'];
-	private changeDebounceTimer?: ReturnType<typeof setTimeout>;
 	private clearEl!: HTMLElement;
+	private commitValueDebounced!: (() => void) & { cancel: () => void };
 	private debounceChange!: number;
 	private decimalScale!: number;
 	private inputEl!: HTMLInputElement;
@@ -60,18 +60,17 @@ export default class SapphireInput extends BaseComponent {
 
 		this.updateHasContent();
 
-		window.clearTimeout(this.changeDebounceTimer);
-		this.changeDebounceTimer = window.setTimeout(() => {
-			this.changeDebounceTimer = undefined;
+		// Masking/caret above must stay synchronous for typing to feel right.
+		// Only the change emission (commitValue) is debounced.
+		if (this.debounceChange > 0) {
+			this.commitValueDebounced();
+		} else {
 			this.commitValue();
-		}, this.debounceChange);
+		}
 	};
 
 	private readonly handleBlur = (): void => {
-		if (this.changeDebounceTimer !== undefined) {
-			window.clearTimeout(this.changeDebounceTimer);
-			this.changeDebounceTimer = undefined;
-		}
+		this.commitValueDebounced.cancel();
 		this.commitValue();
 	};
 
@@ -89,6 +88,10 @@ export default class SapphireInput extends BaseComponent {
 
 	private readonly handleKeyDown = (event: KeyboardEvent): void => {
 		if (event.key === 'Enter') {
+			// Flush any pending debounced change so OnEnterKey consumers
+			// observe the latest value, not the previous keystroke's.
+			this.commitValueDebounced.cancel();
+			this.commitValue();
 			this.actions?.OnEnterKey();
 			return;
 		}
@@ -110,6 +113,7 @@ export default class SapphireInput extends BaseComponent {
 			return;
 		}
 
+		this.commitValueDebounced.cancel();
 		this.value = String(next);
 		this.updateDisplayValue();
 		this.updateHasContent();
@@ -126,6 +130,7 @@ export default class SapphireInput extends BaseComponent {
 			return;
 		}
 
+		this.commitValueDebounced.cancel();
 		this.value = String(next);
 		this.updateDisplayValue();
 		this.updateHasContent();
@@ -156,6 +161,7 @@ export default class SapphireInput extends BaseComponent {
 		this.actions = init.actions;
 		this.clearEl = this.widgetEl.querySelector<HTMLElement>('.sapphireinput-clear')!;
 		this.debounceChange = init.debounceChange;
+		this.commitValueDebounced = Helpers.debounce(() => this.commitValue(), this.debounceChange);
 		this.decimalScale = init.numericOptions.DecimalScale;
 		this.max = SapphireInput.parseBound(init.numericOptions?.Max);
 		this.min = SapphireInput.parseBound(init.numericOptions?.Min);
@@ -247,6 +253,7 @@ export default class SapphireInput extends BaseComponent {
 
 	destroy(): void {
 		super.destroy();
+		this.commitValueDebounced.cancel();
 		this.inputEl.removeEventListener('input', this.handleInput);
 		this.inputEl.removeEventListener('blur', this.handleBlur);
 		this.inputEl.removeEventListener('keydown', this.handleKeyDown);

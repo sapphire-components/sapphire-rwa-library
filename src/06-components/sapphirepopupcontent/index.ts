@@ -49,7 +49,7 @@ export default class SapphirePopupContent extends BaseComponent {
 	}
 
 	bindEvents(): void {
-		this.closeButton.addEventListener('click', this.onClickClose);
+		this.closeButton?.addEventListener('click', this.onClickClose);
 		document.addEventListener('keydown', this.onKeyDown);
 	}
 
@@ -71,7 +71,7 @@ export default class SapphirePopupContent extends BaseComponent {
 	}
 
 	destroy(): void {
-		this.closeButton.removeEventListener('click', this.onClickClose);
+		this.closeButton?.removeEventListener('click', this.onClickClose);
 		document.removeEventListener('keydown', this.onKeyDown);
 	}
 }

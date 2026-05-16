@@ -16,6 +16,8 @@ const SCSS_PARTIAL_DIRS = [
 	'09-utils',
 ];
 
+const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
+
 export default defineConfig(({ command, mode }) => {
 	const isProdBuild = command === 'build' && mode === 'prod';
 	const sourcemap = !isProdBuild;
@@ -23,6 +25,9 @@ export default defineConfig(({ command, mode }) => {
 
 	return {
 		appType: 'custom', //spa, mpa
+		define: {
+			__APP_VERSION__: JSON.stringify(pkg.version),
+		},
 		base: './', // '/'
 		clearScreen: true,
 		logLevel: 'info', //warn, debug, info
@@ -78,7 +83,7 @@ export default defineConfig(({ command, mode }) => {
 });
 
 function makeBanner(mode) {
-	return `/*!  SapphireRWALibrary ${mode.toUpperCase()} v${process.env.npm_package_version ?? '0.0.0'} ${new Date().toISOString()} */\n`;
+	return `/*!  SapphireRWALibrary ${mode.toUpperCase()} v${pkg.version} ${new Date().toISOString()} */\n`;
 }
 
 function bannerOnDisk(banner) {

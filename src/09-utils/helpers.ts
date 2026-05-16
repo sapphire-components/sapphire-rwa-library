@@ -127,4 +127,20 @@ export default class Helpers {
 			},
 		};
 	}
+
+	static debounce<T extends (...args: any[]) => void>(fn: T, delay: number): ((...args: Parameters<T>) => void) & { cancel: () => void } {
+		let timeout: ReturnType<typeof setTimeout> | undefined;
+
+		const debounced = function (this: unknown, ...args: Parameters<T>): void {
+			clearTimeout(timeout);
+			timeout = setTimeout(() => fn.apply(this, args), delay);
+		};
+
+		return Object.assign(debounced, {
+			cancel(): void {
+				clearTimeout(timeout);
+				timeout = undefined;
+			},
+		});
+	}
 }

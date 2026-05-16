@@ -4,7 +4,7 @@ import { BaseComponent, type BaseComponentInit } from '../../core/base';
 
 interface TabsConfigOptions extends BaseComponentInit {
 	actions: {
-		OnChange: (index_in: number) => void;
+		OnChange: (tabIndex_in: number, tabIdentifier_in: string) => void;
 	};
 	activeTab: number;
 	enabled: boolean;
@@ -77,6 +77,9 @@ export default class Tabs extends BaseComponent {
 
 	evaluateTabHeaderStatus(): void {
 		const allTabsHeadersArray = Array.from(this.tabsHeaderContainer.querySelectorAll<HTMLDivElement>(`.sapphire-tabheader`));
+
+		console.log(allTabsHeadersArray);
+
 		allTabsHeadersArray.forEach((item: HTMLElement, index: number) => {
 			if (index === this.activeTab) {
 				item.dataset.active = 'true';
@@ -124,6 +127,14 @@ export default class Tabs extends BaseComponent {
 			overflowItems.forEach((item) => {
 				item.classList.add('is-overflowed', 'overlay-item');
 				item.tabIndex = 0;
+
+				const myIndex = Number(item.dataset.index);
+				if (myIndex === this.activeTab) {
+					item.dataset.active = 'true';
+				} else {
+					item.dataset.active = 'false';
+				}
+
 				this.tabsHeaderOverflow.appendChild(item);
 			});
 		}
@@ -146,16 +157,19 @@ export default class Tabs extends BaseComponent {
 		});
 	}
 
-	setTabIndex(index_in: number): void {
-		this.activeTab = index_in;
+	setTabIndex(tabIndex_in: number, tabIdentifier_in: string): void {
+		this.activeTab = tabIndex_in;
 		Overlay.getInstance(this.tippyTooltipEl)?.tippyInstance.hide();
-		this.configOptions.actions.OnChange(this.activeTab);
+
+		console.log('setTabIndex', this.activeTab, tabIdentifier_in);
+		this.configOptions.actions.OnChange(this.activeTab, tabIdentifier_in);
 		this.render();
 	}
 
 	parametersChanged(payload: TabsConfigOptions): void {
+		console.log('parametersChanged', this.runtimeId, this.activeTab, payload);
 		if (!Helpers.areTheyEqual(payload.activeTab, this.activeTab)) {
-			this.setTabIndex(payload.activeTab);
+			this.setTabIndex(payload.activeTab, '');
 		}
 	}
 
