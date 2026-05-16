@@ -90,7 +90,8 @@ export default class Tabs extends BaseComponent {
 	}
 
 	evaluateTabHeaderOverflow(): void {
-		if (this.configOptions.theme === 'pills') {
+		if (this.configOptions.theme.includes('pills')) {
+			this.tabsHeaderButton.remove();
 			return;
 		}
 
@@ -164,6 +165,22 @@ export default class Tabs extends BaseComponent {
 		console.log('setTabIndex', this.activeTab, tabIdentifier_in);
 		this.configOptions.actions.OnChange(this.activeTab, tabIdentifier_in);
 		this.render();
+	}
+
+	navigateOverflowFocus(currentItem: HTMLElement, offset: number): void {
+		const items = Array.from(this.tabsHeaderOverflow.querySelectorAll<HTMLDivElement>('.sapphire-tabheader'));
+		if (items.length === 0) return;
+
+		const currentIndex = items.indexOf(currentItem as HTMLDivElement);
+		if (currentIndex === -1) return;
+
+		const next = items[(currentIndex + offset + items.length) % items.length];
+
+		items.forEach((item) => {
+			item.tabIndex = -1;
+		});
+		next.tabIndex = 0;
+		next.focus();
 	}
 
 	parametersChanged(payload: TabsConfigOptions): void {

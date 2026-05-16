@@ -33,10 +33,11 @@ interface IOverlayConfigOptions extends BaseComponentInit {
 		OnHide: () => void;
 		OnShow: () => void;
 	};
-	autoFocus: boolean;
 	contentId: string;
 	externalContentId: string;
 	externalTriggerId: string;
+	focusOnClose: boolean;
+	focusOnOpen: boolean;
 	height: number;
 	iframeURL: string;
 	maxHeight: number;
@@ -50,9 +51,10 @@ interface IOverlayConfigOptions extends BaseComponentInit {
 
 export default class Overlay extends BaseComponent {
 	private actions!: IOverlayConfigOptions['actions'];
-	private autoFocus!: boolean;
 	private bootstrapOptions: Partial<ITippyOptions> = {};
 	private configOptions!: IOverlayConfigOptions;
+	private focusOnClose!: boolean;
+	private focusOnOpen!: boolean;
 	private isClickTrigger: boolean = false;
 	private padding!: string;
 	private theme!: string;
@@ -117,8 +119,9 @@ export default class Overlay extends BaseComponent {
 		}
 
 		this.actions = configOptions.actions;
-		this.autoFocus = configOptions.autoFocus;
 		this.configOptions = configOptions;
+		this.focusOnClose = configOptions.focusOnClose;
+		this.focusOnOpen = configOptions.focusOnOpen;
 		this.padding = configOptions.padding;
 		this.theme = configOptions.theme;
 		this.tippyOptions = configOptions.options;
@@ -291,7 +294,7 @@ export default class Overlay extends BaseComponent {
 				}
 			},
 			onShown: (_instance: TippyInstance) => {
-				if (!this.autoFocus) return;
+				if (!this.focusOnOpen) return;
 				const firstItem = _instance.popper.querySelector<HTMLElement>('[role="menuitem"], button, [href], input, [tabindex]:not([tabindex="-1"])');
 				firstItem?.focus();
 			},
@@ -302,7 +305,11 @@ export default class Overlay extends BaseComponent {
 				}
 				this.actions.OnHide();
 			},
-			onHidden: (_instance: TippyInstance) => {},
+			onHidden: (_instance: TippyInstance) => {
+				if (!this.focusOnClose) return;
+				const trigger = _instance.reference as HTMLElement;
+				trigger.focus();
+			},
 			onDestroy: (_instance: TippyInstance) => {},
 		};
 

@@ -18,23 +18,35 @@ export default class TabHeader extends BaseComponent {
 	};
 
 	private readonly onTabHeaderKeydown = (event: KeyboardEvent): void => {
-		if (event.key === 'Enter') {
+		const tabs = Tabs.getInstance(this.tabsEL);
+		const isOverflowed = this.widgetEl.classList.contains('is-overflowed');
+
+		if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
 			event.preventDefault();
-			Tabs.getInstance(this.tabsEL)?.setTabIndex(this.index, this.identifier);
+			tabs?.setTabIndex(this.index, this.identifier);
+			return;
+		}
+
+		if (isOverflowed) {
+			if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+				event.preventDefault();
+				event.stopPropagation();
+				tabs?.navigateOverflowFocus(this.widgetEl, event.key === 'ArrowDown' ? 1 : -1);
+			}
 			return;
 		}
 
 		if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
 		event.preventDefault();
 
-		const tabs = Array.from(this.tabsHeaderContainerEl.querySelectorAll<HTMLDivElement>('.sapphire-tabheader'));
-		if (tabs.length === 0) return;
+		const headerTabs = Array.from(this.tabsHeaderContainerEl.querySelectorAll<HTMLDivElement>('.sapphire-tabheader'));
+		if (headerTabs.length === 0) return;
 
-		const currentIndex = tabs.indexOf(this.widgetEl as HTMLDivElement);
+		const currentIndex = headerTabs.indexOf(this.widgetEl as HTMLDivElement);
 		const offset = event.key === 'ArrowRight' ? 1 : -1;
-		const nextTab = tabs[(currentIndex + offset + tabs.length) % tabs.length];
+		const nextTab = headerTabs[(currentIndex + offset + headerTabs.length) % headerTabs.length];
 
-		tabs.forEach((tab) => {
+		headerTabs.forEach((tab) => {
 			tab.tabIndex = -1;
 		});
 		nextTab.tabIndex = 0;
@@ -42,7 +54,7 @@ export default class TabHeader extends BaseComponent {
 
 		const targetIndex = Number(nextTab.dataset.index);
 		if (!Number.isNaN(targetIndex)) {
-			Tabs.getInstance(this.tabsEL)?.setTabIndex(targetIndex, this.identifier);
+			tabs?.setTabIndex(targetIndex, this.identifier);
 		}
 	};
 
