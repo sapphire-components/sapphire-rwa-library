@@ -22,10 +22,20 @@ div[data-block$='ScrollableContent'] {
 		scrollbar-width: thin;
 	}
 	&-footer {
+		align-items: center;
+		display: grid;
 		flex: 0 0 auto;
+		grid-template-columns: 1fr auto 1fr;
 		padding-top: 8px;
-		&:empty {
-			display: none;
+		width: 100%;
+		&-left {
+			justify-self: start;
+		}
+		&-center {
+			justify-self: center;
+		}
+		&-right {
+			justify-self: end;
 		}
 	}
 }

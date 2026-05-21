@@ -8,6 +8,7 @@ import DesignSystemColors from './03-designsystem/_designsystem-screen-colors';
 import DropdownMenu from './06-components/dropdownmenu';
 import FilterBar from './05-helpers/filterbar';
 import Helpers from './09-utils/helpers';
+import LabelValue from './05-helpers/labelvalue';
 import LayoutWrapper from './02-core/layout';
 import Overlay from './06-components/overlay';
 import ResponsiveGrid from './06-components/responsive-grid';
@@ -38,6 +39,7 @@ const SapphireRWALibrary = {
 	DropdownMenu,
 	FilterBar,
 	Helpers,
+	LabelValue,
 	LayoutWrapper,
 	Overlay,
 	ResponsiveGrid,

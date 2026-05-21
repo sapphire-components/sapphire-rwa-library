@@ -16,7 +16,6 @@
 	height: var(--sapphirepopupcontent-height);
 	max-height: calc(100vh - 48px);
 	position: relative;
-
 	&-header {
 		flex: 0 0 auto;
 		&:empty {
@@ -35,9 +34,18 @@
 		}
 	}
 	&-footer {
+		align-items: center;
+		display: grid;
 		flex: 0 0 auto;
-		&:empty {
-			display: none;
+		grid-template-columns: 1fr auto 1fr;
+		&-left {
+			justify-self: start;
+		}
+		&-center {
+			justify-self: center;
+		}
+		&-right {
+			justify-self: end;
 		}
 	}
 

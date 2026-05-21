@@ -91,7 +91,7 @@ export default class TabHeader extends BaseComponent {
 	}
 
 	parametersChanged(payload: TabHeaderConfigOptions): void {
-		console.log(payload);
+		console.log('parametersChanged', payload);
 	}
 
 	destroy() {

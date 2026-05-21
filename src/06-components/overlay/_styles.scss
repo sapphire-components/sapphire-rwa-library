@@ -29,8 +29,6 @@ div[data-block$='Overlay'] {
 		0 6px 16px rgba(0, 0, 0, 0.06);
 	color: var(--color-neutral-0);
 	.overlay-close {
-		background-color: var(--color-neutral-0);
-		cursor: pointer;
 		position: absolute;
 		right: 4px;
 		top: 4px;
@@ -44,6 +42,12 @@ div[data-block$='Overlay'] {
 			color: var(--color-neutral-9);
 			filter: drop-shadow(0 0 0 #000);
 		}
+	}
+}
+
+.tippy-box[data-persistent='true'] {
+	.scrollablecontent-header {
+		padding-right: 32px;
 	}
 }
 

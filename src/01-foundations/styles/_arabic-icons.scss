@@ -1,12 +1,20 @@
 .is-rtl {
 	.svg-icon[data-iconname='caret-double-right'],
+	.svg-icon[data-iconname='caret-double-left'],
 	.svg-icon[data-iconname='caret-circle-right'],
+	.svg-icon[data-iconname='caret-circle-left'],
 	.svg-icon[data-iconname='caret-circle-double-right'],
+	.svg-icon[data-iconname='caret-circle-double-left'],
 	.svg-icon[data-iconname='arrow-right'],
+	.svg-icon[data-iconname='arrow-left'],
 	.svg-icon[data-iconname='arrow-line-right'],
+	.svg-icon[data-iconname='arrow-line-left'],
 	.svg-icon[data-iconname='arrow-circle-right'],
+	.svg-icon[data-iconname='arrow-circle-left'],
 	.svg-icon[data-iconname='arrow-fat-right'],
-	.svg-icon[data-iconname='caret-right'] {
+	.svg-icon[data-iconname='arrow-fat-left'],
+	.svg-icon[data-iconname='caret-right'],
+	.svg-icon[data-iconname='caret-left'] {
 		transform: scaleX(-1);
 	}
 }

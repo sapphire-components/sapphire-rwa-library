@@ -205,7 +205,7 @@ export default class Overlay extends BaseComponent {
 					box.dataset.persistent = 'true';
 
 					const closeButton = document.createElement('div');
-					closeButton.className = 'overlay-close';
+					closeButton.className = 'btn btn-small btn-icon btn-tertiary overlay-close';
 					closeButton.innerHTML = Helpers.placeIcon('x', 's');
 					box.appendChild(closeButton);
 

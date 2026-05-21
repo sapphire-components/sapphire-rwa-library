@@ -1,0 +1,44 @@
+.btn-primary {
+	background-color: var(--color-primary);
+	color: var(--color-neutral-0);
+	outline-color: transparent;
+	&:hover {
+		background-color: var(--color-primary-hover);
+	}
+	.svg-icon[data-size] {
+		color: var(--color-neutral-0);
+	}
+}
+
+.btn-tertiary {
+	background-color: transparent;
+	outline-color: transparent;
+}
+
+.btn-destructive {
+	background-color: var(--color-red);
+	color: var(--color-neutral-0);
+	outline-color: transparent;
+	&:hover {
+		background-color: var(--color-red-dark);
+	}
+	.svg-icon[data-size] {
+		color: var(--color-neutral-0);
+	}
+}
+
+.btn-destructive-secondary {
+	background-color: var(--color-neutral-0);
+	color: var(--color-red);
+	outline-color: var(--color-red);
+	&:hover {
+		background-color: var(--color-red-lightest);
+	}
+	.svg-icon[data-size] {
+		color: var(--color-red);
+	}
+}
+
+.btn-icon {
+	padding: 8px;
+}

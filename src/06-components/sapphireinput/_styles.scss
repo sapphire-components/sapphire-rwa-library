@@ -174,3 +174,7 @@ div[data-block$='SapphireInput'] {
 		pointer-events: none;
 	}
 }
+
+.sapphireinput-invalid {
+	-servicestudio-display: none !important;
+}

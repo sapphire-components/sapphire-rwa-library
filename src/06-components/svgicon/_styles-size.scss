@@ -1,3 +1,4 @@
+.svg-icon[data-size='xs2'],
 .svg-icon[data-size='xs'] {
 	&[data-shape]:not([data-shape='']) {
 		height: 12px;
@@ -58,7 +59,13 @@
 	}
 }
 
-.svg-icon[data-size='xl'] {
+.svg-icon[data-size='xl'],
+.svg-icon[data-size='xl2'],
+.svg-icon[data-size='xl3'],
+.svg-icon[data-size='xl4'],
+.svg-icon[data-size='xl5'],
+.svg-icon[data-size='xl6'],
+.svg-icon[data-size='xl7'] {
 	&[data-shape]:not([data-shape='']) {
 		height: 40px;
 		width: 40px;

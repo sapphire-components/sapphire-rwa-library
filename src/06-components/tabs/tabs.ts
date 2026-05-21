@@ -78,7 +78,6 @@ export default class Tabs extends BaseComponent {
 	evaluateTabHeaderStatus(): void {
 		const allTabsHeadersArray = Array.from(this.tabsHeaderContainer.querySelectorAll<HTMLDivElement>(`.sapphire-tabheader`));
 
-		console.log(allTabsHeadersArray);
 
 		allTabsHeadersArray.forEach((item: HTMLElement, index: number) => {
 			if (index === this.activeTab) {

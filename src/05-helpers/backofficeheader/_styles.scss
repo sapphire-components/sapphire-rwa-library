@@ -1,0 +1,26 @@
+.backofficeheader-breadcrumbs {
+	margin-bottom: 24px;
+	.breadcrumbs-item {
+		.placeholder-empty {
+			line-height: 0;
+		}
+		.svg-icon {
+			margin-inline: 6px;
+		}
+	}
+	&:empty {
+		display: none;
+	}
+}
+
+.backofficeheader-head {
+	display: flex;
+	margin-bottom: var(--space-l);
+	&-title {
+		flex: 1 1 0;
+		font-size: var(--font-size-h1);
+		font-weight: 600;
+	}
+	&-actions {
+	}
+}

@@ -1,3 +1,11 @@
 .overflow-auto {
 	overflow: auto;
 }
+
+.overflow-hidden {
+	overflow: hidden;
+}
+
+.overflow-visible, .list.list-group.overflow-visible {
+	overflow: visible;
+}

@@ -11,9 +11,19 @@ div[data-block$='LabelValue'] {
 	&-label {
 		font-size: var(--font-size-s);
 	}
-	&-value {
-		// overflow-wrap: anywhere;
-		// word-break: break-word;
+	&-body {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		width: 100%;
+	}
+	&-hint {
+		color: var(--color-neutral-7);
+		font-size: var(--font-size-xs);
+	}
+	&-mandatory {
+		color: var(--color-error);
+		margin-inline-start: 4px;
 	}
 }
 
