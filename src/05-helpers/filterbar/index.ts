@@ -7,11 +7,8 @@ interface FilterBarInit extends BaseComponentInit {
 
 export default class FilterBar extends BaseComponent {
 	private lastWidgetRect?: { top: number; width: number; height: number };
-	private resizeObserver?: ResizeObserver;
-	private resizeRafId?: number;
 	private placeholderEl!: HTMLDivElement;
 	private wrapperEl!: HTMLDivElement;
-	private isFixed = false;
 
 	constructor(init: FilterBarInit) {
 		super(init);
@@ -25,8 +22,16 @@ export default class FilterBar extends BaseComponent {
 
 		this.createPlaceholder();
 		this.setWidgetRect();
-		this.observeResize();
+
+		this.observeLayoutResize(this.handleLayoutResize);
 	}
+
+	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
+		console.log('layout resized filterbar');
+		if (this.widgetEl.dataset.isfixed === 'true') {
+			this.wrapperEl.style.width = this.placeholderEl.getBoundingClientRect().width + 'px';
+		}
+	};
 
 	createPlaceholder(): void {
 		this.placeholderEl = document.createElement('div');
@@ -36,10 +41,6 @@ export default class FilterBar extends BaseComponent {
 	}
 
 	setWidgetRect(): void {
-		if (this.isFixed) {
-			return;
-		}
-
 		const top = Math.ceil(this.wrapperEl.offsetTop);
 		const width = Math.ceil(this.wrapperEl.clientWidth);
 		const height = Math.ceil(this.wrapperEl.clientHeight);
@@ -55,29 +56,8 @@ export default class FilterBar extends BaseComponent {
 		this.widgetEl.style.setProperty('--filterbar-height', `${height}px`);
 	}
 
-	private observeResize(): void {
-		this.resizeObserver = new ResizeObserver(() => {
-			if (this.resizeRafId !== undefined) {
-				return;
-			}
-			this.resizeRafId = window.requestAnimationFrame(() => {
-				this.resizeRafId = undefined;
-				this.setWidgetRect();
-			});
-		});
-
-		this.resizeObserver.observe(this.widgetEl);
-	}
-
 	destroy(): void {
-		if (this.resizeRafId !== undefined) {
-			window.cancelAnimationFrame(this.resizeRafId);
-			this.resizeRafId = undefined;
-		}
-
-		this.resizeObserver?.disconnect();
-		this.resizeObserver = undefined;
-
+		super.destroy();
 		this.placeholderEl.remove();
 	}
 }

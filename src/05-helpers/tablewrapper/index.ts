@@ -8,15 +8,13 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 
 export default class TableWrapper extends BaseComponent {
 	private configOptions!: TableWrapperConfigOptions;
-	private resizeDebounceTimeoutId?: number;
-	private resizeObserver?: ResizeObserver;
-	private tableEl!: HTMLTableElement;
-	private theadEl!: HTMLTableSectionElement;
-	private tableHeaderEl!: HTMLDivElement;
-	private tableHeaderCloneEl!: HTMLDivElement;
-	private topScrollEl!: HTMLDivElement;
 	private syncing = false;
+	private tableEl!: HTMLTableElement;
+	private tableHeaderCloneEl!: HTMLDivElement;
+	private tableHeaderEl!: HTMLDivElement;
+	private theadEl!: HTMLTableSectionElement;
 	private topInnerEl?: HTMLDivElement;
+	private topScrollEl!: HTMLDivElement;
 
 	constructor(configOptions: TableWrapperConfigOptions) {
 		super(configOptions);
@@ -25,6 +23,8 @@ export default class TableWrapper extends BaseComponent {
 			console.warn('TableWrapper: root element not found for runtimeId', configOptions.runtimeId);
 			return;
 		}
+
+		console.log('TableWrapper: constructor', configOptions);
 
 		this.configOptions = configOptions;
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
@@ -47,7 +47,6 @@ export default class TableWrapper extends BaseComponent {
 		this.theadEl.appendChild(this.tableHeaderCloneEl);
 
 		this.setWidgetRect();
-		this.observeResize();
 
 		if (this.configOptions.hasScrollTop) {
 			this.topInnerEl = this.topScrollEl.querySelector<HTMLDivElement>('.table-scroll-top__inner')!;
@@ -70,6 +69,8 @@ export default class TableWrapper extends BaseComponent {
 				this.syncing = false;
 			});
 		}
+
+		this.observeLayoutResize(this.handleLayoutResize);
 	}
 
 	setWidgetRect(): void {
@@ -89,30 +90,16 @@ export default class TableWrapper extends BaseComponent {
 		this.widgetEl.style.setProperty('--tablewrapper-width', `${this.widgetEl.clientWidth}px`);
 	}
 
-	private observeResize(): void {
-		const debounceMs = 150;
-		this.resizeObserver = new ResizeObserver(() => {
-			if (this.configOptions.hasScrollTop) {
-				this.topInnerEl!.style.width = ``;
-			}
+	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
+		console.log('layout resized tablewrapper');
+		if (this.configOptions.hasScrollTop) {
+			this.topInnerEl!.style.width = ``;
+		}
 
-			if (this.resizeDebounceTimeoutId !== undefined) {
-				window.clearTimeout(this.resizeDebounceTimeoutId);
-			}
-			this.resizeDebounceTimeoutId = window.setTimeout(() => {
-				this.resizeDebounceTimeoutId = undefined;
-				this.setWidgetRect();
-			}, debounceMs);
-		});
-		this.resizeObserver.observe(this.widgetEl);
-	}
+		this.setWidgetRect();
+	};
 
 	destroy() {
-		if (this.resizeDebounceTimeoutId !== undefined) {
-			window.clearTimeout(this.resizeDebounceTimeoutId);
-			this.resizeDebounceTimeoutId = undefined;
-		}
-		this.resizeObserver?.disconnect();
-		this.resizeObserver = undefined;
+		super.destroy();
 	}
 }

@@ -33,6 +33,8 @@ export default class Tabs extends BaseComponent {
 			return;
 		}
 
+		console.log('Tabs: constructor');
+
 		this.configOptions = configOptions;
 		this.activeTab = configOptions.activeTab;
 
@@ -77,7 +79,6 @@ export default class Tabs extends BaseComponent {
 
 	evaluateTabHeaderStatus(): void {
 		const allTabsHeadersArray = Array.from(this.tabsHeaderContainer.querySelectorAll<HTMLDivElement>(`.sapphire-tabheader`));
-
 
 		allTabsHeadersArray.forEach((item: HTMLElement, index: number) => {
 			if (index === this.activeTab) {
@@ -161,7 +162,6 @@ export default class Tabs extends BaseComponent {
 		this.activeTab = tabIndex_in;
 		Overlay.getInstance(this.tippyTooltipEl)?.tippyInstance.hide();
 
-		console.log('setTabIndex', this.activeTab, tabIdentifier_in);
 		this.configOptions.actions.OnChange(this.activeTab, tabIdentifier_in);
 		this.render();
 	}

@@ -1,3 +1,5 @@
+import Helpers from '../09-utils/helpers';
+
 export type BaseComponentInit = {
 	identifier?: string;
 	runtimeId?: string;
@@ -12,6 +14,9 @@ export class BaseComponent {
 	runtimeId: string;
 	widgetEl: HTMLElement;
 
+	private layoutResizeObserver?: ResizeObserver;
+	private layoutResizeDebounced?: ((...args: Parameters<ResizeObserverCallback>) => void) & { cancel: () => void };
+
 	constructor(init: BaseComponentInit) {
 		this.identifier = init.identifier!;
 		this.runtimeId = init.runtimeId!;
@@ -25,9 +30,38 @@ export class BaseComponent {
 	parametersChanged(_payload?: BaseComponentInit): void {}
 
 	destroy(): void {
+		this.disconnectLayoutResize();
+
 		if (this.widgetEl) {
 			BaseComponent.getRegistry(this.constructor as BaseComponentConstructor<this>).delete(this.widgetEl);
 		}
+	}
+
+	protected observeLayoutResize(handler: ResizeObserverCallback, debounceMs?: number): void {
+		if (this.layoutResizeObserver) {
+			return;
+		}
+
+		const layoutEl = document.querySelector<HTMLElement>('.layout');
+		if (!layoutEl) {
+			return;
+		}
+
+		let callback: ResizeObserverCallback = handler;
+		if (typeof debounceMs === 'number' && debounceMs > 0) {
+			this.layoutResizeDebounced = Helpers.debounce(handler, debounceMs);
+			callback = this.layoutResizeDebounced;
+		}
+
+		this.layoutResizeObserver = new ResizeObserver(callback);
+		this.layoutResizeObserver.observe(layoutEl);
+	}
+
+	protected disconnectLayoutResize(): void {
+		this.layoutResizeDebounced?.cancel();
+		this.layoutResizeDebounced = undefined;
+		this.layoutResizeObserver?.disconnect();
+		this.layoutResizeObserver = undefined;
 	}
 
 	static getInstance<T extends BaseComponent>(this: BaseComponentConstructor<T>, element: HTMLElement): T | undefined {

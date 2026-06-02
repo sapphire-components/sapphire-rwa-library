@@ -99,14 +99,15 @@ async function buildSprite() {
 		prev.push(rec.folderName);
 		duplicates.set(rec.name, prev);
 	}
-	const duplicateNames = [...duplicates.entries()].filter(([, folders]) => new Set(folders).size > 1);
+	const duplicateNames = [...duplicates.entries()].filter(([, folders]) => folders.length > 1);
 	if (duplicateNames.length > 0) {
 		const details = duplicateNames
 			.map(([name, folders]) => `${name}: ${[...new Set(folders)].sort().join(', ')}`)
 			.join('\n');
-		throw new Error(
-			`Duplicate icon names found across folders (would create duplicate <symbol id="svg-icon-...">):\n${details}\n\nRename one of the files so icon names are unique.`
+		console.error(
+			`Duplicate icon names found (would create duplicate <symbol id="svg-icon-...">):\n${details}\n\nRename one of the files so icon names are unique.`
 		);
+		process.exit(1);
 	}
 
 	const symbols = [];
