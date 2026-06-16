@@ -31,20 +31,7 @@ export default class TableWrapper extends BaseComponent {
 		this.theadEl = this.tableEl.querySelector<HTMLTableSectionElement>('thead')!;
 		this.tableHeaderEl = this.widgetEl.querySelector<HTMLDivElement>('.table-header')!;
 
-		if (this.configOptions.hasScrollTop) {
-			this.topScrollEl = document.createElement('div');
-			this.topScrollEl.classList.add('table-scroll-top');
-			this.topScrollEl.innerHTML = '<div class="table-scroll-top__inner"></div>';
-			this.tableEl.parentNode?.insertBefore(this.topScrollEl, this.tableEl);
-		}
-
-		const clone = this.tableHeaderEl.cloneNode(true) as HTMLDivElement;
-		clone.classList.add('table-header-clone');
-		clone.querySelectorAll('.sortable-icon').forEach((child) => {
-			(child as HTMLElement).style.opacity = '0';
-		});
-		this.tableHeaderCloneEl = clone as HTMLDivElement;
-		this.theadEl.appendChild(this.tableHeaderCloneEl);
+		this.setupDOM();
 
 		this.setWidgetRect();
 
@@ -53,10 +40,20 @@ export default class TableWrapper extends BaseComponent {
 
 			this.topInnerEl.style.width = `${this.tableEl.scrollWidth}px`;
 
+			console.log('table scroll top scroll listener added', this.topScrollEl);
 			this.topScrollEl.addEventListener('scroll', () => {
+				console.log('table scroll top scroll', this.syncing);
 				if (this.syncing) return;
 				this.syncing = true;
 				this.widgetEl.scrollLeft = this.topScrollEl.scrollLeft;
+				this.syncing = false;
+			});
+
+			this.tableHeaderCloneEl.addEventListener('scroll', () => {
+				console.log('table header clone scroll', this.syncing);
+				if (this.syncing) return;
+				this.syncing = true;
+				this.widgetEl.scrollLeft = this.tableHeaderCloneEl.scrollLeft;
 				this.syncing = false;
 			});
 
@@ -71,6 +68,23 @@ export default class TableWrapper extends BaseComponent {
 		}
 
 		this.observeLayoutResize(this.handleLayoutResize);
+	}
+
+	setupDOM(): void {
+		if (this.configOptions.hasScrollTop) {
+			this.topScrollEl = document.createElement('div');
+			this.topScrollEl.classList.add('table-scroll-top');
+			this.topScrollEl.innerHTML = '<div class="table-scroll-top__inner"></div>';
+			this.tableEl.parentNode?.insertBefore(this.topScrollEl, this.tableEl);
+		}
+
+		const clone = this.tableHeaderEl.cloneNode(true) as HTMLDivElement;
+		clone.classList.add('table-header-clone');
+		clone.querySelectorAll('.sortable-icon').forEach((child) => {
+			(child as HTMLElement).style.opacity = '0';
+		});
+		this.tableHeaderCloneEl = clone as HTMLDivElement;
+		this.theadEl.appendChild(this.tableHeaderCloneEl);
 	}
 
 	setWidgetRect(): void {

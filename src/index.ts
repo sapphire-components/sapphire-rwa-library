@@ -17,6 +17,7 @@ import SapphireIntl from './02-core/SapphireIntl';
 import SapphirePopupContent from './06-components/sapphirepopupcontent';
 import ScrollableContent from './06-components/scrollablecontent';
 import TableWrapper from './05-helpers/tablewrapper';
+import TextEditor from './06-components/texteditor';
 import Toast from './06-components/toast';
 import { LocalStorageKeys } from './09-utils/local-storage-keys';
 import { Tabs, TabHeader, TabContent } from './06-components/tabs';
@@ -51,6 +52,7 @@ const SapphireRWALibrary = {
 	TabHeader,
 	TableWrapper,
 	Tabs,
+	TextEditor,
 	Toast: new Toast(),
 	init,
 };

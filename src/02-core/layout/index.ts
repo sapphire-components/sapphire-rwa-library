@@ -12,37 +12,7 @@ export default class LayoutWrapper extends BaseComponent {
 	private screenContainerEl: HTMLDivElement | null;
 	private tableEl: HTMLDivElement | null = null;
 
-	constructor(configOptions: LayoutWrapperInit) {
-		super(configOptions);
-
-		this.layoutWrapperEl = document.querySelector<HTMLDivElement>('.layoutwrapper');
-		this.screenContainerEl = document.querySelector<HTMLDivElement>('.screen-container');
-
-		if (!this.screenContainerEl || !this.layoutWrapperEl) {
-			return;
-		}
-
-		console.log('LayoutWrapper: constructor');
-
-		this.filterBarEl = document.querySelector<HTMLDivElement>('.filterbar[data-issticky="true"]');
-		this.tableEl = document.querySelector<HTMLDivElement>('.tablewrapper .table');
-
-		const onScroll = this.handleLayoutVerticalScroll.bind(this);
-
-		this.observeLayoutResize(this.handleLayoutResize);
-
-		this.screenContainerEl.addEventListener('scroll', onScroll);
-	}
-
-	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
-		if (this.tableEl && this.tableEl.dataset.isfixed === 'true') {
-			this.duplicateTableHeaderWidths(this.tableEl as HTMLTableElement);
-		} else if (this.tableEl && this.tableEl.dataset.isfixed === 'false') {
-			this.removeTableHeaderCloneWidths(this.tableEl as HTMLTableElement);
-		}
-	};
-
-	handleLayoutVerticalScroll(): void {
+	private handleLayoutVerticalScroll = (): void => {
 		if (this.filterBarEl) {
 			this.filterBarEl.dataset.isfixed = 'false';
 		}
@@ -81,7 +51,33 @@ export default class LayoutWrapper extends BaseComponent {
 		}
 
 		this.screenContainerEl!.dataset.fixedcombinedheight = fixedCombinedHeight.toString();
+	};
+
+	constructor(configOptions: LayoutWrapperInit) {
+		super(configOptions);
+
+		this.layoutWrapperEl = document.querySelector<HTMLDivElement>('.layoutwrapper');
+		this.screenContainerEl = document.querySelector<HTMLDivElement>('.screen-container');
+
+		if (!this.screenContainerEl || !this.layoutWrapperEl) {
+			return;
+		}
+
+		this.filterBarEl = document.querySelector<HTMLDivElement>('.filterbar[data-issticky="true"]');
+		this.tableEl = document.querySelector<HTMLDivElement>('.tablewrapper .table');
+
+		this.observeLayoutResize(this.handleLayoutResize);
+
+		this.screenContainerEl.addEventListener('scroll', this.handleLayoutVerticalScroll);
 	}
+
+	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
+		if (this.tableEl && this.tableEl.dataset.isfixed === 'true') {
+			this.duplicateTableHeaderWidths(this.tableEl as HTMLTableElement);
+		} else if (this.tableEl && this.tableEl.dataset.isfixed === 'false') {
+			this.removeTableHeaderCloneWidths(this.tableEl as HTMLTableElement);
+		}
+	};
 
 	duplicateTableHeaderWidths(tableEl: HTMLTableElement): void {
 		const tableHeaderEl = tableEl.querySelector<HTMLDivElement>('.table-header:not(.table-header-clone)');
