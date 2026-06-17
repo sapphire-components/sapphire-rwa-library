@@ -12,6 +12,7 @@ import LabelValue from './05-helpers/labelvalue';
 import LayoutWrapper from './02-core/layout';
 import Overlay from './06-components/overlay';
 import ResponsiveGrid from './06-components/responsive-grid';
+import SapphireDropdown from './06-components/sapphiredropdown';
 import SapphireInput from './06-components/sapphireinput';
 import SapphireIntl from './02-core/SapphireIntl';
 import SapphirePopupContent from './06-components/sapphirepopupcontent';
@@ -44,6 +45,7 @@ const SapphireRWALibrary = {
 	LayoutWrapper,
 	Overlay,
 	ResponsiveGrid,
+	SapphireDropdown,
 	SapphireInput,
 	SapphireIntl,
 	SapphirePopupContent,

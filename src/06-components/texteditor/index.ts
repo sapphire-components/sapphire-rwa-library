@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import Helpers from '../../09-utils/helpers.ts';
 import Quill, { type QuillOptions } from 'quill';
 import quillSnowCss from 'quill/dist/quill.snow.css?inline';
@@ -32,7 +33,7 @@ export interface ITextEditor extends BaseComponentInit {
 	toolbarOptions: string;
 }
 
-export default class RichTextEditor extends BaseComponent {
+export default class TextEditor extends BaseComponent {
 	#actions!: ITextEditor['actions'];
 	#blur = this.blur.bind(this);
 	// #changeDebounce!: number;
@@ -100,6 +101,8 @@ export default class RichTextEditor extends BaseComponent {
 			this.quill.enable(this.#enabled);
 
 			this.attachQuillEvents();
+
+			console.log(Object.keys(Quill.imports).filter((key) => key.startsWith('formats/')));
 		}
 
 		/** Resize observer */
@@ -168,7 +171,19 @@ export default class RichTextEditor extends BaseComponent {
 		this.quill?.root.addEventListener('focus', this.#focus);
 	}
 
-	parametersChanged(_payload: ITextEditor): void {}
+	parametersChanged(_payload: ITextEditor): void {
+		if (!Helpers.areTheyEqual(_payload.enabled, this.#enabled)) {
+			console.log('TextEditor: parametersChanged enabled', _payload);
+			this.#enabled = _payload.enabled;
+			this.quill?.enable(this.#enabled);
+		}
+
+		if (!Helpers.areTheyEqual(_payload.content, this.#content)) {
+			console.log('TextEditor content', _payload.content, this.#content);
+			this.#content = _payload.content;
+			this.setQuillHtml(this.#content);
+		}
+	}
 
 	destroy(): void {
 		this.#resizeDebounced?.cancel();
@@ -201,5 +216,15 @@ export default class RichTextEditor extends BaseComponent {
 
 	focus(): void {
 		this.#actions.OnFocus();
+	}
+
+	setQuillHtml(incomingHtml: string): void {
+		const safeHtml = DOMPurify.sanitize(incomingHtml ?? '', {
+			USE_PROFILES: { html: true },
+		});
+
+		const delta = this.quill?.clipboard.convert({ html: safeHtml });
+
+		this.quill?.setContents(delta ?? [], 'silent');
 	}
 }

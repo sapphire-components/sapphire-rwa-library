@@ -1,5 +1,5 @@
-@use '../../01-foundations/styles/_colors.scss' as *;
-@use '../../01-foundations/styles/_mixins.scss' as *;
+@use '../../01-foundations/_colors.scss' as *;
+@use '../../01-foundations/_mixins.scss' as *;
 
 div[data-block$='SapphireInput'] {
 	display: contents;

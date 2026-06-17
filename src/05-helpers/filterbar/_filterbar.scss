@@ -1,4 +1,4 @@
-@use '../../01-foundations/styles/_colors.scss' as *;
+@use '../../01-foundations/_colors.scss' as *;
 
 div[data-block$='FilterBar'] {
 	display: contents;

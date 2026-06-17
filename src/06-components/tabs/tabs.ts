@@ -33,8 +33,6 @@ export default class Tabs extends BaseComponent {
 			return;
 		}
 
-		console.log('Tabs: constructor');
-
 		this.configOptions = configOptions;
 		this.activeTab = configOptions.activeTab;
 

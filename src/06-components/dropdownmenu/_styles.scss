@@ -1,4 +1,4 @@
-@use '../../01-foundations/styles/_mixins.scss' as *;
+@use '../../01-foundations/_mixins.scss' as *;
 
 div[data-block$='DropdownMenu'] {
 	display: contents;
@@ -41,7 +41,7 @@ div[data-block$='DropdownMenu'] {
 			color: var(--color-neutral-9);
 			display: block;
 			font-size: 14px;
-			 min-height: 26px;
+			min-height: 26px;
 			&:hover {
 				font-weight: 700;
 				text-decoration: none;
@@ -58,9 +58,9 @@ div[data-block$='DropdownMenu'] {
 	> .dropdownmenu-header {
 		padding-inline-start: 8px;
 		.dropdownmenu-header-label {
+			color: var(--color-neutral-7);
 			font-size: 16px;
 			font-weight: 600;
-			color: var(--color-neutral-7);
 		}
 	}
 	> .dropdownmenu-items {
@@ -68,13 +68,9 @@ div[data-block$='DropdownMenu'] {
 	}
 }
 
-
-.dropdownmenu[data-isopen="true"][data-rootlevel='true'] {
+.dropdownmenu[data-isopen='true'][data-rootlevel='true'] {
 	margin-bottom: 24px;
 }
-
-
-
 
 .dropdownmenu[data-rootlevel='false'] {
 	> .dropdownmenu-header {
