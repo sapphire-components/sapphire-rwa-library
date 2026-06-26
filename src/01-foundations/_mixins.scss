@@ -1,3 +1,7 @@
+@mixin transition($property: all, $duration: var(--transition-duration), $easing: var(--transition-easing)) {
+	transition: $property $duration $easing;
+}
+
 @mixin focus-visible($width: 1px, $color: var(--color-primary)) {
 	&:focus-visible {
 		box-shadow:

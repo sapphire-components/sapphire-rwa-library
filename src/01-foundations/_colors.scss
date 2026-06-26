@@ -1,32 +1,6 @@
-$color-sapphire-background: #f1f1f1;
-$color-sapphire-surface: #f5f5f5;
-$color-sapphire-interactive: #f9f9f9;
-$color-secondary: #2a5a6e;
-
-$colors: (
-	primary: var(--color-primary),
-	sapphire-background: $color-sapphire-background,
-	sapphire-surface: $color-sapphire-surface,
-	secondary: var(--color-secondary),
-	//
-	error: var(--color-error),
-	info: var(--color-info),
-	success: var(--color-success),
-	warning: var(--color-warning),
-	//
-	neutral-0: var(--color-neutral-0),
-	neutral-10: var(--color-neutral-10),
-	neutral-1: var(--color-neutral-1),
-	neutral-2: var(--color-neutral-2),
-	neutral-3: var(--color-neutral-3),
-	neutral-4: var(--color-neutral-4),
-	neutral-5: var(--color-neutral-5),
-	neutral-6: var(--color-neutral-6),
-	neutral-7: var(--color-neutral-7),
-	neutral-8: var(--color-neutral-8),
-	neutral-9: var(--color-neutral-9),
-	transparent: transparent,
-);
+@forward 'tokens/scss-variables';
+@forward 'tokens/color-map';
+@use 'tokens/color-map' as *;
 
 @each $name, $value in $colors {
 	.text-#{'' + $name} {

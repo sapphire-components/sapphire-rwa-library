@@ -1,12 +1,11 @@
-.buttondropdown[data-isvalid='False'] {
-	outline-color: var(--color-error);
+.buttondropdown[data-isvalid='false'] {
 	.buttondropdown-label,
 	.buttondropdown-arrow,
 	.buttondropdown-label:hover,
 	.buttondropdown-arrow:hover {
 		background-color: var(--color-error-light) !important;
-		border-color: var(--color-error) !important;
-		color: var(--color-neutral-10);
+		color: var(--color-text);
+		outline-color: var(--color-error);
 	}
 
 	.svg-icon {
@@ -14,16 +13,17 @@
 	}
 }
 
-.buttondropdown[data-enabled='False'] {
-	pointer-events: none;
+.buttondropdown[data-enabled='false'] {
+	cursor: not-allowed;
 	.buttondropdown-label,
 	.buttondropdown-arrow {
-		background-color: var(--color-neutral-3) !important;
-		border-color: var(--color-neutral-8);
-		color: var(--color-neutral-8);
+		background-color: var(--color-background-disabled) !important;
+		color: var(--color-text-disabled);
+		outline-color: var(--color-border);
+		pointer-events: none;
 	}
 	.svg-icon {
-		color: var(--color-neutral-8);
+		color: var(--color-text-disabled);
 	}
 }
 

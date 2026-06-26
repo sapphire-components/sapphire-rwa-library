@@ -1,0 +1,28 @@
+.sapphiredropdown[data-haschips='true'] {
+	.sapphiredropdown-chips {
+		display: inline-flex;
+		&:empty {
+			display: none;
+		}
+	}
+}
+
+.sapphiredropdown[data-isvalid='false'] {
+	.sapphiredropdown-trigger {
+		background-color: var(--color-error-light);
+		border-color: var(--color-error);
+		color: var(--color-text);
+	}
+}
+
+.sapphiredropdown[data-enabled='false'] {
+	cursor: not-allowed;
+	.sapphiredropdown-trigger {
+		background-color: var(--color-background-disabled);
+		color: var(--color-text-disabled);
+		pointer-events: none;
+	}
+	.sapphiredropdown-chevron {
+		color: var(--color-text-disabled);
+	}
+}

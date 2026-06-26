@@ -8,13 +8,15 @@
 		"serve:dist": "vite preview --port 4173 --strictPort",
 		"build:watch": "vite build --watch --mode dev",
 		"build": "tsc && vite build --mode prod",
-		"build:icons": "node build-icon-sprite.mjs"
+		"build:icons": "node build-icon-sprite.mjs",
+		"build:tokens": "node build-tokens.mjs"
 	},
 	"dependencies": {
 		"concurrently": "^9.2.1",
 		"dompurify": "^3.4.10",
 		"prettier": "^3.8.3",
 		"quill": "^2.0.3",
+		"quill-table-better": "^1.2.3",
 		"sass": "^1.99.0",
 		"stylelint": "^17.11.0",
 		"stylelint-order": "^8.1.1",

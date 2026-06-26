@@ -1,0 +1,270 @@
+@use '../../01-foundations/_mixins.scss' as *;
+
+div[data-block$='SapphireDropdown'] {
+	display: contents;
+}
+
+.sapphiredropdown {
+	display: block;
+	position: relative;
+	width: 100%;
+	&-trigger {
+		@include focus-visible();
+		align-items: center;
+		background-color: var(--color-neutral-0);
+		border: 1px solid var(--color-border);
+		border-radius: 6px;
+		cursor: pointer;
+		display: flex;
+		gap: 8px;
+		min-height: 40px;
+		padding-block: 6px;
+		padding-inline: 12px;
+		user-select: none;
+		width: 100%;
+		&:hover {
+			border-color: var(--color-neutral-6);
+		}
+		&[aria-expanded='true'] {
+			border-color: var(--color-primary);
+			.sapphiredropdown-chevron {
+				transform: rotate(180deg);
+			}
+		}
+	}
+	&-chips {
+		background-color: var(--color-neutral-2);
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		display: none;
+		flex-wrap: wrap;
+		gap: 4px;
+		margin-top: 12px;
+		min-height: 24px;
+		padding: 8px;
+		width: 100%;
+		&:empty {
+			display: none;
+		}
+	}
+	&-value {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		&[data-placeholder='true'] {
+			color: var(--color-neutral-6);
+		}
+	}
+	&-clear {
+		@include focus-visible();
+		align-items: center;
+		color: var(--color-neutral-6);
+		cursor: pointer;
+		display: none;
+		flex: 0 0 auto;
+		justify-content: center;
+		&:hover {
+			color: var(--color-neutral-9);
+		}
+	}
+	&-chevron {
+		align-items: center;
+		color: var(--color-neutral-6);
+		display: inline-flex;
+		flex: 0 0 auto;
+		transition: transform 0.15s ease;
+	}
+}
+
+.sapphiredropdown[data-clear='true'][data-hasvalue='true'] {
+	.sapphiredropdown-clear {
+		display: inline-flex;
+	}
+}
+
+/* The global .tippy-box theme is dark; scope a light surface for the dropdown panel. */
+.tippy-box:has(.sapphiredropdown-panel) {
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-4);
+	border-radius: 8px;
+	color: var(--color-neutral-9);
+	.tippy-content {
+		padding: 0;
+	}
+}
+
+.sapphiredropdown-panel {
+	display: flex;
+	flex-direction: column;
+	max-height: 320px;
+	min-width: var(--trigger-width, 200px);
+	width: var(--trigger-width, auto);
+}
+
+.sapphiredropdown-search {
+	align-items: center;
+	border-bottom: 1px solid var(--color-neutral-3);
+	display: flex;
+	flex: 0 0 auto;
+	gap: 8px;
+	padding: 8px 12px;
+	&-icon {
+		align-items: center;
+		color: var(--color-neutral-6);
+		display: inline-flex;
+		flex: 0 0 auto;
+	}
+	&-input {
+		@include focus-visible();
+		background: transparent;
+		border: none;
+		border-radius: 4px;
+		color: var(--color-neutral-9);
+		flex: 1 1 auto;
+		min-width: 0;
+		outline: none;
+		width: 100%;
+		&::placeholder {
+			color: var(--color-neutral-6);
+		}
+	}
+	&-clear {
+		@include focus-visible();
+		align-items: center;
+		border-radius: 4px;
+		color: var(--color-neutral-6);
+		cursor: pointer;
+		display: inline-flex;
+		flex: 0 0 auto;
+		justify-content: center;
+		&:hover {
+			color: var(--color-neutral-9);
+		}
+		&[hidden] {
+			display: none;
+		}
+	}
+}
+
+.sapphiredropdown-list {
+	list-style: none;
+	margin: 0;
+	overflow-y: auto;
+	padding: 4px;
+}
+
+.sapphiredropdown-option {
+	align-items: center;
+	border-radius: 4px;
+	color: var(--color-neutral-9);
+	cursor: pointer;
+	display: flex;
+	gap: 8px;
+	padding: 8px;
+	&[hidden] {
+		display: none;
+	}
+	&-icon {
+		align-items: center;
+		color: var(--color-neutral-7);
+		display: inline-flex;
+		flex: 0 0 auto;
+	}
+	&-body {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		min-width: 0;
+	}
+	&-label {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	&-description {
+		color: var(--color-neutral-7);
+		font-size: var(--font-size-xs);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	&-checkbox {
+		align-items: center;
+		border: 1px solid var(--color-neutral-5);
+		border-radius: 4px;
+		color: var(--color-neutral-0);
+		display: inline-flex;
+		flex: 0 0 auto;
+		height: 18px;
+		justify-content: center;
+		width: 18px;
+		.svg-icon {
+			opacity: 0;
+		}
+	}
+	&:hover {
+		background-color: var(--color-neutral-1);
+	}
+	&[data-active='true'] {
+		outline: 1px solid var(--focus-ring-outer);
+		outline-offset: -1px;
+	}
+	&[aria-disabled='true'] {
+		color: var(--color-neutral-5);
+		cursor: not-allowed;
+	}
+}
+
+.sapphiredropdown-panel[data-multiple='false'] {
+	.sapphiredropdown-option[aria-selected='true'] {
+		background-color: var(--color-neutral-3);
+	}
+}
+
+.sapphiredropdown-panel[data-multiple='true'] {
+	.sapphiredropdown-option[aria-selected='true'] {
+		.sapphiredropdown-option-checkbox {
+			background-color: var(--color-primary);
+			border-color: var(--color-primary);
+			.svg-icon {
+				opacity: 1;
+			}
+		}
+	}
+}
+
+.sapphiredropdown-empty {
+	color: var(--color-neutral-6);
+	padding: 12px;
+	text-align: center;
+	&[hidden] {
+		display: none;
+	}
+}
+
+.sapphiredropdown-loading {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	padding: 24px;
+	&[hidden] {
+		display: none;
+	}
+}
+
+.sapphiredropdown-spinner {
+	animation: sapphiredropdown-spin 0.6s linear infinite;
+	border: 2px solid var(--color-neutral-3);
+	border-radius: 50%;
+	border-top-color: var(--color-primary);
+	height: 24px;
+	width: 24px;
+}
+
+@keyframes sapphiredropdown-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

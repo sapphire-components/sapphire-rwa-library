@@ -1,24 +1,10 @@
-@use 'sass:color';
-
-:root {
-	--color-primary: #00bfa5;
-	--color-primary-hover: #009e88;
-	--color-primary-light: #c0ece6;
-	--color-primary-lighter: #e6faf6;
-	--color-secondary: #2a5a6e;
-	--color-secondary-hover: #214757;
-
-	--focus-ring-outer: color-mix(in srgb, var(--color-primary) 35%, white);
-
-	--space-xxs: 2px;
-}
-
 * {
 	scrollbar-width: thin;
 }
 
 html,
 body {
+	color: var(--color-text);
 	font-family: 'Lato';
 	font-size: var(--font-size-base);
 	height: 100%;

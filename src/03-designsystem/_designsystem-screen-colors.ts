@@ -1,10 +1,16 @@
 export default class DesignSystemColors {
-	private observer: MutationObserver | null = null;
+	private observers: MutationObserver[] = [];
 
 	constructor() {
-		const colorsContainer = document.querySelector<HTMLElement>('.colors-list');
-		if (!colorsContainer) return;
+		const colorsContainers = document.querySelectorAll<HTMLElement>('.colors-list');
+		if (!colorsContainers.length) return;
 
+		for (const colorsContainer of colorsContainers) {
+			this.observeColorsContainer(colorsContainer);
+		}
+	}
+
+	private observeColorsContainer(colorsContainer: HTMLElement) {
 		const writeHexToPres = () => {
 			const pres = colorsContainer.querySelectorAll<HTMLElement>('pre');
 			for (const pre of pres) {
@@ -18,7 +24,7 @@ export default class DesignSystemColors {
 
 		writeHexToPres();
 
-		this.observer = new MutationObserver((mutations) => {
+		const observer = new MutationObserver((mutations) => {
 			for (const mutation of mutations) {
 				if (mutation.type !== 'childList') continue;
 				for (const node of mutation.addedNodes) {
@@ -30,12 +36,15 @@ export default class DesignSystemColors {
 			}
 		});
 
-		this.observer?.observe(colorsContainer, { childList: true });
+		observer.observe(colorsContainer, { childList: true });
+		this.observers.push(observer);
 	}
 
 	destroy() {
-		this.observer?.disconnect();
-		this.observer = null;
+		for (const observer of this.observers) {
+			observer.disconnect();
+		}
+		this.observers = [];
 	}
 }
 

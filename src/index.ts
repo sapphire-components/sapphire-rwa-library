@@ -4,6 +4,7 @@ import { injectIconSprite } from './core/iconsSprite';
 import { installBodyPlatformClassStripper } from './core/stripBodyPlatformClasses';
 
 import ButtonDropdown from './06-components/buttondropdown';
+import Chip from './06-components/chip';
 import DesignSystemColors from './03-designsystem/_designsystem-screen-colors';
 import DropdownMenu from './06-components/dropdownmenu';
 import FilterBar from './05-helpers/filterbar';
@@ -37,6 +38,7 @@ function init(): void {
 
 const SapphireRWALibrary = {
 	ButtonDropdown,
+	Chip,
 	DesignSystemColors,
 	DropdownMenu,
 	FilterBar,

@@ -11,6 +11,7 @@ export function getToolbarTemplate(
 		size?: boolean;
 		strike?: boolean;
 		underline?: boolean;
+		table?: boolean;
 	} = {},
 ) {
 	return `
@@ -104,7 +105,9 @@ export function getToolbarTemplate(
 				}
     ${options.listOrdered ? '<button class="ql-list" value="ordered"></button>' : ''}
     ${options.listBullet ? '<button class="ql-list" value="bullet"></button>' : ''}
+    ${options.table ? '<button class="ql-table-better"></button>' : ''}
     ${options.clean ? '<button class="ql-clean"></button>' : ''}
+
 
   </div>
 

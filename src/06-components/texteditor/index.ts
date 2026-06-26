@@ -1,19 +1,30 @@
 import DOMPurify from 'dompurify';
 import Helpers from '../../09-utils/helpers.ts';
 import Quill, { type QuillOptions } from 'quill';
+import QuillTableBetter from 'quill-table-better';
 import quillSnowCss from 'quill/dist/quill.snow.css?inline';
+import quillTableBetterCss from 'quill-table-better/dist/quill-table-better.css?inline';
 import { BaseComponent, type BaseComponentInit } from '../../core/base.ts';
 import { getToolbarTemplate } from './toolbar.ts';
 
 const RESIZE_DEBOUNCE_MS = 100;
 const QUILL_STYLE_ID = 'sapphire-rwa-quill-snow';
+const QUILL_TABLE_BETTER_STYLE_ID = 'sapphire-rwa-quill-table-better';
 
 function ensureQuillStyles(): void {
-	if (document.getElementById(QUILL_STYLE_ID)) return;
-	const style = document.createElement('style');
-	style.id = QUILL_STYLE_ID;
-	style.textContent = quillSnowCss;
-	document.head.appendChild(style);
+	if (!document.getElementById(QUILL_STYLE_ID)) {
+		const style = document.createElement('style');
+		style.id = QUILL_STYLE_ID;
+		style.textContent = quillSnowCss;
+		document.head.appendChild(style);
+	}
+
+	if (!document.getElementById(QUILL_TABLE_BETTER_STYLE_ID)) {
+		const style = document.createElement('style');
+		style.id = QUILL_TABLE_BETTER_STYLE_ID;
+		style.textContent = quillTableBetterCss;
+		document.head.appendChild(style);
+	}
 }
 
 export interface ITextEditor extends BaseComponentInit {
@@ -84,10 +95,25 @@ export default class TextEditor extends BaseComponent {
 				this.createToolbar();
 			}
 
+			Quill.register(
+				{
+					'modules/table-better': QuillTableBetter,
+				},
+				true,
+			);
+
 			const options: QuillOptions = {
 				theme: 'snow',
 				modules: {
-					toolbar: this.#hasToolbar ? this.#toolbar : false,
+					toolbar: this.#toolbar,
+					table: false,
+					'table-better': {
+						language: 'en_US',
+						toolbarTable: true,
+					},
+					keyboard: {
+						bindings: QuillTableBetter.keyboardBindings,
+					},
 				},
 				placeholder: this.#placeholder,
 			};
@@ -102,7 +128,7 @@ export default class TextEditor extends BaseComponent {
 
 			this.attachQuillEvents();
 
-			console.log(Object.keys(Quill.imports).filter((key) => key.startsWith('formats/')));
+			// console.log(Object.keys(Quill.imports).filter((key) => key.startsWith('formats/')));
 		}
 
 		/** Resize observer */
@@ -132,6 +158,7 @@ export default class TextEditor extends BaseComponent {
 			size: hasToolbarOption('size'),
 			strike: hasToolbarOption('strike'),
 			underline: hasToolbarOption('underline'),
+			table: hasToolbarOption('table'),
 		});
 
 		this.widgetEl.prepend(template.content);
