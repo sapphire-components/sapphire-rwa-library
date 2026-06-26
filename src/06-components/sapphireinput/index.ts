@@ -13,7 +13,6 @@ interface SapphireInputInit extends BaseComponentInit {
 		OnChange: (value: string) => void;
 		OnClear: () => void;
 		OnEnterKey: () => void;
-		SetIsValid: (isValid: boolean) => void;
 	};
 	debounceChange: number;
 	enabled: boolean;
@@ -33,6 +32,8 @@ export default class SapphireInput extends BaseComponent {
 	private debounceChange!: number;
 	private decimalScale!: number;
 	private inputEl!: HTMLInputElement;
+	private isOutOfBounds = false;
+	private isValid = true;
 	private max: number | null = null;
 	private min: number | null = null;
 	private minusEl!: HTMLDivElement;
@@ -169,8 +170,11 @@ export default class SapphireInput extends BaseComponent {
 		this.plusEl = this.widgetEl.querySelector<HTMLDivElement>('.sapphireinput-plus')!;
 		this.step = init.numericOptions.Step;
 		this.type = init.type;
+		this.isValid = init.isValid ?? true;
+		this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
+		this.widgetEl.dataset.isoutofbounds = 'false';
 
-		// Initial value is "external" — accept it verbatim. Validity is checked at
+		// Initial value is "external" — accept it verbatim. Out-of-bounds is checked at
 		// the end of the constructor; user typing later will mask/clamp on the fly.
 		this.value = init.value ?? '';
 
@@ -196,7 +200,7 @@ export default class SapphireInput extends BaseComponent {
 		this.updateDisplayValue();
 		this.updateHasContent();
 		this.updateStepsButtons();
-		this.checkValidity();
+		this.checkOutOfBounds();
 	}
 
 	private updateDisplayValue(): void {
@@ -223,7 +227,7 @@ export default class SapphireInput extends BaseComponent {
 	}
 
 	parametersChanged(payload: SapphireInputInit): void {
-		// Bounds first — validity check below depends on min/max being current.
+		// Bounds first — out-of-bounds check below depends on min/max being current.
 		const nextMin = SapphireInput.parseBound(payload.numericOptions?.Min);
 		if (nextMin !== this.min) {
 			this.min = nextMin;
@@ -234,8 +238,8 @@ export default class SapphireInput extends BaseComponent {
 			this.max = nextMax;
 		}
 
-		// External value: accept verbatim. We don't mask or clamp — the value
-		// will be flagged invalid below if it doesn't fit the rules.
+		// External value: accept verbatim. We don't mask or clamp — out-of-bounds
+		// is evaluated below if it doesn't fit the rules.
 		const incoming = payload.value ?? '';
 		if (!Helpers.areTheyEqual(incoming, this.value)) {
 			this.value = incoming;
@@ -244,11 +248,12 @@ export default class SapphireInput extends BaseComponent {
 			this.updateStepsButtons();
 		}
 
-		if (payload.isValid === false) {
-			this.setValidity(false);
-		} else {
-			this.checkValidity();
+		if (payload.isValid !== undefined && payload.isValid !== this.isValid) {
+			this.isValid = payload.isValid;
+			this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
 		}
+
+		this.checkOutOfBounds();
 	}
 
 	destroy(): void {
@@ -265,25 +270,25 @@ export default class SapphireInput extends BaseComponent {
 		this.minusEl?.removeEventListener('keydown', this.handleStepKeyDown);
 	}
 
-	private checkValidity(): void {
-		this.setValidity(this.computeValidity());
+	private checkOutOfBounds(): void {
+		this.setOutOfBounds(this.computeOutOfBounds());
 	}
 
-	// True when `this.value` is well-formed for the current type and bounds.
-	// Empty is treated as valid (required-field semantics live elsewhere).
-	private computeValidity(): boolean {
+	// True when `this.value` is outside type/bounds rules.
+	// Empty is treated as in-bounds (required-field semantics live elsewhere).
+	private computeOutOfBounds(): boolean {
 		if (this.type === 'text') {
-			return true;
+			return false;
 		}
 
 		const trimmed = String(this.value).trim();
 		if (trimmed === '') {
-			return true;
+			return false;
 		}
 
 		const numeric = Number(trimmed.replace(',', '.'));
 		if (!Number.isFinite(numeric)) {
-			return false;
+			return true;
 		}
 
 		// Round-trip integrity: masking the raw value must not change its
@@ -291,21 +296,25 @@ export default class SapphireInput extends BaseComponent {
 		const masked = this.maskValue(trimmed);
 		const maskedNumeric = masked === '' ? NaN : Number(masked);
 		if (!Number.isFinite(maskedNumeric) || maskedNumeric !== numeric) {
-			return false;
+			return true;
 		}
 
 		if (this.min !== null && numeric < this.min) {
-			return false;
+			return true;
 		}
 		if (this.max !== null && numeric > this.max) {
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
-	private setValidity(next: boolean): void {
-		this.actions?.SetIsValid(next);
+	private setOutOfBounds(next: boolean): void {
+		if (next === this.isOutOfBounds) {
+			return;
+		}
+		this.isOutOfBounds = next;
+		this.widgetEl.dataset.isoutofbounds = next ? 'true' : 'false';
 	}
 
 	// Parses an inbound bound string. Empty / whitespace / non-numeric => null (no constraint).
@@ -404,9 +413,8 @@ export default class SapphireInput extends BaseComponent {
 		}
 
 		// User-typed path: maskValue + clampValue guarantee the stored value is
-		// well-formed and within bounds, so it's valid by construction. This
-		// also flips validity back to true after a previously-invalid external.
-		this.setValidity(true);
+		// well-formed and within bounds, so it is in-bounds by construction.
+		this.setOutOfBounds(false);
 	}
 
 	private toDisplay(internal: string): string {

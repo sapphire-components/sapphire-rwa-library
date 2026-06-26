@@ -1,0 +1,36 @@
+.sapphireinput[data-enabled='false'] {
+	cursor: not-allowed;
+	.sapphireinput-minus,
+	.sapphireinput-plus,
+	.sapphireinput-icon,
+	.sapphireinput-clear {
+		color: var(--color-text-disabled);
+		pointer-events: none;
+	}
+	.form-control[data-input] {
+		background-color: var(--color-background-disabled);
+		color: var(--color-text-disabled);
+		pointer-events: none;
+	}
+}
+
+.sapphireinput[data-enabled][data-isvalid='false'] {
+	.form-control[data-input] {
+		background-color: var(--color-error-light);
+		border-color: var(--color-error);
+	}
+	.sapphireinput-invalid {
+		display: flex;
+		gap: 4px;
+	}
+}
+
+.sapphireinput-invalid:has(.sapphireinput-invalid-message:empty) {
+	display: none !important;
+}
+
+.sapphireinput[data-isoutofbounds='true'] {
+	.form-control[data-input] {
+		border-color: var(--color-error);
+	}
+}

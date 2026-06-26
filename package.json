@@ -9,7 +9,10 @@
 		"build:watch": "vite build --watch --mode dev",
 		"build": "tsc && vite build --mode prod",
 		"build:icons": "node build-icon-sprite.mjs",
-		"build:tokens": "node build-tokens.mjs"
+		"build:tokens": "node build-tokens.mjs",
+		"release:patch": "release-it patch --ci",
+		"release:minor": "release-it minor --ci",
+		"release:major": "release-it major --ci"
 	},
 	"dependencies": {
 		"concurrently": "^9.2.1",
@@ -26,6 +29,7 @@
 	},
 	"devDependencies": {
 		"esbuild": "^0.28.0",
+		"release-it": "^20.2.1",
 		"source-map-js": "^1.2.1"
 	}
 }
