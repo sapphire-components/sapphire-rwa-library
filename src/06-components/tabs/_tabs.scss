@@ -26,7 +26,7 @@ div[data-block$='TabContent'] {
 		&-button {
 			@include focus-visible();
 			align-items: center;
-			color: var(--color-neutral-7);
+			color: var(--color-text);
 			cursor: pointer;
 			display: flex;
 			font-weight: 700;
@@ -62,7 +62,7 @@ div[data-block$='TabContent'] {
 	background: transparent;
 	border: 0;
 	border-block-end: 2px solid transparent;
-	color: var(--color-neutral-8);
+	color: var(--color-neutral-7);
 	cursor: pointer;
 	display: flex;
 	font-weight: 700;

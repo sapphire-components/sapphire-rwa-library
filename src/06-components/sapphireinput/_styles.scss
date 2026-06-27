@@ -56,7 +56,7 @@ div[data-block$='SapphireInput'] {
 		padding-inline-start: 36px;
 		width: 100%;
 		&::placeholder {
-			color: var(--color-neutral-6);
+			color: var(--color-text-disabled);
 		}
 	}
 }
@@ -71,7 +71,7 @@ div[data-block$='SapphireInput'] {
 }
 
 .sapphireinput-hint {
-	color: var(--color-neutral-7);
+	color: var(--color-text-disabled);
 	font-size: var(--font-size-xs);
 	padding-inline: var(--space-xs);
 	&:empty {
@@ -137,7 +137,7 @@ div[data-block$='SapphireInput'] {
 
 .sapphireinput[data-theme='filter'] {
 	.form-control[data-input] {
-		background-color: $color-interactive;
+		background-color: var(--color-interactive);
 		border-radius: 100px;
 	}
 }

@@ -9,8 +9,8 @@ div[data-block$='FilterBar'] {
 	width: 100%;
 
 	&-wrapper {
-		background-color: $color-surface;
-		border: solid 1px var(--color-neutral-5);
+		background-color: var(--color-background);
+		border: solid 1px var(--color-border);
 		border-radius: var(--border-radius-soft);
 		display: flex;
 		gap: 12px;

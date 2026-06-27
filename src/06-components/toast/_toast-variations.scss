@@ -4,25 +4,25 @@
 	&[data-type='alert-info'] {
 		background-color: var(--color-info);
 		.toast-notification-progress {
-			background-color: color.adjust(#5db0db, $lightness: -10%);
+			background-color: var(--color-info-dark);
 		}
 	}
 	&[data-type='alert-error'] {
 		background-color: var(--color-error);
 		.toast-notification-progress {
-			background-color: color.adjust(#d0011b, $lightness: -10%);
+			background-color: var(--color-error-dark);
 		}
 	}
 	&[data-type='alert-success'] {
 		background-color: var(--color-success);
 		.toast-notification-progress {
-			background-color: color.adjust(#7cb342, $lightness: -10%);
+			background-color: var(--color-success-dark);
 		}
 	}
 	&[data-type='alert-warning'] {
 		background-color: var(--color-warning);
 		.toast-notification-progress {
-			background-color: color.adjust(#ff9f00, $lightness: -10%);
+			background-color: var(--color-warning-dark);
 		}
 	}
 }

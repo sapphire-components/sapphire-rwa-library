@@ -1,5 +1,5 @@
 body:has(.layoutwrapper[data-theme='login']) {
-	background-color: #fff;
+	background-color: var(--color-neutral-0);
 }
 
 .layoutwrapper[data-theme='login'] {
@@ -26,9 +26,9 @@ body:has(.layoutwrapper[data-theme='login']) {
 }
 
 .login-floating-content {
-	background-color: #fff;
+	background-color: var(--color-neutral-0);
 	border-radius: 8px;
-	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: var(--box-shadow-md);
 	left: unset;
 	max-width: 400px;
 	padding: 24px;

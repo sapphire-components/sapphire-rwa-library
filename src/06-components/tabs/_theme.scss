@@ -8,7 +8,7 @@
 	}
 	> .sapphire-tabs-header .sapphire-tabheader[data-active='true'] {
 		.sapphire-tabheader-content {
-			background-color: var(--color-primary-light);
+			background-color: var(--color-primary-lighter);
 			color: var(--color-primary);
 		}
 	}
@@ -29,14 +29,14 @@
 		}
 
 		.sapphire-tabheader-content {
-			background-color: var(--color-neutral-2);
+			background-color: var(--color-interactive);
 			border: none;
 			border-radius: 99px;
 		}
 	}
 	> .sapphire-tabs-header .sapphire-tabheader[data-active='true'] {
 		.sapphire-tabheader-content {
-			background-color: var(--color-primary-light);
+			background-color: var(--color-primary-lighter);
 			color: var(--color-primary);
 		}
 	}
