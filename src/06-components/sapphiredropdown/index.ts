@@ -5,6 +5,7 @@ import { tmplOption, tmplPanel } from './templates';
 interface ISapphireDropdownConfig {
 	Clear: boolean;
 	HasChips: boolean;
+	HasSelectAll: boolean;
 	Multiple: boolean;
 	NoOptionsText: string;
 	NoSearchResultsText: string;
@@ -13,6 +14,7 @@ interface ISapphireDropdownConfig {
 	SearchKeyword: string;
 	SearchPlaceholder: string;
 	SearchServerSide: boolean;
+	SelectAllText: string;
 	SelectedOptionsText: string;
 	ShowDescription: boolean;
 	ShowIcon: boolean;
@@ -42,6 +44,7 @@ interface ISapphireDropdown extends BaseComponentInit {
 	optionsList: ISapphireDropdownOption[];
 	selectedList: ISapphireDropdownOption[];
 	theme: string;
+	validationMessage: string;
 	width: string;
 }
 
@@ -60,9 +63,11 @@ export default class SapphireDropdown extends BaseComponent {
 	private placeholder = '';
 	private searchKeyword = '';
 	private searchPlaceholder = '';
+	private selectAllText = '';
 	private selectedList: ISapphireDropdownOption[] = [];
 	private selectedOptionsText = '';
 	private theme = '';
+	private validationMessage = '';
 
 	private triggerEl!: HTMLDivElement;
 	private valueEl!: HTMLElement;
@@ -71,9 +76,11 @@ export default class SapphireDropdown extends BaseComponent {
 	private searchEl: HTMLInputElement | null = null;
 	private searchClearEl: HTMLElement | null = null;
 	private listEl!: HTMLUListElement;
+	private selectAllEl: HTMLElement | null = null;
 	private emptyEl!: HTMLElement;
 	private loadingEl!: HTMLElement;
 	private chipsContainerEl: HTMLElement | null = null;
+	private validationMessageEl: HTMLElement | null = null;
 
 	private scrollEndEmitted = false;
 	private tippyInstance: TippyInstance | null = null;
@@ -204,6 +211,10 @@ export default class SapphireDropdown extends BaseComponent {
 	};
 
 	private readonly onListClick = (event: MouseEvent): void => {
+		if ((event.target as HTMLElement).closest('.sapphiredropdown-selectall')) {
+			this.toggleSelectAll();
+			return;
+		}
 		const optionEl = (event.target as HTMLElement).closest<HTMLElement>('.sapphiredropdown-option');
 		if (!optionEl || optionEl.getAttribute('aria-disabled') === 'true') return;
 		const value = optionEl.dataset.value ?? '';
@@ -258,6 +269,8 @@ export default class SapphireDropdown extends BaseComponent {
 			return;
 		}
 
+		console.log('init', init);
+
 		this.actions = init.actions;
 		this.config = init.config;
 		this.enabled = init.enabled;
@@ -266,6 +279,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.optionsList = init.optionsList ?? [];
 		this.selectedList = init.selectedList ?? [];
 		this.normalizeSelectedList();
+		this.hydrateSelectedList();
 		this.placeholder = this.config.Placeholder ?? '';
 		this.searchPlaceholder = this.config.SearchPlaceholder ?? '';
 		this.searchKeyword = this.config.SearchKeyword ?? '';
@@ -273,7 +287,9 @@ export default class SapphireDropdown extends BaseComponent {
 		this.noOptionsText = this.config.NoOptionsText ?? '';
 		this.noSearchResultsText = this.config.NoSearchResultsText ?? '';
 		this.selectedOptionsText = this.config.SelectedOptionsText ?? '';
+		this.selectAllText = this.config.SelectAllText ?? '';
 		this.hasChips = this.config.HasChips;
+		this.validationMessage = init.validationMessage ?? '';
 
 		this.emitSearchDebounced = Helpers.debounce((keyword: string) => this.actions.OnSearch(keyword), 300);
 
@@ -283,6 +299,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.buildDom();
 		this.renderOptions();
 		this.updateTriggerLabel();
+		this.updateValidationMessage();
 		this.updateLoadingState();
 		this.initTippy();
 		this.bindEvents();
@@ -385,6 +402,11 @@ export default class SapphireDropdown extends BaseComponent {
 
 	private renderOptions(): void {
 		this.listEl.replaceChildren();
+		this.selectAllEl = null;
+
+		if (this.config.Multiple && this.config.HasSelectAll) {
+			this.renderSelectAllRow();
+		}
 
 		for (const option of this.optionsList) {
 			const optionFragment = tmplOption.content.cloneNode(true);
@@ -424,12 +446,56 @@ export default class SapphireDropdown extends BaseComponent {
 		this.activeValue = null;
 		this.scrollEndEmitted = false;
 		this.updateActiveDescendant();
+		this.updateSelectAllState();
 		// Client-side: re-apply the active keyword to the freshly rendered list.
 		if (!this.config.SearchServerSide && this.searchKeyword.trim().length > 0) {
 			this.filterOptions(this.searchKeyword);
 		} else {
 			this.updateEmptyState();
 		}
+	}
+
+	// Pinned row at the top of the list (Multiple + HasSelectAll) that toggles
+	// every option on/off. Kept off the .sapphiredropdown-option class so it is
+	// excluded from search filtering and keyboard navigation.
+	private renderSelectAllRow(): void {
+		const rowEl = document.createElement('li');
+		rowEl.className = 'sapphiredropdown-selectall';
+		rowEl.setAttribute('role', 'option');
+		rowEl.setAttribute('aria-selected', 'false');
+
+		const checkbox = document.createElement('span');
+		checkbox.className = 'sapphiredropdown-option-checkbox';
+		checkbox.setAttribute('aria-hidden', 'true');
+		checkbox.innerHTML = Helpers.placeIcon('check', 's');
+		rowEl.appendChild(checkbox);
+
+		const label = document.createElement('span');
+		label.className = 'sapphiredropdown-option-label';
+		label.textContent = this.selectAllText;
+		rowEl.appendChild(label);
+
+		this.listEl.appendChild(rowEl);
+		this.selectAllEl = rowEl;
+	}
+
+	private toggleSelectAll(): void {
+		const allSelected = this.optionsList.length > 0 && this.optionsList.every((option) => this.isSelected(option.Value));
+		this.selectedList = allSelected ? [] : [...this.optionsList];
+		this.refreshSelectedState();
+		this.updateTriggerLabel();
+		this.emitChange();
+	}
+
+	// Reflect the aggregate selection: fully checked when every option is
+	// selected, indeterminate when only some are.
+	private updateSelectAllState(): void {
+		if (!this.selectAllEl) return;
+		const total = this.optionsList.length;
+		const selectedCount = this.optionsList.reduce((count, option) => count + (this.isSelected(option.Value) ? 1 : 0), 0);
+		const allSelected = total > 0 && selectedCount === total;
+		this.selectAllEl.setAttribute('aria-selected', allSelected ? 'true' : 'false');
+		this.selectAllEl.dataset.indeterminate = selectedCount > 0 && !allSelected ? 'true' : 'false';
 	}
 
 	// While searching, hide the list/empty message and show the loading spinner;
@@ -759,6 +825,7 @@ export default class SapphireDropdown extends BaseComponent {
 		for (const optionEl of this.optionEls()) {
 			optionEl.setAttribute('aria-selected', this.isSelected(optionEl.dataset.value ?? '') ? 'true' : 'false');
 		}
+		this.updateSelectAllState();
 	}
 
 	private updateTriggerLabel(): void {
@@ -767,6 +834,23 @@ export default class SapphireDropdown extends BaseComponent {
 		if (this.hasChips) {
 			this.renderChips();
 		}
+	}
+
+	// Renders a validation message below the trigger while invalid. The element
+	// only exists when isValid is false; its text tracks validationMessage.
+	private updateValidationMessage(): void {
+		if (!this.isValid) {
+			if (!this.validationMessageEl) {
+				this.validationMessageEl = document.createElement('div');
+				this.validationMessageEl.className = 'validation-message';
+				this.triggerEl.after(this.validationMessageEl);
+			}
+			this.validationMessageEl.textContent = this.validationMessage;
+			return;
+		}
+
+		this.validationMessageEl?.remove();
+		this.validationMessageEl = null;
 	}
 
 	private createChipElement(option: ISapphireDropdownOption): HTMLElement {
@@ -860,9 +944,43 @@ export default class SapphireDropdown extends BaseComponent {
 
 	// Single-select accepts at most one entry; discard extras from external payloads.
 	private normalizeSelectedList(): void {
+		// Drop entries with no Value; they can't be matched, rendered, or toggled.
+		// Also drop placeholder-like "0" entries that carry no Label (empty selections
+		// echoed back from OutSystems as Value="0").
+		this.selectedList = this.selectedList.filter((item) => {
+			const hasValue = item.Value !== null && item.Value !== undefined && item.Value !== '';
+			if (!hasValue) return false;
+
+			const hasLabel = item.Label !== null && item.Label !== undefined && item.Label !== '';
+			if (item.Value === '0' && !hasLabel) return false;
+
+			return true;
+		});
+
 		if (!this.config.Multiple && this.selectedList.length > 1) {
 			this.selectedList = this.selectedList.slice(0, 1);
 		}
+	}
+
+	// Selected items may arrive with empty fields (e.g. a payload that just echoes
+	// the chosen values). Backfill any empty Label/Description/Icon per field from
+	// the matching optionsList entry so the trigger and chips render full content.
+	private hydrateSelectedList(): void {
+		if (this.selectedList.length === 0 || this.optionsList.length === 0) return;
+
+		this.selectedList = this.selectedList.map((selected) => {
+			if (selected.Label && selected.Description && selected.Icon) return selected;
+
+			const match = this.optionByValue(selected.Value);
+			if (!match) return selected;
+
+			return {
+				Value: selected.Value,
+				Label: selected.Label || match.Label,
+				Description: selected.Description || match.Description,
+				Icon: selected.Icon || match.Icon,
+			};
+		});
 	}
 
 	private optionByValue(value: string): ISapphireDropdownOption | undefined {
@@ -895,6 +1013,7 @@ export default class SapphireDropdown extends BaseComponent {
 		if (!this.widgetEl) return;
 
 		let needsLabelRefresh = false;
+		let needsHydrate = false;
 		if (payload.enabled !== undefined && payload.enabled !== this.enabled) {
 			this.enabled = payload.enabled;
 			this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
@@ -909,6 +1028,7 @@ export default class SapphireDropdown extends BaseComponent {
 			this.optionsList = payload.optionsList;
 			this.renderOptions();
 			needsLabelRefresh = true;
+			needsHydrate = true;
 		}
 
 		if (payload.selectedList && !Helpers.areTheyEqual(payload.selectedList, this.selectedList)) {
@@ -916,6 +1036,13 @@ export default class SapphireDropdown extends BaseComponent {
 			this.normalizeSelectedList();
 			this.refreshSelectedState();
 			needsLabelRefresh = true;
+			needsHydrate = true;
+		}
+
+		// Backfill any value-only selected items against the current options before
+		// the trigger/chips re-render.
+		if (needsHydrate) {
+			this.hydrateSelectedList();
 		}
 
 		if (payload.isSearching !== undefined && payload.isSearching !== this.isSearching) {
@@ -923,9 +1050,20 @@ export default class SapphireDropdown extends BaseComponent {
 			this.updateLoadingState();
 		}
 
+		let needsValidationRefresh = false;
 		if (payload.isValid !== undefined && payload.isValid !== this.isValid) {
 			this.isValid = payload.isValid;
 			this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
+			needsValidationRefresh = true;
+		}
+
+		if (payload.validationMessage !== undefined && payload.validationMessage !== this.validationMessage) {
+			this.validationMessage = payload.validationMessage;
+			needsValidationRefresh = true;
+		}
+
+		if (needsValidationRefresh) {
+			this.updateValidationMessage();
 		}
 
 		if (needsLabelRefresh) {

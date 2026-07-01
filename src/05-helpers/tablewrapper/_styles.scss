@@ -5,12 +5,19 @@
 	overflow-x: auto;
 	position: relative;
 	scrollbar-width: thin;
-	> div {
+	.tablewrapper-table {
 		display: contents;
 	}
 	table {
 		thead {
 			height: 48px;
+			th {
+				> span,
+				> .sortable-icon {
+					display: inline-block;
+					vertical-align: middle;
+				}
+			}
 		}
 		.table-header-clone {
 			display: none;
@@ -65,5 +72,27 @@
 	}
 	.table-scroll-top__inner {
 		height: 1px;
+	}
+}
+
+.tablewrapper[data-isloading='true'] {
+	table {
+		opacity: 0.5;
+	}
+}
+
+.tablewrapper-norecords {
+	background-color: var(--color-surface);
+	border: solid 1px var(--color-border);
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	display: none;
+	min-height: 150px;
+	place-items: center;
+}
+
+.tablewrapper[data-norecords='true'] {
+	.tablewrapper-norecords {
+		display: grid;
 	}
 }

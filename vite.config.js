@@ -6,15 +6,7 @@ import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import { SourceMapConsumer, SourceMapGenerator } from 'source-map-js';
 
-const SCSS_PARTIAL_DIRS = [
-	'01-foundations',
-	'02-core',
-	'03-designsystem',
-	'04-outsystems',
-	'05-helpers',
-	'06-components',
-	'09-utils',
-];
+const SCSS_PARTIAL_DIRS = ['01-foundations', '02-designsystem', '03-core', '04-outsystems', '05-helpers', '06-components', '09-utils'];
 
 const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
@@ -77,6 +69,7 @@ export default defineConfig(({ command, mode }) => {
 				sourcemap,
 			}),
 			bannerOnDisk(banner),
+			cssHotSwap({ outDir: 'dist', outFile: 'sapphire-rwa-library.css' }),
 			mkcert(),
 		],
 	};
@@ -108,6 +101,104 @@ function bannerOnDisk(banner) {
 				if (content.startsWith('/*!')) continue; // avoid double-banner in watch mode
 				fs.writeFileSync(filePath, banner + content, 'utf8');
 			}
+		},
+	};
+}
+
+// Dev-only CSS hot-swap for consumers that load the built stylesheet from the
+// preview server (e.g. an OutSystems page pointing at https://localhost:4173).
+// The page is not served by Vite, so Vite's own HMR client is unavailable.
+// Instead the preview server watches the emitted CSS and pushes a Server-Sent
+// Event on change; a tiny client script (served at /__css_hmr_client.js) swaps
+// the <link> in place — no page reload. Add this once to the dev page:
+//   <script src="https://localhost:4173/__css_hmr_client.js"></script>
+function cssHotSwap({ outDir, outFile }) {
+	const SSE_PATH = '/__css_hmr';
+	const CLIENT_PATH = '/__css_hmr_client.js';
+	const CLIENT_SCRIPT = `(function () {
+	var self = document.currentScript;
+	var origin = self ? new URL(self.src).origin : location.origin;
+	var es = new EventSource(origin + ${JSON.stringify(SSE_PATH)});
+	es.addEventListener('css-update', function () {
+		document.querySelectorAll('link[rel="stylesheet"]').forEach(function (link) {
+			var href;
+			try { href = new URL(link.href, location.href); } catch (e) { return; }
+			if (href.origin !== origin) return;
+			href.searchParams.set('t', Date.now());
+			var next = link.cloneNode();
+			next.href = href.href;
+			next.addEventListener('load', function () { link.remove(); });
+			next.addEventListener('error', function () { next.remove(); });
+			link.parentNode.insertBefore(next, link.nextSibling);
+		});
+		console.debug('[css-hmr] stylesheet reloaded');
+	});
+	console.info('[css-hmr] connected to', origin);
+})();
+`;
+
+	return {
+		name: 'css-hot-swap',
+		apply: 'serve', // preview + dev server only; excluded from builds
+		configurePreviewServer(server) {
+			const clients = new Set();
+			const absOutDir = path.resolve(process.cwd(), outDir);
+
+			const broadcast = () => {
+				const payload = `event: css-update\ndata: ${Date.now()}\n\n`;
+				for (const res of clients) res.write(payload);
+			};
+
+			// Watch the output dir (not the file itself) so we survive the file
+			// being replaced on each rebuild. Retry until the dir exists, since
+			// `build:watch` and `serve:dist` start concurrently.
+			let debounce;
+			const startWatch = () => {
+				if (!fs.existsSync(absOutDir)) {
+					setTimeout(startWatch, 500);
+					return;
+				}
+				fs.watch(absOutDir, (_event, filename) => {
+					if (filename && path.basename(filename) !== outFile) return;
+					clearTimeout(debounce);
+					debounce = setTimeout(broadcast, 120);
+				});
+				server.config.logger.info(`  \x1b[36m➜\x1b[0m  css-hmr: watching ${outFile}, client at ${CLIENT_PATH}`);
+			};
+			startWatch();
+
+			server.middlewares.use((req, res, next) => {
+				const url = (req.url || '').split('?')[0];
+
+				if (url === CLIENT_PATH) {
+					res.writeHead(200, {
+						'Content-Type': 'application/javascript; charset=utf-8',
+						'Cache-Control': 'no-cache',
+						'Access-Control-Allow-Origin': '*',
+					});
+					res.end(CLIENT_SCRIPT);
+					return;
+				}
+
+				if (url === SSE_PATH) {
+					res.writeHead(200, {
+						'Content-Type': 'text/event-stream',
+						'Cache-Control': 'no-cache',
+						Connection: 'keep-alive',
+						'Access-Control-Allow-Origin': '*',
+					});
+					res.write('retry: 1000\n\n');
+					clients.add(res);
+					const heartbeat = setInterval(() => res.write(':\n\n'), 20000);
+					req.on('close', () => {
+						clearInterval(heartbeat);
+						clients.delete(res);
+					});
+					return;
+				}
+
+				next();
+			});
 		},
 	};
 }
@@ -200,9 +291,7 @@ function scssBundle({ srcDir, partialDirs, outFile, banner, sourcemap }) {
 					// pre-rewrite the map so the consumer hands us those paths
 					// directly via `m.source`.
 					const resolvedSources = map.sources.map((src) => {
-						const abs = src.startsWith('file://')
-							? fileURLToPath(src)
-							: path.resolve(path.dirname(filePath), src);
+						const abs = src.startsWith('file://') ? fileURLToPath(src) : path.resolve(path.dirname(filePath), src);
 						return path.relative(outDir, abs).replace(/\\/g, '/');
 					});
 					const adjustedMap = { ...map, sources: resolvedSources, sourceRoot: '' };

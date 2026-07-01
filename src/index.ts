@@ -2,31 +2,37 @@ import './core/init-bootstrap';
 
 import { injectIconSprite } from './core/iconsSprite';
 import { installBodyPlatformClassStripper } from './core/stripBodyPlatformClasses';
+import { installClickCooldown } from './core/clickCooldown';
+
+import DesignSystemColors from './02-designsystem/_designsystem-screen-colors';
+
+import LayoutWrapper from './03-core/layout';
+import SapphireIntl from './03-core/SapphireIntl';
+
+import FilterBar from './05-helpers/filterbar';
+import LabelValue from './05-helpers/labelvalue';
+import TableWrapper from './05-helpers/tablewrapper';
 
 import ButtonDropdown from './06-components/buttondropdown';
 import Chip from './06-components/chip';
-import DesignSystemColors from './03-designsystem/_designsystem-screen-colors';
 import DropdownMenu from './06-components/dropdownmenu';
-import FilterBar from './05-helpers/filterbar';
-import Helpers from './09-utils/helpers';
-import LabelValue from './05-helpers/labelvalue';
-import LayoutWrapper from './02-core/layout';
 import Overlay from './06-components/overlay';
 import ResponsiveGrid from './06-components/responsive-grid';
 import SapphireDropdown from './06-components/sapphiredropdown';
 import SapphireInput from './06-components/sapphireinput';
-import SapphireIntl from './02-core/SapphireIntl';
 import SapphirePopupContent from './06-components/sapphirepopupcontent';
 import ScrollableContent from './06-components/scrollablecontent';
-import TableWrapper from './05-helpers/tablewrapper';
 import TextEditor from './06-components/texteditor';
 import Toast from './06-components/toast';
-import { LocalStorageKeys } from './09-utils/local-storage-keys';
 import { Tabs, TabHeader, TabContent } from './06-components/tabs';
+
+import Helpers from './09-utils/helpers';
+import { LocalStorageKeys } from './09-utils/local-storage-keys';
 
 function init(): void {
 	injectIconSprite();
 	installBodyPlatformClassStripper();
+	installClickCooldown();
 
 	const storedLocale: any = Helpers.readFromLocalStorage<string>(LocalStorageKeys.locale);
 	window.SapphireRWALibrary.State.locale = storedLocale['localeCode'];

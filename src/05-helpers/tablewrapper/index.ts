@@ -3,11 +3,15 @@ import { BaseComponent, type BaseComponentInit } from '../../core/base';
 interface TableWrapperConfigOptions extends BaseComponentInit {
 	hasScrollTop: boolean;
 	height: number;
+	isLoading: boolean;
 	maxHeight: number;
+	pageCount: number;
 }
 
 export default class TableWrapper extends BaseComponent {
 	private configOptions!: TableWrapperConfigOptions;
+	private isLoading = false;
+	private pageCount = 0;
 	private syncing = false;
 	private tableEl!: HTMLTableElement;
 	private tableHeaderCloneEl!: HTMLDivElement;
@@ -27,9 +31,16 @@ export default class TableWrapper extends BaseComponent {
 		console.log('TableWrapper: constructor', configOptions);
 
 		this.configOptions = configOptions;
+
+		this.isLoading = this.configOptions.isLoading;
+		this.pageCount = this.configOptions.pageCount;
+
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
-		this.theadEl = this.tableEl.querySelector<HTMLTableSectionElement>('thead')!;
 		this.tableHeaderEl = this.widgetEl.querySelector<HTMLDivElement>('.table-header')!;
+		this.theadEl = this.tableEl.querySelector<HTMLTableSectionElement>('thead')!;
+
+		this.reflectStateAttributes();
+		this.reflectPageCount();
 
 		this.setupDOM();
 
@@ -104,6 +115,10 @@ export default class TableWrapper extends BaseComponent {
 		this.widgetEl.style.setProperty('--tablewrapper-width', `${this.widgetEl.clientWidth}px`);
 	}
 
+	private reflectStateAttributes(): void {
+		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
+	}
+
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
 		console.log('layout resized tablewrapper');
 		if (this.configOptions.hasScrollTop) {
@@ -112,6 +127,28 @@ export default class TableWrapper extends BaseComponent {
 
 		this.setWidgetRect();
 	};
+
+	parametersChanged(payload: TableWrapperConfigOptions): void {
+		if (!this.widgetEl) return;
+
+		if (payload.isLoading !== undefined && payload.isLoading !== this.isLoading) {
+			this.isLoading = payload.isLoading;
+			this.reflectStateAttributes();
+		}
+
+		if (payload.pageCount !== undefined && payload.pageCount !== this.pageCount) {
+			this.pageCount = payload.pageCount;
+			this.reflectPageCount();
+		}
+	}
+
+	private reflectPageCount(): void {
+		if (this.pageCount === 0) {
+			this.widgetEl.dataset.norecords = 'true';
+		} else {
+			this.widgetEl.dataset.norecords = 'false';
+		}
+	}
 
 	destroy() {
 		super.destroy();

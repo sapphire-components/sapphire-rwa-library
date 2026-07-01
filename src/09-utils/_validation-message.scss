@@ -1,0 +1,9 @@
+.validation-message {
+	color: var(--color-error);
+	font-size: var(--font-size-xs);
+	padding-block: var(--space-xs);
+	padding-inline: 0;
+	&:empty {
+		display: none;
+	}
+}

@@ -1,0 +1,6 @@
+// Visual state applied by core/clickCooldown.ts while an element is rate-limited.
+// NOTE: do not set `pointer-events: none` here — the cooldown gate relies on
+// continuing to receive events so repeated presses can reset the timer.
+.is-cooldown {
+	// opacity: 0.5;
+}
