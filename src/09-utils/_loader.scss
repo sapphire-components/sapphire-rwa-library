@@ -1,0 +1,29 @@
+/* Shared loading primitives used across components (dropdown, table wrapper, ...). */
+
+.sapphire-spinner {
+	animation: sapphire-spin 0.6s linear infinite;
+	border: 2px solid var(--color-neutral-3);
+	border-radius: 50%;
+	border-top-color: var(--color-primary);
+	height: 24px;
+	width: 24px;
+}
+
+/* Absolutely centered overlay that fills its nearest positioned ancestor. */
+.sapphire-loading-overlay {
+	align-items: center;
+	display: flex;
+	inset: 0;
+	justify-content: center;
+	pointer-events: none;
+	position: absolute;
+	&[hidden] {
+		display: none;
+	}
+}
+
+@keyframes sapphire-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

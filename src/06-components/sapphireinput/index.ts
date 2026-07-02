@@ -18,6 +18,7 @@ interface SapphireInputInit extends BaseComponentInit {
 	enabled: boolean;
 	hasSteps: boolean;
 	isValid: boolean;
+	maxLength: number;
 	numericOptions: SapphireInputNumericOptions;
 	placeholder: string;
 	theme: string;
@@ -35,11 +36,13 @@ export default class SapphireInput extends BaseComponent {
 	private isOutOfBounds = false;
 	private isValid = true;
 	private max: number | null = null;
+	private maxLength = 0;
 	private min: number | null = null;
 	private minusEl!: HTMLDivElement;
 	private plusEl!: HTMLDivElement;
 	private step!: number;
 	private type!: SapphireInputInit['type'];
+	private validationMessageEl: HTMLElement | null = null;
 	private value!: string;
 
 	private readonly handleInput = (): void => {
@@ -170,13 +173,16 @@ export default class SapphireInput extends BaseComponent {
 		this.plusEl = this.widgetEl.querySelector<HTMLDivElement>('.sapphireinput-plus')!;
 		this.step = init.numericOptions.Step;
 		this.type = init.type;
+		this.maxLength = init.maxLength ?? 0;
 		this.isValid = init.isValid ?? true;
+		this.validationMessageEl = this.widgetEl.querySelector<HTMLElement>('.sapphireinput-invalid');
 		this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
 		this.widgetEl.dataset.isoutofbounds = 'false';
 
-		// Initial value is "external" — accept it verbatim. Out-of-bounds is checked at
-		// the end of the constructor; user typing later will mask/clamp on the fly.
-		this.value = init.value ?? '';
+		// Initial value is "external" — accept it verbatim (only capped to maxLength).
+		// Out-of-bounds is checked at the end of the constructor; user typing later
+		// will mask/clamp on the fly.
+		this.value = this.truncateToMaxLength(init.value ?? '');
 
 		this.inputEl = this.widgetEl.querySelector<HTMLInputElement>('input[data-input]')!;
 
@@ -186,6 +192,7 @@ export default class SapphireInput extends BaseComponent {
 		this.inputEl.name = `input-${init.runtimeId}`;
 		this.inputEl.placeholder = init.placeholder;
 		this.inputEl.spellcheck = false;
+		this.applyMaxLength();
 
 		this.clearEl?.addEventListener('click', this.handleClearClick);
 		this.clearEl?.addEventListener('keydown', this.handleClearKeyDown);
@@ -200,7 +207,36 @@ export default class SapphireInput extends BaseComponent {
 		this.updateDisplayValue();
 		this.updateHasContent();
 		this.updateStepsButtons();
+		this.updateValidationMessage();
 		this.checkOutOfBounds();
+	}
+
+	// Sets the native maxlength when a positive limit is provided; a value of 0
+	// (or less) means "no limit" and clears any previously set attribute.
+	private applyMaxLength(): void {
+		if (this.maxLength > 0) {
+			this.inputEl.maxLength = this.maxLength;
+		} else {
+			this.inputEl.removeAttribute('maxlength');
+		}
+	}
+
+	// Native maxlength only caps user typing/paste; externally-set values must be
+	// truncated explicitly. A limit of 0 (or less) means "no limit".
+	private truncateToMaxLength(value: string): string {
+		if (this.maxLength > 0 && value.length > this.maxLength) {
+			return value.slice(0, this.maxLength);
+		}
+		return value;
+	}
+
+	// The backend renders the message element (.sapphireinput-invalid); we only
+	// toggle its visibility: shown while invalid, hidden while valid.
+	private updateValidationMessage(): void {
+		if (!this.validationMessageEl) {
+			return;
+		}
+		this.validationMessageEl.hidden = this.isValid;
 	}
 
 	private updateDisplayValue(): void {
@@ -238,9 +274,16 @@ export default class SapphireInput extends BaseComponent {
 			this.max = nextMax;
 		}
 
-		// External value: accept verbatim. We don't mask or clamp — out-of-bounds
-		// is evaluated below if it doesn't fit the rules.
-		const incoming = payload.value ?? '';
+		// Apply maxLength before the value so the incoming value is truncated
+		// against the current limit.
+		if (payload.maxLength !== undefined && payload.maxLength !== this.maxLength) {
+			this.maxLength = payload.maxLength;
+			this.applyMaxLength();
+		}
+
+		// External value: accept verbatim, only capped to maxLength. We don't mask
+		// or clamp — out-of-bounds is evaluated below if it doesn't fit the rules.
+		const incoming = this.truncateToMaxLength(payload.value ?? '');
 		if (!Helpers.areTheyEqual(incoming, this.value)) {
 			this.value = incoming;
 			this.updateDisplayValue();
@@ -251,6 +294,7 @@ export default class SapphireInput extends BaseComponent {
 		if (payload.isValid !== undefined && payload.isValid !== this.isValid) {
 			this.isValid = payload.isValid;
 			this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
+			this.updateValidationMessage();
 		}
 
 		this.checkOutOfBounds();

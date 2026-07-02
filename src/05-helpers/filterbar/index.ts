@@ -27,7 +27,6 @@ export default class FilterBar extends BaseComponent {
 	}
 
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
-		console.log('layout resized filterbar');
 		if (this.widgetEl.dataset.isfixed === 'true') {
 			this.wrapperEl.style.width = this.placeholderEl.getBoundingClientRect().width + 'px';
 		}

@@ -1,0 +1,31 @@
+.alert-info a,
+.alert-info a:hover,
+.alert-info a:focus,
+.alert-info a:active {
+	color: var(--color-neutral-0);
+	text-decoration: underline;
+}
+
+.alert-error a,
+.alert-error a:hover,
+.alert-error a:focus,
+.alert-error a:active {
+	color: var(--color-neutral-0);
+	text-decoration: underline;
+}
+
+.alert-success a,
+.alert-success a:hover,
+.alert-success a:focus,
+.alert-success a:active {
+	color: var(--color-neutral-0);
+	text-decoration: underline;
+}
+
+.alert-warning a,
+.alert-warning a:hover,
+.alert-warning a:focus,
+.alert-warning a:active {
+	color: var(--color-neutral-10);
+	text-decoration: underline;
+}

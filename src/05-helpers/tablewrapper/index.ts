@@ -1,4 +1,5 @@
 import { BaseComponent, type BaseComponentInit } from '../../core/base';
+import { createLoadingOverlay } from '../../09-utils/loader';
 
 interface TableWrapperConfigOptions extends BaseComponentInit {
 	hasScrollTop: boolean;
@@ -11,6 +12,7 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 export default class TableWrapper extends BaseComponent {
 	private configOptions!: TableWrapperConfigOptions;
 	private isLoading = false;
+	private loadingEl?: HTMLDivElement;
 	private pageCount = 0;
 	private syncing = false;
 	private tableEl!: HTMLTableElement;
@@ -19,6 +21,7 @@ export default class TableWrapper extends BaseComponent {
 	private theadEl!: HTMLTableSectionElement;
 	private topInnerEl?: HTMLDivElement;
 	private topScrollEl!: HTMLDivElement;
+	private hasScrollTop = false;
 
 	constructor(configOptions: TableWrapperConfigOptions) {
 		super(configOptions);
@@ -28,11 +31,10 @@ export default class TableWrapper extends BaseComponent {
 			return;
 		}
 
-		console.log('TableWrapper: constructor', configOptions);
-
 		this.configOptions = configOptions;
 
 		this.isLoading = this.configOptions.isLoading;
+		this.hasScrollTop = this.configOptions.hasScrollTop;
 		this.pageCount = this.configOptions.pageCount;
 
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
@@ -41,6 +43,7 @@ export default class TableWrapper extends BaseComponent {
 
 		this.reflectStateAttributes();
 		this.reflectPageCount();
+		this.updateLoadingState();
 
 		this.setupDOM();
 
@@ -51,9 +54,7 @@ export default class TableWrapper extends BaseComponent {
 
 			this.topInnerEl.style.width = `${this.tableEl.scrollWidth}px`;
 
-			console.log('table scroll top scroll listener added', this.topScrollEl);
 			this.topScrollEl.addEventListener('scroll', () => {
-				console.log('table scroll top scroll', this.syncing);
 				if (this.syncing) return;
 				this.syncing = true;
 				this.widgetEl.scrollLeft = this.topScrollEl.scrollLeft;
@@ -117,10 +118,10 @@ export default class TableWrapper extends BaseComponent {
 
 	private reflectStateAttributes(): void {
 		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
+		this.widgetEl.dataset.hasscrolltop = this.hasScrollTop ? 'true' : 'false';
 	}
 
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
-		console.log('layout resized tablewrapper');
 		if (this.configOptions.hasScrollTop) {
 			this.topInnerEl!.style.width = ``;
 		}
@@ -134,12 +135,28 @@ export default class TableWrapper extends BaseComponent {
 		if (payload.isLoading !== undefined && payload.isLoading !== this.isLoading) {
 			this.isLoading = payload.isLoading;
 			this.reflectStateAttributes();
+			this.updateLoadingState();
 		}
 
 		if (payload.pageCount !== undefined && payload.pageCount !== this.pageCount) {
 			this.pageCount = payload.pageCount;
 			this.reflectPageCount();
 		}
+	}
+
+	// Floats a centered spinner over the whole wrapper while loading, and tears
+	// it down when loading ends. The wrapper is already `position: relative`.
+	private updateLoadingState(): void {
+		if (this.isLoading) {
+			if (!this.loadingEl) {
+				this.loadingEl = createLoadingOverlay();
+				this.widgetEl.appendChild(this.loadingEl);
+			}
+			return;
+		}
+
+		this.loadingEl?.remove();
+		this.loadingEl = undefined;
 	}
 
 	private reflectPageCount(): void {
@@ -151,6 +168,8 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	destroy() {
+		this.loadingEl?.remove();
+		this.loadingEl = undefined;
 		super.destroy();
 	}
 }

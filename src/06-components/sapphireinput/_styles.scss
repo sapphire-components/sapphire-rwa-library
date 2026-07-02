@@ -79,14 +79,16 @@ div[data-block$='SapphireInput'] {
 	}
 }
 
-.sapphireinput[data-isvalid] .sapphireinput-invalid {
+.sapphireinput-invalid {
 	background-color: var(--color-error-light);
 	border: solid 1px var(--color-error);
 	color: var(--color-error);
-	display: none;
 	font-size: var(--font-size-xs);
 	padding: var(--space-xs) var(--space-s);
 	&:empty {
+		display: none;
+	}
+	&[hidden] {
 		display: none;
 	}
 }

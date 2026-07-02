@@ -50,3 +50,24 @@ div[data-block$='ButtonDropdown'] {
 	min-width: 100%;
 	padding: 4px 8px;
 }
+
+/* The global .tippy-box theme is dark; scope a light surface for the actions panel. */
+.tippy-box:has(.buttondropdown-actions) {
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-4);
+	border-radius: 8px;
+	color: var(--color-neutral-9);
+	.tippy-content {
+		padding: 0;
+	}
+}
+
+.buttondropdown-actions {
+	display: flex;
+	flex-direction: column;
+	/* At least the trigger width (non-split), growing to fit content up to 350px
+	   so wide options don't wrap under a narrow trigger. */
+	max-width: 350px;
+	min-width: var(--trigger-width, auto);
+	width: max-content;
+}

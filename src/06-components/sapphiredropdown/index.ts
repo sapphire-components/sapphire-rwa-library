@@ -269,8 +269,6 @@ export default class SapphireDropdown extends BaseComponent {
 			return;
 		}
 
-		console.log('init', init);
-
 		this.actions = init.actions;
 		this.config = init.config;
 		this.enabled = init.enabled;

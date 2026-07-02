@@ -110,6 +110,9 @@
 <symbol id="svg-icon-caret-left" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><polyline points="160 208 80 128 160 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
+<symbol id="svg-icon-caret-left-bold" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><polyline points="160 208 80 128 160 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
+</symbol>
 <symbol id="svg-icon-caret-right" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><polyline points="96 48 176 128 96 208" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>

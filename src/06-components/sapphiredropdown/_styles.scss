@@ -25,6 +25,9 @@ div[data-block$='SapphireDropdown'] {
 		&:hover {
 			border-color: var(--color-neutral-6);
 		}
+		&:focus {
+			border-color: var(--color-primary);
+		}
 		&[aria-expanded='true'] {
 			border-color: var(--color-primary);
 			.sapphiredropdown-chevron {
@@ -294,20 +297,5 @@ div[data-block$='SapphireDropdown'] {
 	padding: 24px;
 	&[hidden] {
 		display: none;
-	}
-}
-
-.sapphiredropdown-spinner {
-	animation: sapphiredropdown-spin 0.6s linear infinite;
-	border: 2px solid var(--color-neutral-3);
-	border-radius: 50%;
-	border-top-color: var(--color-primary);
-	height: 24px;
-	width: 24px;
-}
-
-@keyframes sapphiredropdown-spin {
-	to {
-		transform: rotate(360deg);
 	}
 }

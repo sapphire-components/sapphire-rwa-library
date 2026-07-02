@@ -56,9 +56,9 @@ a.overlay-item {
 	align-items: center;
 	color: var(--color-neutral-8);
 	display: flex;
-	font-size: var(--font-size-base);
+	font-size: var(--font-size-s);
 	gap: 8px;
-	padding: var(--space-xs);
+	padding: var(--space-s) var(--space-s);
 	&:hover {
 		background-color: var(--color-neutral-3);
 		color: var(--color-neutral-9);
