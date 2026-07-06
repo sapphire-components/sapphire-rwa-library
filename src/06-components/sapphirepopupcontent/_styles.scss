@@ -1,3 +1,5 @@
+@use '../../01-foundations/typography';
+
 .popup-dialog {
 	margin: unset;
 	max-height: unset;
@@ -17,6 +19,7 @@
 	max-height: calc(100vh - 48px);
 	position: relative;
 	&-header {
+		@extend .heading4;
 		flex: 0 0 auto;
 		&:empty {
 			display: none;
@@ -26,7 +29,7 @@
 		flex: 1 1 auto;
 		margin-inline-end: -8px;
 		min-height: 0;
-		overflow: auto;
+		overflow-y: auto;
 		scrollbar-gutter: stable;
 		scrollbar-width: thin;
 		&:empty {
@@ -50,9 +53,9 @@
 	}
 
 	&-close {
-		inset-inline-end: 8px;
+		inset-inline-end: 16px;
 		position: absolute;
-		top: 8px;
+		top: 16px;
 	}
 }
 
@@ -63,4 +66,8 @@
 	.sapphire-popup-content-footer {
 		border-top: 1px solid var(--color-neutral-6);
 	}
+}
+
+.sapphire-popup-content-footer:not(:has(> :not(:empty))) {
+	display: none;
 }

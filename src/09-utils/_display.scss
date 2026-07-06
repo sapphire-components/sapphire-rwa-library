@@ -13,3 +13,11 @@
 .display-block {
 	display: block;
 }
+
+.hidden {
+	display: none !important;
+}
+
+.hide-when-empty:empty {
+	display: none !important;
+}

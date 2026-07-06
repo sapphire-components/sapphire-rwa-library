@@ -35,7 +35,8 @@ $widthcomponent-sizes: (
 		min-width: $size;
 	}
 	.width-#{$name} {
-		width: $size;
+		max-width: $size;
+		width: 100%;
 	}
 }
 
