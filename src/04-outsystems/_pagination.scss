@@ -1,3 +1,7 @@
+div[data-block$='Pagination'] {
+	display: contents;
+}
+
 .pagination-button {
 	min-width: 32px;
 	padding-inline: 8px;

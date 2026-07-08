@@ -3,7 +3,21 @@ declare global {
 
 	interface Window {
 		SapphireRWALibrary: SapphireRWALibrary;
+		SapphireRWADocumentation: SapphireRWADocumentationConstructor;
 		tippy: any;
+	}
+
+	interface SapphireRWADocumentationInstance {
+		name: string;
+		/** Build-time rendered HTML for the component's documentation.md, or '' when none exists. */
+		html: string;
+	}
+
+	interface SapphireRWADocumentationConstructor {
+		new (name: string): SapphireRWADocumentationInstance;
+		(name: string): SapphireRWADocumentationInstance;
+		has(name: string): boolean;
+		names(): string[];
 	}
 
 	type TippyInstance = {

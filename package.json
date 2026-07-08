@@ -1,7 +1,7 @@
 {
 	"name": "sapphire-rwa-library",
 	"private": true,
-	"version": "0.4.6",
+	"version": "0.4.12",
 	"type": "module",
 	"scripts": {
 		"dev": "concurrently \"npm run serve:dist\" \"npm run build:watch\"",
@@ -30,6 +30,7 @@
 	},
 	"devDependencies": {
 		"esbuild": "^0.28.0",
+		"marked": "^18.0.5",
 		"release-it": "^20.2.1",
 		"source-map-js": "^1.2.1"
 	}

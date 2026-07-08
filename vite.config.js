@@ -4,9 +4,14 @@ import mkcert from 'vite-plugin-mkcert';
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
+import { marked } from 'marked';
 import { SourceMapConsumer, SourceMapGenerator } from 'source-map-js';
 
 const SCSS_PARTIAL_DIRS = ['01-foundations', '02-designsystem', '03-core', '04-outsystems', '05-helpers', '06-components', '09-utils'];
+
+// Dirs scanned for per-component `documentation.md` files.
+const DOCS_DIRS = ['06-components'];
+const DOCS_OUT_FILE = 'sapphire-rwa-documentation.js';
 
 const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
@@ -67,6 +72,11 @@ export default defineConfig(({ command, mode }) => {
 				outFile: 'sapphire-rwa-library.css',
 				banner,
 				sourcemap,
+			}),
+			docsBundle({
+				srcDir: 'src',
+				docsDirs: DOCS_DIRS,
+				outFile: DOCS_OUT_FILE,
 			}),
 			bannerOnDisk(banner),
 			cssHotSwap({ outDir: 'dist', outFile: 'sapphire-rwa-library.css' }),
@@ -343,5 +353,94 @@ function walkScss(dir, cb) {
 		const p = path.join(dir, d.name);
 		if (d.isDirectory()) walkScss(p, cb);
 		else if (p.endsWith('.scss')) cb(p);
+	}
+}
+
+// Scans component folders for `documentation.md`, renders each to HTML at build
+// time (no runtime markdown parser needed), and emits a standalone IIFE
+// `sapphire-rwa-documentation.js` alongside the library JS/CSS. The file exposes
+// a global `SapphireRWADocumentation`:
+//
+//   new SapphireRWADocumentation('Overlay').html  // -> rendered HTML string
+//
+// Lookup is case- and separator-insensitive, so the PascalCase library name
+// ('Overlay', 'SapphirePopupContent', 'ResponsiveGrid') resolves to its folder
+// ('overlay', 'sapphirepopupcontent', 'responsive-grid'). Missing docs -> ''.
+function docsBundle({ srcDir, docsDirs, outFile }) {
+	const watchedDocs = new Set();
+
+	const collect = (cwd) => {
+		const srcRoot = path.resolve(cwd, srcDir);
+		const files = [];
+		for (const dir of docsDirs) {
+			const base = path.resolve(srcRoot, dir);
+			if (!fs.existsSync(base)) continue;
+			walkDocs(base, (p) => files.push(p));
+		}
+		files.sort();
+		return files;
+	};
+
+	return {
+		name: 'docs-bundle',
+		apply: 'build',
+		buildStart() {
+			// Watch existing docs plus their dirs so added/edited files rebuild.
+			const cwd = process.cwd();
+			const srcRoot = path.resolve(cwd, srcDir);
+			for (const dir of docsDirs) {
+				const base = path.resolve(srcRoot, dir);
+				if (fs.existsSync(base)) this.addWatchFile(base);
+			}
+			for (const p of collect(cwd)) this.addWatchFile(p);
+		},
+		async generateBundle() {
+			const cwd = process.cwd();
+			const files = collect(cwd);
+
+			watchedDocs.clear();
+			const docs = {};
+			for (const filePath of files) {
+				const key = normalizeDocKey(path.basename(path.dirname(filePath)));
+				if (!key) continue;
+				const md = fs.readFileSync(filePath, 'utf8');
+				docs[key] = marked.parse(md, { async: false }).trim();
+				watchedDocs.add(filePath);
+			}
+
+			this.emitFile({ type: 'asset', fileName: outFile, source: buildDocsIife(docs) });
+		},
+	};
+}
+
+function normalizeDocKey(name) {
+	return String(name || '')
+		.toLowerCase()
+		.replace(/[^a-z0-9]/g, '');
+}
+
+function buildDocsIife(docs) {
+	return `(function () {
+	var DOCS = ${JSON.stringify(docs)};
+	function normalize(name) {
+		return String(name == null ? '' : name).toLowerCase().replace(/[^a-z0-9]/g, '');
+	}
+	function SapphireRWADocumentation(name) {
+		if (!(this instanceof SapphireRWADocumentation)) return new SapphireRWADocumentation(name);
+		this.name = name;
+		this.html = DOCS[normalize(name)] || '';
+	}
+	SapphireRWADocumentation.has = function (name) { return normalize(name) in DOCS; };
+	SapphireRWADocumentation.names = function () { return Object.keys(DOCS); };
+	window.SapphireRWADocumentation = SapphireRWADocumentation;
+})();
+`;
+}
+
+function walkDocs(dir, cb) {
+	for (const d of fs.readdirSync(dir, { withFileTypes: true })) {
+		const p = path.join(dir, d.name);
+		if (d.isDirectory()) walkDocs(p, cb);
+		else if (d.name.toLowerCase() === 'documentation.md') cb(p);
 	}
 }

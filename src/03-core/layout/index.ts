@@ -64,7 +64,7 @@ export default class LayoutWrapper extends BaseComponent {
 		}
 
 		this.filterBarEl = document.querySelector<HTMLDivElement>('.filterbar[data-issticky="true"]');
-		this.tableEl = document.querySelector<HTMLDivElement>('.tablewrapper .table');
+		this.tableEl = document.querySelector<HTMLDivElement>('.tablewrapper[data-isstickyheader="true"] .table');
 
 		this.observeLayoutResize(this.handleLayoutResize);
 
@@ -84,9 +84,13 @@ export default class LayoutWrapper extends BaseComponent {
 		const tableHeaderClonedEl = tableEl.querySelector<HTMLDivElement>('.table-header-clone');
 		const allTableHeaderEls = tableHeaderEl!.querySelectorAll<HTMLTableCellElement>('th');
 		const allTableHeaderCloneEls = tableHeaderClonedEl!.querySelectorAll<HTMLTableCellElement>('th');
+
 		const count = Math.min(allTableHeaderEls.length, allTableHeaderCloneEls.length);
+
 		for (let i = 0; i < count; i++) {
 			const width = allTableHeaderEls[i].getBoundingClientRect().width;
+			allTableHeaderCloneEls[i].style.maxWidth = `${width}px`;
+			allTableHeaderCloneEls[i].style.minWidth = `${width}px`;
 			allTableHeaderCloneEls[i].style.width = `${width}px`;
 		}
 	}
@@ -96,6 +100,8 @@ export default class LayoutWrapper extends BaseComponent {
 		const allTableHeaderCloneEls = tableHeaderClonedEl!.querySelectorAll<HTMLTableCellElement>('th');
 		for (let i = 0; i < allTableHeaderCloneEls.length; i++) {
 			allTableHeaderCloneEls[i].style.width = '';
+			allTableHeaderCloneEls[i].style.maxWidth = '';
+			allTableHeaderCloneEls[i].style.minWidth = '';
 		}
 	}
 

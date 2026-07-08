@@ -30,6 +30,13 @@
 			}
 		}
 	}
+	.pagination {
+		left: 0;
+		margin-left: auto;
+		margin-top: 24px;
+		position: sticky;
+		width: 100%;
+	}
 }
 
 .tablewrapper[data-columnfixedwidths='true'] {
@@ -53,6 +60,34 @@
 			display: table-row;
 			width: var(--tablewrapper-width);
 		}
+	}
+}
+
+// When a max-height forces an internal vertical scroll, pin the header row to
+// the top of the scroll container. Sticky must be applied to the cells (a
+// sticky tr is unreliable) with a solid background so body rows do not show
+// through as they scroll underneath.
+.tablewrapper[data-hasmaxheight='true'] {
+	table {
+		border-top: none;
+	}
+	.table-header th {
+		background-color: var(--color-neutral-0);
+		border-top: solid 1px var(--color-border);
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+	// Mirror of the header: pin the pagination to the bottom of the scroll
+	// container. Needs a solid background so scrolled rows do not show through.
+	.pagination {
+		background-color: var(--color-neutral-0);
+		border: solid 1px var(--color-border);
+		border-radius: 4px;
+		bottom: 0;
+		padding: 8px;
+		position: sticky;
+		z-index: 1;
 	}
 }
 

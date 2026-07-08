@@ -2,7 +2,7 @@
 	"color": {
 		"background": "#F1F1F1",
 		"background-disabled": "#F5F5F5",
-		"border": "#ADADAD",
+		"border": "#d6d6d6",
 		"interactive": "#f9f9f9",
 		"surface": "#F5F5F5",
 		"text": "#333333",

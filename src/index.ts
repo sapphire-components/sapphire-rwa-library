@@ -13,6 +13,7 @@ import FilterBar from './05-helpers/filterbar';
 import LabelValue from './05-helpers/labelvalue';
 import TableWrapper from './05-helpers/tablewrapper';
 
+import ActionPopup from './06-components/actionpopup';
 import ButtonDropdown from './06-components/buttondropdown';
 import Chip from './06-components/chip';
 import DropdownMenu from './06-components/dropdownmenu';
@@ -43,6 +44,7 @@ function init(): void {
 }
 
 const SapphireRWALibrary = {
+	ActionPopup,
 	ButtonDropdown,
 	Chip,
 	DesignSystemColors,

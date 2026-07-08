@@ -1,0 +1,32 @@
+.layoutwrapper-body-auxiliar {
+	-servicestudio-display: none !important;
+}
+
+.layoutwrapper-body-auxiliar {
+	p {
+		font-family: 'Lato';
+	}
+	hr {
+		border-color: var(--color-border);
+		border-style: solid;
+		color: var(--color-border);
+		margin-block: 24px;
+	}
+	table {
+	}
+	thead {
+		display: none;
+	}
+	th,
+	td {
+		padding-inline: 8px;
+		text-align: left;
+		&:first-child {
+			min-width: 150px;
+			padding-inline-start: 0;
+		}
+	}
+	h6 {
+		font-size: 15px;
+	}
+}

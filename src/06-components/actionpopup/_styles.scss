@@ -1,0 +1,127 @@
+@use '../../01-foundations/_mixins.scss' as *;
+
+div[data-block$='ActionPopup'] {
+	display: contents;
+}
+
+.actionpopup {
+	display: none;
+}
+
+body.actionpopup-locked {
+	overflow: hidden;
+}
+
+.actionpopup-backdrop {
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	inset: 0;
+	justify-content: center;
+	padding: var(--space-base);
+	position: fixed;
+	z-index: 400;
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.actionpopup-dialog {
+	@include focus-visible();
+	background-color: var(--color-neutral-0);
+	border-radius: 8px;
+	box-shadow: var(--box-shadow-xl);
+	color: var(--color-text);
+	display: flex;
+	flex-direction: column;
+	max-height: 90vh;
+	max-width: 90vw;
+	position: relative;
+	width: 480px;
+}
+
+.actionpopup-close {
+	position: absolute;
+	inset-block-start: var(--space-s);
+	inset-inline-end: var(--space-s);
+	min-height: 0;
+	z-index: 1;
+
+	// `.btn` sets `display: inline-flex`, which outranks the UA `[hidden]` rule,
+	// so hiding via the `hidden` attribute needs an explicit override.
+	&[hidden] {
+		display: none;
+	}
+}
+
+.actionpopup-header {
+	flex: 0 0 auto;
+	padding-inline-end: var(--space-xl);
+}
+
+.actionpopup-title {
+	font-size: var(--font-size-h4, 18px);
+	font-weight: 700;
+	margin: 0;
+	text-align: center;
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.actionpopup-body {
+	flex: 1 1 auto;
+	overflow-y: auto;
+}
+
+.actionpopup-message {
+	color: var(--color-neutral-8);
+	margin: 0;
+	text-align: center;
+	padding-block: var(--space-base);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.actionpopup-content-slot {
+	&[hidden] {
+		display: none;
+	}
+}
+
+.actionpopup-footer {
+	display: flex;
+	flex: 0 0 auto;
+	gap: var(--space-s);
+	justify-content: center;
+	.actionpopup-btn[hidden] {
+		display: none;
+	}
+}
+
+// Spacing presets applied to the dialog sections (mirrors SapphirePopupContent).
+.actionpopup-dialog[data-padding='none'] {
+	.actionpopup-header,
+	.actionpopup-body,
+	.actionpopup-footer {
+		padding: 0;
+	}
+}
+
+@each $name, $space in (('s', var(--space-s)), ('base', var(--space-base)), ('m', var(--space-m)), ('l', var(--space-l)), ('xl', var(--space-xl))) {
+	.actionpopup-dialog[data-padding='#{$name}'] {
+		.actionpopup-header {
+			padding: #{$space} #{$space} 0;
+		}
+		.actionpopup-body {
+			padding: var(--space-s) #{$space};
+		}
+		.actionpopup-footer {
+			padding: 0 #{$space} #{$space};
+		}
+	}
+}

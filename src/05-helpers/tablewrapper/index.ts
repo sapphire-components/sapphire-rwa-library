@@ -2,16 +2,18 @@ import { BaseComponent, type BaseComponentInit } from '../../core/base';
 import { createLoadingOverlay } from '../../09-utils/loader';
 
 interface TableWrapperConfigOptions extends BaseComponentInit {
-	hasScrollTop: boolean;
 	height: number;
 	isLoading: boolean;
+	isStickyHeader: boolean;
 	maxHeight: number;
 	pageCount: number;
 }
 
 export default class TableWrapper extends BaseComponent {
 	private configOptions!: TableWrapperConfigOptions;
+	private hasMaxHeight = false;
 	private isLoading = false;
+	private isStickyHeader = false;
 	private loadingEl?: HTMLDivElement;
 	private pageCount = 0;
 	private syncing = false;
@@ -19,9 +21,6 @@ export default class TableWrapper extends BaseComponent {
 	private tableHeaderCloneEl!: HTMLDivElement;
 	private tableHeaderEl!: HTMLDivElement;
 	private theadEl!: HTMLTableSectionElement;
-	private topInnerEl?: HTMLDivElement;
-	private topScrollEl!: HTMLDivElement;
-	private hasScrollTop = false;
 
 	constructor(configOptions: TableWrapperConfigOptions) {
 		super(configOptions);
@@ -34,7 +33,7 @@ export default class TableWrapper extends BaseComponent {
 		this.configOptions = configOptions;
 
 		this.isLoading = this.configOptions.isLoading;
-		this.hasScrollTop = this.configOptions.hasScrollTop;
+		this.isStickyHeader = this.configOptions.isStickyHeader && !this.configOptions.maxHeight;
 		this.pageCount = this.configOptions.pageCount;
 
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
@@ -49,47 +48,25 @@ export default class TableWrapper extends BaseComponent {
 
 		this.setWidgetRect();
 
-		if (this.configOptions.hasScrollTop) {
-			this.topInnerEl = this.topScrollEl.querySelector<HTMLDivElement>('.table-scroll-top__inner')!;
+		this.tableHeaderCloneEl.addEventListener('scroll', () => {
+			console.log('table header clone scroll', this.syncing);
+			if (this.syncing) return;
+			this.syncing = true;
+			this.widgetEl.scrollLeft = this.tableHeaderCloneEl.scrollLeft;
+			this.syncing = false;
+		});
 
-			this.topInnerEl.style.width = `${this.tableEl.scrollWidth}px`;
-
-			this.topScrollEl.addEventListener('scroll', () => {
-				if (this.syncing) return;
-				this.syncing = true;
-				this.widgetEl.scrollLeft = this.topScrollEl.scrollLeft;
-				this.syncing = false;
-			});
-
-			this.tableHeaderCloneEl.addEventListener('scroll', () => {
-				console.log('table header clone scroll', this.syncing);
-				if (this.syncing) return;
-				this.syncing = true;
-				this.widgetEl.scrollLeft = this.tableHeaderCloneEl.scrollLeft;
-				this.syncing = false;
-			});
-
-			this.widgetEl.addEventListener('scroll', () => {
-				if (this.syncing) return;
-				this.syncing = true;
-				this.topScrollEl.scrollLeft = this.widgetEl.scrollLeft;
-				this.topScrollEl.style.marginLeft = this.widgetEl.scrollLeft + 'px';
-				this.tableHeaderCloneEl.scrollLeft = this.widgetEl.scrollLeft;
-				this.syncing = false;
-			});
-		}
+		this.widgetEl.addEventListener('scroll', () => {
+			if (this.syncing) return;
+			this.syncing = true;
+			this.tableHeaderCloneEl.scrollLeft = this.widgetEl.scrollLeft;
+			this.syncing = false;
+		});
 
 		this.observeLayoutResize(this.handleLayoutResize);
 	}
 
 	setupDOM(): void {
-		if (this.configOptions.hasScrollTop) {
-			this.topScrollEl = document.createElement('div');
-			this.topScrollEl.classList.add('table-scroll-top');
-			this.topScrollEl.innerHTML = '<div class="table-scroll-top__inner"></div>';
-			this.tableEl.parentNode?.insertBefore(this.topScrollEl, this.tableEl);
-		}
-
 		const clone = this.tableHeaderEl.cloneNode(true) as HTMLDivElement;
 		clone.classList.add('table-header-clone');
 		clone.querySelectorAll('.sortable-icon').forEach((child) => {
@@ -105,12 +82,13 @@ export default class TableWrapper extends BaseComponent {
 		}
 
 		if (this.configOptions.maxHeight) {
+			this.hasMaxHeight = true;
 			this.widgetEl.style.setProperty('--tablewrapper-max-height', `${this.configOptions.maxHeight}px`);
+		} else {
+			this.hasMaxHeight = false;
 		}
 
-		if (this.topInnerEl) {
-			this.topInnerEl.style.width = `${this.tableEl.scrollWidth}px`;
-		}
+		this.widgetEl.dataset.hasmaxheight = this.hasMaxHeight ? 'true' : 'false';
 
 		this.widgetEl.style.setProperty('--tablewrapper-top', `${this.widgetEl.offsetTop}px`);
 		this.widgetEl.style.setProperty('--tablewrapper-width', `${this.widgetEl.clientWidth}px`);
@@ -118,14 +96,10 @@ export default class TableWrapper extends BaseComponent {
 
 	private reflectStateAttributes(): void {
 		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
-		this.widgetEl.dataset.hasscrolltop = this.hasScrollTop ? 'true' : 'false';
+		this.widgetEl.dataset.isstickyheader = this.isStickyHeader ? 'true' : 'false';
 	}
 
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
-		if (this.configOptions.hasScrollTop) {
-			this.topInnerEl!.style.width = ``;
-		}
-
 		this.setWidgetRect();
 	};
 

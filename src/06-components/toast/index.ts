@@ -18,6 +18,11 @@ export default class Toast {
 
 	createToastNotification(message: IToastMessage): void {
 		message.id = +new Date();
+
+		if (message.type === 'Entities.Alert.Info') {
+			message.type = 'alert-info';
+		}
+
 		this.list.push(message);
 		this.addToastMessage(message);
 	}
