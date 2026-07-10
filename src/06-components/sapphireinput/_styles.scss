@@ -54,6 +54,7 @@ div[data-block$='SapphireInput'] {
 		padding-block: 0;
 		padding-inline-end: 16px;
 		padding-inline-start: 36px;
+		text-align: end;
 		width: 100%;
 		&::placeholder {
 			color: var(--color-text-disabled);
@@ -141,6 +142,12 @@ div[data-block$='SapphireInput'] {
 	.form-control[data-input] {
 		background-color: var(--color-interactive);
 		border-radius: 100px;
+	}
+}
+
+.sapphireinput[data-type='text'] {
+	.form-control[data-input] {
+		text-align: start;
 	}
 }
 

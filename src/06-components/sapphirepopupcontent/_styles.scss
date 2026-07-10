@@ -68,6 +68,15 @@
 	}
 }
 
+.sapphire-popup-content[data-hasclose='true'] {
+	.sapphire-popup-content-header {
+		min-height: 33px;
+		&:empty {
+			display: block;
+		}
+	}
+}
+
 .sapphire-popup-content-footer:not(:has(> :not(:empty))) {
 	display: none;
 }

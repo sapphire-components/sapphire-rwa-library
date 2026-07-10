@@ -178,6 +178,7 @@ export default class SapphireInput extends BaseComponent {
 		this.validationMessageEl = this.widgetEl.querySelector<HTMLElement>('.sapphireinput-invalid');
 		this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
 		this.widgetEl.dataset.isoutofbounds = 'false';
+		this.widgetEl.dataset.type = this.type;
 
 		// Initial value is "external" — accept it verbatim (only capped to maxLength).
 		// Out-of-bounds is checked at the end of the constructor; user typing later

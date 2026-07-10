@@ -1,0 +1,16 @@
+.small[data-checkbox] {
+	height: 16px;
+	width: 16px;
+}
+
+.small[data-checkbox]:before {
+	height: 16px;
+	width: 16px;
+}
+
+.small[data-checkbox]:after {
+	border-width: 2px;
+	left: 3px;
+	top: 4px;
+	width: 8px;
+}

@@ -22,8 +22,15 @@ div[data-block$='ButtonDropdown'] {
 	.buttondropdown-label {
 		border-end-end-radius: 0;
 		border-start-end-radius: 0;
+		box-shadow:
+			inset 1px 0 0 0 var(--color-border),
+			/* left */ inset 0 1px 0 0 var(--color-border),
+			/* top */ inset 0 -1px 0 0 var(--color-border);
 		&.btn-primary {
-			border-inline-end-color: var(--color-neutral-0);
+			box-shadow:
+				inset 1px 0 0 0 var(--color-primary),
+				/* left */ inset 0 1px 0 0 var(--color-primary),
+				/* top */ inset 0 -1px 0 0 var(--color-primary);
 		}
 	}
 
@@ -63,11 +70,11 @@ div[data-block$='ButtonDropdown'] {
 }
 
 .buttondropdown-actions {
+	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
-	/* At least the trigger width (non-split), growing to fit content up to 350px
-	   so wide options don't wrap under a narrow trigger. */
 	max-width: 350px;
 	min-width: var(--trigger-width, auto);
+	overflow: hidden;
 	width: max-content;
 }

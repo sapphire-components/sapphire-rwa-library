@@ -23,6 +23,7 @@ import SapphireDropdown from './06-components/sapphiredropdown';
 import SapphireInput from './06-components/sapphireinput';
 import SapphirePopupContent from './06-components/sapphirepopupcontent';
 import ScrollableContent from './06-components/scrollablecontent';
+import Skeleton from './06-components/skeleton';
 import TextEditor from './06-components/texteditor';
 import Toast from './06-components/toast';
 import { Tabs, TabHeader, TabContent } from './06-components/tabs';
@@ -60,6 +61,7 @@ const SapphireRWALibrary = {
 	SapphireIntl,
 	SapphirePopupContent,
 	ScrollableContent,
+	Skeleton,
 	TabContent,
 	TabHeader,
 	TableWrapper,

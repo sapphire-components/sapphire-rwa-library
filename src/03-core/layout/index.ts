@@ -38,6 +38,7 @@ export default class LayoutWrapper extends BaseComponent {
 		if (this.tableEl) {
 			fixedCombinedHeight = Helpers.getFixedElementsCombinedHeight();
 			const tableRect = this.tableEl!.getBoundingClientRect();
+
 			if (tableRect.top < fixedCombinedHeight) {
 				this.tableEl!.dataset.isfixed = 'true';
 				document.querySelector<HTMLDivElement>('.table-header-clone')!.style.top = `${fixedCombinedHeight}px`;

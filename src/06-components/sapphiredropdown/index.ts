@@ -1,5 +1,6 @@
 import { BaseComponent, type BaseComponentInit } from '../../core/base';
 import Helpers from '../../09-utils/helpers';
+import { createSpinner } from '../../09-utils/loader';
 import { tmplOption, tmplPanel } from './templates';
 
 interface ISapphireDropdownConfig {
@@ -396,6 +397,7 @@ export default class SapphireDropdown extends BaseComponent {
 
 		this.emptyEl = this.panelEl.querySelector('.sapphiredropdown-empty') as HTMLElement;
 		this.loadingEl = this.panelEl.querySelector('.sapphiredropdown-loading') as HTMLElement;
+		this.loadingEl.appendChild(createSpinner());
 	}
 
 	private renderOptions(): void {

@@ -1,0 +1,20 @@
+@keyframes skeleton-pulse {
+  0% {
+    background-color: var(--color-neutral-5);
+  }
+  50% {
+    background-color: var(--color-neutral-2);
+  }
+  100% {
+    background-color: var(--color-neutral-5);
+  }
+}
+
+@keyframes skeleton-destruction {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

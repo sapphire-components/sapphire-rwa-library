@@ -33,14 +33,12 @@ A modal action popup with a backdrop that blocks interaction with the page. It r
 | Name      | Description                     |
 | --------- | ------------------------------- |
 | `Content` | Placeholder for custom content. |
+| `Header`  | Placeholder for custom content. |
 
 <hr>
 
 ###### Events
 
-| Name     | Description                                                        |
-| -------- | ------------------------------------------------------------------ |
-| `Cancel` | Fired by the cancel button, the close button and `Escape`.         |
-| `Close`  | Fired whenever the popup closes (after the specific button event). |
-| `No`     | Fired when the user selects the negative button.                   |
-| `Yes`    | Fired when the user selects the affirmative button.                |
+| Name     | Description                                 |
+| -------- | ------------------------------------------- |
+| `Toggle` | Fired when the component changes its state. |

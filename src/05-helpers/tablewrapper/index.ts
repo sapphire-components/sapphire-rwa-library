@@ -13,6 +13,7 @@ export default class TableWrapper extends BaseComponent {
 	private configOptions!: TableWrapperConfigOptions;
 	private hasMaxHeight = false;
 	private isLoading = false;
+	private isPristine = true;
 	private isStickyHeader = false;
 	private loadingEl?: HTMLDivElement;
 	private pageCount = 0;
@@ -96,6 +97,7 @@ export default class TableWrapper extends BaseComponent {
 
 	private reflectStateAttributes(): void {
 		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
+		this.widgetEl.dataset.ispristine = this.isPristine ? 'true' : 'false';
 		this.widgetEl.dataset.isstickyheader = this.isStickyHeader ? 'true' : 'false';
 	}
 
@@ -107,12 +109,17 @@ export default class TableWrapper extends BaseComponent {
 		if (!this.widgetEl) return;
 
 		if (payload.isLoading !== undefined && payload.isLoading !== this.isLoading) {
+			this.isPristine = false;
 			this.isLoading = payload.isLoading;
 			this.reflectStateAttributes();
 			this.updateLoadingState();
+			if (!payload.isLoading) {
+				this.reflectPageCount();
+			}
 		}
 
 		if (payload.pageCount !== undefined && payload.pageCount !== this.pageCount) {
+			this.isPristine = false;
 			this.pageCount = payload.pageCount;
 			this.reflectPageCount();
 		}
@@ -134,7 +141,7 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private reflectPageCount(): void {
-		if (this.pageCount === 0) {
+		if (this.pageCount === 0 && !this.isPristine) {
 			this.widgetEl.dataset.norecords = 'true';
 		} else {
 			this.widgetEl.dataset.norecords = 'false';

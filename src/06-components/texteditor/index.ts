@@ -47,9 +47,7 @@ export interface ITextEditor extends BaseComponentInit {
 export default class TextEditor extends BaseComponent {
 	#actions!: ITextEditor['actions'];
 	#blur = this.blur.bind(this);
-	// #changeDebounce!: number;
 	#content!: string;
-	// #cursorPosition: number | undefined;
 	#enabled!: boolean;
 	#focus = this.focus.bind(this);
 	#handleMouseEnter = this.handleMouseEnter.bind(this);
@@ -61,15 +59,12 @@ export default class TextEditor extends BaseComponent {
 	#quillEditorEl!: HTMLElement;
 	#resizeDebounced?: ((...args: Parameters<ResizeObserverCallback>) => void) & { cancel: () => void };
 	#resizeObserver?: ResizeObserver;
-	// #theme!: string;
 	#toolbar!: HTMLElement;
 	#toolbarOptions!: string;
 	quill: Quill | null = null;
 
 	constructor(config: ITextEditor) {
 		super(config);
-
-		console.log('RichTextEditor: constructor', config);
 
 		if (!this.widgetEl) {
 			console.warn('RichTextEditor: root element not found for runtimeId', config.runtimeId);
@@ -85,7 +80,6 @@ export default class TextEditor extends BaseComponent {
 		this.#height = config.height;
 		this.#mode = config.mode;
 		this.#placeholder = config.placeholder;
-		// this.#theme = config.theme;
 		this.#toolbarOptions = config.toolbarOptions;
 
 		this.#quillEditorEl = this.widgetEl.querySelector('.quill-editor') as HTMLElement;
@@ -127,8 +121,6 @@ export default class TextEditor extends BaseComponent {
 			this.quill.enable(this.#enabled);
 
 			this.attachQuillEvents();
-
-			// console.log(Object.keys(Quill.imports).filter((key) => key.startsWith('formats/')));
 		}
 
 		/** Resize observer */
@@ -169,11 +161,10 @@ export default class TextEditor extends BaseComponent {
 	attachQuillEvents(): void {
 		this.#quillEditorEl.addEventListener('mouseenter', this.#handleMouseEnter);
 		this.#quillEditorEl.addEventListener('mouseleave', this.#handleMouseLeave);
-		// this.#toolbar.addEventListener('mouseleave', this.#handleMouseLeave);
 
 		this.quill?.on('text-change', (_delta, _oldDelta, _source) => {
 			let textOutput = this.quill?.getText();
-			let htmlOutput = this.quill?.getSemanticHTML(); //this.quill.root.innerHTML;
+			let htmlOutput = this.quill?.getSemanticHTML().replace(/&nbsp;|\u00A0/g, ' ');
 
 			if (htmlOutput === '<p><br></p>' || htmlOutput === '<p></p>') {
 				htmlOutput = '';
@@ -186,27 +177,17 @@ export default class TextEditor extends BaseComponent {
 			this.#actions.OnChange(textOutput ?? '', htmlOutput ?? '');
 		});
 
-		// this.quill?.on('selection-change', (_range, _oldRange, _source) => {
-		// 	if (_range) {
-		// 		this.#cursorPosition = _range.index;
-		// 	} else if (_oldRange) {
-		// 		this.#cursorPosition = _oldRange.index;
-		// 	}
-		// });
-
 		this.quill?.root.addEventListener('blur', this.#blur);
 		this.quill?.root.addEventListener('focus', this.#focus);
 	}
 
 	parametersChanged(_payload: ITextEditor): void {
 		if (!Helpers.areTheyEqual(_payload.enabled, this.#enabled)) {
-			console.log('TextEditor: parametersChanged enabled', _payload);
 			this.#enabled = _payload.enabled;
 			this.quill?.enable(this.#enabled);
 		}
 
 		if (!Helpers.areTheyEqual(_payload.content, this.#content)) {
-			console.log('TextEditor content', _payload.content, this.#content);
 			this.#content = _payload.content;
 			this.setQuillHtml(this.#content);
 		}
@@ -231,9 +212,6 @@ export default class TextEditor extends BaseComponent {
 	}
 
 	handleMouseLeave(_e: MouseEvent): void {
-		// if ((this.#toolbar && this.#toolbar.contains(e.relatedTarget as Node)) || (this.#editorEl && this.#editorEl.contains(e.relatedTarget as Node))) {
-		// 	return;
-		// }
 		this.widgetEl.dataset.ishovered = 'false';
 	}
 

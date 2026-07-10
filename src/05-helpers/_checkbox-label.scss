@@ -5,12 +5,26 @@ div[data-block$='CheckboxLabel'] {
 }
 
 .checkboxlabel {
+	display: inline-flex;
 	label {
 		display: inline-flex;
 		gap: 8px;
+	}
+	&-checkbox {
+		display: inline-flex;
+		> span {
+			display: contents;
+			[data-checkbox] {
+				display: inline-flex;
+			}
+		}
 	}
 	&-label {
 		cursor: pointer;
 		flex: 1 1 0;
 	}
+}
+
+.checkboxlabel-checkbox:has(input.small) {
+	padding-top: 4px;
 }

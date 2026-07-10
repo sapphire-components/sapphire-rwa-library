@@ -1,0 +1,36 @@
+.skeleton[data-widthcomponent='xs'] {
+	max-width: 96px;
+}
+
+.skeleton[data-widthcomponent='s'] {
+	max-width: 152px;
+}
+
+.skeleton[data-widthcomponent='m'] {
+	max-width: 240px;
+}
+
+.skeleton[data-widthcomponent='l'] {
+	max-width: 360px;
+}
+
+.skeleton[data-widthcomponent='full'] {
+	max-width: unset;
+}
+
+.skeleton-loaders {
+	.circle {
+		&--s {
+			height: 24px;
+			width: 24px;
+		}
+		&--m {
+			height: 40px;
+			width: 40px;
+		}
+		&--l {
+			height: 56px;
+			width: 56px;
+		}
+	}
+}

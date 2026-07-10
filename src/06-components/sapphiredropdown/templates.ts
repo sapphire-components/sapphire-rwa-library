@@ -21,9 +21,7 @@ tmplPanel.innerHTML = `
 		</div>
 		<ul class="sapphiredropdown-list" role="listbox"></ul>
 		<div class="sapphiredropdown-empty" hidden></div>
-		<div class="sapphiredropdown-loading" aria-hidden="true" hidden>
-			<span class="sapphire-spinner" aria-hidden="true"></span>
-		</div>
+		<div class="sapphiredropdown-loading" aria-hidden="true" hidden></div>
 	</div>
 `;
 

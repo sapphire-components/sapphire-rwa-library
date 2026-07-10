@@ -1,0 +1,73 @@
+div[data-block$='Skeleton'] {
+	display: contents;
+}
+
+.skeleton {
+	width: 100%;
+	&-loaders {
+		display: flex;
+		gap: 16px;
+		.circle {
+			animation: skeleton-pulse 1.5s infinite;
+			background-color: var(--color-neutral-5);
+			border-radius: 50%;
+			flex-shrink: 0;
+
+			&.is-removing {
+				animation-delay: var(--delay);
+				animation-duration: 500ms;
+				animation-fill-mode: forwards;
+				animation-iteration-count: 1;
+				animation-name: skeleton-destruction;
+				animation-timing-function: ease-out;
+			}
+		}
+
+		.sapphire-spinner {
+			&.is-removing {
+				animation-delay: var(--delay);
+				animation-duration: 500ms;
+				animation-fill-mode: forwards;
+				animation-iteration-count: 1;
+				animation-name: skeleton-destruction;
+				animation-timing-function: ease-out;
+			}
+		}
+
+		.bars {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			width: 100%;
+			span {
+				animation: skeleton-pulse 1.5s infinite;
+				background-color: var(--color-neutral-5);
+				border-radius: var(--border-radius-soft);
+				display: block;
+				min-height: 22px;
+
+				&.is-removing {
+					animation-delay: var(--delay);
+					animation-duration: 500ms;
+					animation-fill-mode: forwards;
+					animation-iteration-count: 1;
+					animation-name: skeleton-destruction;
+					animation-timing-function: ease-out;
+				}
+			}
+		}
+	}
+	&-content {
+		display: none;
+	}
+}
+
+.skeleton.is-resolved {
+	display: contents;
+	.skeleton-loaders {
+		display: none;
+	}
+	.skeleton-content {
+		display: block;
+	}
+}

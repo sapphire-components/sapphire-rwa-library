@@ -4,8 +4,8 @@
 	.buttondropdown-label:hover,
 	.buttondropdown-arrow:hover {
 		background-color: var(--color-error-light) !important;
+		box-shadow: inset 0 0 0 1px var(--color-error);
 		color: var(--color-text);
-		outline-color: var(--color-error);
 	}
 	.svg-icon {
 		color: var(--color-neutral-10);
@@ -17,12 +17,31 @@
 	.buttondropdown-label,
 	.buttondropdown-arrow {
 		background-color: var(--color-background-disabled) !important;
+		box-shadow: inset 0 0 0 1px var(--color-border);
 		color: var(--color-text-disabled);
-		outline-color: var(--color-border);
 		pointer-events: none;
 	}
 	.svg-icon {
 		color: var(--color-text-disabled);
+	}
+}
+
+.buttondropdown[data-issplitbutton='true'][data-enabled='false'] {
+	.buttondropdown-label.btn-primary {
+		box-shadow:
+			inset 1px 0 0 0 var(--color-border),
+			/* left */ inset 0 1px 0 0 var(--color-border),
+			/* top */ inset 0 -1px 0 0 var(--color-border);
+	}
+}
+
+.buttondropdown[data-issplitbutton='true'][data-isvalid='false'] {
+	.buttondropdown-label,
+	.buttondropdown-label.btn-primary {
+		box-shadow:
+			inset 1px 0 0 0 var(--color-error),
+			/* left */ inset 0 1px 0 0 var(--color-error),
+			/* top */ inset 0 -1px 0 0 var(--color-error);
 	}
 }
 

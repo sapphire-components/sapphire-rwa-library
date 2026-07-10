@@ -12,6 +12,7 @@
 		thead {
 			height: 48px;
 			th {
+				background-color: var(--color-neutral-0);
 				> span,
 				> .sortable-icon {
 					display: inline-block;
@@ -20,11 +21,13 @@
 			}
 		}
 		.table-header-clone {
+			background-color: var(--color-neutral-0);
 			display: none;
 			overflow-x: auto;
 			overflow-y: hidden;
 			position: fixed;
 			user-select: none;
+			z-index: 1;
 			&::-webkit-scrollbar {
 				display: none;
 			}
@@ -37,6 +40,10 @@
 		position: sticky;
 		width: 100%;
 	}
+}
+
+.tablewrapper .table-header th.text-align-center {
+	text-align: center;
 }
 
 .tablewrapper[data-columnfixedwidths='true'] {
