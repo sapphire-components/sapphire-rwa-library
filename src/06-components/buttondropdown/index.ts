@@ -1,5 +1,6 @@
 import { BaseComponent, type BaseComponentInit } from '../../core/base';
 import Helpers from '../../09-utils/helpers';
+import { ValidationMessage } from '../../09-utils/validation-message';
 
 export interface IButtonDropdown extends BaseComponentInit {
 	actions: {
@@ -29,7 +30,7 @@ export default class ButtonDropdown extends BaseComponent {
 	#actionsEl!: HTMLElement;
 	#arrowEl: HTMLButtonElement | null = null;
 	#triggerEl!: HTMLElement;
-	#validationMessageEl: HTMLElement | null = null;
+	#validationMessageCtrl!: ValidationMessage;
 	#actionsId = '';
 
 	#tippyInstance: TippyInstance | null = null;
@@ -61,9 +62,11 @@ export default class ButtonDropdown extends BaseComponent {
 
 		this.#actionsId = `${this.runtimeId}-actions`;
 
+		this.#validationMessageCtrl = new ValidationMessage(this.widgetEl);
+
 		this.#reflectStateAttributes();
 		this.#build();
-		this.#updateValidationMessage();
+		this.#validationMessageCtrl.update(this.#isValid, this.#validationMessage);
 		this.#initTippy();
 		this.#bindEvents();
 	}
@@ -324,23 +327,6 @@ export default class ButtonDropdown extends BaseComponent {
 		}
 	}
 
-	// Renders a validation message below the widget while invalid, mirroring
-	// SapphireDropdown. The element only exists while isValid is false.
-	#updateValidationMessage(): void {
-		if (!this.#isValid) {
-			if (!this.#validationMessageEl) {
-				this.#validationMessageEl = document.createElement('div');
-				this.#validationMessageEl.className = 'validation-message';
-				this.widgetEl.after(this.#validationMessageEl);
-			}
-			this.#validationMessageEl.textContent = this.#validationMessage;
-			return;
-		}
-
-		this.#validationMessageEl?.remove();
-		this.#validationMessageEl = null;
-	}
-
 	parametersChanged(payload: IButtonDropdown): void {
 		if (!this.widgetEl) return;
 
@@ -363,7 +349,7 @@ export default class ButtonDropdown extends BaseComponent {
 		}
 
 		if (needsValidationRefresh) {
-			this.#updateValidationMessage();
+			this.#validationMessageCtrl.update(this.#isValid, this.#validationMessage);
 		}
 
 		if (payload.isSplitButton !== undefined && payload.isSplitButton !== this.#isSplitButton) {
@@ -398,7 +384,6 @@ export default class ButtonDropdown extends BaseComponent {
 	destroy(): void {
 		super.destroy();
 		this.#teardown();
-		this.#validationMessageEl?.remove();
-		this.#validationMessageEl = null;
+		this.#validationMessageCtrl.destroy();
 	}
 }

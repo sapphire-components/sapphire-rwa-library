@@ -75,6 +75,8 @@ a.overlay-item {
 }
 
 .overlay-content:has(.overlay-item) {
+	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 }

@@ -1,9 +1,17 @@
 .validation-message {
+	align-items: center;
 	color: var(--color-error);
+	display: flex;
 	font-size: var(--font-size-xs);
+	gap: var(--space-xs);
+	justify-items: flex-start;
 	padding-block: var(--space-xs);
 	padding-inline: 0;
-	&:empty {
-		display: none;
+	&-icon {
+		flex-shrink: 0;
+		line-height: 1;
+		.svg-icon {
+			margin: 0;
+		}
 	}
 }

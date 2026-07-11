@@ -1,6 +1,7 @@
 import { BaseComponent, type BaseComponentInit } from '../../core/base';
 import Helpers from '../../09-utils/helpers';
 import { createSpinner } from '../../09-utils/loader';
+import { ValidationMessage } from '../../09-utils/validation-message';
 import { tmplOption, tmplPanel } from './templates';
 
 interface ISapphireDropdownConfig {
@@ -81,7 +82,7 @@ export default class SapphireDropdown extends BaseComponent {
 	private emptyEl!: HTMLElement;
 	private loadingEl!: HTMLElement;
 	private chipsContainerEl: HTMLElement | null = null;
-	private validationMessageEl: HTMLElement | null = null;
+	private validationMessageCtrl!: ValidationMessage;
 
 	private scrollEndEmitted = false;
 	private tippyInstance: TippyInstance | null = null;
@@ -296,9 +297,10 @@ export default class SapphireDropdown extends BaseComponent {
 
 		this.reflectStateAttributes();
 		this.buildDom();
+		this.validationMessageCtrl = new ValidationMessage(this.triggerEl);
 		this.renderOptions();
 		this.updateTriggerLabel();
-		this.updateValidationMessage();
+		this.validationMessageCtrl.update(this.isValid, this.validationMessage);
 		this.updateLoadingState();
 		this.initTippy();
 		this.bindEvents();
@@ -836,23 +838,6 @@ export default class SapphireDropdown extends BaseComponent {
 		}
 	}
 
-	// Renders a validation message below the trigger while invalid. The element
-	// only exists when isValid is false; its text tracks validationMessage.
-	private updateValidationMessage(): void {
-		if (!this.isValid) {
-			if (!this.validationMessageEl) {
-				this.validationMessageEl = document.createElement('div');
-				this.validationMessageEl.className = 'validation-message';
-				this.triggerEl.after(this.validationMessageEl);
-			}
-			this.validationMessageEl.textContent = this.validationMessage;
-			return;
-		}
-
-		this.validationMessageEl?.remove();
-		this.validationMessageEl = null;
-	}
-
 	private createChipElement(option: ISapphireDropdownOption): HTMLElement {
 		const chipEl = document.createElement('div');
 		chipEl.className = 'chip';
@@ -1063,7 +1048,7 @@ export default class SapphireDropdown extends BaseComponent {
 		}
 
 		if (needsValidationRefresh) {
-			this.updateValidationMessage();
+			this.validationMessageCtrl.update(this.isValid, this.validationMessage);
 		}
 
 		if (needsLabelRefresh) {
@@ -1094,5 +1079,6 @@ export default class SapphireDropdown extends BaseComponent {
 
 		this.tippyInstance?.destroy();
 		this.tippyInstance = null;
+		this.validationMessageCtrl.destroy();
 	}
 }

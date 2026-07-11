@@ -10,7 +10,7 @@ import { SourceMapConsumer, SourceMapGenerator } from 'source-map-js';
 const SCSS_PARTIAL_DIRS = ['01-foundations', '02-designsystem', '03-core', '04-outsystems', '05-helpers', '06-components', '09-utils'];
 
 // Dirs scanned for per-component `documentation.md` files.
-const DOCS_DIRS = ['06-components'];
+const DOCS_DIRS = ['05-helpers', '06-components'];
 const DOCS_OUT_FILE = 'sapphire-rwa-documentation.js';
 
 const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));

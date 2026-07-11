@@ -1,5 +1,6 @@
 div[data-block$='ButtonDropdown'] {
-	display: contents;
+	display: inline-flex;
+	flex-direction: column;
 }
 
 .buttondropdown {

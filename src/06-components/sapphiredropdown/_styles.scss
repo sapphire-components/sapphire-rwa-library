@@ -5,7 +5,8 @@ div[data-block$='SapphireDropdown'] {
 }
 
 .sapphiredropdown {
-	display: block;
+	display: inline-flex;
+	flex-direction: column;
 	position: relative;
 	width: 100%;
 	&-trigger {
