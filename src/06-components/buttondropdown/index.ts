@@ -1,6 +1,6 @@
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
-import Helpers from '../../09-utils/helpers';
-import { ValidationMessage } from '../../09-utils/validation-message';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+import Helpers from '@utils/helpers';
+import { ValidationMessage } from '@utils/validation-message';
 
 export interface IButtonDropdown extends BaseComponentInit {
 	actions: {

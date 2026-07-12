@@ -1,5 +1,5 @@
-import Helpers from '../../09-utils/helpers';
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
+import Helpers from '@utils/helpers';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface LayoutWrapperInit extends BaseComponentInit {
 	theme: string;

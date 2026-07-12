@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
-import { createSpinner } from '../../09-utils/loader';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+import { createSpinner } from '@utils/loader';
 
 export interface ISkeleton extends BaseComponentInit {
 	display: { Bars: number; Loading: boolean; Circle: string };

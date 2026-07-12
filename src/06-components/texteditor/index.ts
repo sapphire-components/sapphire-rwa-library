@@ -1,11 +1,11 @@
 import DOMPurify from 'dompurify';
-import Helpers from '../../09-utils/helpers.ts';
+import Helpers from '@utils/helpers';
 import Quill, { type QuillOptions } from 'quill';
 import QuillTableBetter from 'quill-table-better';
 import quillSnowCss from 'quill/dist/quill.snow.css?inline';
 import quillTableBetterCss from 'quill-table-better/dist/quill-table-better.css?inline';
-import { BaseComponent, type BaseComponentInit } from '../../core/base.ts';
-import { getToolbarTemplate } from './toolbar.ts';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+import { getToolbarTemplate } from './toolbar';
 
 const RESIZE_DEBOUNCE_MS = 100;
 const QUILL_STYLE_ID = 'sapphire-rwa-quill-snow';

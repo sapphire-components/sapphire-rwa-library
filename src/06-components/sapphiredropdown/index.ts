@@ -1,7 +1,7 @@
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
-import Helpers from '../../09-utils/helpers';
-import { createSpinner } from '../../09-utils/loader';
-import { ValidationMessage } from '../../09-utils/validation-message';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+import Helpers from '@utils/helpers';
+import { createSpinner } from '@utils/loader';
+import { ValidationMessage } from '@utils/validation-message';
 import { tmplOption, tmplPanel } from './templates';
 
 interface ISapphireDropdownConfig {

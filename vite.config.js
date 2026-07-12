@@ -20,7 +20,18 @@ export default defineConfig(({ command, mode }) => {
 	const sourcemap = !isProdBuild;
 	const banner = makeBanner(mode);
 
+	const srcDir = path.resolve(process.cwd(), 'src');
+
 	return {
+		resolve: {
+			alias: {
+				'@': srcDir,
+				'@core': path.resolve(srcDir, 'core'),
+				'@utils': path.resolve(srcDir, '09-utils'),
+				'@components': path.resolve(srcDir, '06-components'),
+				'@helpers': path.resolve(srcDir, '05-helpers'),
+			},
+		},
 		appType: 'custom', //spa, mpa
 		define: {
 			__APP_VERSION__: JSON.stringify(pkg.version),

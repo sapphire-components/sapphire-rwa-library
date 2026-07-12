@@ -1,6 +1,6 @@
-import Helpers from '../../09-utils/helpers';
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
-import { LocalStorageKeys } from '../../09-utils/local-storage-keys';
+import Helpers from '@utils/helpers';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+import { LocalStorageKeys } from '@utils/local-storage-keys';
 
 interface DropdownMenuInit extends BaseComponentInit {
 	isOpen: boolean;

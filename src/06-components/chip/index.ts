@@ -1,5 +1,5 @@
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
-import Helpers from '../../09-utils/helpers';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+import Helpers from '@utils/helpers';
 
 export interface IChip extends BaseComponentInit {
 	actions: {

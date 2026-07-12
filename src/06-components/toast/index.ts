@@ -1,4 +1,4 @@
-import Helpers from '../../09-utils/helpers';
+import Helpers from '@utils/helpers';
 import { tmplToastMessage } from './templates';
 
 export interface IToastMessage {

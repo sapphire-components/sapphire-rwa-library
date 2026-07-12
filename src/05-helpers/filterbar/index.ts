@@ -1,4 +1,4 @@
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface FilterBarInit extends BaseComponentInit {
 	enabled: boolean;

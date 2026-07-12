@@ -1,4 +1,4 @@
-import spriteMarkup from '../10-export/icons-sprite.svg?raw';
+import spriteMarkup from '@/10-export/icons-sprite.svg?raw';
 
 let injected = false;
 

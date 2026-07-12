@@ -1,5 +1,5 @@
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
-import { createLoadingOverlay } from '../../09-utils/loader';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+import { createLoadingOverlay } from '@utils/loader';
 
 interface TableWrapperConfigOptions extends BaseComponentInit {
 	height: number;

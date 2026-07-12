@@ -1,14 +1,16 @@
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
 
-interface TemplateConfigOptions extends BaseComponentInit {
+interface ITemplateConfigOptions extends BaseComponentInit {
+	actions: {};
 	enabled: boolean;
 }
 
 export default class Template extends BaseComponent {
-	// private configOptions!: TemplateConfigOptions;
+	// private actions: ITemplateConfigOptions['actions'];
+	// private configOptions!: ITemplateConfigOptions;
 	// private enabled!: boolean;
 
-	constructor(configOptions: TemplateConfigOptions) {
+	constructor(configOptions: ITemplateConfigOptions) {
 		super(configOptions);
 
 		if (!this.widgetEl) {
@@ -16,13 +18,16 @@ export default class Template extends BaseComponent {
 			return;
 		}
 
+		// this.actions = configOptions.actions;
 		// this.configOptions = configOptions;
 		// this.enabled = configOptions.enabled;
 	}
 
-	parametersChanged(payload: TemplateConfigOptions): void {
+	parametersChanged(payload: ITemplateConfigOptions): void {
 		console.log(payload);
 	}
 
-	destroy() {}
+	destroy() {
+		super.destroy();
+	}
 }

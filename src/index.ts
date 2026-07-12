@@ -1,35 +1,35 @@
-import './core/init-bootstrap';
+import '@core/init-bootstrap';
 
-import { injectIconSprite } from './core/iconsSprite';
-import { installBodyPlatformClassStripper } from './core/stripBodyPlatformClasses';
-import { installClickCooldown } from './core/clickCooldown';
+import { injectIconSprite } from '@core/iconsSprite';
+import { installBodyPlatformClassStripper } from '@core/stripBodyPlatformClasses';
+import { installClickCooldown } from '@core/clickCooldown';
 
-import DesignSystemColors from './02-designsystem/_designsystem-screen-colors';
+import DesignSystemColors from '@/02-designsystem/_designsystem-screen-colors';
 
-import LayoutWrapper from './03-core/layout';
-import SapphireIntl from './03-core/SapphireIntl';
+import LayoutWrapper from '@/03-core/layout';
+import SapphireIntl from '@/03-core/SapphireIntl';
 
-import FilterBar from './05-helpers/filterbar';
-import LabelValue from './05-helpers/labelvalue';
-import TableWrapper from './05-helpers/tablewrapper';
+import FilterBar from '@helpers/filterbar';
+import LabelValue from '@helpers/labelvalue';
+import TableWrapper from '@helpers/tablewrapper';
 
-import ActionPopup from './06-components/actionpopup';
-import ButtonDropdown from './06-components/buttondropdown';
-import Chip from './06-components/chip';
-import DropdownMenu from './06-components/dropdownmenu';
-import Overlay from './06-components/overlay';
-import ResponsiveGrid from './06-components/responsive-grid';
-import SapphireDropdown from './06-components/sapphiredropdown';
-import SapphireInput from './06-components/sapphireinput';
-import SapphirePopupContent from './06-components/sapphirepopupcontent';
-import ScrollableContent from './06-components/scrollablecontent';
-import Skeleton from './06-components/skeleton';
-import TextEditor from './06-components/texteditor';
-import Toast from './06-components/toast';
-import { Tabs, TabHeader, TabContent } from './06-components/tabs';
+import ActionPopup from '@components/actionpopup';
+import ButtonDropdown from '@components/buttondropdown';
+import Chip from '@components/chip';
+import DropdownMenu from '@components/dropdownmenu';
+import Overlay from '@components/overlay';
+import ResponsiveGrid from '@components/responsive-grid';
+import SapphireDropdown from '@components/sapphiredropdown';
+import SapphireInput from '@components/sapphireinput';
+import SapphirePopupContent from '@components/sapphirepopupcontent';
+import ScrollableContent from '@components/scrollablecontent';
+import Skeleton from '@components/skeleton';
+import TextEditor from '@components/texteditor';
+import Toast from '@components/toast';
+import { Tabs, TabHeader, TabContent } from '@components/tabs';
 
-import Helpers from './09-utils/helpers';
-import { LocalStorageKeys } from './09-utils/local-storage-keys';
+import Helpers from '@utils/helpers';
+import { LocalStorageKeys } from '@utils/local-storage-keys';
 
 function init(): void {
 	injectIconSprite();

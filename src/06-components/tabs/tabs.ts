@@ -1,6 +1,6 @@
-import Helpers from '../../09-utils/helpers';
-import Overlay from '../overlay';
-import { BaseComponent, type BaseComponentInit } from '../../core/base';
+import Helpers from '@utils/helpers';
+import Overlay from '@components/overlay';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface TabsConfigOptions extends BaseComponentInit {
 	actions: {
