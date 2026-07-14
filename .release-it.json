@@ -7,7 +7,12 @@
 		"pushArgs": ["--follow-tags"],
 		"tagName": "v${version}",
 		"commitMessage": "chore: release v${version}",
-		"tagAnnotation": "Release v${version}"
+		"tagAnnotation": "Release v${version}",
+		"addUntrackedFiles": true,
+		"requireCleanWorkingDir": false
+	},
+	"hooks": {
+		"after:bump": "npm run build:prod"
 	},
 	"npm": {
 		"publish": false

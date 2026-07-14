@@ -11,6 +11,9 @@
 		"addUntrackedFiles": true,
 		"requireCleanWorkingDir": false
 	},
+	"hooks": {
+		"after:bump": "npm run build:prod"
+	},
 	"npm": {
 		"publish": false
 	},

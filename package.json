@@ -1,7 +1,7 @@
 {
 	"name": "sapphire-rwa-library",
 	"private": true,
-	"version": "0.6.11",
+	"version": "0.6.12",
 	"type": "module",
 	"scripts": {
 		"dev": "vite build --mode dev && vite build --mode dev --config vite.icons.config.js && concurrently \"npm run serve:dist\" \"npm run build:watch\"",
@@ -10,9 +10,9 @@
 		"build:prod": "tsc && rm -rf dist && vite build --mode prod && vite build --mode prod --config vite.icons.config.js",
 		"build:icons": "node build-icon-sprite.mjs",
 		"build:tokens": "node build-tokens.mjs",
-		"release:patch": "release-it patch --ci --config .release-it.patch.json && npm run build:prod",
-		"release:minor": "release-it minor --ci && npm run build:prod",
-		"release:major": "release-it major --ci && npm run build:prod"
+		"release:patch": "release-it patch --ci --config .release-it.patch.json",
+		"release:minor": "release-it minor --ci",
+		"release:major": "release-it major --ci"
 	},
 	"dependencies": {
 		"concurrently": "^10.0.3",
