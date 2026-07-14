@@ -58,7 +58,8 @@ export default defineConfig(({ command, mode }) => {
 			copyPublicDir: true,
 			cssCodeSplit: false, // false when using lib
 			cssMinify: false,
-			emptyOutDir: true,
+			// Keep sibling bundles (e.g. sapphire-rwa-icons.js) when rebuilding in watch mode.
+			emptyOutDir: false,
 			lib: {
 				entry: 'src/index.ts',
 				name: 'SapphireRWALibrary',

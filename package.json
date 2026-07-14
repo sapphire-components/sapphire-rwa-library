@@ -1,14 +1,13 @@
 {
 	"name": "sapphire-rwa-library",
 	"private": true,
-	"version": "0.6.10",
+	"version": "0.6.11",
 	"type": "module",
 	"scripts": {
-		"dev": "concurrently \"npm run serve:dist\" \"npm run build:watch\"",
+		"dev": "vite build --mode dev && vite build --mode dev --config vite.icons.config.js && concurrently \"npm run serve:dist\" \"npm run build:watch\"",
 		"serve:dist": "vite preview --port 4173 --strictPort",
-		"build:watch": "vite build --watch --mode dev",
-		"build:prod": "tsc && vite build --mode prod",
-		"build": "npm run release:patch",
+		"build:watch": "concurrently \"vite build --watch --mode dev\" \"vite build --watch --mode dev --config vite.icons.config.js\"",
+		"build:prod": "tsc && rm -rf dist && vite build --mode prod && vite build --mode prod --config vite.icons.config.js",
 		"build:icons": "node build-icon-sprite.mjs",
 		"build:tokens": "node build-tokens.mjs",
 		"release:patch": "release-it patch --ci --config .release-it.patch.json && npm run build:prod",

@@ -3,9 +3,14 @@ declare global {
 
 	interface Window {
 		SapphireRWALibrary: SapphireRWALibrary;
+		SapphireRWAIcons: SapphireRWAIcons;
 		SapphireRWADocumentation: SapphireRWADocumentationConstructor;
 		SapphireRWAStaticEntities: SapphireRWAStaticEntitiesConstructor;
 		tippy: any;
+	}
+
+	interface SapphireRWAIcons {
+		inject(): void;
 	}
 
 	interface SapphireRWALookupInstance {

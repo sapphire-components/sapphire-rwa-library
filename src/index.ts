@@ -1,6 +1,5 @@
 import '@core/init-bootstrap';
 
-import { injectIconSprite } from '@core/iconsSprite';
 import { installBodyPlatformClassStripper } from '@core/stripBodyPlatformClasses';
 import { installClickCooldown } from '@core/clickCooldown';
 
@@ -32,7 +31,6 @@ import Helpers from '@utils/helpers';
 import { LocalStorageKeys } from '@utils/local-storage-keys';
 
 function init(): void {
-	injectIconSprite();
 	installBodyPlatformClassStripper();
 	installClickCooldown();
 
