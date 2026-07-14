@@ -1,7 +1,7 @@
 {
 	"name": "sapphire-rwa-library",
 	"private": true,
-	"version": "0.6.9",
+	"version": "0.6.10",
 	"type": "module",
 	"scripts": {
 		"dev": "concurrently \"npm run serve:dist\" \"npm run build:watch\"",
@@ -16,22 +16,20 @@
 		"release:major": "release-it major --ci && npm run build:prod"
 	},
 	"dependencies": {
-		"concurrently": "^9.2.1",
+		"concurrently": "^10.0.3",
 		"dompurify": "^3.4.10",
+		"esbuild": "^0.28.0",
+		"marked": "^18.0.5",
 		"prettier": "^3.8.3",
 		"quill": "^2.0.3",
 		"quill-table-better": "^1.2.3",
+		"release-it": "^20.2.1",
 		"sass": "^1.99.0",
+		"source-map-js": "^1.2.1",
 		"stylelint": "^17.11.0",
 		"stylelint-order": "^8.1.1",
-		"typescript": "~6.0.3",
+		"typescript": "^7.0.2",
 		"vite": "^8.0.11",
 		"vite-plugin-mkcert": "^2.0.0"
-	},
-	"devDependencies": {
-		"esbuild": "^0.28.0",
-		"marked": "^18.0.5",
-		"release-it": "^20.2.1",
-		"source-map-js": "^1.2.1"
 	}
 }
