@@ -1,0 +1,23 @@
+.static-entity {
+	background-color: var(--color-neutral-0);
+	border: solid 1px var(--color-border);
+	border-radius: 8px;
+	box-shadow: var(--box-shadow-md);
+	padding: 16px;
+	h6 {
+		margin-bottom: 8px;
+	}
+	table {
+		th,
+		td {
+			padding-inline: 24px;
+			text-align: start;
+			&:first-child {
+				padding-inline-start: 0;
+			}
+			&:last-child {
+				padding-inline-end: 0;
+			}
+		}
+	}
+}

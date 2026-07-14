@@ -4,21 +4,30 @@ declare global {
 	interface Window {
 		SapphireRWALibrary: SapphireRWALibrary;
 		SapphireRWADocumentation: SapphireRWADocumentationConstructor;
+		SapphireRWAStaticEntities: SapphireRWAStaticEntitiesConstructor;
 		tippy: any;
 	}
 
-	interface SapphireRWADocumentationInstance {
+	interface SapphireRWALookupInstance {
 		name: string;
-		/** Build-time rendered HTML for the component's documentation.md, or '' when none exists. */
+		/** Build-time rendered HTML, or '' when none exists. */
 		html: string;
 	}
 
-	interface SapphireRWADocumentationConstructor {
-		new (name: string): SapphireRWADocumentationInstance;
-		(name: string): SapphireRWADocumentationInstance;
+	interface SapphireRWALookupConstructor {
+		new (name: string): SapphireRWALookupInstance;
+		(name: string): SapphireRWALookupInstance;
 		has(name: string): boolean;
 		names(): string[];
 	}
+
+	interface SapphireRWADocumentationInstance extends SapphireRWALookupInstance {}
+
+	interface SapphireRWADocumentationConstructor extends SapphireRWALookupConstructor {}
+
+	interface SapphireRWAStaticEntitiesInstance extends SapphireRWALookupInstance {}
+
+	interface SapphireRWAStaticEntitiesConstructor extends SapphireRWALookupConstructor {}
 
 	type TippyInstance = {
 		destroy: () => void;

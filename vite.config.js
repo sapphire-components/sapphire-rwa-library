@@ -13,6 +13,11 @@ const SCSS_PARTIAL_DIRS = ['01-foundations', '02-designsystem', '03-core', '04-o
 const DOCS_DIRS = ['05-helpers', '06-components'];
 const DOCS_OUT_FILE = 'sapphire-rwa-documentation.js';
 
+// Static entity folders scanned for `enumerables.md` reference tables.
+const STATIC_ENTITIES_DIR = '01-foundations/staticentities';
+const STATIC_ENTITIES_OUT_FILE = 'sapphire-rwa-static-entities.js';
+const STATIC_ENTITIES_ROUTE = '/RW_DesignSystem/StaticEntities';
+
 const pkg = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
 export default defineConfig(({ command, mode }) => {
@@ -84,10 +89,22 @@ export default defineConfig(({ command, mode }) => {
 				banner,
 				sourcemap,
 			}),
-			docsBundle({
+			lookupDocsBundle({
+				name: 'docs-bundle',
 				srcDir: 'src',
-				docsDirs: DOCS_DIRS,
+				scanDirs: DOCS_DIRS,
+				docFileName: 'documentation.md',
 				outFile: DOCS_OUT_FILE,
+				globalName: 'SapphireRWADocumentation',
+				linkStaticEntities: true,
+			}),
+			lookupDocsBundle({
+				name: 'static-entities-bundle',
+				srcDir: 'src',
+				scanDirs: [STATIC_ENTITIES_DIR],
+				docFileName: 'enumerables.md',
+				outFile: STATIC_ENTITIES_OUT_FILE,
+				globalName: 'SapphireRWAStaticEntities',
 			}),
 			bannerOnDisk(banner),
 			cssHotSwap({ outDir: 'dist', outFile: 'sapphire-rwa-library.css' }),
@@ -367,39 +384,38 @@ function walkScss(dir, cb) {
 	}
 }
 
-// Scans component folders for `documentation.md`, renders each to HTML at build
-// time (no runtime markdown parser needed), and emits a standalone IIFE
-// `sapphire-rwa-documentation.js` alongside the library JS/CSS. The file exposes
-// a global `SapphireRWADocumentation`:
+// Scans folders for markdown docs, renders each to HTML at build time (no
+// runtime markdown parser needed), and emits standalone IIFE bundles alongside
+// the library JS/CSS:
 //
-//   new SapphireRWADocumentation('Overlay').html  // -> rendered HTML string
+//   sapphire-rwa-documentation.js     -> SapphireRWADocumentation (components)
+//   sapphire-rwa-static-entities.js -> SapphireRWAStaticEntities (enumerables)
 //
-// Lookup is case- and separator-insensitive, so the PascalCase library name
-// ('Overlay', 'SapphirePopupContent', 'ResponsiveGrid') resolves to its folder
-// ('overlay', 'sapphirepopupcontent', 'responsive-grid'). Missing docs -> ''.
-function docsBundle({ srcDir, docsDirs, outFile }) {
-	const watchedDocs = new Set();
-
+//   new SapphireRWADocumentation('Overlay').html       // component docs HTML
+//   new SapphireRWAStaticEntities('SapphireScale').html // records table HTML
+//
+// Lookup is case- and separator-insensitive ('SapphireScale', 'sapphire-scale'
+// -> sapphirescale). Missing docs -> ''.
+function lookupDocsBundle({ name, srcDir, scanDirs, docFileName, outFile, globalName, linkStaticEntities = false }) {
 	const collect = (cwd) => {
 		const srcRoot = path.resolve(cwd, srcDir);
 		const files = [];
-		for (const dir of docsDirs) {
+		for (const dir of scanDirs) {
 			const base = path.resolve(srcRoot, dir);
 			if (!fs.existsSync(base)) continue;
-			walkDocs(base, (p) => files.push(p));
+			walkMarkdownDocs(base, docFileName, (p) => files.push(p));
 		}
 		files.sort();
 		return files;
 	};
 
 	return {
-		name: 'docs-bundle',
+		name,
 		apply: 'build',
 		buildStart() {
-			// Watch existing docs plus their dirs so added/edited files rebuild.
 			const cwd = process.cwd();
 			const srcRoot = path.resolve(cwd, srcDir);
-			for (const dir of docsDirs) {
+			for (const dir of scanDirs) {
 				const base = path.resolve(srcRoot, dir);
 				if (fs.existsSync(base)) this.addWatchFile(base);
 			}
@@ -408,18 +424,18 @@ function docsBundle({ srcDir, docsDirs, outFile }) {
 		async generateBundle() {
 			const cwd = process.cwd();
 			const files = collect(cwd);
+			const staticEntities = linkStaticEntities ? collectStaticEntityNames(cwd, srcDir) : [];
 
-			watchedDocs.clear();
 			const docs = {};
 			for (const filePath of files) {
 				const key = normalizeDocKey(path.basename(path.dirname(filePath)));
 				if (!key) continue;
-				const md = fs.readFileSync(filePath, 'utf8');
+				let md = fs.readFileSync(filePath, 'utf8');
+				if (staticEntities.length) md = linkStaticEntitiesInMarkdown(md, staticEntities);
 				docs[key] = marked.parse(md, { async: false }).trim();
-				watchedDocs.add(filePath);
 			}
 
-			this.emitFile({ type: 'asset', fileName: outFile, source: buildDocsIife(docs) });
+			this.emitFile({ type: 'asset', fileName: outFile, source: buildLookupIife(globalName, docs) });
 		},
 	};
 }
@@ -430,28 +446,50 @@ function normalizeDocKey(name) {
 		.replace(/[^a-z0-9]/g, '');
 }
 
-function buildDocsIife(docs) {
+function buildLookupIife(globalName, docs) {
 	return `(function () {
 	var DOCS = ${JSON.stringify(docs)};
 	function normalize(name) {
 		return String(name == null ? '' : name).toLowerCase().replace(/[^a-z0-9]/g, '');
 	}
-	function SapphireRWADocumentation(name) {
-		if (!(this instanceof SapphireRWADocumentation)) return new SapphireRWADocumentation(name);
+	function ${globalName}(name) {
+		if (!(this instanceof ${globalName})) return new ${globalName}(name);
 		this.name = name;
 		this.html = DOCS[normalize(name)] || '';
 	}
-	SapphireRWADocumentation.has = function (name) { return normalize(name) in DOCS; };
-	SapphireRWADocumentation.names = function () { return Object.keys(DOCS); };
-	window.SapphireRWADocumentation = SapphireRWADocumentation;
+	${globalName}.has = function (name) { return normalize(name) in DOCS; };
+	${globalName}.names = function () { return Object.keys(DOCS); };
+	window.${globalName} = ${globalName};
 })();
 `;
 }
 
-function walkDocs(dir, cb) {
+function walkMarkdownDocs(dir, docFileName, cb) {
+	const target = docFileName.toLowerCase();
 	for (const d of fs.readdirSync(dir, { withFileTypes: true })) {
 		const p = path.join(dir, d.name);
-		if (d.isDirectory()) walkDocs(p, cb);
-		else if (d.name.toLowerCase() === 'documentation.md') cb(p);
+		if (d.isDirectory()) walkMarkdownDocs(p, docFileName, cb);
+		else if (d.name.toLowerCase() === target) cb(p);
 	}
+}
+
+function collectStaticEntityNames(cwd, srcDir) {
+	const base = path.resolve(cwd, srcDir, STATIC_ENTITIES_DIR);
+	if (!fs.existsSync(base)) return [];
+	return fs
+		.readdirSync(base, { withFileTypes: true })
+		.filter((d) => d.isDirectory())
+		.map((d) => d.name)
+		.sort((a, b) => b.length - a.length);
+}
+
+function linkStaticEntitiesInMarkdown(md, entityNames) {
+	let result = md;
+	for (const entity of entityNames) {
+		const escaped = entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		const re = new RegExp('(?<!\\[)`' + escaped + '`', 'g');
+		const url = `${STATIC_ENTITIES_ROUTE}#${entity}`;
+		result = result.replace(re, '[`' + entity + '`](' + url + ')');
+	}
+	return result;
 }
