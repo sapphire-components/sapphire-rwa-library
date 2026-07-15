@@ -31,15 +31,21 @@ import Helpers from '@utils/helpers';
 import { LocalStorageKeys } from '@utils/local-storage-keys';
 
 function init(): void {
-	installBodyPlatformClassStripper();
-	installClickCooldown();
+	const script = document.querySelector('script#sapphire-rwa-library');
 
-	const storedLocale: any = Helpers.readFromLocalStorage<string>(LocalStorageKeys.locale);
-	window.SapphireRWALibrary.State.locale = storedLocale['localeCode'];
-	window.SapphireRWALibrary.State.isRTL = storedLocale['isRTL'];
+	if (script) {
+		console.log('Script exists');
+	} else {
+		installBodyPlatformClassStripper();
+		installClickCooldown();
 
-	const style1 = 'color: #FFA500; font-weight: bold;';
-	console.log(`%cSapphireRWALibrary | ${__APP_VERSION__} | ${window.location.pathname}`, style1);
+		const storedLocale: any = Helpers.readFromLocalStorage<string>(LocalStorageKeys.locale);
+		window.SapphireRWALibrary.State.locale = storedLocale['localeCode'];
+		window.SapphireRWALibrary.State.isRTL = storedLocale['isRTL'];
+
+		const style1 = 'color: #FFA500; font-weight: bold;';
+		console.log(`%cSapphireRWALibrary | ${__APP_VERSION__} | ${window.location.pathname}`, style1);
+	}
 }
 
 const SapphireRWALibrary = {
