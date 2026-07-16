@@ -22,3 +22,7 @@
 		top: 9px;
 	}
 }
+
+.dropdown-container > select.dropdown-display {
+	border-color: var(--color-border);
+}

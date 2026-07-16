@@ -3,6 +3,18 @@
 }
 
 .layoutwrapper-body-auxiliar {
+	background-color: var(--color-neutral-0);
+	border-radius: 8px;
+	box-shadow: var(--box-shadow-lg);
+	flex: 0 0 600px;
+	font-size: 13px;
+	overflow: auto;
+	padding: 12px 2px;
+	scrollbar-gutter: stable both-edges;
+	&:empty {
+		display: none;
+	}
+
 	p {
 		font-family: 'Lato';
 	}
@@ -11,8 +23,6 @@
 		border-style: solid;
 		color: var(--color-border);
 		margin-block: 24px;
-	}
-	table {
 	}
 	thead {
 		display: none;
@@ -28,5 +38,11 @@
 	}
 	h6 {
 		font-size: 15px;
+	}
+}
+
+body[data-showdocumentation='false'] {
+	.layoutwrapper-body-auxiliar {
+		display: none;
 	}
 }

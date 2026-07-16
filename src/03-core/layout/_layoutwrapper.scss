@@ -1,20 +1,7 @@
 @use '../../01-foundations/_colors.scss' as *;
 
-.screen-container {
-	scrollbar-gutter: stable;
-}
-
 div[data-block$='LayoutBlank'] {
 	display: contents;
-}
-
-body:has(.layoutwrapper) {
-	background-color: $color-background;
-}
-
-body.overlay-iframe,
-body.overlay-iframe-auto-size {
-	background-color: transparent;
 }
 
 .layoutwrapper {
@@ -32,19 +19,26 @@ body.overlay-iframe-auto-size {
 		flex: 1;
 		gap: 24px;
 		min-width: 0;
-		padding: 48px 24px;
+		padding: 24px;
 		&-content {
 			flex: 1;
 			margin-inline: auto;
 			max-width: 1300px;
 			min-width: 0;
 		}
-		&-auxiliar {
-			flex: 0 0 600px;
-			font-size: 13px;
-			&:empty {
-				display: none;
-			}
-		}
+	}
+}
+
+.layoutwrapper.designsystem {
+	height: 100vh;
+	overflow: hidden;
+	.layoutwrapper-body {
+		height: 100%;
+	}
+	.layoutwrapper-body-content {
+		max-width: unset;
+		overflow: auto;
+		padding-right: 8px;
+		scrollbar-gutter: stable both-edges;
 	}
 }

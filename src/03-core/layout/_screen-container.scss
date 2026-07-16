@@ -1,0 +1,7 @@
+.screen-container {
+	scrollbar-gutter: stable;
+}
+
+.screen-container:has(.layoutwrapper.designsystem) {
+	scrollbar-gutter: unset;
+}

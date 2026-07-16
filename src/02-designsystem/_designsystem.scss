@@ -2,17 +2,26 @@
 	background-color: var(--color-neutral-0);
 	border: solid 1px var(--color-neutral-5);
 	border-radius: 8px;
-	inset-inline-start: 12px;
-	padding: 8px;
+	display: flex;
+	gap: 8px;
+	height: 43px;
+	inset-inline-start: -205px;
+	overflow: hidden;
+	padding: 12px;
 	position: fixed;
-	top: -80px;
-	transition: top 0.3s ease-in-out;
-	width: 50px;
+	top: 12px;
+	transition: transform 0.3s ease-in-out;
 	z-index: 1;
-
 	&:hover {
-		top: -4px;
-		width: auto;
+		height: unset;
+		transform: translateX(200px);
+	}
+}
+
+:dir(rtl) .configuration-selector {
+	inset-inline-start: -195px;
+	&:hover {
+		transform: translateX(-190px);
 	}
 }
 

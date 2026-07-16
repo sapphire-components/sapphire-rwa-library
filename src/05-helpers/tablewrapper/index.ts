@@ -141,6 +141,8 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private reflectPageCount(): void {
+		console.log('reflectPageCount', this.runtimeId, this.pageCount, this.isPristine);
+
 		if (this.pageCount === 0 && !this.isPristine) {
 			this.widgetEl.dataset.norecords = 'true';
 		} else {
