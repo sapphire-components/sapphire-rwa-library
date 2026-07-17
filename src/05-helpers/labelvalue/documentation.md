@@ -10,10 +10,10 @@ The `LabelValue` helper does not own field logic or validation. It only handles 
 
 | Name              | Type            | Description                                                                                                                                 |
 | ----------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `IsMandatory`     | `boolean`       | When `True`, appends a red asterisk (`*`) after the label text.                                                                             |
-| `LabelTopPadding` | `integer`       | Top padding applied to the label in horizontal orientation, in pixels. Used to align the label with the control. Defaults to platform value. |
+| `IsMandatory`     | `Boolean`       | When `True`, appends a red asterisk (`*`) after the label text.                                                                             |
+| `LabelTopPadding` | `Integer`       | Top padding applied to the label in horizontal orientation, in pixels. Used to align the label with the control. Defaults to platform value. |
 | `LabelWidth`      | `SapphireScale` | Fixed width of the label column when `Orientation` is `horizontal`. Ignored in vertical orientation.                                        |
-| `Orientation`     | `string`        | Layout direction: `horizontal` places the label and control side by side; `vertical` stacks the label above the control.                    |
+| `Orientation`     | `Text`        | Layout direction: `horizontal` places the label and control side by side; `vertical` stacks the label above the control.                    |
 
 <hr>
 

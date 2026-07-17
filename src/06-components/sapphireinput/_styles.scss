@@ -80,20 +80,6 @@ div[data-block$='SapphireInput'] {
 	}
 }
 
-.sapphireinput-invalid {
-	background-color: var(--color-error-light);
-	border: solid 1px var(--color-error);
-	color: var(--color-error);
-	font-size: var(--font-size-xs);
-	padding: var(--space-xs) var(--space-s);
-	&:empty {
-		display: none;
-	}
-	&[hidden] {
-		display: none;
-	}
-}
-
 .sapphireinput[data-iconname=''] {
 	.form-control[data-input] {
 		padding-inline-start: var(--space-base);
@@ -149,8 +135,4 @@ div[data-block$='SapphireInput'] {
 	.form-control[data-input] {
 		text-align: start;
 	}
-}
-
-.sapphireinput-invalid {
-	-servicestudio-display: none !important;
 }

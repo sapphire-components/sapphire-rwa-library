@@ -10,12 +10,12 @@ The `Chip` enhances a root element containing a `.chip-content` node. Based on i
 
 | Property       | Type      | Description                                                            |
 | -------------- | --------- | ---------------------------------------------------------------------- |
-| `Enabled`      | `boolean` | Enables or disables all interaction. Disabled chips are not focusable. |
-| `HasClear`     | `boolean` | Renders a trailing clear button.                                       |
-| `Icon`         | `string`  | Optional leading icon name rendered before the content.                |
-| `IsClickable`  | `boolean` | Makes the whole chip act as a button firing `Click`.                   |
-| `IsSelectable` | `boolean` | Makes the chip a toggle that fires `Toggle` and tracks selected state. |
-| `IsSelected`   | `boolean` | Initial selected state (only meaningful when `IsSelectable`).          |
+| `Enabled`      | `Boolean` | Enables or disables all interaction. Disabled chips are not focusable. |
+| `HasClear`     | `Boolean` | Renders a trailing clear button.                                       |
+| `Icon`         | `Text`  | Optional leading icon name rendered before the content.                |
+| `IsClickable`  | `Boolean` | Makes the whole chip act as a button firing `Click`.                   |
+| `IsSelectable` | `Boolean` | Makes the chip a toggle that fires `Toggle` and tracks selected state. |
+| `IsSelected`   | `Boolean` | Initial selected state (only meaningful when `IsSelectable`).          |
 
 <hr>
 

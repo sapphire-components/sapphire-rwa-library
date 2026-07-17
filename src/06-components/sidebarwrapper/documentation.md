@@ -8,8 +8,8 @@ This component is a wrapper for the Interaction\Sidebar component from OSUI.
 
 | Name         | Type            | Description                                                                                                     |
 | ------------ | --------------- | --------------------------------------------------------------------------------------------------------------- |
-| `HasOverlay` | `boolean`       | Set to True, to show an overlay when the Sidebar is open. When you click on the overlay, the Sidebar is closed. |
-| `IsOpen`     | `boolean`       | Controls visibility of the sidebar.                                                                             |
+| `HasOverlay` | `Boolean`       | Set to True, to show an overlay when the Sidebar is open. When you click on the overlay, the Sidebar is closed. |
+| `IsOpen`     | `Boolean`       | Controls visibility of the sidebar.                                                                             |
 | `Width`      | `SapphireScale` | Spacing preset for the sidebar width. Defaults to `xl2`.                                                        |
 
 <hr>

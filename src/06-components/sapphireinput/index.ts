@@ -1,5 +1,6 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
+import { ValidationMessage } from '@utils/validation-message';
 
 interface SapphireInputNumericOptions {
 	DecimalScale: number;
@@ -23,6 +24,7 @@ interface SapphireInputInit extends BaseComponentInit {
 	placeholder: string;
 	theme: string;
 	type: 'text' | 'integer' | 'decimal';
+	validationMessage: string;
 	value: string;
 }
 
@@ -42,7 +44,8 @@ export default class SapphireInput extends BaseComponent {
 	private plusEl!: HTMLDivElement;
 	private step!: number;
 	private type!: SapphireInputInit['type'];
-	private validationMessageEl: HTMLElement | null = null;
+	private validationMessage = '';
+	private validationMessageCtrl!: ValidationMessage;
 	private value!: string;
 
 	private readonly handleInput = (): void => {
@@ -175,7 +178,8 @@ export default class SapphireInput extends BaseComponent {
 		this.type = init.type;
 		this.maxLength = init.maxLength ?? 0;
 		this.isValid = init.isValid ?? true;
-		this.validationMessageEl = this.widgetEl.querySelector<HTMLElement>('.sapphireinput-invalid');
+		this.validationMessage = init.validationMessage ?? '';
+		this.validationMessageCtrl = new ValidationMessage(this.widgetEl);
 		this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
 		this.widgetEl.dataset.isoutofbounds = 'false';
 		this.widgetEl.dataset.type = this.type;
@@ -208,7 +212,7 @@ export default class SapphireInput extends BaseComponent {
 		this.updateDisplayValue();
 		this.updateHasContent();
 		this.updateStepsButtons();
-		this.updateValidationMessage();
+		this.validationMessageCtrl.update(this.isValid, this.validationMessage);
 		this.checkOutOfBounds();
 	}
 
@@ -229,15 +233,6 @@ export default class SapphireInput extends BaseComponent {
 			return value.slice(0, this.maxLength);
 		}
 		return value;
-	}
-
-	// The backend renders the message element (.sapphireinput-invalid); we only
-	// toggle its visibility: shown while invalid, hidden while valid.
-	private updateValidationMessage(): void {
-		if (!this.validationMessageEl) {
-			return;
-		}
-		this.validationMessageEl.hidden = this.isValid;
 	}
 
 	private updateDisplayValue(): void {
@@ -292,10 +287,20 @@ export default class SapphireInput extends BaseComponent {
 			this.updateStepsButtons();
 		}
 
+		let needsValidationRefresh = false;
 		if (payload.isValid !== undefined && payload.isValid !== this.isValid) {
 			this.isValid = payload.isValid;
 			this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
-			this.updateValidationMessage();
+			needsValidationRefresh = true;
+		}
+
+		if (payload.validationMessage !== undefined && payload.validationMessage !== this.validationMessage) {
+			this.validationMessage = payload.validationMessage;
+			needsValidationRefresh = true;
+		}
+
+		if (needsValidationRefresh) {
+			this.validationMessageCtrl.update(this.isValid, this.validationMessage);
 		}
 
 		this.checkOutOfBounds();
@@ -313,6 +318,7 @@ export default class SapphireInput extends BaseComponent {
 		this.plusEl?.removeEventListener('keydown', this.handleStepKeyDown);
 		this.minusEl?.removeEventListener('click', this.handleMinusClick);
 		this.minusEl?.removeEventListener('keydown', this.handleStepKeyDown);
+		this.validationMessageCtrl.destroy();
 	}
 
 	private checkOutOfBounds(): void {

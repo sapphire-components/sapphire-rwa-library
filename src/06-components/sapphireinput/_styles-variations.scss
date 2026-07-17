@@ -19,14 +19,6 @@
 		background-color: var(--color-error-light);
 		border-color: var(--color-error);
 	}
-	.sapphireinput-invalid {
-		display: flex;
-		gap: 4px;
-	}
-}
-
-.sapphireinput-invalid:has(.sapphireinput-invalid-message:empty) {
-	display: none !important;
 }
 
 .sapphireinput[data-isoutofbounds='true'] {

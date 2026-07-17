@@ -7,8 +7,8 @@
 | Name      | Type            | Description |
 | --------- | --------------- | ----------- |
 | `Color`   | `SapphireColor` |             |
-| `Enabled` | `boolean`       |             |
-| `HasDot`  | `boolean`       |             |
+| `Enabled` | `Boolean`       |             |
+| `HasDot`  | `Boolean`       |             |
 | `Shape`   | `Shape`         |             |
 | `Width`   | `SapphireScale` |             |
 

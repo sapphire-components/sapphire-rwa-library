@@ -10,38 +10,38 @@ The `Overlay` attaches to a trigger element and shows a floating box containing 
 
 ###### Input parameters
 
-| Name                | Type           | Description                                                                                                                                                            |
-| ------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ExternalContentId` | `string`       | Overrides the `Content` placeholder with an element defined elsewhere on the page.                                                                                     |
-| `ExternalTriggerId` | `string`       | Overrides the `Trigger` placeholder with an element defined elsewhere on the page.                                                                                     |
-| `FocusOnClose`      | `boolean`      | Returns focus to the trigger when the overlay closes.                                                                                                                  |
-| `FocusOnOpen`       | `boolean`      | Focuses the first focusable element when the overlay opens.                                                                                                            |
-| `Height`            | `number`       | Fixed height in pixels.                                                                                                                                                |
-| `IframeURL`         | `string`       | Renders the overlay content inside an iframe pointing at this URL.                                                                                                     |
-| `MaxHeight`         | `number`       | Maximum height in pixels.                                                                                                                                              |
-| `Options`           | `Structure`    | Tippy options controlling placement and behaviour. See the `Options` structure below.                                                                                 |
-| `Padding`           | `SapphireSize` | Padding preset applied to the overlay box.                                                                                                                             |
-| `Persistent`        | `boolean`      | Keeps the overlay open until explicitly closed and adds a close button.                                                                                                |
-| `Theme`             | `string`       | Optional theme: `light`, `success`, `info`, `warning`, `error`. Include `disable-init` to skip auto-initialization, or `iframe-auto-size` to auto-size iframe content. |
-| `Width`             | `number`       | Fixed width in pixels (also raises `maxWidth` when larger).                                                                                                            |
+| Name                | Type                  | Description                                                                                                                                                            |
+| ------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ExternalContentId` | `Text`                | Overrides the `Content` placeholder with an element defined elsewhere on the page.                                                                                     |
+| `ExternalTriggerId` | `Text`                | Overrides the `Trigger` placeholder with an element defined elsewhere on the page.                                                                                     |
+| `FocusOnClose`      | `Boolean`             | Returns focus to the trigger when the overlay closes.                                                                                                                  |
+| `FocusOnOpen`       | `Boolean`             | Focuses the first focusable element when the overlay opens.                                                                                                            |
+| `Height`            | `Integer`             | Fixed height in pixels.                                                                                                                                                |
+| `IframeURL`         | `Text`                | Renders the overlay content inside an iframe pointing at this URL.                                                                                                     |
+| `MaxHeight`         | `Integer`             | Maximum height in pixels.                                                                                                                                              |
+| `Options`           | `TippyTooltipOptions` | Tippy options controlling placement and behaviour. See the `Options` structure below.                                                                                  |
+| `Padding`           | `SapphireSize`        | Padding preset applied to the overlay box.                                                                                                                             |
+| `Persistent`        | `Boolean`             | Keeps the overlay open until explicitly closed and adds a close button.                                                                                                |
+| `Theme`             | `Text`                | Optional theme: `light`, `success`, `info`, `warning`, `error`. Include `disable-init` to skip auto-initialization, or `iframe-auto-size` to auto-size iframe content. |
+| `Width`             | `Integer`             | Fixed width in pixels (also raises `maxWidth` when larger).                                                                                                            |
 
 <hr>
 
-###### `Options` structure
+###### `TippyTooltipOptions` structure
 
 Tippy configuration passed through to the underlying instance.
 
-| Property      | Type        | Description                                                                                                        |
-| ------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| `placement`   | `string`    | Position of the overlay relative to the trigger (flipped automatically in RTL). See the Tippy placement link above. |
-| `trigger`     | `string`    | Event(s) that open the overlay, e.g. `click` or `mouseenter focus`. Using `click` enables keyboard toggle.        |
-| `arrow`       | `boolean`   | Renders a pointer arrow on the overlay.                                                                            |
-| `delay`       | `Structure` | Show/hide delays in milliseconds: `{ Show, Hide }`.                                                                |
-| `interactive` | `boolean`   | Keeps the overlay open while the pointer is over its content.                                                     |
-| `hideOnClick` | `boolean`   | Hides the overlay when clicking outside it.                                                                        |
-| `flip`        | `boolean`   | Allows flipping to the opposite placement when there is no room. When `false`, flipping is disabled.              |
-| `maxWidth`    | `number`    | Maximum width in pixels. Non-numeric values resolve to `none`; overridden by `Width` when `Width` is larger.      |
-| `appendTo`    | `string`    | Where the overlay is mounted. `body` appends to `<body>`; any other value mounts it next to the trigger.          |
+| Property      | Type        | Description                                                                                                         |
+| ------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| `placement`   | `Text`      | Position of the overlay relative to the trigger (flipped automatically in RTL). See the Tippy placement link above. |
+| `trigger`     | `Text`      | Event(s) that open the overlay, e.g. `click` or `mouseenter focus`. Using `click` enables keyboard toggle.          |
+| `arrow`       | `Boolean`   | Renders a pointer arrow on the overlay.                                                                             |
+| `delay`       | `Structure` | Show/hide delays in milliseconds: `{ Show, Hide }`.                                                                 |
+| `interactive` | `Boolean`   | Keeps the overlay open while the pointer is over its content.                                                       |
+| `hideOnClick` | `Boolean`   | Hides the overlay when clicking outside it.                                                                         |
+| `flip`        | `Boolean`   | Allows flipping to the opposite placement when there is no room. When `false`, flipping is disabled.                |
+| `maxWidth`    | `Integer`   | Maximum width in pixels. Non-numeric values resolve to `none`; overridden by `Width` when `Width` is larger.        |
+| `appendTo`    | `Text`      | Where the overlay is mounted. `body` appends to `<body>`; any other value mounts it next to the trigger.            |
 
 <hr>
 

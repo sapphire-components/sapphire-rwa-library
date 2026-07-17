@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.14 2026-07-16T17:37:50.453Z */
+/*!  SapphireRWALibrary PROD v0.6.15 2026-07-17T08:14:15.794Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -5907,14 +5907,6 @@ div[data-block$=SapphireDropdown] {
   background-color: var(--color-error-light);
   border-color: var(--color-error);
 }
-.sapphireinput[data-enabled][data-isvalid=false] .sapphireinput-invalid {
-  display: flex;
-  gap: 4px;
-}
-
-.sapphireinput-invalid:has(.sapphireinput-invalid-message:empty) {
-  display: none !important;
-}
 
 .sapphireinput[data-isoutofbounds=true] .form-control[data-input] {
   border-color: var(--color-error);
@@ -6495,20 +6487,6 @@ div[data-block$=SapphireInput] {
   display: none;
 }
 
-.sapphireinput-invalid {
-  background-color: var(--color-error-light);
-  border: solid 1px var(--color-error);
-  color: var(--color-error);
-  font-size: var(--font-size-xs);
-  padding: var(--space-xs) var(--space-s);
-}
-.sapphireinput-invalid:empty {
-  display: none;
-}
-.sapphireinput-invalid[hidden] {
-  display: none;
-}
-
 .sapphireinput[data-iconname=""] .form-control[data-input] {
   padding-inline-start: var(--space-base);
 }
@@ -6547,10 +6525,6 @@ div[data-block$=SapphireInput] {
 
 .sapphireinput[data-type=text] .form-control[data-input] {
   text-align: start;
-}
-
-.sapphireinput-invalid {
-  -servicestudio-display: none !important;
 }
 .sapphire-popup-content[data-padding=none] {
   padding: 0;

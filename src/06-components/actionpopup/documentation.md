@@ -15,15 +15,15 @@ A modal action popup with a backdrop that blocks interaction with the page. It r
 
 | Name          | Type            | Description                                                                                                                                                        |
 | ------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `CloseOnEsc`  | `boolean`       | When `True` (and `HasClose` is `True`), pressing `Escape` closes the popup (fires `Cancel`).                                                                       |
-| `HasClose`    | `boolean`       | When `True`, shows the top-right close button. When `False`, hides it and disables the `Escape` shortcut, so the popup is only dismissible via the action buttons. |
-| `IsOpen`      | `boolean`       | Controls visibility of the popup.                                                                                                                                  |
-| `LabelCancel` | `string`        | Label on the cancel button. Button hidden when "".                                                                                                                 |
-| `LabelNo`     | `string`        | Label on the negative button. Button hidden when "".                                                                                                               |
-| `LabelYes`    | `string`        | Label on the affirmative button. Button hidden when "".                                                                                                            |
-| `Message`     | `string`        | Message of the popup. Hidden when empty.                                                                                                                           |
+| `CloseOnEsc`  | `Boolean`       | When `True` (and `HasClose` is `True`), pressing `Escape` closes the popup (fires `Cancel`).                                                                       |
+| `HasClose`    | `Boolean`       | When `True`, shows the top-right close button. When `False`, hides it and disables the `Escape` shortcut, so the popup is only dismissible via the action buttons. |
+| `IsOpen`      | `Boolean`       | Controls visibility of the popup.                                                                                                                                  |
+| `LabelCancel` | `Text`        | Label on the cancel button. Button hidden when "".                                                                                                                 |
+| `LabelNo`     | `Text`        | Label on the negative button. Button hidden when "".                                                                                                               |
+| `LabelYes`    | `Text`        | Label on the affirmative button. Button hidden when "".                                                                                                            |
+| `Message`     | `Text`        | Message of the popup. Hidden when empty.                                                                                                                           |
 | `Padding`     | `SapphireSize`  | Spacing preset for the dialog sections. Defaults to `m`.                                                                                                           |
-| `Title`       | `string`        | Title of the popup. Hidden when empty.                                                                                                                             |
+| `Title`       | `Text`        | Title of the popup. Hidden when empty.                                                                                                                             |
 | `Width`       | `SapphireScale` | Spacing preset for the dialog width. Defaults to `m`.                                                                                                              |
 
 <hr>

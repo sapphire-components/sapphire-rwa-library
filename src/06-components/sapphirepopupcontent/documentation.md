@@ -15,11 +15,11 @@ Structured content layout for the **Popup** widget from Service Studio. Use it w
 
 | Name            | Type            | Description                                                                                                                                 |
 | --------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CloseOnEsc`    | `boolean`       | When `True`, pressing `Escape` fires the `Close` event.                                                                                     |
-| `HasClose`      | `boolean`       | When `True`, shows the top-right close button and reserves header space for it. When `False`, the close button is hidden.                   |
-| `HasSeparators` | `boolean`       | When `True`, draws separators between the header/body and body/footer sections.                                                             |
-| `Height`        | `integer`       | Fixed height of the popup content in pixels. When `0`, height grows with content (still limited by the viewport max-height).                |
-| `MinHeight`     | `integer`       | Minimum height of the popup content in pixels. When `0`, no minimum is applied.                                                             |
+| `CloseOnEsc`    | `Boolean`       | When `True`, pressing `Escape` fires the `Close` event.                                                                                     |
+| `HasClose`      | `Boolean`       | When `True`, shows the top-right close button and reserves header space for it. When `False`, the close button is hidden.                   |
+| `HasSeparators` | `Boolean`       | When `True`, draws separators between the header/body and body/footer sections.                                                             |
+| `Height`        | `Integer`       | Fixed height of the popup content in pixels. When `0`, height grows with content (still limited by the viewport max-height).                |
+| `MinHeight`     | `Integer`       | Minimum height of the popup content in pixels. When `0`, no minimum is applied.                                                             |
 | `Padding`       | `SapphireSize`  | Spacing preset for the dialog padding and section gaps. Supported values: `none`, `s`, `base`, `m`, `l`, `xl`.                              |
 | `Width`         | `SapphireScale` | Width preset for the dialog. Supported values: `s` (400px), `m` (600px), `l` (960px, default), `xl` (1200px), `full` (viewport minus 48px). |
 

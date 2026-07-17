@@ -12,12 +12,12 @@ A button that reveals a dropdown panel of actions. It supports two modes: a regu
 
 | Name                | Type            | Description                                                                                     |
 | ------------------- | --------------- | ----------------------------------------------------------------------------------------------- |
-| `ButtonClass`       | `string`        | Allows to style the button to the existing semantic versions.                                   |
-| `Enabled`           | `boolean`       | Enables or disables all interaction. Disabled dropdowns close any open panel.                   |
-| `IsSplitButton`     | `boolean`       | When `True`, renders a separate chevron trigger and the label fires `Click` instead of opening. |
-| `IsValid`           | `boolean`       | When `False`, marks the component invalid and shows `ValidationMessage` below it.               |
-| `Placement`         | `string`        | Preferred placement of the actions panel relative to the trigger. Defaults to `bottom-start`.   |
-| `ValidationMessage` | `string`        | Message shown below the widget while `IsValid` is `False`.                                      |
+| `ButtonClass`       | `Text`        | Allows to style the button to the existing semantic versions.                                   |
+| `Enabled`           | `Boolean`       | Enables or disables all interaction. Disabled dropdowns close any open panel.                   |
+| `IsSplitButton`     | `Boolean`       | When `True`, renders a separate chevron trigger and the label fires `Click` instead of opening. |
+| `IsValid`           | `Boolean`       | When `False`, marks the component invalid and shows `ValidationMessage` below it.               |
+| `Placement`         | `Text`        | Preferred placement of the actions panel relative to the trigger. Defaults to `bottom-start`.   |
+| `ValidationMessage` | `Text`        | Message shown below the widget while `IsValid` is `False`.                                      |
 | `Width`             | `SapphireScale` | Sets the width of the component.                                                                |
 
 <hr>

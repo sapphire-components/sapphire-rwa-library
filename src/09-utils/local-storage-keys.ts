@@ -6,6 +6,6 @@ export const LocalStorageKeys = {
 	locale: '$OS_Users$CurrentLocale',
 
 	dropdownMenu(runtimeId: string): string {
-		return `dropdownmenu-${runtimeId}`;
+		return `sph-dropdownmenu-${runtimeId}`;
 	},
 } as const;
