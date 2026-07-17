@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.15 2026-07-17T08:14:15.794Z */
+/*!  SapphireRWALibrary PROD v0.6.16 2026-07-17T08:27:54.582Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -6408,7 +6408,7 @@ div[data-block$=SapphireInput] {
 }
 
 .sapphireinput {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 4px;
 }

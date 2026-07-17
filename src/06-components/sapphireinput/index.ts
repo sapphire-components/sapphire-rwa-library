@@ -179,7 +179,7 @@ export default class SapphireInput extends BaseComponent {
 		this.maxLength = init.maxLength ?? 0;
 		this.isValid = init.isValid ?? true;
 		this.validationMessage = init.validationMessage ?? '';
-		this.validationMessageCtrl = new ValidationMessage(this.widgetEl);
+		this.validationMessageCtrl = new ValidationMessage(this.widgetEl, 'append');
 		this.widgetEl.dataset.isvalid = this.isValid ? 'true' : 'false';
 		this.widgetEl.dataset.isoutofbounds = 'false';
 		this.widgetEl.dataset.type = this.type;

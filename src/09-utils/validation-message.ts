@@ -3,13 +3,17 @@ import Helpers from './helpers';
 // Shared validation message UI. Keep markup here so every component renders
 // the same icon/text layout and picks up styling from `09-utils/_validation-message.scss`.
 
+type ValidationMessagePlacement = 'after' | 'append';
+
 export class ValidationMessage {
 	#el: HTMLElement | null = null;
 	#textEl: HTMLElement | null = null;
 	readonly #anchor: HTMLElement;
+	readonly #placement: ValidationMessagePlacement;
 
-	constructor(anchor: HTMLElement) {
+	constructor(anchor: HTMLElement, placement: ValidationMessagePlacement = 'after') {
 		this.#anchor = anchor;
+		this.#placement = placement;
 	}
 
 	update(isValid: boolean, message: string): void {
@@ -31,7 +35,11 @@ export class ValidationMessage {
 			this.#textEl.className = 'validation-message-text';
 
 			this.#el.append(icon, this.#textEl);
-			this.#anchor.after(this.#el);
+			if (this.#placement === 'append') {
+				this.#anchor.append(this.#el);
+			} else {
+				this.#anchor.after(this.#el);
+			}
 		}
 
 		this.#textEl!.textContent = message;

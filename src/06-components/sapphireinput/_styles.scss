@@ -6,7 +6,7 @@ div[data-block$='SapphireInput'] {
 }
 
 .sapphireinput {
-	display: flex;
+	display: inline-flex;
 	flex-direction: column;
 	gap: 4px;
 	&-minus,
