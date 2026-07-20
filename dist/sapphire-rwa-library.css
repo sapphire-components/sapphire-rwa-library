@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.17 2026-07-17T11:15:56.751Z */
+/*!  SapphireRWALibrary PROD v0.6.18 2026-07-20T18:26:34.819Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -3293,6 +3293,9 @@ input[data-switch].small:empty:after {
 }
 input[data-switch].small:checked:after {
   transform: translateX(18px) translateZ(0);
+}
+input.not-valid + span.validation-message {
+  position: static;
 }
 div[data-block$=CheckboxLabel] {
   display: contents;
