@@ -8,12 +8,12 @@ While `IsWaiting` is `True` the placeholders pulse. When `IsWaiting` becomes `Fa
 
 ###### Input parameters
 
-| Property    | Type            | Description                                                                                  |
-| ----------- | --------------- | -------------------------------------------------------------------------------------------- |
-| `Display`   | `Structure`     | Controls which loading placeholders are rendered. See the `Display` structure below.         |
-| `Enabled`   | `Boolean`       | Enables or disables the component.                                                           |
+| Property    | Type            | Description                                                                                          |
+| ----------- | --------------- | ---------------------------------------------------------------------------------------------------- |
+| `Display`   | `Structure`     | Controls which loading placeholders are rendered. See the `Display` structure below.                 |
+| `Enabled`   | `Boolean`       | Enables or disables the component.                                                                   |
 | `IsWaiting` | `Boolean`       | While `true`, placeholders are shown. Setting it to `false` animates them out and reveals `Content`. |
-| `Width`     | `SapphireScale` | Sets the width of the skeleton container.                                                    |
+| `Width`     | `SapphireScale` | Sets the width of the skeleton container.                                                            |
 
 <hr>
 
@@ -24,13 +24,13 @@ An object describing which placeholders to render. Rendered in order: circle, lo
 | Property  | Type      | Description                                                                                             |
 | --------- | --------- | ------------------------------------------------------------------------------------------------------- |
 | `Bars`    | `Integer` | Number of bar placeholders to render. When `> 0`, renders that many bars with decreasing widths.        |
-| `Circle`  | `Text`  | Size of a circular placeholder. Accepts `s`, `m`, or `l`; any other value (or empty) renders no circle. |
+| `Circle`  | `Text`    | Size of a circular placeholder. Accepts `s`, `m`, or `l`; any other value (or empty) renders no circle. |
 | `Loading` | `Boolean` | When `true`, renders a spinner loader.                                                                  |
 
 <hr>
 
 ###### Placeholders
 
-| Name      | Description                                                       |
-| --------- | ----------------------------------------------------------------- |
-| `Content` | Element to be displayed as content after IsWaiting becomes false. |
+| Name      | Description                                                         |
+| --------- | ------------------------------------------------------------------- |
+| `Content` | Element to be displayed as content after `IsWaiting` becomes false. |

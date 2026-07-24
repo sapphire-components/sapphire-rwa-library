@@ -13,18 +13,19 @@ A modal action popup with a backdrop that blocks interaction with the page. It r
 
 ###### Input parameters
 
-| Name          | Type            | Description                                                                                                                                                        |
-| ------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `CloseOnEsc`  | `Boolean`       | When `True` (and `HasClose` is `True`), pressing `Escape` closes the popup (fires `Cancel`).                                                                       |
-| `HasClose`    | `Boolean`       | When `True`, shows the top-right close button. When `False`, hides it and disables the `Escape` shortcut, so the popup is only dismissible via the action buttons. |
-| `IsOpen`      | `Boolean`       | Controls visibility of the popup.                                                                                                                                  |
-| `LabelCancel` | `Text`        | Label on the cancel button. Button hidden when "".                                                                                                                 |
-| `LabelNo`     | `Text`        | Label on the negative button. Button hidden when "".                                                                                                               |
-| `LabelYes`    | `Text`        | Label on the affirmative button. Button hidden when "".                                                                                                            |
-| `Message`     | `Text`        | Message of the popup. Hidden when empty.                                                                                                                           |
-| `Padding`     | `SapphireSize`  | Spacing preset for the dialog sections. Defaults to `m`.                                                                                                           |
-| `Title`       | `Text`        | Title of the popup. Hidden when empty.                                                                                                                             |
-| `Width`       | `SapphireScale` | Spacing preset for the dialog width. Defaults to `m`.                                                                                                              |
+| Name          | Type            | Description                                                                                                                                                                |
+| ------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CloseOnEsc`  | `Boolean`       | When `True` (and `HasClose` is `True`), pressing `Escape` closes the popup (fires `Cancel`).                                                                               |
+| `Enabled`     | `Boolean`       | Enables or disables the Cancel / Negative / Positive action buttons. When `False`, those buttons are disabled and ignore clicks; the close button and `Escape` still work. |
+| `HasClose`    | `Boolean`       | When `True`, shows the top-right close button. When `False`, hides it and disables the `Escape` shortcut, so the popup is only dismissible via the action buttons.         |
+| `IsOpen`      | `Boolean`       | Controls visibility of the popup.                                                                                                                                          |
+| `LabelCancel` | `Text`          | Label on the cancel button. Button hidden when "".                                                                                                                         |
+| `LabelNo`     | `Text`          | Label on the negative button. Button hidden when "".                                                                                                                       |
+| `LabelYes`    | `Text`          | Label on the affirmative button. Button hidden when "".                                                                                                                    |
+| `Message`     | `Text`          | Message of the popup. Hidden when empty.                                                                                                                                   |
+| `Padding`     | `SapphireSize`  | Spacing preset for the dialog sections. Defaults to `m`.                                                                                                                   |
+| `Title`       | `Text`          | Title of the popup. Hidden when empty.                                                                                                                                     |
+| `Width`       | `SapphireScale` | Spacing preset for the dialog width. Defaults to `m`.                                                                                                                      |
 
 <hr>
 
@@ -33,12 +34,14 @@ A modal action popup with a backdrop that blocks interaction with the page. It r
 | Name      | Description                     |
 | --------- | ------------------------------- |
 | `Content` | Placeholder for custom content. |
-| `Header`  | Placeholder for custom content. |
 
 <hr>
 
 ###### Events
 
-| Name     | Description                                 |
-| -------- | ------------------------------------------- |
-| `Toggle` | Fired when the component changes its state. |
+| Name     | Description                                                                                                                           | Arguments             |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `Cancel` | Fired when the Cancel button is clicked, or when the close button / `Escape` dismisses the popup. The popup then closes.              | `Identifier` (`Text`) |
+| `Close`  | Fired whenever the popup closes, after any preceding button event (`Cancel` / `No` / `Yes`), including when `IsOpen` becomes `False`. | `Identifier` (`Text`) |
+| `No`     | Fired when the Negative button is clicked. The popup then closes.                                                                     | `Identifier` (`Text`) |
+| `Yes`    | Fired when the Positive button is clicked. The popup then closes.                                                                     | `Identifier` (`Text`) |
