@@ -4,6 +4,7 @@ import { createLoadingOverlay } from '@utils/loader';
 interface TableWrapperConfigOptions extends BaseComponentInit {
 	height: number;
 	isLoading: boolean;
+	isPristine: boolean;
 	isStickyHeader: boolean;
 	maxHeight: number;
 	pageCount: number;
@@ -34,6 +35,7 @@ export default class TableWrapper extends BaseComponent {
 		this.configOptions = configOptions;
 
 		this.isLoading = this.configOptions.isLoading;
+		this.isPristine = this.configOptions.isPristine;
 		this.isStickyHeader = this.configOptions.isStickyHeader && !this.configOptions.maxHeight;
 		this.pageCount = this.configOptions.pageCount;
 
@@ -123,6 +125,12 @@ export default class TableWrapper extends BaseComponent {
 			this.pageCount = payload.pageCount;
 			this.reflectPageCount();
 		}
+
+		if (payload.isPristine !== undefined && payload.isPristine !== this.isPristine) {
+			this.isPristine = payload.isPristine;
+			this.reflectStateAttributes();
+			this.reflectPageCount();
+		}
 	}
 
 	// Floats a centered spinner over the whole wrapper while loading, and tears
@@ -141,8 +149,6 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private reflectPageCount(): void {
-		console.log('reflectPageCount', this.runtimeId, this.pageCount, this.isPristine);
-
 		if (this.pageCount === 0 && !this.isPristine) {
 			this.widgetEl.dataset.norecords = 'true';
 		} else {

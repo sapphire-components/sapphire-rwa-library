@@ -98,26 +98,6 @@
 	}
 }
 
-.tablewrapper[data-hasscrolltop='true'] {
-	padding-bottom: 16px;
-	.table {
-		margin-top: 8px;
-	}
-	.table-scroll-top {
-		height: 8px;
-		left: 0;
-		overflow-x: auto;
-		overflow-y: hidden;
-		position: absolute;
-		scrollbar-width: thin;
-		top: 0;
-		width: 100%;
-	}
-	.table-scroll-top__inner {
-		height: 1px;
-	}
-}
-
 .tablewrapper[data-isloading='true'] {
 	table {
 		opacity: 0.5;
