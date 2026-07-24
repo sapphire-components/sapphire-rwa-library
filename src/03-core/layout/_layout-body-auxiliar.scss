@@ -46,3 +46,12 @@ body[data-showdocumentation='false'] {
 		display: none;
 	}
 }
+
+.layoutwrapper[data-documentationwidth='xl3'] {
+	.layoutwrapper-body-auxiliar {
+		display: block;
+		&:empty {
+			display: none;
+		}
+	}
+}

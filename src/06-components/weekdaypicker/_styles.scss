@@ -1,0 +1,57 @@
+@use '../../01-foundations/_mixins.scss' as *;
+
+.weekdaypicker {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	&-day {
+		@include transition(background-color);
+		@include focus-visible();
+		align-items: center;
+		aspect-ratio: 1;
+		background-color: var(--color-neutral-0);
+		border: 1px solid var(--color-border);
+		border-radius: 50%;
+		box-shadow: var(--box-shadow-sm);
+		color: var(--color-neutral-9);
+		cursor: pointer;
+		display: inline-flex;
+		flex: 0 0 auto;
+		font-size: 14px;
+		justify-content: center;
+		line-height: 1;
+		min-height: 55px;
+		min-width: 55px;
+		padding: 0;
+
+		&:hover:not(:disabled) {
+			background-color: var(--color-neutral-1);
+		}
+
+		&[data-selected='true'] {
+			background-color: var(--color-primary);
+			border-color: var(--color-primary);
+			color: var(--color-neutral-0);
+
+			&:hover:not(:disabled) {
+				background-color: var(--color-primary-dark);
+				border-color: var(--color-primary-dark);
+			}
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.45;
+		}
+	}
+}
+
+.weekdaypicker[data-enabled='false'] {
+	.weekdaypicker-day {
+		cursor: not-allowed;
+		opacity: 0.45;
+		pointer-events: none;
+	}
+}

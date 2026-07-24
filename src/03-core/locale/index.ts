@@ -1,4 +1,4 @@
-export default class SapphireIntl {
+export default class Locale {
 	static DateTimeFormat({
 		dateTime,
 		locale,
@@ -12,7 +12,7 @@ export default class SapphireIntl {
 		locale: string;
 		additionalOptions: any;
 	}): string {
-		// console.log('SapphireIntl.DateTimeFormat args:', {
+		// console.log('Locale.DateTimeFormat args:', {
 		// 	dateTime,
 		// 	dateStyle,
 		// 	timeStyle,

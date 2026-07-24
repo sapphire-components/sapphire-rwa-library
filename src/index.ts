@@ -6,7 +6,7 @@ import { installClickCooldown } from '@core/clickCooldown';
 import DesignSystemColors from '@/02-designsystem/_designsystem-screen-colors';
 
 import LayoutWrapper from '@/03-core/layout';
-import SapphireIntl from '@/03-core/SapphireIntl';
+import Locale from '@/03-core/locale';
 
 import FilterBar from '@helpers/filterbar';
 import LabelValue from '@helpers/labelvalue';
@@ -25,6 +25,7 @@ import ScrollableContent from '@components/scrollablecontent';
 import Skeleton from '@components/skeleton';
 import TextEditor from '@components/texteditor';
 import Toast from '@components/toast';
+import WeekDayPicker from '@components/weekdaypicker';
 import { Tabs, TabHeader, TabContent } from '@components/tabs';
 
 import Helpers from '@utils/helpers';
@@ -58,11 +59,11 @@ const SapphireRWALibrary = {
 	Helpers,
 	LabelValue,
 	LayoutWrapper,
+	Locale,
 	Overlay,
 	ResponsiveGrid,
 	SapphireDropdown,
 	SapphireInput,
-	SapphireIntl,
 	SapphirePopupContent,
 	ScrollableContent,
 	Skeleton,
@@ -71,6 +72,7 @@ const SapphireRWALibrary = {
 	TableWrapper,
 	Tabs,
 	TextEditor,
+	WeekDayPicker,
 	Toast: new Toast(),
 	init,
 };

@@ -127,17 +127,21 @@ async function buildSprite() {
 
 	await fs.writeFile(SPRITE_PATH, sprite, 'utf8');
 
+	let totalIcons = 0;
 	for (const [folderName, iconNames] of iconNamesByFolder.entries()) {
 		const listPath = path.join(ASSETS_DIR, `icons-sprite-${folderName}.txt`);
 		const escapedNames = iconNames.map((name) => `'${name.replace(/'/g, "\\'")}'`);
 		const innerList = `[${escapedNames.join(', ')}]`;
 		const iconsListContent = JSON.stringify(innerList);
 		await fs.writeFile(listPath, iconsListContent, 'utf8');
+		console.log(`${folderName}: ${iconNames.length} icons`);
+		totalIcons += iconNames.length;
 	}
 
 	console.log(`SVG sprite written to ${SPRITE_PATH}`);
 	console.log(`Icons lists written to ${ASSETS_DIR}${path.sep}icons-sprite-<folder>.txt`);
 	console.log(`Included symbols: ${sortedRecords.map((r) => r.name).join(', ')}`);
+	console.log(`Total icons: ${totalIcons}`);
 }
 
 buildSprite().catch((err) => {

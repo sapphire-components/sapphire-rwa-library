@@ -13,7 +13,7 @@ interface SapphireInputInit extends BaseComponentInit {
 	actions: {
 		OnChange: (value: string) => void;
 		OnClear: () => void;
-		OnEnterKey: () => void;
+		OnEnterKey: (value: string) => void;
 	};
 	debounceChange: number;
 	enabled: boolean;
@@ -99,7 +99,7 @@ export default class SapphireInput extends BaseComponent {
 			// observe the latest value, not the previous keystroke's.
 			this.commitValueDebounced.cancel();
 			this.commitValue();
-			this.actions?.OnEnterKey();
+			this.actions?.OnEnterKey(this.value);
 			return;
 		}
 		if (event.key === 'ArrowUp' && this.plusEl) {
