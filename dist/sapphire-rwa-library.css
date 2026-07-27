@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.21 2026-07-24T16:40:27.719Z */
+/*!  SapphireRWALibrary PROD v0.6.22 2026-07-27T10:09:44.056Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -8208,6 +8208,16 @@ div[data-block$=TabContent] {
   cursor: not-allowed;
   opacity: 0.45;
   pointer-events: none;
+}
+
+.weekdaypicker[data-density=compact] .weekdaypicker-day {
+  font-size: 12px;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.weekdaypicker[data-density=compact][data-weekdayformat=short] .weekdaypicker-day {
+  font-size: 11px;
 }
 .border-solid-1 {
   border-style: solid;
