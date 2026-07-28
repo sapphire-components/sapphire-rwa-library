@@ -11,9 +11,11 @@ export default class DropdownMenu extends BaseComponent {
 	private isOpen!: boolean;
 
 	private readonly onClickHeader = (): void => {
-		this.isOpen = !this.isOpen;
-		this.widgetEl.dataset.isopen = this.isOpen ? 'true' : 'false';
-		Helpers.writeToLocalStorage(LocalStorageKeys.dropdownMenu(this.runtimeId), this.isOpen);
+		if (this.isOpen) {
+			this.close();
+		} else {
+			this.open();
+		}
 	};
 
 	private readonly onKeyDownHeader = (event: KeyboardEvent): void => {
@@ -22,6 +24,22 @@ export default class DropdownMenu extends BaseComponent {
 			this.onClickHeader();
 		}
 	};
+
+	private setOpen(isOpen: boolean): void {
+		if (this.isOpen === isOpen) return;
+
+		this.isOpen = isOpen;
+		this.widgetEl.dataset.isopen = isOpen ? 'true' : 'false';
+		Helpers.writeToLocalStorage(LocalStorageKeys.dropdownMenu(this.runtimeId), isOpen);
+	}
+
+	open(): void {
+		this.setOpen(true);
+	}
+
+	close(): void {
+		this.setOpen(false);
+	}
 
 	constructor(init: DropdownMenuInit) {
 		super(init);

@@ -3,7 +3,8 @@ import '@core/init-bootstrap';
 import { installBodyPlatformClassStripper } from '@core/stripBodyPlatformClasses';
 import { installClickCooldown } from '@core/clickCooldown';
 
-import DesignSystemColors from '@/02-designsystem/_designsystem-screen-colors';
+import DesignSystemColors from '@/02-designsystem/design-system-screen-colors';
+import DesignSystemMenu from '@/02-designsystem/design-system-menu';
 
 import LayoutWrapper from '@/03-core/layout';
 import Locale from '@/03-core/locale';
@@ -35,7 +36,7 @@ function init(): void {
 	const script = document.querySelector('script#sapphire-rwa-library');
 
 	if (script) {
-		console.log('Script exists');
+		console.log('Script alredy exists');
 	} else {
 		installBodyPlatformClassStripper();
 		installClickCooldown();
@@ -54,6 +55,7 @@ const SapphireRWALibrary = {
 	ButtonDropdown,
 	Chip,
 	DesignSystemColors,
+	DesignSystemMenu,
 	DropdownMenu,
 	FilterBar,
 	Helpers,
@@ -72,8 +74,8 @@ const SapphireRWALibrary = {
 	TableWrapper,
 	Tabs,
 	TextEditor,
-	WeekDayPicker,
 	Toast: new Toast(),
+	WeekDayPicker,
 	init,
 };
 

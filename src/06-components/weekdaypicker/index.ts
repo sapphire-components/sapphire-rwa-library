@@ -100,7 +100,7 @@ export default class WeekDayPicker extends BaseComponent {
 		if (options.syncSelected && payload.selected !== undefined) {
 			this.#selected = this.normalizeSelected(payload.selected);
 		} else {
-			// Keep selection valid if selectableCount shrunk.
+			// Clamp local selection when SelectableCount shrinks (or after other param-only updates).
 			this.#selected = this.normalizeSelected(this.#selected);
 		}
 
@@ -179,20 +179,14 @@ export default class WeekDayPicker extends BaseComponent {
 
 		if (index >= 0) {
 			this.#selected = this.#selected.filter((value) => value !== day);
-			this.refreshDayState();
+		} else if (this.#selected.length >= this.#selectableCount) {
 			return;
+		} else {
+			this.#selected = [...this.#selected, day];
 		}
 
-		if (this.#selected.length >= this.#selectableCount) {
-			return;
-		}
-
-		this.#selected = [...this.#selected, day];
 		this.refreshDayState();
-
-		if (this.#selected.length === this.#selectableCount) {
-			this.#actions.OnChange(JSON.stringify(this.#selected));
-		}
+		this.#actions.OnChange(JSON.stringify(this.#selected));
 	}
 
 	private orderedDays(): number[] {

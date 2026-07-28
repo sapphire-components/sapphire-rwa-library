@@ -13,19 +13,13 @@ function stripPlatformClassesFromBody(): void {
 }
 
 export function installBodyPlatformClassStripper(): void {
-	const body = document.body;
-	if (!body) {
-		document.addEventListener('DOMContentLoaded', () => installBodyPlatformClassStripper(), { once: true });
-		return;
-	}
-
 	stripPlatformClassesFromBody();
 
 	const observer = new MutationObserver(() => {
 		stripPlatformClassesFromBody();
 	});
 
-	observer.observe(body, {
+	observer.observe(document.body, {
 		attributes: true,
 		attributeFilter: ['class'],
 	});

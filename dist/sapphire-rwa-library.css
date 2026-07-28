@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.22 2026-07-27T10:09:44.056Z */
+/*!  SapphireRWALibrary PROD v0.6.23 2026-07-28T10:22:06.643Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -1640,6 +1640,20 @@ body.is-rtl .ThemeGrid_MarginGutter {
 .btn-rounded {
   border-radius: 100px;
 }
+.btn-xsmall {
+  font-size: 12px;
+  min-height: 24px;
+  padding-inline: 8px;
+}
+.btn-xsmall .svg-icon[data-size] {
+  height: 16px;
+  width: 16px;
+}
+.btn-xsmall .svg-icon[data-size] svg {
+  height: 16px;
+  width: 16px;
+}
+
 .btn-small {
   font-size: 12px;
   min-height: 32px;
@@ -1805,6 +1819,10 @@ body.is-rtl .ThemeGrid_MarginGutter {
   --transition-easing: ease;
 }
 
+.design-system-menu-expand,
+.design-system-menu-collapse {
+  cursor: pointer;
+}
 .configuration-selector {
   background-color: var(--color-neutral-0);
   border: solid 1px var(--color-neutral-5);
@@ -3260,6 +3278,11 @@ div[data-block$=BreadcrumbsItem] {
 
 .dropdown-container > select.dropdown-display {
   border-color: var(--color-border);
+}
+.form-control.input-xsmall[data-input] {
+  font-size: var(--font-size-xs);
+  height: 22px;
+  padding: var(--space-none) var(--space-s);
 }
 .osui-tabs {
   overflow: unset;
@@ -5337,6 +5360,7 @@ div[data-block$=DropdownMenu] {
   color: var(--color-neutral-9);
   display: block;
   font-size: 14px;
+  line-height: 26px;
   min-height: 26px;
 }
 .dropdownmenu-items a:hover {

@@ -1,3 +1,4 @@
+import * as esbuild from 'esbuild';
 import * as sass from 'sass';
 import fs from 'node:fs';
 import mkcert from 'vite-plugin-mkcert';
