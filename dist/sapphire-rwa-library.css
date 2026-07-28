@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.24 2026-07-28T17:11:26.427Z */
+/*!  SapphireRWALibrary PROD v0.6.25 2026-07-28T17:42:06.634Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -3943,6 +3943,10 @@ div[data-block$=FilterBar] {
   inset-inline-end: 8px;
 }
 
+.inputwrapper[data-size=xs][data-hasclear=true] .form-control[data-input] {
+  padding-inline-end: 24px;
+}
+
 .inputwrapper[data-size=xs][data-hasicon=true] .form-control[data-input] {
   padding-inline-start: 28px;
 }
@@ -3956,6 +3960,10 @@ div[data-block$=FilterBar] {
 }
 .inputwrapper[data-size=s] .inputwrapper-clear {
   inset-inline-end: 12px;
+}
+
+.inputwrapper[data-size=s][data-hasclear=true] .form-control[data-input] {
+  padding-inline-end: 32px;
 }
 
 .inputwrapper[data-size=s][data-hasicon=true] .form-control[data-input] {
@@ -3972,7 +3980,7 @@ div[data-block$=FilterBar] {
 }
 
 .inputwrapper[data-aligntoend=true] .form-control[data-input] {
-  text-align: inline-end;
+  text-align: end;
 }
 div[data-block$=InputWrapper] {
   display: contents;
@@ -3993,7 +4001,7 @@ div[data-block$=InputWrapper] {
   width: 100%;
 }
 .inputwrapper .form-control[data-input] {
-  text-align: inline-start;
+  text-align: start;
   width: 100%;
 }
 .inputwrapper-icon {
@@ -4038,6 +4046,10 @@ div[data-block$=InputWrapper] {
 
 .inputwrapper[data-hasicon=true] .form-control[data-input] {
   padding-inline-start: 36px;
+}
+
+.inputwrapper[data-hasclear=true] .form-control[data-input] {
+  padding-inline-end: 36px;
 }
 
 .inputwrapper[data-hascontent=true][data-hasclear=true] .inputwrapper-clear {

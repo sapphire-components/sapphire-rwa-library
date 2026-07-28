@@ -12,6 +12,12 @@
 	}
 }
 
+.inputwrapper[data-size='xs'][data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 24px;
+	}
+}
+
 .inputwrapper[data-size='xs'][data-hasicon='true'] {
 	.form-control[data-input] {
 		padding-inline-start: 28px;
@@ -28,6 +34,12 @@
 	}
 	.inputwrapper-clear {
 		inset-inline-end: 12px;
+	}
+}
+
+.inputwrapper[data-size='s'][data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 32px;
 	}
 }
 

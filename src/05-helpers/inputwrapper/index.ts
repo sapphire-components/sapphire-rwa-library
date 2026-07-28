@@ -8,7 +8,6 @@ interface IInputWrapper extends BaseComponentInit {
 	enabled: boolean;
 	hasClear: boolean;
 	iconName: string;
-	type: string;
 }
 
 export default class InputWrapper extends BaseComponent {

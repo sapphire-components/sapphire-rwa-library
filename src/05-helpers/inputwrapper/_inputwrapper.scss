@@ -20,7 +20,7 @@ div[data-block$='InputWrapper'] {
 	}
 
 	.form-control[data-input] {
-		text-align: inline-start;
+		text-align: start;
 		width: 100%;
 	}
 
@@ -68,6 +68,12 @@ div[data-block$='InputWrapper'] {
 .inputwrapper[data-hasicon='true'] {
 	.form-control[data-input] {
 		padding-inline-start: 36px;
+	}
+}
+
+.inputwrapper[data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 36px;
 	}
 }
 
