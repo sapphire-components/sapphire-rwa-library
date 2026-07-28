@@ -12,6 +12,7 @@ import Locale from '@/03-core/locale';
 import FilterBar from '@helpers/filterbar';
 import LabelValue from '@helpers/labelvalue';
 import TableWrapper from '@helpers/tablewrapper';
+import InputWrapper from '@helpers/inputwrapper';
 
 import ActionPopup from '@components/actionpopup';
 import ButtonDropdown from '@components/buttondropdown';
@@ -59,6 +60,7 @@ const SapphireRWALibrary = {
 	DropdownMenu,
 	FilterBar,
 	Helpers,
+	InputWrapper,
 	LabelValue,
 	LayoutWrapper,
 	Locale,

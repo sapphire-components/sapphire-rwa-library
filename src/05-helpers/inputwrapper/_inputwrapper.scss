@@ -1,0 +1,78 @@
+@use '../../01-foundations/_mixins.scss' as *;
+
+div[data-block$='InputWrapper'] {
+	display: contents;
+}
+
+.inputwrapper {
+	align-items: center;
+	display: inline-flex;
+	gap: var(--space-xs);
+	position: relative;
+
+	> div {
+		display: contents;
+		span.input-text,
+		span.input-search {
+			display: inline-flex;
+			width: 100%;
+		}
+	}
+
+	.form-control[data-input] {
+		text-align: inline-start;
+		width: 100%;
+	}
+
+	&-icon {
+		align-items: center;
+		color: var(--color-neutral-6);
+		display: inline-flex;
+		flex: 0 0 auto;
+		inset-inline-start: 12px;
+		justify-content: center;
+		pointer-events: none;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	&-clear {
+		@include focus-visible();
+		align-items: center;
+		background: transparent;
+		border: none;
+		border-radius: 4px;
+		color: var(--color-neutral-6);
+		cursor: pointer;
+		display: none;
+		flex: 0 0 auto;
+		inset-inline-end: 16px;
+		justify-content: center;
+		padding: 0;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+
+		&:hover:not(:disabled) {
+			color: var(--color-neutral-9);
+		}
+
+		&:disabled {
+			color: var(--color-neutral-5);
+			cursor: not-allowed;
+		}
+	}
+}
+
+.inputwrapper[data-hasicon='true'] {
+	.form-control[data-input] {
+		padding-inline-start: 36px;
+	}
+}
+
+.inputwrapper[data-hascontent='true'][data-hasclear='true'] {
+	.inputwrapper-clear {
+		display: inline-flex;
+	}
+}

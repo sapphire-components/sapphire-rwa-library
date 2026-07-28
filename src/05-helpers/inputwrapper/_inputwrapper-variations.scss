@@ -1,0 +1,18 @@
+.inputwrapper[data-enabled='false'] {
+	span.input-text,
+	span.input-search {
+		cursor: not-allowed;
+	}
+
+	.form-control[data-input] {
+		background-color: var(--color-background-disabled);
+		color: var(--color-text-disabled);
+		pointer-events: none;
+	}
+}
+
+.inputwrapper[data-aligntoend='true'] {
+	.form-control[data-input] {
+		text-align: inline-end;
+	}
+}

@@ -27,16 +27,12 @@ export default class DesignSystemMenu extends BaseComponent {
 		this.collapseAll();
 	};
 
-	private readonly onFilterInput = (): void => {
-		this.filterLinks();
-	};
-
 	constructor(init: IDesignSystemMenu) {
 		super(init);
 
 		this.expandEl = document.querySelector('.design-system-menu-expand');
 		this.collapseEl = document.querySelector('.design-system-menu-collapse');
-		this.filterInputEl = document.querySelector('.form-control.input-xsmall');
+		this.filterInputEl = document.querySelector('.form-control');
 
 		this.bindEvents();
 	}
@@ -55,7 +51,7 @@ export default class DesignSystemMenu extends BaseComponent {
 		}
 	}
 
-	private filterLinks(): void {
+	filterLinks(): void {
 		const filterValue = this.filterInputEl?.value.trim().toLowerCase() ?? '';
 		const linkElements = this.widgetEl.querySelectorAll<HTMLAnchorElement>('.layoutaside-body a[data-link]');
 
@@ -96,7 +92,6 @@ export default class DesignSystemMenu extends BaseComponent {
 		this.expandEl?.addEventListener('keydown', this.onExpandKeyDown);
 		this.collapseEl?.addEventListener('click', this.onCollapseClick);
 		this.collapseEl?.addEventListener('keydown', this.onCollapseKeyDown);
-		this.filterInputEl?.addEventListener('input', this.onFilterInput);
 	}
 
 	expandAll(): void {
@@ -116,7 +111,6 @@ export default class DesignSystemMenu extends BaseComponent {
 		this.expandEl?.removeEventListener('keydown', this.onExpandKeyDown);
 		this.collapseEl?.removeEventListener('click', this.onCollapseClick);
 		this.collapseEl?.removeEventListener('keydown', this.onCollapseKeyDown);
-		this.filterInputEl?.removeEventListener('input', this.onFilterInput);
 		super.destroy();
 	}
 }
