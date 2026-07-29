@@ -14,21 +14,22 @@ import LabelValue from '@helpers/labelvalue';
 import TableWrapper from '@helpers/tablewrapper';
 import InputWrapper from '@helpers/inputwrapper';
 
-import ActionPopup from '@components/actionpopup';
-import ButtonDropdown from '@components/buttondropdown';
-import Chip from '@components/chip';
-import DropdownMenu from '@components/dropdownmenu';
-import Overlay from '@components/overlay';
-import ResponsiveGrid from '@components/responsive-grid';
-import SapphireDropdown from '@components/sapphiredropdown';
-import SapphireInput from '@components/sapphireinput';
-import SapphirePopupContent from '@components/sapphirepopupcontent';
-import ScrollableContent from '@components/scrollablecontent';
-import Skeleton from '@components/skeleton';
-import TextEditor from '@components/texteditor';
-import Toast from '@components/toast';
-import WeekDayPicker from '@components/weekdaypicker';
-import { Tabs, TabHeader, TabContent } from '@components/tabs';
+import SapphirePopupContent from '@custom-layout/sapphirepopupcontent';
+import ScrollableContent from '@custom-layout/scrollablecontent';
+import ResponsiveGrid from '@custom-layout/responsive-grid';
+
+import ActionPopup from '@custom-components/actionpopup';
+import ButtonDropdown from '@custom-components/buttondropdown';
+import Chip from '@custom-components/chip';
+import DropdownMenu from '@custom-components/dropdownmenu';
+import Overlay from '@custom-components/overlay';
+import SapphireDropdown from '@custom-components/sapphiredropdown';
+import SapphireInput from '@custom-components/sapphireinput';
+import Skeleton from '@custom-components/skeleton';
+import TextEditor from '@custom-components/texteditor';
+import Toast from '@custom-components/toast';
+import WeekDayPicker from '@custom-components/weekdaypicker';
+import { Tabs, TabHeader, TabContent } from '@custom-components/tabs';
 
 import Helpers from '@utils/helpers';
 import { LocalStorageKeys } from '@utils/local-storage-keys';

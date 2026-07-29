@@ -3,9 +3,10 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@core/*": ["./src/core/*"],
-			"@utils/*": ["./src/09-utils/*"],
-			"@components/*": ["./src/06-components/*"],
-			"@helpers/*": ["./src/05-helpers/*"]
+			"@custom-components/*": ["./src/07-custom-components/*"],
+			"@custom-layout/*": ["./src/06-custom-layout/*"],
+			"@helpers/*": ["./src/05-helpers/*"],
+			"@utils/*": ["./src/09-utils/*"]
 		},
 		"target": "ES2022",
 		"useDefineForClassFields": true,

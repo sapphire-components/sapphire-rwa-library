@@ -8,10 +8,19 @@ import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import { SourceMapConsumer, SourceMapGenerator } from 'source-map-js';
 
-const SCSS_PARTIAL_DIRS = ['01-foundations', '02-designsystem', '03-core', '04-outsystems', '05-helpers', '06-components', '09-utils'];
+const SCSS_PARTIAL_DIRS = [
+	'01-foundations',
+	'02-designsystem',
+	'03-core',
+	'04-outsystems',
+	'05-helpers',
+	'06-custom-layout',
+	'07-custom-components',
+	'09-utils',
+];
 
 // Dirs scanned for per-component `documentation.md` files.
-const DOCS_DIRS = ['03-core', '05-helpers', '06-components'];
+const DOCS_DIRS = ['03-core', '05-helpers', '06-custom-layout', '07-custom-components'];
 const DOCS_OUT_FILE = 'sapphire-rwa-documentation.js';
 
 // Static entity folders scanned for `enumerables.md` reference tables.
@@ -33,9 +42,10 @@ export default defineConfig(({ command, mode }) => {
 			alias: {
 				'@': srcDir,
 				'@core': path.resolve(srcDir, 'core'),
-				'@utils': path.resolve(srcDir, '09-utils'),
-				'@components': path.resolve(srcDir, '06-components'),
+				'@custom-components': path.resolve(srcDir, '07-custom-components'),
+				'@custom-layout': path.resolve(srcDir, '06-custom-layout'),
 				'@helpers': path.resolve(srcDir, '05-helpers'),
+				'@utils': path.resolve(srcDir, '09-utils'),
 			},
 		},
 		appType: 'custom', //spa, mpa

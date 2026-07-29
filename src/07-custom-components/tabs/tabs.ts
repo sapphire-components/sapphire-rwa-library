@@ -1,5 +1,5 @@
 import Helpers from '@utils/helpers';
-import Overlay from '@components/overlay';
+import Overlay from '@custom-components/overlay';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface TabsConfigOptions extends BaseComponentInit {

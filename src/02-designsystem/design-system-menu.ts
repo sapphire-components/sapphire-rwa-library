@@ -2,10 +2,13 @@ import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface IDesignSystemMenu extends BaseComponentInit {}
 
+const SCROLL_STATE_KEY = 'designSystemMenuScrollTop';
+
 export default class DesignSystemMenu extends BaseComponent {
 	private collapseEl: HTMLDivElement | null = null;
 	private expandEl: HTMLDivElement | null = null;
 	private filterInputEl: HTMLInputElement | null = null;
+	private scrollContainerEl: HTMLElement | null = null;
 
 	private readonly onExpandClick = (): void => {
 		this.expandAll();
@@ -27,14 +30,22 @@ export default class DesignSystemMenu extends BaseComponent {
 		this.collapseAll();
 	};
 
+	private readonly onLinkClick = (event: MouseEvent): void => {
+		const target = event.target as HTMLElement | null;
+		if (!target?.closest('a[data-link]')) return;
+		this.storeScrollPosition();
+	};
+
 	constructor(init: IDesignSystemMenu) {
 		super(init);
 
 		this.expandEl = document.querySelector('.design-system-menu-expand');
 		this.collapseEl = document.querySelector('.design-system-menu-collapse');
 		this.filterInputEl = document.querySelector('.form-control');
+		this.scrollContainerEl = this.widgetEl.querySelector('.layoutaside-body');
 
 		this.bindEvents();
+		this.restoreScrollPosition();
 	}
 
 	private isActionKey(event: KeyboardEvent): boolean {
@@ -92,6 +103,23 @@ export default class DesignSystemMenu extends BaseComponent {
 		this.expandEl?.addEventListener('keydown', this.onExpandKeyDown);
 		this.collapseEl?.addEventListener('click', this.onCollapseClick);
 		this.collapseEl?.addEventListener('keydown', this.onCollapseKeyDown);
+		this.scrollContainerEl?.addEventListener('click', this.onLinkClick);
+	}
+
+	private storeScrollPosition(): void {
+		if (!this.scrollContainerEl) return;
+		window.SapphireRWALibrary.State[SCROLL_STATE_KEY] = this.scrollContainerEl.scrollTop;
+	}
+
+	private restoreScrollPosition(): void {
+		const scrollTop = window.SapphireRWALibrary.State[SCROLL_STATE_KEY];
+		if (typeof scrollTop !== 'number' || !this.scrollContainerEl) return;
+
+		requestAnimationFrame(() => {
+			if (this.scrollContainerEl) {
+				this.scrollContainerEl.scrollTop = scrollTop;
+			}
+		});
 	}
 
 	expandAll(): void {
@@ -111,6 +139,7 @@ export default class DesignSystemMenu extends BaseComponent {
 		this.expandEl?.removeEventListener('keydown', this.onExpandKeyDown);
 		this.collapseEl?.removeEventListener('click', this.onCollapseClick);
 		this.collapseEl?.removeEventListener('keydown', this.onCollapseKeyDown);
+		this.scrollContainerEl?.removeEventListener('click', this.onLinkClick);
 		super.destroy();
 	}
 }
