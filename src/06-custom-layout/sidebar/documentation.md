@@ -1,6 +1,6 @@
 ###### Overview
 
-This component is a wrapper for the Interaction\Sidebar component from OSUI.
+This component is a wrapper containing the `Interaction\Sidebar` component from OSUI.
 
 <hr>
 

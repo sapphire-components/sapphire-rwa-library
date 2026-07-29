@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.26 2026-07-29T07:21:06.171Z */
+/*!  SapphireRWALibrary PROD v0.6.27 2026-07-29T08:30:14.751Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -3336,6 +3336,32 @@ input[data-switch].small:checked:after {
 input.not-valid + span.validation-message {
   position: static;
 }
+.backofficeheader-breadcrumbs {
+  margin-bottom: 24px;
+}
+.backofficeheader-breadcrumbs .breadcrumbs-item .placeholder-empty {
+  line-height: 0;
+}
+.backofficeheader-breadcrumbs .breadcrumbs-item .svg-icon {
+  margin-inline: 6px;
+}
+.backofficeheader-breadcrumbs:empty {
+  display: none;
+}
+
+.backofficeheader-head {
+  display: flex;
+  margin-bottom: var(--space-l);
+}
+.backofficeheader-head-title {
+  flex: 1 1 0;
+  font-size: var(--font-size-h1);
+  font-weight: 600;
+}
+.backofficeheader-head-actions > div,
+.backofficeheader-head-actions button {
+  vertical-align: middle;
+}
 div[data-block$=CheckboxLabel] {
   display: contents;
 }
@@ -3363,32 +3389,6 @@ div[data-block$=CheckboxLabel] {
 
 .checkboxlabel-checkbox:has(input.small) {
   padding-top: 4px;
-}
-.backofficeheader-breadcrumbs {
-  margin-bottom: 24px;
-}
-.backofficeheader-breadcrumbs .breadcrumbs-item .placeholder-empty {
-  line-height: 0;
-}
-.backofficeheader-breadcrumbs .breadcrumbs-item .svg-icon {
-  margin-inline: 6px;
-}
-.backofficeheader-breadcrumbs:empty {
-  display: none;
-}
-
-.backofficeheader-head {
-  display: flex;
-  margin-bottom: var(--space-l);
-}
-.backofficeheader-head-title {
-  flex: 1 1 0;
-  font-size: var(--font-size-h1);
-  font-weight: 600;
-}
-.backofficeheader-head-actions > div,
-.backofficeheader-head-actions button {
-  vertical-align: middle;
 }
 .text-background {
   color: var(--color-background);
@@ -5248,11 +5248,11 @@ div[data-block$=ScrollableContent] {
 .scrollablecontent-footer-right {
   justify-self: end;
 }
-div[data-block$=SidebarWrapper] {
+div[data-block$=Sidebar] {
   display: contents;
 }
 
-.sidebarwrapper {
+.sidebar {
   display: contents;
 }
 div[data-block$=ActionPopup] {
