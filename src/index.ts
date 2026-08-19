@@ -29,6 +29,7 @@ import Skeleton from '@custom-components/skeleton';
 import TextEditor from '@custom-components/texteditor';
 import Toast from '@custom-components/toast';
 import WeekDayPicker from '@custom-components/weekdaypicker';
+import ColorPicker from '@custom-components/colorpicker';
 import { Tabs, TabHeader, TabContent } from '@custom-components/tabs';
 
 import Helpers from '@utils/helpers';
@@ -56,6 +57,7 @@ const SapphireRWALibrary = {
 	ActionPopup,
 	ButtonDropdown,
 	Chip,
+	ColorPicker,
 	DesignSystemColors,
 	DesignSystemMenu,
 	DropdownMenu,

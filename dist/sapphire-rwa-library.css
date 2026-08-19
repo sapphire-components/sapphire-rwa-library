@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.27 2026-07-29T08:30:14.751Z */
+/*!  SapphireRWALibrary PROD v0.6.28 2026-08-19T14:50:49.544Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -5675,6 +5675,202 @@ div[data-block$=Chip2] {
 
 .chip[data-hasclear=true] .chip-clear {
   display: inline-flex;
+}
+div[data-block$=ColorPicker] {
+  display: contents;
+}
+
+.colorpicker {
+  display: inline-flex;
+  vertical-align: middle;
+}
+.colorpicker > .colorpicker-panel {
+  display: none;
+}
+.colorpicker-trigger:focus-visible {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  outline: none;
+}
+.colorpicker-trigger {
+  background-color: var(--color-neutral-0);
+  background-image: linear-gradient(45deg, var(--color-neutral-4) 25%, transparent 25%), linear-gradient(-45deg, var(--color-neutral-4) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--color-neutral-4) 75%), linear-gradient(-45deg, transparent 75%, var(--color-neutral-4) 75%);
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  background-size: 8px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: var(--box-shadow-sm);
+  cursor: pointer;
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0;
+  width: 36px;
+}
+.colorpicker-trigger[data-empty=false] {
+  background-image: none;
+}
+
+.colorpicker[data-enabled=false] .colorpicker-trigger {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.tippy-box:has(.colorpicker-panel) {
+  background: var(--color-neutral-2);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: var(--box-shadow-md);
+  color: var(--color-neutral-9);
+}
+.tippy-box:has(.colorpicker-panel) .tippy-content {
+  padding: 0;
+}
+
+.colorpicker-panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  user-select: none;
+  width: 240px;
+}
+
+.colorpicker-fields {
+  display: flex;
+  gap: 12px;
+}
+
+.colorpicker-sv:focus-visible {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  outline: none;
+}
+.colorpicker-sv {
+  background: linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, var(--colorpicker-hue, #ff0000));
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  cursor: crosshair;
+  flex: 1 1 auto;
+  height: 160px;
+  position: relative;
+  touch-action: none;
+  width: auto;
+}
+
+.colorpicker-sv-thumb {
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
+  height: 12px;
+  pointer-events: none;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 12px;
+}
+
+.colorpicker-hue:focus-visible {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  outline: none;
+}
+.colorpicker-hue {
+  background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  cursor: ns-resize;
+  flex: 0 0 14px;
+  position: relative;
+  touch-action: none;
+  width: 14px;
+}
+
+.colorpicker-hue-thumb {
+  background: #fff;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
+  height: 4px;
+  left: -1px;
+  pointer-events: none;
+  position: absolute;
+  right: -1px;
+  transform: translateY(-50%);
+}
+
+.colorpicker-meta {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.colorpicker-preview {
+  background-color: var(--color-neutral-0);
+  background-image: linear-gradient(45deg, var(--color-neutral-4) 25%, transparent 25%), linear-gradient(-45deg, var(--color-neutral-4) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--color-neutral-4) 75%), linear-gradient(-45deg, transparent 75%, var(--color-neutral-4) 75%);
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  background-size: 8px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  display: flex;
+  flex: 0 0 64px;
+  height: 32px;
+  overflow: hidden;
+}
+.colorpicker-preview-current, .colorpicker-preview-selected {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+.colorpicker-input:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  outline: none;
+}
+.colorpicker-input {
+  background-color: var(--color-neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-text);
+  flex: 1 1 auto;
+  font-size: 14px;
+  height: 32px;
+  min-width: 0;
+  padding-block: 0;
+  padding-inline: 8px;
+  width: 100%;
+}
+.colorpicker-input:focus {
+  border-color: var(--color-primary);
+}
+
+.colorpicker-panel[data-showinput=false] .colorpicker-input {
+  display: none;
+}
+.colorpicker-panel[data-showinput=false] .colorpicker-preview {
+  flex: 1 1 auto;
+}
+
+.colorpicker-panel[data-isvalid=false] .colorpicker-input {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+}
+.colorpicker-panel[data-isvalid=false] .colorpicker-input:focus {
+  border-color: var(--color-error);
+}
+
+.colorpicker-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.colorpicker-cancel,
+.colorpicker-clear {
+  color: var(--color-primary);
+  min-height: 32px;
+}
+
+.colorpicker-clear[hidden] {
+  display: none;
+}
+
+.colorpicker-apply {
+  min-height: 32px;
 }
 div[data-block$=DropdownMenu] {
   display: contents;
