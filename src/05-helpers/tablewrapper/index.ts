@@ -2,6 +2,10 @@ import { BaseComponent, type BaseComponentInit } from '@core/base';
 import { createLoadingOverlay } from '@utils/loader';
 
 interface TableWrapperConfigOptions extends BaseComponentInit {
+	actions: {
+		OnRowClick: (rowId: string) => void;
+	};
+	clickableRows: boolean;
 	height: number;
 	isLoading: boolean;
 	isPristine: boolean;
@@ -11,6 +15,8 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 }
 
 export default class TableWrapper extends BaseComponent {
+	private actions!: TableWrapperConfigOptions['actions'];
+	private clickableRows = false;
 	private configOptions!: TableWrapperConfigOptions;
 	private hasMaxHeight = false;
 	private isLoading = false;
@@ -24,6 +30,14 @@ export default class TableWrapper extends BaseComponent {
 	private tableHeaderEl!: HTMLDivElement;
 	private theadEl!: HTMLTableSectionElement;
 
+	private handleRowClick = (event: Event): void => {
+		const row = event.currentTarget as HTMLElement;
+		const firstTdWithRowId = row.querySelector<HTMLTableCellElement>('td[data-rowid]');
+		const rowId = firstTdWithRowId?.dataset.rowid ?? 'missing rowid';
+
+		this.actions.OnRowClick(rowId);
+	};
+
 	constructor(configOptions: TableWrapperConfigOptions) {
 		super(configOptions);
 
@@ -34,6 +48,8 @@ export default class TableWrapper extends BaseComponent {
 
 		this.configOptions = configOptions;
 
+		this.actions = this.configOptions.actions;
+		this.clickableRows = this.configOptions.clickableRows;
 		this.isLoading = this.configOptions.isLoading;
 		this.isPristine = this.configOptions.isPristine;
 		this.isStickyHeader = this.configOptions.isStickyHeader && !this.configOptions.maxHeight;
@@ -67,6 +83,24 @@ export default class TableWrapper extends BaseComponent {
 		});
 
 		this.observeLayoutResize(this.handleLayoutResize);
+
+		this.handleClickableRows();
+	}
+
+	handleClickableRows(): void {
+		setTimeout(() => {
+			this.tableEl.querySelectorAll<HTMLElement>('tbody .table-row').forEach((row) => {
+				if (this.clickableRows) {
+					if (!row.classList.contains('is-clickable')) {
+						row.classList.add('is-clickable');
+						row.addEventListener('click', this.handleRowClick);
+					}
+				} else if (row.classList.contains('is-clickable')) {
+					row.classList.remove('is-clickable');
+					row.removeEventListener('click', this.handleRowClick);
+				}
+			});
+		}, 0);
 	}
 
 	setupDOM(): void {
@@ -110,6 +144,11 @@ export default class TableWrapper extends BaseComponent {
 	parametersChanged(payload: TableWrapperConfigOptions): void {
 		if (!this.widgetEl) return;
 
+		if (payload.clickableRows !== undefined && payload.clickableRows !== this.clickableRows) {
+			this.clickableRows = payload.clickableRows;
+			this.handleClickableRows();
+		}
+
 		if (payload.isLoading !== undefined && payload.isLoading !== this.isLoading) {
 			this.isPristine = false;
 			this.isLoading = payload.isLoading;
@@ -118,18 +157,21 @@ export default class TableWrapper extends BaseComponent {
 			if (!payload.isLoading) {
 				this.reflectPageCount();
 			}
+			this.handleClickableRows();
 		}
 
 		if (payload.pageCount !== undefined && payload.pageCount !== this.pageCount) {
 			this.isPristine = false;
 			this.pageCount = payload.pageCount;
 			this.reflectPageCount();
+			this.handleClickableRows();
 		}
 
 		if (payload.isPristine !== undefined && payload.isPristine !== this.isPristine) {
 			this.isPristine = payload.isPristine;
 			this.reflectStateAttributes();
 			this.reflectPageCount();
+			this.handleClickableRows();
 		}
 	}
 

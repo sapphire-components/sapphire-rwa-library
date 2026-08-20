@@ -58,6 +58,10 @@
 	}
 }
 
+.tablewrapper .table-row.is-clickable {
+	cursor: pointer;
+}
+
 .tablewrapper {
 	.table[data-isfixed='true'] {
 		thead {

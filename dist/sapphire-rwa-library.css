@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.28 2026-08-19T14:50:49.544Z */
+/*!  SapphireRWALibrary PROD v0.6.29 2026-08-20T09:26:40.222Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -4966,6 +4966,10 @@ div[data-widthcomponent=auto] {
 .tablewrapper[data-columnfixedwidths=true] td {
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.tablewrapper .table-row.is-clickable {
+  cursor: pointer;
 }
 
 .tablewrapper .table[data-isfixed=true] thead {
