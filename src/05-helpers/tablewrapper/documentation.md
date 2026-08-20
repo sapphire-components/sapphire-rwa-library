@@ -7,7 +7,7 @@ A layout helper that wraps a platform `Table` (or equivalent markup) placed in a
 - While `IsLoading` is `True`, the table is dimmed and a centered loading overlay is shown over the wrapper.
 - When `PageCount` is `0` and the wrapper is no longer pristine, the **NoRecords** placeholder is shown. `IsPristine` keeps the empty state hidden before the first data load.
 - `ColumnFixedWidths` applies fixed `table-layout` and honours `width-*` classes on cells; when off, those width classes are cleared.
-- When `ClickableRows` is `True`, body rows become clickable and fire `RowClick` with the first `data-rowid` found on a cell in that row. When no cell has `data-rowid`, the event receives `"missing rowid"`. Turning `ClickableRows` off removes the handlers.
+- When `ClickableRows` is `True`, body rows become clickable and fire `RowClick` with the first `data-rowid` found on a cell in that row. When no cell has `data-rowid`, the event receives `"missing rowid"`. Clicks on interactive cell content (`a`, `button`, `input`, `select`, `textarea`, `label`, and common ARIA / editable roles) do not fire `RowClick`. Turning `ClickableRows` off removes the handlers.
 
 <hr>
 
@@ -15,7 +15,7 @@ A layout helper that wraps a platform `Table` (or equivalent markup) placed in a
 
 | Name                | Type              | Description                                                                                                                                                             |
 | ------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ClickableRows`     | `Boolean`         | When `True`, makes body rows clickable and fires `RowClick` with the row id from the first `td[data-rowid]`. When `False`, click handlers are removed.                 |
+| `ClickableRows`     | `Boolean`         | When `True`, makes body rows clickable and fires `RowClick` with the row id from the first `td[data-rowid]`. Interactive cell content does not trigger `RowClick`. When `False`, click handlers are removed. |
 | `ColumnFixedWidths` | `Boolean`         | When `True`, uses fixed table layout and applies `width-*` size classes to columns. When `False`, those width classes are unset.                                        |
 | `Density`           | `SapphireDensity` |                                                                                                                                                                         |
 | `HasPagination`     | `Boolean`         |                                                                                                                                                                         |
@@ -45,4 +45,4 @@ A layout helper that wraps a platform `Table` (or equivalent markup) placed in a
 | Name                 | Description                                                                                                                                      | Arguments                   |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- |
 | `PaginationNavigate` | Event triggered on navigate. New start index value returned.                                                                                     | `NewStartIndex` (`Integer`) |
-| `RowClick`           | Fired when a clickable row is activated. Provide a `data-rowid` on at least one `td` in the row; otherwise the argument is `"missing rowid"`. | `RowId` (`Text`)            |
+| `RowClick`           | Fired when a clickable row is activated (not when the click target is interactive cell content). Provide a `data-rowid` on at least one `td` in the row; otherwise the argument is `"missing rowid"`. | `RowId` (`Text`)            |

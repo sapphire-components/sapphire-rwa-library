@@ -30,7 +30,12 @@ export default class TableWrapper extends BaseComponent {
 	private tableHeaderEl!: HTMLDivElement;
 	private theadEl!: HTMLTableSectionElement;
 
+	private static readonly INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, label, [role="button"], [role="link"], [contenteditable="true"]';
+
 	private handleRowClick = (event: Event): void => {
+		const target = event.target as HTMLElement | null;
+		if (target?.closest(TableWrapper.INTERACTIVE_SELECTOR)) return;
+
 		const row = event.currentTarget as HTMLElement;
 		const firstTdWithRowId = row.querySelector<HTMLTableCellElement>('td[data-rowid]');
 		const rowId = firstTdWithRowId?.dataset.rowid ?? 'missing rowid';
