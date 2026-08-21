@@ -16,11 +16,12 @@ const SCSS_PARTIAL_DIRS = [
 	'05-helpers',
 	'06-custom-layout',
 	'07-custom-components',
+	'08-custom-patterns',
 	'09-utils',
 ];
 
 // Dirs scanned for per-component `documentation.md` files.
-const DOCS_DIRS = ['03-core', '05-helpers', '06-custom-layout', '07-custom-components'];
+const DOCS_DIRS = ['03-core', '05-helpers', '06-custom-layout', '07-custom-components', '08-custom-patterns'];
 const DOCS_OUT_FILE = 'sapphire-rwa-documentation.js';
 
 // Static entity folders scanned for `enumerables.md` reference tables.
@@ -44,6 +45,7 @@ export default defineConfig(({ command, mode }) => {
 				'@core': path.resolve(srcDir, 'core'),
 				'@custom-components': path.resolve(srcDir, '07-custom-components'),
 				'@custom-layout': path.resolve(srcDir, '06-custom-layout'),
+				'@custom-patterns': path.resolve(srcDir, '08-custom-patterns'),
 				'@helpers': path.resolve(srcDir, '05-helpers'),
 				'@utils': path.resolve(srcDir, '09-utils'),
 			},

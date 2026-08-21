@@ -5,6 +5,7 @@
 			"@core/*": ["./src/core/*"],
 			"@custom-components/*": ["./src/07-custom-components/*"],
 			"@custom-layout/*": ["./src/06-custom-layout/*"],
+			"@custom-patterns/*": ["./src/08-custom-patterns/*"],
 			"@helpers/*": ["./src/05-helpers/*"],
 			"@utils/*": ["./src/09-utils/*"]
 		},

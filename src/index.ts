@@ -32,6 +32,8 @@ import WeekDayPicker from '@custom-components/weekdaypicker';
 import ColorPicker from '@custom-components/colorpicker';
 import { Tabs, TabHeader, TabContent } from '@custom-components/tabs';
 
+import PrintDocument from '@custom-patterns/printdocument';
+
 import Helpers from '@utils/helpers';
 import { LocalStorageKeys } from '@utils/local-storage-keys';
 
@@ -68,6 +70,7 @@ const SapphireRWALibrary = {
 	LayoutWrapper,
 	Locale,
 	Overlay,
+	PrintDocument,
 	ResponsiveGrid,
 	SapphireDropdown,
 	SapphireInput,
