@@ -1,2 +1,7 @@
+div[data-block$='PrintDocument'] {
+	display: contents;
+}
+
 .printdocument {
+	display: inline-flex;
 }

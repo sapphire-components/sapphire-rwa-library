@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.32 2026-08-21T10:12:19.021Z */
+/*!  SapphireRWALibrary PROD v0.6.33 2026-08-21T14:47:23.675Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -5191,6 +5191,20 @@ div[data-block$=ResponsiveGrid] {
 .sapphire-popup-content-footer:not(:has(> :not(:empty))) {
   display: none;
 }
+.sapphire-popup-content[data-theme=printdocument] .sapphire-popup-content-body {
+  overflow-y: unset;
+}
+.sapphire-popup-content[data-theme=printdocument] .sapphire-popup-content-footer {
+  padding: 16px;
+}
+.sapphire-popup-content[data-theme=printdocument] iframe[data-name=printpreview] {
+  border: 0;
+  display: block;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
 .sapphire-popup-content[data-width=s] {
   width: min(400px, 100vw - 48px);
 }
@@ -8566,7 +8580,13 @@ div[data-block$=TabContent] {
 .weekdaypicker[data-density=compact][data-weekdayformat=short] .weekdaypicker-day {
   font-size: 11px;
 }
+div[data-block$=PrintDocument] {
+  display: contents;
+}
 
+.printdocument {
+  display: inline-flex;
+}
 .border-solid-1 {
   border-style: solid;
   border-width: 1px;

@@ -1,0 +1,16 @@
+.sapphire-popup-content[data-theme='printdocument'] {
+	.sapphire-popup-content-body {
+		overflow-y: unset;
+	}
+	.sapphire-popup-content-footer {
+		padding: 16px;
+	}
+	iframe[data-name='printpreview'] {
+		border: 0;
+		display: block;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+	}
+}
