@@ -1,6 +1,6 @@
 ###### Overview
 
-A layout helper that wraps a platform `Table` (or equivalent markup) placed in a placeholder. The table itself is not part of the helper: `TableWrapper` only controls scroll behaviour, sticky headers, loading, empty state, optional clickable rows, and column width rules through CSS and JavaScript.
+A layout helper that wraps a platform `Table` (or equivalent markup) placed in a placeholder. The table itself is not part of the helper: `TableWrapper` only controls scroll behaviour, sticky headers, loading, empty state, optional clickable rows, optional reorderable rows, and column width rules through CSS and JavaScript.
 
 - The root (`.tablewrapper`) is the horizontal scroll container. When `MaxHeight` is set, it also becomes the vertical scroll container and pins the header cells (and pagination, when present) with `position: sticky`.
 - `IsStickyHeader` enables a cloned header row that sticks to the top of the screen layout while the page scrolls. It is ignored when `MaxHeight` is set (internal scroll takes over).
@@ -8,6 +8,7 @@ A layout helper that wraps a platform `Table` (or equivalent markup) placed in a
 - When `PageCount` is `0` and the wrapper is no longer pristine, the **NoRecords** placeholder is shown. `IsPristine` keeps the empty state hidden before the first data load.
 - `ColumnFixedWidths` applies fixed `table-layout` and honours `width-*` classes on cells; when off, those width classes are cleared.
 - When `ClickableRows` is `True`, body rows become clickable and fire `RowClick` with the first `data-rowid` found on a cell in that row. When no cell has `data-rowid`, the event receives `"missing rowid"`. Clicks on interactive cell content (`a`, `button`, `input`, `select`, `textarea`, `label`, and common ARIA / editable roles) do not fire `RowClick`. Turning `ClickableRows` off removes the handlers.
+- When `ReorderableRows` is `True`, every `tbody > tr` in the wrapped table can be dragged to a new position (hover cursor is `grab`). After a drop that changes order, `RowsReordered` fires with the `data-rowid` of each row in the new visual order (JSON array string). Interactive cell content does not start a drag. A completed drag does not fire `RowClick`.
 
 <hr>
 
@@ -26,6 +27,7 @@ A layout helper that wraps a platform `Table` (or equivalent markup) placed in a
 | `MaxHeight`         | `Integer`         | Maximum height of the wrapper in pixels. When greater than `0`, enables internal vertical scroll with a sticky header (and sticky pagination). When `0`, no max-height. |
 | `MaxRecords`        | `Integer`         | For pagination: Number of records per page                                                                                                                              |
 | `PageCount`         | `Integer`         | Record length for the current page. When 0 it displays the NoRecords placeholder. Otherwise, its always hidden                                                          |
+| `ReorderableRows`   | `Boolean`         | When `True`, body rows (`tbody > tr`) can be dragged to reorder. Hover shows a grab cursor. After a drop that changes order, `RowsReordered` fires with each row's `data-rowid` in the new order. Interactive cell content does not start a drag. |
 | `StartIndex`        | `Integer`         | For pagination: Set the initial index to start pagination                                                                                                               |
 | `TotalCount`        | `Long Integer`    | For pagination: Total records of list                                                                                                                                   |
 
@@ -46,3 +48,4 @@ A layout helper that wraps a platform `Table` (or equivalent markup) placed in a
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- |
 | `PaginationNavigate` | Event triggered on navigate. New start index value returned.                                                                                     | `NewStartIndex` (`Integer`) |
 | `RowClick`           | Fired when a clickable row is activated (not when the click target is interactive cell content). Provide a `data-rowid` on at least one `td` in the row; otherwise the argument is `"missing rowid"`. | `RowId` (`Text`)            |
+| `RowsReordered`      | Fired after a row is dropped in a new position. Each id is the row's `data-rowid` (copied from the first `td[data-rowid]` when present). JSON array string, e.g. `["id-1","id-2"]`. | `RowIds` (`Text`)           |

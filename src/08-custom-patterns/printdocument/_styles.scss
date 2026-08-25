@@ -5,3 +5,11 @@ div[data-block$='PrintDocument'] {
 .printdocument {
 	display: inline-flex;
 }
+
+.printdocument[data-enabled='false'] {
+	.btn-print {
+		background-color: var(--color-neutral-5);
+		box-shadow: none;
+		pointer-events: none;
+	}
+}

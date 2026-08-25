@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.33 2026-08-21T14:47:23.675Z */
+/*!  SapphireRWALibrary PROD v0.6.35 2026-08-25T17:00:27.896Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -4449,6 +4449,9 @@ div[data-block$=LabelValue] {
 .labelvalue-label {
   font-size: var(--font-size-s);
 }
+.labelvalue-label:has(label:empty) {
+  display: none !important;
+}
 .labelvalue-body {
   display: flex;
   flex-direction: column;
@@ -4970,6 +4973,26 @@ div[data-widthcomponent=auto] {
 
 .tablewrapper .table-row.is-clickable {
   cursor: pointer;
+}
+
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.table-row {
+  cursor: move;
+}
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging {
+  cursor: grabbing;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.12)) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.2));
+  position: relative;
+  z-index: 2;
+}
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging td {
+  background-color: var(--color-neutral-0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  position: relative;
+  transform: translateY(-4px);
+  z-index: 2;
+}
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-primary), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .tablewrapper .table[data-isfixed=true] thead {
@@ -8586,6 +8609,12 @@ div[data-block$=PrintDocument] {
 
 .printdocument {
   display: inline-flex;
+}
+
+.printdocument[data-enabled=false] .btn-print {
+  background-color: var(--color-neutral-5);
+  box-shadow: none;
+  pointer-events: none;
 }
 .border-solid-1 {
   border-style: solid;

@@ -10,6 +10,9 @@ div[data-block$='LabelValue'] {
 	gap: 8px;
 	&-label {
 		font-size: var(--font-size-s);
+		&:has(label:empty) {
+			display: none !important;
+		}
 	}
 	&-body {
 		display: flex;

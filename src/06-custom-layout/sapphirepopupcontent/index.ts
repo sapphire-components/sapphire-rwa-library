@@ -16,7 +16,6 @@ export default class SapphirePopupContent extends BaseComponent {
 	private closeOnEsc!: boolean;
 	private height!: number;
 	private minHeight!: number;
-	// private theme!: boolean;
 	private readonly actions!: SapphirePopupContentInit['actions'];
 	private readonly onClickClose = (): void => {
 		this.actions.OnClose();
@@ -39,7 +38,6 @@ export default class SapphirePopupContent extends BaseComponent {
 		this.height = init.height;
 		this.minHeight = init.minHeight;
 		this.closeOnEsc = init.closeOnEsc;
-		// this.theme = init.theme;
 		this.closeButton = this.widgetEl.querySelector<HTMLButtonElement>('.sapphire-popup-content-close button')!;
 
 		this.bindEvents();
@@ -48,11 +46,6 @@ export default class SapphirePopupContent extends BaseComponent {
 		setTimeout(() => {
 			this.widgetEl.focus();
 		}, 0);
-
-		// if (this.theme ==="printdocument") {
-		// 	const printDocument = new
-		// } else {
-		// }
 	}
 
 	bindEvents(): void {

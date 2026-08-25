@@ -11,7 +11,6 @@ export default class PrintDocument extends BaseComponent {
 	private actions!: IPrintDocument['actions'];
 	private btnClose!: HTMLButtonElement;
 	private btnPrint!: HTMLButtonElement;
-	// private enabled!: boolean;
 	private popupContent!: HTMLDivElement;
 
 	private readonly ShowPopup = (): void => {
@@ -28,7 +27,6 @@ export default class PrintDocument extends BaseComponent {
 		}
 
 		this.actions = configOptions.actions;
-		// this.enabled = configOptions.enabled;
 
 		//
 		this.btnPrint = this.widgetEl.querySelector<HTMLButtonElement>('.btn-print')!;
@@ -59,8 +57,8 @@ export default class PrintDocument extends BaseComponent {
 		});
 	}
 
-	parametersChanged(payload: IPrintDocument): void {
-		console.log(payload);
+	parametersChanged(_payload: IPrintDocument): void {
+		// console.log(payload);
 	}
 
 	destroy() {
