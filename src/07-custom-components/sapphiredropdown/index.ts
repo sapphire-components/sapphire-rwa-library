@@ -410,7 +410,7 @@ export default class SapphireDropdown extends BaseComponent {
 			this.renderSelectAllRow();
 		}
 
-		for (const option of this.optionsList) {
+		for (const option of this.optionsForList()) {
 			const optionFragment = tmplOption.content.cloneNode(true);
 			const optionEl = (optionFragment as DocumentFragment).querySelector('.sapphiredropdown-option') as HTMLLIElement;
 
@@ -482,9 +482,10 @@ export default class SapphireDropdown extends BaseComponent {
 	}
 
 	private toggleSelectAll(): void {
-		const allSelected = this.optionsList.length > 0 && this.optionsList.every((option) => this.isSelected(option.Value));
-		this.selectedList = allSelected ? [] : [...this.optionsList];
-		this.refreshSelectedState();
+		const list = this.optionsForList();
+		const allSelected = list.length > 0 && list.every((option) => this.isSelected(option.Value));
+		this.selectedList = allSelected ? [] : [...list];
+		this.syncOverlayWithSelection();
 		this.updateTriggerLabel();
 		this.emitChange();
 	}
@@ -493,8 +494,9 @@ export default class SapphireDropdown extends BaseComponent {
 	// selected, indeterminate when only some are.
 	private updateSelectAllState(): void {
 		if (!this.selectAllEl) return;
-		const total = this.optionsList.length;
-		const selectedCount = this.optionsList.reduce((count, option) => count + (this.isSelected(option.Value) ? 1 : 0), 0);
+		const list = this.optionsForList();
+		const total = list.length;
+		const selectedCount = list.reduce((count, option) => count + (this.isSelected(option.Value) ? 1 : 0), 0);
 		const allSelected = total > 0 && selectedCount === total;
 		this.selectAllEl.setAttribute('aria-selected', allSelected ? 'true' : 'false');
 		this.selectAllEl.dataset.indeterminate = selectedCount > 0 && !allSelected ? 'true' : 'false';
@@ -554,7 +556,7 @@ export default class SapphireDropdown extends BaseComponent {
 	// options, server-side counts the incoming list. NoSearchResultsText shows
 	// while a keyword is active, NoOptionsText otherwise.
 	private updateEmptyState(): void {
-		const hasVisible = this.config.SearchServerSide ? this.optionsList.length > 0 : this.optionEls().some((optionEl) => !optionEl.hidden);
+		const hasVisible = this.config.SearchServerSide ? this.optionsForList().length > 0 : this.optionEls().some((optionEl) => !optionEl.hidden);
 
 		if (hasVisible) {
 			this.emptyEl.hidden = true;
@@ -795,14 +797,14 @@ export default class SapphireDropdown extends BaseComponent {
 		if (this.config.Multiple) {
 			const alreadySelected = this.isSelected(value);
 			this.selectedList = alreadySelected ? this.selectedList.filter((item) => item.Value !== value) : [...this.selectedList, option];
-			this.refreshSelectedState();
+			this.syncOverlayWithSelection();
 			this.updateTriggerLabel();
 			this.emitChange();
 			return;
 		}
 
 		this.selectedList = [option];
-		this.refreshSelectedState();
+		this.syncOverlayWithSelection();
 		this.updateTriggerLabel();
 		this.close();
 		this.triggerEl.focus();
@@ -811,7 +813,7 @@ export default class SapphireDropdown extends BaseComponent {
 
 	private clearSelection(): void {
 		this.selectedList = [];
-		this.refreshSelectedState();
+		this.syncOverlayWithSelection();
 		this.updateTriggerLabel();
 		this.actions.OnClear();
 		this.emitChange();
@@ -884,7 +886,7 @@ export default class SapphireDropdown extends BaseComponent {
 		if (!this.isSelected(value)) return;
 
 		this.selectedList = this.selectedList.filter((item) => item.Value !== value);
-		this.refreshSelectedState();
+		this.syncOverlayWithSelection();
 		this.updateTriggerLabel();
 		this.emitChange();
 	}
@@ -956,7 +958,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.selectedList = this.selectedList.map((selected) => {
 			if (selected.Label && selected.Description && selected.Icon) return selected;
 
-			const match = this.optionByValue(selected.Value);
+			const match = this.optionsList.find((option) => option.Value === selected.Value);
 			if (!match) return selected;
 
 			return {
@@ -969,7 +971,38 @@ export default class SapphireDropdown extends BaseComponent {
 	}
 
 	private optionByValue(value: string): ISapphireDropdownOption | undefined {
-		return this.optionsList.find((option) => option.Value === value);
+		return this.optionsForList().find((option) => option.Value === value);
+	}
+
+	// Overlay list is the incoming options, plus any current selection whose
+	// Value is not in that list (e.g. a paged/filtered payload). Incoming
+	// optionsList is left untouched so parent equality checks stay stable.
+	private missingSelected(): ISapphireDropdownOption[] {
+		const incomingValues = new Set(this.optionsList.map((option) => option.Value));
+		return this.selectedList.filter((selected) => !incomingValues.has(selected.Value));
+	}
+
+	private optionsForList(): ISapphireDropdownOption[] {
+		const missing = this.missingSelected();
+		return missing.length === 0 ? this.optionsList : [...missing, ...this.optionsList];
+	}
+
+	// Rebuild the overlay only when prepended (missing-from-incoming) items
+	// changed; otherwise just refresh aria-selected. Avoids scroll jumps when
+	// the parent echoes the same selection back.
+	private syncOverlayWithSelection(): void {
+		const incomingValues = new Set(this.optionsList.map((option) => option.Value));
+		const renderedPrepended = this.optionEls().filter((optionEl) => !incomingValues.has(optionEl.dataset.value ?? ''));
+		const missing = this.missingSelected();
+		const samePrepended =
+			renderedPrepended.length === missing.length && renderedPrepended.every((optionEl, index) => optionEl.dataset.value === missing[index].Value);
+
+		if (samePrepended) {
+			this.refreshSelectedState();
+			return;
+		}
+
+		this.renderOptions();
 	}
 
 	private optionEls(): HTMLElement[] {
@@ -977,7 +1010,7 @@ export default class SapphireDropdown extends BaseComponent {
 	}
 
 	private navigableOptions(): ISapphireDropdownOption[] {
-		return this.optionsList.filter((option) => this.isValueVisible(option.Value));
+		return this.optionsForList().filter((option) => this.isValueVisible(option.Value));
 	}
 
 	private isValueVisible(value: string): boolean {
@@ -999,6 +1032,8 @@ export default class SapphireDropdown extends BaseComponent {
 
 		let needsLabelRefresh = false;
 		let needsHydrate = false;
+		let optionsChanged = false;
+		let selectedChanged = false;
 		if (payload.enabled !== undefined && payload.enabled !== this.enabled) {
 			this.enabled = payload.enabled;
 			this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
@@ -1011,7 +1046,7 @@ export default class SapphireDropdown extends BaseComponent {
 
 		if (payload.optionsList && !Helpers.areTheyEqual(payload.optionsList, this.optionsList)) {
 			this.optionsList = payload.optionsList;
-			this.renderOptions();
+			optionsChanged = true;
 			needsLabelRefresh = true;
 			needsHydrate = true;
 		}
@@ -1019,15 +1054,21 @@ export default class SapphireDropdown extends BaseComponent {
 		if (payload.selectedList && !Helpers.areTheyEqual(payload.selectedList, this.selectedList)) {
 			this.selectedList = payload.selectedList;
 			this.normalizeSelectedList();
-			this.refreshSelectedState();
+			selectedChanged = true;
 			needsLabelRefresh = true;
 			needsHydrate = true;
 		}
 
 		// Backfill any value-only selected items against the current options before
-		// the trigger/chips re-render.
+		// the overlay/trigger/chips re-render.
 		if (needsHydrate) {
 			this.hydrateSelectedList();
+		}
+
+		if (optionsChanged) {
+			this.renderOptions();
+		} else if (selectedChanged) {
+			this.syncOverlayWithSelection();
 		}
 
 		if (payload.isSearching !== undefined && payload.isSearching !== this.isSearching) {

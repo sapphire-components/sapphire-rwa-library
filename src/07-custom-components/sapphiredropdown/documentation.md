@@ -2,7 +2,7 @@
 
 A combobox-style dropdown for selecting one or many options from a list. It supports search (client- or server-side), select-all, chips for selected values, clear, keyboard navigation / typeahead, and a validation message.
 
-- The trigger is a focusable combobox; activating it (click or keyboard) opens a Tippy panel with the options listbox.
+- The trigger is a focusable combobox; activating it (click or keyboard) opens a Tippy panel with the options listbox. Selected options that are not in the current `OptionsList` are prepended in that list (so a paged or filtered payload still shows the current selection).
 - Single select closes the panel after a choice. Multiple select keeps the panel open and toggles options; overflowing labels collapse to a count summary using `SelectedOptionsText`.
 - When `Config.Search` is `True`, a search field filters options. Client-side search matches `Label` / `Description`; with `SearchServerSide`, typing emits `Search` (debounced 300ms) so the parent can refresh `OptionsList`.
 - While `IsSearching` is `True`, the list is hidden and a loading spinner is shown (typical for server-side search).
@@ -19,8 +19,8 @@ A combobox-style dropdown for selecting one or many options from a list. It supp
 | `Enabled`           | `Boolean`                | Enables or disables interaction. Disabled dropdowns are not focusable / interactive.                                                   |
 | `IsSearching`       | `Boolean`                | When `True`, shows the loading state in the panel and hides the options list.                                                          |
 | `IsValid`           | `Boolean`                | When `False`, marks the component invalid and shows `ValidationMessage`.                                                               |
-| `OptionsList`       | `SapphireDropdownOption` | Available options to render in the list.                                                                                               |
-| `SelectedList`      | `SapphireDropdownOption` | Currently selected options. Single-select keeps at most one entry; missing labels/icons are hydrated from `OptionsList` when possible. |
+| `OptionsList`       | `SapphireDropdownOption` | Available options to render in the list. Selected items whose `Value` is not in this list are prepended in the overlay (single or multiple). |
+| `SelectedList`      | `SapphireDropdownOption` | Currently selected options. Single-select keeps at most one entry; missing labels/icons are hydrated from `OptionsList` when possible. Selected items not present in `OptionsList` still appear at the top of the overlay so they can be deselected. |
 | `ValidationMessage` | `Text`                   | Message shown below the trigger while `IsValid` is `False`.                                                                            |
 | `Width`             | `SapphireScale`          | Width preset for the dropdown (`auto`, `xs`–`xl7`, `full`, etc.). The open panel matches the trigger width.                            |
 
