@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.37 2026-08-27T11:21:00.594Z */
+/*!  SapphireRWALibrary PROD v0.6.38 2026-08-31T09:07:43.340Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -5043,16 +5043,16 @@ div[data-widthcomponent=auto] {
   border-radius: 4px;
   box-shadow: none;
   color: inherit;
+  field-sizing: content;
   font: inherit;
   font-variant-numeric: tabular-nums;
   margin: 0;
-  min-width: 1.5ch;
+  min-width: 3ch;
   outline: solid 1px var(--color-neutral-5);
   padding: 0;
   pointer-events: auto;
   text-align: center;
   user-select: auto;
-  width: 2.5ch;
 }
 .tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-target:focus {
   background-color: var(--color-neutral-1);
