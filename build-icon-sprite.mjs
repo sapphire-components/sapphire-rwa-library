@@ -6,6 +6,39 @@ const ICONS_DIR = path.join(ROOT_DIR, 'src', '00-assets', 'icons');
 const ASSETS_DIR = path.join(ROOT_DIR, 'src', '10-export');
 const SPRITE_PATH = path.join(ASSETS_DIR, 'icons-sprite.svg');
 
+// Weight/style variants of the same icon, in the order they should appear after the base name.
+const VARIANT_SUFFIX_RANK = new Map([
+	['thin', 1],
+	['light', 2],
+	['bold', 3],
+	['fill', 4],
+	['duotone', 5],
+]);
+
+function parseIconName(name) {
+	const lastHyphen = name.lastIndexOf('-');
+	if (lastHyphen > 0) {
+		const suffix = name.slice(lastHyphen + 1).toLowerCase();
+		const rank = VARIANT_SUFFIX_RANK.get(suffix);
+		if (rank !== undefined) {
+			return { base: name.slice(0, lastHyphen), rank };
+		}
+	}
+	return { base: name, rank: 0 };
+}
+
+function compareIconNames(a, b) {
+	const pa = parseIconName(a);
+	const pb = parseIconName(b);
+	if (pa.base !== pb.base) {
+		return pa.base < pb.base ? -1 : 1;
+	}
+	if (pa.rank !== pb.rank) {
+		return pa.rank - pb.rank;
+	}
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
 async function ensureIconsDir() {
 	try {
 		const stat = await fs.stat(ICONS_DIR);
@@ -38,7 +71,7 @@ async function readSvgFilesInDir(dirPath) {
 	return entries
 		.filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.svg'))
 		.map((entry) => entry.name)
-		.sort();
+		.sort((a, b) => compareIconNames(path.basename(a, '.svg'), path.basename(b, '.svg')));
 }
 
 async function buildSprite() {
@@ -51,7 +84,10 @@ async function buildSprite() {
 	const svgFileRecords = []; // { folderName: string, filename: string, filePath: string, name: string }
 
 	// Root-level SVGs (if any)
-	const rootSvgFiles = entries.filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.svg')).map((e) => e.name).sort();
+	const rootSvgFiles = entries
+		.filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.svg'))
+		.map((e) => e.name)
+		.sort((a, b) => compareIconNames(path.basename(a, '.svg'), path.basename(b, '.svg')));
 	if (rootSvgFiles.length > 0) {
 		const folderName = 'root';
 		const iconNames = rootSvgFiles.map((f) => path.basename(f, '.svg'));
@@ -112,7 +148,9 @@ async function buildSprite() {
 
 	const symbols = [];
 
-	const sortedRecords = [...svgFileRecords].sort((a, b) => a.name.localeCompare(b.name) || a.folderName.localeCompare(b.folderName));
+	const sortedRecords = [...svgFileRecords].sort(
+		(a, b) => compareIconNames(a.name, b.name) || (a.folderName < b.folderName ? -1 : a.folderName > b.folderName ? 1 : 0)
+	);
 	for (const rec of sortedRecords) {
 		const raw = await fs.readFile(rec.filePath, 'utf8');
 

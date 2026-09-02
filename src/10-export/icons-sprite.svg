@@ -155,11 +155,11 @@
 <symbol id="svg-icon-caret-up-bold" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><polyline points="48 160 128 80 208 160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
 </symbol>
-<symbol id="svg-icon-caret-up-down-bold" viewBox="0 0 256 256">
-<rect width="256" height="256" fill="none"/><polyline points="80 176 128 224 176 176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/><polyline points="80 80 128 32 176 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
-</symbol>
 <symbol id="svg-icon-caret-up-fill" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M213.66,154.34l-80-80a8,8,0,0,0-11.32,0l-80,80A8,8,0,0,0,48,168H208a8,8,0,0,0,5.66-13.66Z"/>
+</symbol>
+<symbol id="svg-icon-caret-up-down-bold" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><polyline points="80 176 128 224 176 176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/><polyline points="80 80 128 32 176 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
 </symbol>
 <symbol id="svg-icon-carrying-infants" viewBox="0 0 40 40">
 <path d="M6.99785 11.8568C7.52437 11.8568 8.0104 12.0312 8.39742 12.3226C10.778 14.3094 12.5635 15.8001 13.7538 16.7936C14.0317 17.0253 17.4114 17.5957 17.8288 17.6666C18.2462 17.7375 18.7581 18.3147 18.7581 18.8232C18.7581 18.9998 18.7311 19.1708 18.6805 19.3306C18.8357 19.0122 19.0585 18.723 19.3443 18.4823C20.5143 17.4922 22.2863 17.6779 23.3011 18.8986C23.3438 18.9492 24.8942 20.7932 26.8912 23.1738C27.1814 23.0512 27.4649 22.9769 27.7428 22.9488C28.3155 22.8925 31.1056 23.6013 31.9652 23.8342C32.8247 24.0671 32.7853 24.6307 32.683 24.8963C32.5795 25.1618 32.1227 25.4172 31.0966 25.2529C30.4126 25.1438 29.8804 25.0943 29.5013 25.1055L29.8287 26.6784L29.9052 26.7695L29.9806 26.8606L30.2157 26.7571C30.8716 26.486 31.4049 26.3712 31.8155 26.4128C32.5333 26.486 34.5168 28.3884 34.8352 28.7237C35.1536 29.059 34.9882 29.4336 34.8352 29.5844C34.6822 29.7351 34.2592 29.7351 33.9633 29.5844C33.6674 29.4336 32.5333 27.872 31.7379 27.7843C31.5197 27.7607 31.226 27.7989 30.857 27.9013C33.0767 30.5643 35.0703 32.9686 35.6588 33.7212L35.8241 33.6908L36.0379 33.6796C37.1213 33.6796 38 34.5661 38 35.6597C38 36.7533 37.1213 37.6398 36.0379 37.6398C34.9545 37.6398 34.0758 36.7533 34.0758 35.6597C34.0758 35.2659 34.1894 34.8992 34.3863 34.5909C34.1197 34.2871 33.6899 33.7797 33.1476 33.1351C32.6897 32.5973 26.8979 34.3951 24.4295 32.0561C21.9611 29.7171 24.9628 23.2548 24.4295 22.6056C23.1166 21.0114 22.2087 19.9066 22.1749 19.8672C21.6968 19.2923 20.8755 19.2057 20.3332 19.6647C19.7965 20.1192 19.7335 20.9383 20.1892 21.5031L20.2027 21.52C20.4749 21.8473 20.4412 22.3289 20.1273 22.5944C19.8134 22.8599 19.3386 22.8104 19.0652 22.483C18.3745 21.6516 18.2113 20.5558 18.5477 19.6276C18.2788 20.1249 17.7602 20.4579 17.1661 20.4579C16.7814 20.4579 12.0651 19.5983 11.8131 19.3891C11.2742 18.9402 10.4653 18.2674 9.38635 17.3696C11.0199 21.9317 12.0809 24.7219 12.568 25.7389C12.9562 26.549 11.8604 27.2308 9.28284 27.7877C9.16921 27.8124 8.40079 37.1977 8.40079 37.9987H6.52419C6.52419 37.8963 6.50394 37.4598 6.46794 36.8196L6.42631 36.1165C6.24968 33.1981 5.87053 27.9317 5.57577 27.7044C4.99299 27.2578 2.81487 27.2578 2.14096 25.7378C1.46705 24.2178 3.39203 15.8418 4.06706 14.4118C4.7421 12.9807 5.68715 11.8512 7.00235 11.8512L6.99785 11.8568ZM24.263 33.6841C25.3465 33.6841 26.2251 34.5706 26.2251 35.6642C26.2251 36.7578 25.3465 37.6443 24.263 37.6443C23.1796 37.6443 22.3009 36.7578 22.3009 35.6642C22.3009 34.5706 23.1796 33.6841 24.263 33.6841ZM28.1872 17.8466C29.2707 17.8466 30.1493 18.7332 30.1493 19.8267C30.1493 20.9203 29.2707 21.8068 28.1872 21.8068C27.1038 21.8068 26.2251 20.9203 26.2251 19.8267C26.2251 18.7332 27.1038 17.8466 28.1872 17.8466ZM8.40867 2.00128C10.5755 2.00128 12.3329 3.77438 12.3329 5.96037C12.3329 8.14636 10.5755 9.91945 8.40867 9.91945C6.2418 9.91945 4.48446 8.14636 4.48446 5.96037C4.48446 3.77438 6.2418 2.00128 8.40867 2.00128Z" />
@@ -182,6 +182,9 @@
 <symbol id="svg-icon-check-bold" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><polyline points="40 144 96 200 224 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
 </symbol>
+<symbol id="svg-icon-check-fill" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM205.66,85.66l-96,96a8,8,0,0,1-11.32,0l-40-40a8,8,0,0,1,11.32-11.32L104,164.69l90.34-90.35a8,8,0,0,1,11.32,11.32Z"/>
+</symbol>
 <symbol id="svg-icon-check-circle" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><polyline points="88 136 112 160 168 104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
@@ -190,9 +193,6 @@
 </symbol>
 <symbol id="svg-icon-check-circle-fill" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/>
-</symbol>
-<symbol id="svg-icon-check-fill" viewBox="0 0 256 256">
-<rect width="256" height="256" fill="none"/><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM205.66,85.66l-96,96a8,8,0,0,1-11.32,0l-40-40a8,8,0,0,1,11.32-11.32L104,164.69l90.34-90.35a8,8,0,0,1,11.32,11.32Z"/>
 </symbol>
 <symbol id="svg-icon-check-square" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><polyline points="88 136 112 160 168 104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="40" width="176" height="176" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
@@ -477,6 +477,9 @@
 <symbol id="svg-icon-plus-bold" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><line x1="40" y1="128" x2="216" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/><line x1="128" y1="40" x2="128" y2="216" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
 </symbol>
+<symbol id="svg-icon-plus-fill" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM184,136H136v48a8,8,0,0,1-16,0V136H72a8,8,0,0,1,0-16h48V72a8,8,0,0,1,16,0v48h48a8,8,0,0,1,0,16Z"/>
+</symbol>
 <symbol id="svg-icon-plus-circle" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="16"/><line x1="88" y1="128" x2="168" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="128" y1="88" x2="128" y2="168" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
@@ -485,9 +488,6 @@
 </symbol>
 <symbol id="svg-icon-plus-circle-fill" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M128,24A104,104,0,1,0,232,128,104.13,104.13,0,0,0,128,24Zm40,112H136v32a8,8,0,0,1-16,0V136H88a8,8,0,0,1,0-16h32V88a8,8,0,0,1,16,0v32h32a8,8,0,0,1,0,16Z"/>
-</symbol>
-<symbol id="svg-icon-plus-fill" viewBox="0 0 256 256">
-<rect width="256" height="256" fill="none"/><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM184,136H136v48a8,8,0,0,1-16,0V136H72a8,8,0,0,1,0-16h48V72a8,8,0,0,1,16,0v48h48a8,8,0,0,1,0,16Z"/>
 </symbol>
 <symbol id="svg-icon-plus-minus" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><line x1="200" y1="56" x2="56" y2="200" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="32" y1="72" x2="112" y2="72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="72" y1="32" x2="72" y2="112" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="144" y1="184" x2="224" y2="184" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
@@ -516,11 +516,11 @@
 <symbol id="svg-icon-radio-button" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="128" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
-<symbol id="svg-icon-radio-button-fill" viewBox="0 0 256 256">
-<rect width="256" height="256" fill="none"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm56-88a56,56,0,1,1-56-56A56.06,56.06,0,0,1,184,128Z"/>
-</symbol>
 <symbol id="svg-icon-radio-button-light" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/><circle cx="128" cy="128" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+</symbol>
+<symbol id="svg-icon-radio-button-fill" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm56-88a56,56,0,1,1-56-56A56.06,56.06,0,0,1,184,128Z"/>
 </symbol>
 <symbol id="svg-icon-resize" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><rect x="48" y="120" width="88" height="88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M208,184v16a8,8,0,0,1-8,8H176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="208" y1="112" x2="208" y2="144" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M184,48h16a8,8,0,0,1,8,8V72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="112" y1="48" x2="144" y2="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M48,80V56a8,8,0,0,1,8-8H72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
@@ -612,14 +612,14 @@
 <symbol id="svg-icon-warning" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M142.41,40.22l87.46,151.87C236,202.79,228.08,216,215.46,216H40.54C27.92,216,20,202.79,26.13,192.09L113.59,40.22C119.89,29.26,136.11,29.26,142.41,40.22Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="128" y1="144" x2="128" y2="104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="180" r="12"/>
 </symbol>
+<symbol id="svg-icon-warning-fill" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM120,104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1,12-12A12,12,0,0,1,128,192Z"/>
+</symbol>
 <symbol id="svg-icon-warning-circle" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="16"/><line x1="128" y1="136" x2="128" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="172" r="12"/>
 </symbol>
 <symbol id="svg-icon-warning-diamond" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><line x1="128" y1="136" x2="128" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="172" r="12"/><rect x="52.13" y="52.13" width="151.73" height="151.73" rx="7.95" transform="translate(-53.02 128) rotate(-45)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-</symbol>
-<symbol id="svg-icon-warning-fill" viewBox="0 0 256 256">
-<rect width="256" height="256" fill="none"/><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM120,104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1,12-12A12,12,0,0,1,128,192Z"/>
 </symbol>
 <symbol id="svg-icon-warning-octagon" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><line x1="128" y1="136" x2="128" y2="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M164.45,32H91.55a8,8,0,0,0-5.66,2.34L34.34,85.89A8,8,0,0,0,32,91.55v72.9a8,8,0,0,0,2.34,5.66l51.55,51.55A8,8,0,0,0,91.55,224h72.9a8,8,0,0,0,5.66-2.34l51.55-51.55a8,8,0,0,0,2.34-5.66V91.55a8,8,0,0,0-2.34-5.66L170.11,34.34A8,8,0,0,0,164.45,32Z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="16"/><circle cx="128" cy="172" r="12"/>
@@ -630,6 +630,9 @@
 <symbol id="svg-icon-x-bold" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><line x1="200" y1="56" x2="56" y2="200" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/><line x1="200" y1="200" x2="56" y2="56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/>
 </symbol>
+<symbol id="svg-icon-x-fill" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM181.66,170.34a8,8,0,0,1-11.32,11.32L128,139.31,85.66,181.66a8,8,0,0,1-11.32-11.32L116.69,128,74.34,85.66A8,8,0,0,1,85.66,74.34L128,116.69l42.34-42.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
+</symbol>
 <symbol id="svg-icon-x-circle" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><line x1="160" y1="96" x2="96" y2="160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="96" y1="96" x2="160" y2="160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
@@ -638,9 +641,6 @@
 </symbol>
 <symbol id="svg-icon-x-circle-fill" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
-</symbol>
-<symbol id="svg-icon-x-fill" viewBox="0 0 256 256">
-<rect width="256" height="256" fill="none"/><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM181.66,170.34a8,8,0,0,1-11.32,11.32L128,139.31,85.66,181.66a8,8,0,0,1-11.32-11.32L116.69,128,74.34,85.66A8,8,0,0,1,85.66,74.34L128,116.69l42.34-42.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
 </symbol>
 <symbol id="svg-icon-x-ray" viewBox="0 0 40 40">
 <path d="M33.0907 2H6.90935C4.12731 2 2 4.12731 2 6.90935V33.0907C2 35.7084 4.12731 38 6.90935 38H33.0907C35.7084 38 38 35.8727 38 33.0907V6.90935C38 4.12731 35.8727 2 33.0907 2ZM6.91047 5.27252H18.3649C18.3649 5.27252 20.0017 5.1094 20.0017 6.09037C20.0017 7.07134 18.3649 6.90822 18.3649 6.90822H6.91047C6.91047 6.90822 5.27365 7.07134 5.27365 6.09037C5.27365 5.1094 6.91047 5.27252 6.91047 5.27252ZM5.27365 9.3629C5.27365 8.3808 6.91047 8.54505 6.91047 8.54505H13.4555C13.4555 8.54505 15.0923 8.38193 15.0923 9.3629C15.0923 10.3439 13.4555 10.1807 13.4555 10.1807H6.91047C6.91047 10.1807 5.27365 10.3439 5.27365 9.3629ZM20.3279 24.2541C21.4731 24.5814 20.491 26.2171 19.8374 26.8718C19.5101 27.3623 18.528 27.5266 17.8744 28.0171C16.2376 29.4896 12.4745 32.9264 10.8377 34.399C10.5104 34.0716 10.183 33.7443 9.69251 33.2538C11.8198 31.1265 16.4018 27.1992 17.2196 24.9088C16.7292 24.7457 15.9102 25.5635 15.2566 25.8909C13.6198 26.873 9.69363 30.3086 8.21993 31.7812C7.5652 31.1265 6.74735 30.3086 6.09262 29.6539C7.23784 28.5087 10.6746 25.0719 11.3293 23.9267C11.8198 23.272 12.1472 22.6172 12.6388 21.7994C12.8019 21.472 12.8019 21.3089 12.9662 20.9815C13.1293 20.8184 13.2935 20.6542 13.4566 20.491C13.784 20.0006 13.4566 19.3458 13.784 18.8542C13.9471 18.6911 14.2745 18.3637 14.4387 18.1995C15.0935 17.2174 15.7482 17.2174 16.7292 17.709C17.2196 18.0364 17.2197 18.6911 17.7113 19.3458C18.366 20.1637 19.6743 20.1637 20.6564 21.6363C20.8195 21.9636 21.3111 22.4541 21.3111 22.9457C21.6385 23.6004 20.8207 23.9278 20.3291 24.2552L20.3279 24.2541ZM27.0372 18.5269C26.8741 19.3447 27.5277 20.4899 27.2003 21.3089C26.2182 22.9457 24.5825 23.4362 23.4373 22.6184C22.2921 21.8005 22.1279 20.6553 20.9827 20.1637C19.6732 19.509 19.3458 19.3458 19.0196 18.3637C18.6922 17.2185 18.2017 15.9091 18.8565 14.6007C19.5112 13.1282 21.3111 12.8008 22.129 13.946C23.6016 13.2913 25.4015 12.9639 27.0383 11.4913L31.4561 7.23671L34.5655 10.3461C34.5655 10.3461 27.3657 17.2185 27.0383 18.528L27.0372 18.5269Z" />
