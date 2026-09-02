@@ -19,8 +19,11 @@ import ScrollableContent from '@custom-layout/scrollablecontent';
 import ResponsiveGrid from '@custom-layout/responsive-grid';
 
 import ActionPopup from '@custom-components/actionpopup';
+import ButtonChoice from '@custom-components/buttonchoice';
 import ButtonDropdown from '@custom-components/buttondropdown';
 import Chip from '@custom-components/chip';
+import ColorPicker from '@custom-components/colorpicker';
+import Country from '@custom-components/country';
 import DropdownMenu from '@custom-components/dropdownmenu';
 import Overlay from '@custom-components/overlay';
 import SapphireDropdown from '@custom-components/sapphiredropdown';
@@ -29,7 +32,6 @@ import Skeleton from '@custom-components/skeleton';
 import TextEditor from '@custom-components/texteditor';
 import Toast from '@custom-components/toast';
 import WeekDayPicker from '@custom-components/weekdaypicker';
-import ColorPicker from '@custom-components/colorpicker';
 import { Tabs, TabHeader, TabContent } from '@custom-components/tabs';
 
 import PrintDocument from '@custom-patterns/printdocument';
@@ -57,9 +59,11 @@ function init(): void {
 
 const SapphireRWALibrary = {
 	ActionPopup,
+	ButtonChoice,
 	ButtonDropdown,
 	Chip,
 	ColorPicker,
+	Country,
 	DesignSystemColors,
 	DesignSystemMenu,
 	DropdownMenu,

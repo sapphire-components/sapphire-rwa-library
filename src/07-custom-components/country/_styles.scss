@@ -1,0 +1,34 @@
+div[data-block$='Country'] {
+	display: contents;
+}
+
+.country {
+	align-items: center;
+	display: inline-flex;
+	flex: 0 0 auto;
+	gap: 8px;
+
+	&-flag {
+		aspect-ratio: 4 / 3;
+		border-radius: 4px;
+		display: block;
+		flex: 0 0 auto;
+		height: 24px;
+		object-fit: cover;
+		width: auto;
+	}
+
+	&-name {
+		min-width: 0;
+	}
+}
+
+.country[data-size='s'] {
+	.country-flag {
+		border-radius: 2px;
+		height: 16px;
+	}
+	.country-name {
+		font-size: 12px;
+	}
+}

@@ -62,22 +62,39 @@ export default class DropdownMenu extends BaseComponent {
 		}
 
 		setTimeout(() => {
-			if (this.checkAnyActiveChild()) {
-				this.widgetEl.dataset.isactive = 'true';
-				this.widgetEl.dataset.isopen = 'true';
+			const activeChild = this.widgetEl.querySelector<HTMLAnchorElement>('a.active');
+			if (!activeChild) return;
+
+			this.widgetEl.dataset.isactive = 'true';
+			this.widgetEl.dataset.isopen = 'true';
+
+			if (isRootLevel) {
+				requestAnimationFrame(() => {
+					if (!this.isVerticallyInView(activeChild)) {
+						activeChild.scrollIntoView({ block: 'center', inline: 'nearest' });
+					}
+				});
 			}
 		}, 0);
 
 		this.bindEvents();
 	}
 
+	private isVerticallyInView(el: HTMLElement): boolean {
+		const scrollParent = el.closest<HTMLElement>('.layoutaside-body');
+		const elRect = el.getBoundingClientRect();
+
+		if (!scrollParent) {
+			return elRect.top >= 0 && elRect.bottom <= window.innerHeight;
+		}
+
+		const parentRect = scrollParent.getBoundingClientRect();
+		return elRect.top >= parentRect.top && elRect.bottom <= parentRect.bottom;
+	}
+
 	bindEvents(): void {
 		this.headerEl.addEventListener('click', this.onClickHeader);
 		this.headerEl.addEventListener('keydown', this.onKeyDownHeader);
-	}
-
-	checkAnyActiveChild(): boolean {
-		return !!this.widgetEl.querySelector('a.active');
 	}
 
 	parametersChanged(): void {}

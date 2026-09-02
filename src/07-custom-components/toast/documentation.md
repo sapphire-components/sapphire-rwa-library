@@ -7,6 +7,7 @@ A global toast notification service (`SapphireRWALibrary.Toast`) that shows stac
 - Supported types: `alert-info`, `alert-error`, `alert-success`, `alert-warning`. Unknown types fall back to the info icon. The legacy value `Entities.Alert.Info` is normalised to `alert-info`.
 - When `TimeToLive` is greater than `0`, the progress bar runs for that many seconds and then dismisses the toast. When it is `0`, the toast stays until the user dismisses it.
 - Clicking the toast (or its close control when `HasClose` is `True`) starts the removal animation. When the last toast is gone, the container is removed.
+- When more than one toast is visible, a **Close all** button appears below the stack. Clicking it dismisses every remaining toast with the same removal animation. The button hides again as soon as fewer than two toasts are left.
 
 <hr>
 

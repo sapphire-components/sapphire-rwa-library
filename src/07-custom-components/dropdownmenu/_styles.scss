@@ -48,6 +48,7 @@ div[data-block$='DropdownMenu'] {
 				text-decoration: none;
 			}
 			&.active {
+				background-color: var(--color-primary-lighter);
 				font-weight: 700;
 			}
 		}

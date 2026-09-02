@@ -84,4 +84,13 @@
 			width: 0;
 		}
 	}
+
+	&-close-all {
+		background-color: var(--color-neutral-0);
+
+		// `.btn` sets `display: inline-flex`, which outranks the UA `[hidden]` rule.
+		&[hidden] {
+			display: none;
+		}
+	}
 }

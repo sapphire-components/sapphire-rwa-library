@@ -164,7 +164,7 @@ export default class TableWrapper extends BaseComponent {
 
 		this.setWidgetRect();
 
-		this.tableHeaderCloneEl.addEventListener('scroll', () => {
+		this.tableHeaderCloneEl?.addEventListener('scroll', () => {
 			console.log('table header clone scroll', this.syncing);
 			if (this.syncing) return;
 			this.syncing = true;
@@ -228,6 +228,8 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	setupDOM(): void {
+		if (!this.tableHeaderEl) return;
+
 		const clone = this.tableHeaderEl.cloneNode(true) as HTMLDivElement;
 		clone.classList.add('table-header-clone');
 		clone.querySelectorAll('.sortable-icon').forEach((child) => {

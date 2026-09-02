@@ -4,6 +4,7 @@ declare global {
 	interface Window {
 		SapphireRWALibrary: SapphireRWALibrary;
 		SapphireRWAIcons: SapphireRWAIcons;
+		SapphireRWAFlags: SapphireRWAFlags;
 		SapphireRWADocumentation: SapphireRWADocumentationConstructor;
 		SapphireRWAStaticEntities: SapphireRWAStaticEntitiesConstructor;
 		tippy: any;
@@ -11,6 +12,10 @@ declare global {
 
 	interface SapphireRWAIcons {
 		inject(): void;
+	}
+
+	interface SapphireRWAFlags {
+		get(code: string): string | undefined;
 	}
 
 	interface SapphireRWALookupInstance {

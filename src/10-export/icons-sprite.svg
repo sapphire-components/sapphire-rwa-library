@@ -194,6 +194,9 @@
 <symbol id="svg-icon-check-fill" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM205.66,85.66l-96,96a8,8,0,0,1-11.32,0l-40-40a8,8,0,0,1,11.32-11.32L104,164.69l90.34-90.35a8,8,0,0,1,11.32,11.32Z"/>
 </symbol>
+<symbol id="svg-icon-check-square" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><polyline points="88 136 112 160 168 104" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="40" y="40" width="176" height="176" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+</symbol>
 <symbol id="svg-icon-checks" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><polyline points="16 130.29 54.4 168 144 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="125.96 144 150.4 168 240 80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
@@ -510,6 +513,15 @@
 <symbol id="svg-icon-question-mark" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M128,160V144c30.93,0,56-21.49,56-48s-25.07-48-56-48S72,69.49,72,96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="208" r="16"/>
 </symbol>
+<symbol id="svg-icon-radio-button" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><circle cx="128" cy="128" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+</symbol>
+<symbol id="svg-icon-radio-button-fill" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm56-88a56,56,0,1,1-56-56A56.06,56.06,0,0,1,184,128Z"/>
+</symbol>
+<symbol id="svg-icon-radio-button-light" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/><circle cx="128" cy="128" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+</symbol>
 <symbol id="svg-icon-resize" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><rect x="48" y="120" width="88" height="88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M208,184v16a8,8,0,0,1-8,8H176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="208" y1="112" x2="208" y2="144" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M184,48h16a8,8,0,0,1,8,8V72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="112" y1="48" x2="144" y2="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M48,80V56a8,8,0,0,1,8-8H72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
@@ -548,6 +560,9 @@
 </symbol>
 <symbol id="svg-icon-speaker-simple-high" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><path d="M88,168H40a8,8,0,0,1-8-8V96a8,8,0,0,1,8-8H88l72-56V224Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="200" y1="104" x2="200" y2="152" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="232" y1="88" x2="232" y2="168" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+</symbol>
+<symbol id="svg-icon-square" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><rect x="40" y="40" width="176" height="176" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
 <symbol id="svg-icon-squares-four" viewBox="0 0 256 256">
 <rect width="256" height="256" fill="none"/><rect x="48" y="48" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="144" y="48" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="48" y="144" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><rect x="144" y="144" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
@@ -629,5 +644,8 @@
 </symbol>
 <symbol id="svg-icon-x-ray" viewBox="0 0 40 40">
 <path d="M33.0907 2H6.90935C4.12731 2 2 4.12731 2 6.90935V33.0907C2 35.7084 4.12731 38 6.90935 38H33.0907C35.7084 38 38 35.8727 38 33.0907V6.90935C38 4.12731 35.8727 2 33.0907 2ZM6.91047 5.27252H18.3649C18.3649 5.27252 20.0017 5.1094 20.0017 6.09037C20.0017 7.07134 18.3649 6.90822 18.3649 6.90822H6.91047C6.91047 6.90822 5.27365 7.07134 5.27365 6.09037C5.27365 5.1094 6.91047 5.27252 6.91047 5.27252ZM5.27365 9.3629C5.27365 8.3808 6.91047 8.54505 6.91047 8.54505H13.4555C13.4555 8.54505 15.0923 8.38193 15.0923 9.3629C15.0923 10.3439 13.4555 10.1807 13.4555 10.1807H6.91047C6.91047 10.1807 5.27365 10.3439 5.27365 9.3629ZM20.3279 24.2541C21.4731 24.5814 20.491 26.2171 19.8374 26.8718C19.5101 27.3623 18.528 27.5266 17.8744 28.0171C16.2376 29.4896 12.4745 32.9264 10.8377 34.399C10.5104 34.0716 10.183 33.7443 9.69251 33.2538C11.8198 31.1265 16.4018 27.1992 17.2196 24.9088C16.7292 24.7457 15.9102 25.5635 15.2566 25.8909C13.6198 26.873 9.69363 30.3086 8.21993 31.7812C7.5652 31.1265 6.74735 30.3086 6.09262 29.6539C7.23784 28.5087 10.6746 25.0719 11.3293 23.9267C11.8198 23.272 12.1472 22.6172 12.6388 21.7994C12.8019 21.472 12.8019 21.3089 12.9662 20.9815C13.1293 20.8184 13.2935 20.6542 13.4566 20.491C13.784 20.0006 13.4566 19.3458 13.784 18.8542C13.9471 18.6911 14.2745 18.3637 14.4387 18.1995C15.0935 17.2174 15.7482 17.2174 16.7292 17.709C17.2196 18.0364 17.2197 18.6911 17.7113 19.3458C18.366 20.1637 19.6743 20.1637 20.6564 21.6363C20.8195 21.9636 21.3111 22.4541 21.3111 22.9457C21.6385 23.6004 20.8207 23.9278 20.3291 24.2552L20.3279 24.2541ZM27.0372 18.5269C26.8741 19.3447 27.5277 20.4899 27.2003 21.3089C26.2182 22.9457 24.5825 23.4362 23.4373 22.6184C22.2921 21.8005 22.1279 20.6553 20.9827 20.1637C19.6732 19.509 19.3458 19.3458 19.0196 18.3637C18.6922 17.2185 18.2017 15.9091 18.8565 14.6007C19.5112 13.1282 21.3111 12.8008 22.129 13.946C23.6016 13.2913 25.4015 12.9639 27.0383 11.4913L31.4561 7.23671L34.5655 10.3461C34.5655 10.3461 27.3657 17.2185 27.0383 18.528L27.0372 18.5269Z" />
+</symbol>
+<symbol id="svg-icon-x-square" viewBox="0 0 256 256">
+<rect width="256" height="256" fill="none"/><rect x="40" y="40" width="176" height="176" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="160" y1="96" x2="96" y2="160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="96" y1="96" x2="160" y2="160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
 </symbol>
 </svg>

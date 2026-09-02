@@ -1,4 +1,4 @@
-export const tmplToastMessage = document.createElement("template");
+export const tmplToastMessage = document.createElement('template');
 tmplToastMessage.innerHTML = `
     <div class="toast-notification">
         <div class="toast-notification-content">

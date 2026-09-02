@@ -11,13 +11,15 @@ export interface IToastMessage {
 }
 
 export default class Toast {
+	private elCloseAll: HTMLButtonElement | null = null;
 	private elToastContainer: HTMLElement | null = null;
 	private list: IToastMessage[] = [];
+	private nextId = 0;
 
 	constructor() {}
 
 	createToastNotification(message: IToastMessage): void {
-		message.id = +new Date();
+		message.id = ++this.nextId;
 
 		if (message.type === 'Entities.Alert.Info') {
 			message.type = 'alert-info';
@@ -30,6 +32,8 @@ export default class Toast {
 	clearToastNotifications(): void {
 		this.list = [];
 		this.elToastContainer?.remove();
+		this.elToastContainer = null;
+		this.elCloseAll = null;
 	}
 
 	addToastMessage(message: IToastMessage): void {
@@ -37,6 +41,7 @@ export default class Toast {
 			this.elToastContainer = document.createElement('div');
 			this.elToastContainer.className = 'toast';
 			document.getElementById('transitionContainer')?.prepend(this.elToastContainer);
+			this.ensureCloseAllButton();
 		}
 
 		let fragment = tmplToastMessage.content.cloneNode(true) as HTMLElement;
@@ -78,28 +83,31 @@ export default class Toast {
 		}
 
 		this.elToastContainer.prepend(toastMessage);
+		this.updateCloseAllVisibility();
 
 		toastMessage.addEventListener('click', () => {
-			this.removeToastMessage(message.id);
+			this.dismissToastElement(toastMessage);
 		});
 
 		toastMessage.addEventListener('animationend', (animation: AnimationEvent) => {
 			switch (animation.animationName) {
 				case 'toast-destruction':
-					const toastId = Number(toastMessage.dataset.id);
 					toastMessage.remove();
-					const position = this.list.findIndex((message: IToastMessage) => message.id === toastId);
+					const position = this.list.indexOf(message);
 					if (position > -1) {
 						this.list.splice(position, 1);
 					}
 					if (this.list.length === 0) {
 						this.elToastContainer?.remove();
 						this.elToastContainer = null;
+						this.elCloseAll = null;
+					} else {
+						this.updateCloseAllVisibility();
 					}
 					break;
 				case 'toast-progress':
 					if (message.timeToLive > 0) {
-						toastMessage?.classList.add('is-removing');
+						this.dismissToastElement(toastMessage);
 					}
 					break;
 			}
@@ -107,7 +115,45 @@ export default class Toast {
 	}
 
 	removeToastMessage(id: number): void {
-		const elToRemove = document.querySelector(`.toast-notification[data-id="${id}"]`);
-		elToRemove?.classList.add('is-removing');
+		this.elToastContainer?.querySelectorAll(`.toast-notification[data-id="${id}"]`).forEach((el) => {
+			this.dismissToastElement(el);
+		});
+	}
+
+	private closeAllToastMessages(): void {
+		this.elToastContainer?.querySelectorAll('.toast-notification:not(.is-removing)').forEach((el) => {
+			this.dismissToastElement(el);
+		});
+	}
+
+	private dismissToastElement(el: Element): void {
+		el.classList.add('is-removing');
+		this.updateCloseAllVisibility();
+	}
+
+	private ensureCloseAllButton(): void {
+		if (!this.elToastContainer || this.elCloseAll) {
+			return;
+		}
+
+		this.elCloseAll = document.createElement('button');
+		this.elCloseAll.type = 'button';
+		this.elCloseAll.className = 'btn btn-xsmall toast-close-all';
+		this.elCloseAll.textContent = 'Close all';
+		this.elCloseAll.hidden = true;
+		this.elCloseAll.addEventListener('click', (event: Event) => {
+			event.stopPropagation();
+			this.closeAllToastMessages();
+		});
+		this.elToastContainer.append(this.elCloseAll);
+	}
+
+	private updateCloseAllVisibility(): void {
+		if (!this.elCloseAll) {
+			return;
+		}
+
+		const visibleCount = this.elToastContainer?.querySelectorAll('.toast-notification:not(.is-removing)').length ?? 0;
+		this.elCloseAll.hidden = visibleCount < 2;
 	}
 }

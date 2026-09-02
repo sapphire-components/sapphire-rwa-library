@@ -1,0 +1,98 @@
+@use '../../01-foundations/_mixins.scss' as *;
+
+div[data-block$='ButtonChoice'] {
+	display: contents;
+}
+
+div[data-block$='ButtonChoice'].buttonchoice,
+.buttonchoice {
+	display: inline-flex;
+	flex-direction: column;
+	width: fit-content;
+
+	&-wrapper {
+		@include transition(background-color);
+		@include focus-visible();
+		align-items: center;
+		background-color: var(--color-neutral-0);
+		border: none;
+		border-radius: 4px;
+		box-shadow: inset 0 0 0 1px var(--color-border);
+		color: var(--color-neutral-8);
+		cursor: pointer;
+		display: inline-flex;
+		font-size: 14px;
+		gap: 8px;
+		height: auto;
+		justify-content: center;
+		min-height: 36px;
+		padding-block: 0;
+		padding-inline: 12px;
+		user-select: none;
+
+		&:hover {
+			background-color: var(--color-neutral-1);
+		}
+
+		.svg-icon[data-size] {
+			color: var(--color-neutral-8);
+			height: 20px;
+			width: 20px;
+			svg {
+				height: 20px;
+				width: 20px;
+			}
+		}
+	}
+
+	&-icon {
+		display: grid;
+		flex: 0 0 auto;
+		place-items: center;
+	}
+
+	&-content {
+		min-width: 0;
+	}
+}
+
+.buttonchoice[data-isselected='true'] {
+	.buttonchoice-wrapper {
+		background-color: var(--color-primary);
+		box-shadow: inset 0 0 0 1px var(--color-primary);
+		color: var(--color-neutral-0);
+		&:hover {
+			background-color: var(--color-primary-dark);
+		}
+		.svg-icon[data-size] {
+			color: var(--color-neutral-0);
+		}
+	}
+}
+
+.buttonchoice[data-enabled='false'] {
+	cursor: not-allowed;
+	.buttonchoice-wrapper {
+		background-color: var(--color-background-disabled);
+		box-shadow: inset 0 0 0 1px var(--color-border);
+		color: var(--color-text-disabled);
+		pointer-events: none;
+		.svg-icon[data-size] {
+			color: var(--color-text-disabled);
+		}
+	}
+}
+
+.buttonchoice[data-isvalid='false'] {
+	.buttonchoice-wrapper {
+		background-color: var(--color-error-light);
+		box-shadow: inset 0 0 0 1px var(--color-error);
+		color: var(--color-text);
+		&:hover {
+			background-color: var(--color-error-light);
+		}
+		.svg-icon[data-size] {
+			color: var(--color-neutral-10);
+		}
+	}
+}
