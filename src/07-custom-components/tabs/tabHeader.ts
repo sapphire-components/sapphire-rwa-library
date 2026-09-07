@@ -90,8 +90,8 @@ export default class TabHeader extends BaseComponent {
 		this.widgetEl.addEventListener('keydown', this.onTabHeaderKeydown);
 	}
 
-	parametersChanged(payload: TabHeaderConfigOptions): void {
-		console.log('parametersChanged', payload);
+	parametersChanged(_payload: TabHeaderConfigOptions): void {
+		// console.log('parametersChanged', payload);
 	}
 
 	destroy() {

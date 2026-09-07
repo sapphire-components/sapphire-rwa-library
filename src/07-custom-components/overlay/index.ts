@@ -212,7 +212,7 @@ export default class Overlay extends BaseComponent {
 					closeButton.addEventListener('click', (event: Event) => {
 						event.stopPropagation();
 						event.preventDefault();
-						console.log('closeButton clicked');
+						// console.log('closeButton clicked');
 						_instance.hide();
 					});
 				}
@@ -262,8 +262,7 @@ export default class Overlay extends BaseComponent {
 
 							timeout = window.setTimeout(() => {
 								requestAnimationFrame(() => {
-									console.log('mutationObserver');
-
+									// console.log('mutationObserver');
 									if (this.configOptions.theme.includes('iframe-auto-size')) {
 										setIframeNaturalSize();
 									}
@@ -282,7 +281,7 @@ export default class Overlay extends BaseComponent {
 					});
 
 					const setIframeNaturalSize = () => {
-						console.log('setIframeNaturalSize');
+						// console.log('setIframeNaturalSize');
 						const layout = iframeBody.querySelector('.layout');
 						if (!layout) return;
 						const { width, height } = layout.getBoundingClientRect();
