@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.45 2026-09-09T12:25:44.866Z */
+/*!  SapphireRWALibrary PROD v0.6.46 2026-09-10T08:25:58.316Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -9350,6 +9350,50 @@ div[data-block$=PrintDocument] {
 
 .margin-left-xxxl {
   margin-left: 64px !important;
+}
+
+.margin-xxxxl {
+  margin: 100px !important;
+}
+
+.margin-inline-xxxxl {
+  margin-inline: 100px !important;
+}
+
+.margin-block-xxxxl {
+  margin-block: 100px !important;
+}
+
+.margin-inline-start-xxxxl {
+  margin-inline-start: 100px !important;
+}
+
+.margin-inline-end-xxxxl {
+  margin-inline-end: 100px !important;
+}
+
+.margin-block-start-xxxxl {
+  margin-block-start: 100px !important;
+}
+
+.margin-block-end-xxxxl {
+  margin-block-end: 100px !important;
+}
+
+.margin-top-xxxxl {
+  margin-top: 100px !important;
+}
+
+.margin-right-xxxxl {
+  margin-right: 100px !important;
+}
+
+.margin-bottom-xxxxl {
+  margin-bottom: 100px !important;
+}
+
+.margin-left-xxxxl {
+  margin-left: 100px !important;
 }
 .validation-message {
   align-items: center;

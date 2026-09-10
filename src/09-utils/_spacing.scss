@@ -8,7 +8,8 @@ $sapphire-spacing:
 	'l' 32px,
 	'xl' 40px,
 	'xxl' 48px,
-	'xxxl' 64px;
+	'xxxl' 64px,
+	'xxxxl' 100px;
 
 @each $key, $value in $sapphire-spacing {
 	.margin-#{$key} {
