@@ -19,16 +19,19 @@ import ScrollableContent from '@custom-layout/scrollablecontent';
 import ResponsiveGrid from '@custom-layout/responsive-grid';
 
 import ActionPopup from '@custom-components/actionpopup';
+import AlertBar from '@custom-components/alertbar';
 import ButtonChoice from '@custom-components/buttonchoice';
 import ButtonDropdown from '@custom-components/buttondropdown';
 import Chip from '@custom-components/chip';
 import ColorPicker from '@custom-components/colorpicker';
 import Country from '@custom-components/country';
 import DropdownMenu from '@custom-components/dropdownmenu';
+import MasterDetail from '@custom-components/masterdetail';
 import Overlay from '@custom-components/overlay';
 import SapphireDropdown from '@custom-components/sapphiredropdown';
 import SapphireInput from '@custom-components/sapphireinput';
 import Skeleton from '@custom-components/skeleton';
+import Status from '@custom-components/status';
 import TextEditor from '@custom-components/texteditor';
 import Toast from '@custom-components/toast';
 import WeekDayPicker from '@custom-components/weekdaypicker';
@@ -59,6 +62,7 @@ function init(): void {
 
 const SapphireRWALibrary = {
 	ActionPopup,
+	AlertBar,
 	ButtonChoice,
 	ButtonDropdown,
 	Chip,
@@ -73,6 +77,7 @@ const SapphireRWALibrary = {
 	LabelValue,
 	LayoutWrapper,
 	Locale,
+	MasterDetail,
 	Overlay,
 	PrintDocument,
 	ResponsiveGrid,
@@ -81,6 +86,7 @@ const SapphireRWALibrary = {
 	SapphirePopupContent,
 	ScrollableContent,
 	Skeleton,
+	Status,
 	TabContent,
 	TabHeader,
 	TableWrapper,

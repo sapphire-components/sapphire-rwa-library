@@ -143,4 +143,12 @@ export default class Helpers {
 			},
 		});
 	}
+
+	static getOuterSize(el: HTMLElement): { width: number; height: number } {
+		const style = getComputedStyle(el);
+		return {
+			width: el.offsetWidth + parseFloat(style.marginLeft) + parseFloat(style.marginRight),
+			height: el.offsetHeight + parseFloat(style.marginTop) + parseFloat(style.marginBottom),
+		};
+	}
 }

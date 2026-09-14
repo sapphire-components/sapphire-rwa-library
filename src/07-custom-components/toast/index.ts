@@ -1,4 +1,5 @@
 import Helpers from '@utils/helpers';
+import { getAlertAppearance, resolveAlertType, type AlertType } from '@utils/alert';
 import { tmplToastMessage } from './templates';
 
 export interface IToastMessage {
@@ -7,7 +8,7 @@ export interface IToastMessage {
 	id: number;
 	timeToLive: number;
 	title: string;
-	type: string;
+	type: AlertType;
 }
 
 export default class Toast {
@@ -21,9 +22,7 @@ export default class Toast {
 	createToastNotification(message: IToastMessage): void {
 		message.id = ++this.nextId;
 
-		if (message.type === 'Entities.Alert.Info') {
-			message.type = 'alert-info';
-		}
+		message.type = resolveAlertType(message.type);
 
 		this.list.push(message);
 		this.addToastMessage(message);
@@ -61,26 +60,8 @@ export default class Toast {
 			toastMessageClose.innerHTML = Helpers.placeIcon('x');
 		}
 
-		// Icon
-		let toastMessageIcon = toastMessage.querySelector('.toast-notification-content-icon') as HTMLElement;
-
-		switch (message.type) {
-			case 'alert-error':
-				toastMessageIcon.innerHTML = Helpers.placeIcon('warning-octagon', 'm');
-				break;
-			case 'alert-info':
-				toastMessageIcon.innerHTML = Helpers.placeIcon('info', 'm');
-				break;
-			case 'alert-success':
-				toastMessageIcon.innerHTML = Helpers.placeIcon('check-circle-bold', 'm');
-				break;
-			case 'alert-warning':
-				toastMessageIcon.innerHTML = Helpers.placeIcon('warning', 'm');
-				break;
-			default:
-				toastMessageIcon.innerHTML = Helpers.placeIcon('info', 'm');
-				break;
-		}
+		const toastMessageIcon = toastMessage.querySelector('.toast-notification-content-icon') as HTMLElement;
+		toastMessageIcon.innerHTML = Helpers.placeIcon(getAlertAppearance(message.type).icon, 'm');
 
 		this.elToastContainer.prepend(toastMessage);
 		this.updateCloseAllVisibility();

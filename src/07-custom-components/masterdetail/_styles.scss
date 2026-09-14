@@ -1,0 +1,19 @@
+div[data-block$='MasterDetail'] {
+	display: contents;
+}
+
+.masterdetail {
+	display: flex;
+	gap: 16px;
+	&-aside {
+		overflow-y: auto;
+		scrollbar-gutter: stable;
+		scrollbar-width: thin;
+	}
+	&-content {
+		background-color: var(--color-background);
+		overflow-y: auto;
+		scrollbar-gutter: stable;
+		scrollbar-width: thin;
+	}
+}

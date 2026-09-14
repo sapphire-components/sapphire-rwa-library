@@ -1,0 +1,47 @@
+div[data-block$='Status'] {
+	display: contents;
+}
+
+.status {
+	align-items: center;
+	display: inline-flex;
+	flex: 0 0 auto;
+	gap: 4px;
+	line-height: 20px;
+
+	&-icon {
+		display: grid;
+		flex: 0 0 auto;
+		place-items: center;
+	}
+
+	&-label {
+		min-width: 0;
+	}
+
+	&[data-type='alert-info'] {
+		--iconcolor: var(--color-info);
+		color: var(--color-info);
+	}
+
+	&[data-type='alert-warning'] {
+		--iconcolor: var(--color-warning);
+		color: var(--color-warning);
+	}
+
+	&[data-type='alert-success'] {
+		--iconcolor: var(--color-success);
+		color: var(--color-success);
+	}
+
+	&[data-type='alert-error'] {
+		--iconcolor: var(--color-error);
+		color: var(--color-error);
+	}
+}
+
+.status[data-size='s'] {
+	.status-label {
+		font-size: 12px;
+	}
+}

@@ -21,7 +21,7 @@ const SCSS_PARTIAL_DIRS = [
 ];
 
 // Dirs scanned for per-component `documentation.md` files.
-const DOCS_DIRS = ['03-core', '05-helpers', '06-custom-layout', '07-custom-components', '08-custom-patterns'];
+const DOCS_DIRS = ['03-core', '04-outsystems', '05-helpers', '06-custom-layout', '07-custom-components', '08-custom-patterns'];
 const DOCS_OUT_FILE = 'sapphire-rwa-documentation.js';
 
 // Static entity folders scanned for `enumerables.md` reference tables.
@@ -119,6 +119,7 @@ export default defineConfig(({ command, mode }) => {
 				docFileName: 'enumerables.md',
 				outFile: STATIC_ENTITIES_OUT_FILE,
 				globalName: 'SapphireRWAStaticEntities',
+				linkStaticEntities: true,
 			}),
 			bannerOnDisk(banner),
 			cssHotSwap({ outDir: 'dist', outFile: 'sapphire-rwa-library.css' }),
@@ -498,12 +499,50 @@ function collectStaticEntityNames(cwd, srcDir) {
 }
 
 function linkStaticEntitiesInMarkdown(md, entityNames) {
-	let result = md;
-	for (const entity of entityNames) {
+	const replacements = entityNames.map((entity) => {
 		const escaped = entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-		const re = new RegExp('(?<!\\[)`' + escaped + '`', 'g');
-		const url = `${STATIC_ENTITIES_ROUTE}#${entity}`;
-		result = result.replace(re, '[`' + entity + '`](' + url + ')');
-	}
-	return result;
+		return {
+			re: new RegExp('(?<!\\[)`' + escaped + '`', 'g'),
+			replacement: '[`' + entity + '`](' + `${STATIC_ENTITIES_ROUTE}#${entity}` + ')',
+		};
+	});
+
+	const linkInText = (text) => {
+		let result = text;
+		for (const { re, replacement } of replacements) {
+			re.lastIndex = 0;
+			result = result.replace(re, replacement);
+		}
+		return result;
+	};
+
+	// In parameter tables, Property/Name is an input identifier (plain string).
+	// Type and Description cells may reference static entities.
+	let skipColumnIndexes = null;
+
+	return md
+		.split('\n')
+		.map((line) => {
+			if (!/^\s*\|.*\|\s*$/.test(line)) {
+				skipColumnIndexes = null;
+				return linkInText(line);
+			}
+
+			if (/^\s*\|[\s:|-]+\|\s*$/.test(line)) return line;
+
+			const parts = line.split('|');
+			const cells = parts.slice(1, -1);
+
+			if (skipColumnIndexes === null) {
+				skipColumnIndexes = new Set();
+				cells.forEach((cell, i) => {
+					const header = cell.trim().toLowerCase();
+					if (header === 'property' || header === 'name') skipColumnIndexes.add(i);
+				});
+				return line;
+			}
+
+			return [parts[0], ...cells.map((cell, i) => (skipColumnIndexes.has(i) ? cell : linkInText(cell))), parts[parts.length - 1]].join('|');
+		})
+		.join('\n');
 }

@@ -1,4 +1,5 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
+import Helpers from '@utils/helpers';
 
 interface SapphirePopupContentInit extends BaseComponentInit {
 	actions: {
@@ -54,15 +55,23 @@ export default class SapphirePopupContent extends BaseComponent {
 	}
 
 	renderVariables(): void {
+		const popupContent = this.widgetEl.querySelector<HTMLDivElement>('.sapphire-popup-content');
+		this.widgetEl.style.removeProperty('--sapphirepopupcontent-height');
+
+		const popupContentHeader = this.widgetEl.querySelector<HTMLDivElement>('.sapphire-popup-content-header');
+		this.widgetEl.style.setProperty('--popupcontentheader-height', `${popupContentHeader ? Helpers.getOuterSize(popupContentHeader).height : 0}px`);
+
+		const popupContentFooter = this.widgetEl.querySelector<HTMLDivElement>('.sapphire-popup-content-footer');
+		this.widgetEl.style.setProperty('--popupcontentfooter-height', `${popupContentFooter ? Helpers.getOuterSize(popupContentFooter).height : 0}px`);
+
 		if (this.height) {
 			this.widgetEl.style.setProperty('--sapphirepopupcontent-height', `${this.height}px`);
-		} else {
-			this.widgetEl.style.removeProperty('--sapphirepopupcontent-height');
-		}
-		if (this.minHeight) {
+		} else if (this.minHeight) {
 			this.widgetEl.style.setProperty('--sapphirepopupcontent-min-height', `${this.minHeight}px`);
 		} else {
-			this.widgetEl.style.removeProperty('--sapphirepopupcontent-min-height');
+			setTimeout(() => {
+				this.widgetEl.style.setProperty('--sapphirepopupcontent-height', `${popupContent ? popupContent.getBoundingClientRect().height : 0}px`);
+			}, 10);
 		}
 	}
 

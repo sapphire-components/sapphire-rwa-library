@@ -1,5 +1,9 @@
 @use '../../01-foundations/typography';
 
+div[data-block$='SapphirePopupContent'] {
+	display: contents;
+}
+
 .popup-dialog {
 	margin: unset;
 	max-height: unset;
