@@ -1,4 +1,4 @@
-@use '../../../src/01-foundations/colors' as *;
+@use '../../../01-foundations/colors' as *;
 
 div[data-block$='SVGIcon'] {
 	display: contents;

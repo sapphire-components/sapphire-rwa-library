@@ -14,28 +14,28 @@ import LabelValue from '@helpers/labelvalue';
 import TableWrapper from '@helpers/tablewrapper';
 import InputWrapper from '@helpers/inputwrapper';
 
-import SapphirePopupContent from '@custom-layout/sapphirepopupcontent';
-import ScrollableContent from '@custom-layout/scrollablecontent';
-import ResponsiveGrid from '@custom-layout/responsive-grid';
+import SapphirePopupContent from '@/07-custom-components/overlay/sapphirepopupcontent';
+import ScrollableContent from '@/07-custom-components/layout/scrollablecontent';
+import ResponsiveGrid from '@/07-custom-components/layout/responsive-grid';
 
-import ActionPopup from '@custom-components/actionpopup';
-import AlertBar from '@custom-components/alertbar';
-import ButtonChoice from '@custom-components/buttonchoice';
-import ButtonDropdown from '@custom-components/buttondropdown';
-import Chip from '@custom-components/chip';
-import ColorPicker from '@custom-components/colorpicker';
-import Country from '@custom-components/country';
-import DropdownMenu from '@custom-components/dropdownmenu';
+import ActionPopup from '@/07-custom-components/overlay/actionpopup';
+import AlertBar from '@/07-custom-components/feedback/alertbar';
+import ButtonChoice from '@/07-custom-components/buttons/buttonchoice';
+import ButtonDropdown from '@/07-custom-components/buttons/buttondropdown';
+import Chip from '@/07-custom-components/buttons/chip';
+import ColorPicker from '@/07-custom-components/utilities/colorpicker';
+import Country from '@/07-custom-components/utilities/country';
+import DropdownMenu from '@/07-custom-components/navigation/dropdownmenu';
 import MasterDetail from '@custom-components/masterdetail';
-import Overlay from '@custom-components/overlay';
-import SapphireDropdown from '@custom-components/sapphiredropdown';
-import SapphireInput from '@custom-components/sapphireinput';
-import Skeleton from '@custom-components/skeleton';
-import Status from '@custom-components/status';
-import TextEditor from '@custom-components/texteditor';
-import Toast from '@custom-components/toast';
-import WeekDayPicker from '@custom-components/weekdaypicker';
-import { Tabs, TabHeader, TabContent } from '@custom-components/tabs';
+import Overlay from '@/07-custom-components/overlay/overlay';
+import SapphireDropdown from '@/07-custom-components/inputcontrols/sapphiredropdown';
+import SapphireInput from '@/07-custom-components/inputcontrols/sapphireinput';
+import Skeleton from '@/07-custom-components/feedback/skeleton';
+import Status from '@/07-custom-components/feedback/status';
+import TextEditor from '@/07-custom-components/inputcontrols/texteditor';
+import Toast from '@/07-custom-components/feedback/toast';
+import WeekDayPicker from '@/07-custom-components/utilities/weekdaypicker';
+import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
 
 import PrintDocument from '@custom-patterns/printdocument';
 
