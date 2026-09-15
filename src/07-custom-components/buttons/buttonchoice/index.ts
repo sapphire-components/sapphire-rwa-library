@@ -1,5 +1,6 @@
-import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
+import { isAlertType, type AlertType } from '@utils/alert';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
 import { ValidationMessage } from '@utils/validation-message';
 
 export interface IButtonChoice extends BaseComponentInit {
@@ -12,6 +13,7 @@ export interface IButtonChoice extends BaseComponentInit {
 	isSelected: boolean;
 	isValid: boolean;
 	validationMessage: string;
+	type: AlertType | '' | null;
 }
 
 const ICON_MULTIPLE = 'square';
@@ -31,6 +33,7 @@ export default class ButtonChoice extends BaseComponent {
 	#isValid = true;
 	#validationMessage = '';
 	#validationMessageCtrl!: ValidationMessage;
+	#type: AlertType | '' = '';
 	#wrapperEl!: HTMLElement;
 	buttonChoiceContentEl!: HTMLElement;
 
@@ -113,9 +116,7 @@ export default class ButtonChoice extends BaseComponent {
 
 		this.widgetEl.classList.add('buttonchoice');
 
-		const existing =
-			this.buttonChoiceContentEl.closest<HTMLElement>('.buttonchoice-wrapper') ??
-			this.widgetEl.querySelector<HTMLElement>(':scope > .buttonchoice-wrapper');
+		const existing = this.buttonChoiceContentEl.closest<HTMLElement>('.buttonchoice-wrapper') ?? this.widgetEl.querySelector<HTMLElement>(':scope > .buttonchoice-wrapper');
 
 		if (existing) {
 			this.#wrapperEl = existing;
@@ -159,6 +160,9 @@ export default class ButtonChoice extends BaseComponent {
 		}
 		if (payload.validationMessage !== undefined) {
 			this.#validationMessage = String(payload.validationMessage ?? '');
+		}
+		if (payload.type !== undefined) {
+			this.#type = payload.type && isAlertType(payload.type) ? payload.type : '';
 		}
 
 		this.reflectState();
@@ -214,6 +218,7 @@ export default class ButtonChoice extends BaseComponent {
 		this.widgetEl.dataset.allowmultiple = this.#allowMultiple ? 'true' : 'false';
 		this.widgetEl.dataset.groupname = this.#groupName;
 		this.widgetEl.dataset.isvalid = this.#isValid ? 'true' : 'false';
+		this.widgetEl.dataset.type = this.#type;
 	}
 
 	private currentIconName(): string {

@@ -96,3 +96,9 @@ div[data-block$='ButtonChoice'].buttonchoice,
 		}
 	}
 }
+
+.buttonchoice[data-theme='hide-icon'] {
+	.buttonchoice-icon {
+		display: none;
+	}
+}

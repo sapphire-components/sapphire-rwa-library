@@ -1,6 +1,6 @@
 @use '../../../01-foundations/typography';
 
-div[data-block$='SapphirePopupContent'] {
+div[data-block$='PopupContent'] {
 	display: contents;
 }
 
@@ -15,11 +15,10 @@ div[data-block$='SapphirePopupContent'] {
 	width: fit-content;
 }
 
-.sapphire-popup-content {
+.popup-content {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	height: var(--sapphirepopupcontent-height);
 	max-height: calc(100vh - 48px);
 	position: relative;
 	&-header {
@@ -63,17 +62,17 @@ div[data-block$='SapphirePopupContent'] {
 	}
 }
 
-.sapphire-popup-content[data-hasseparators='true'] {
-	.sapphire-popup-content-header {
+.popup-content[data-hasseparators='true'] {
+	.popup-content-header {
 		border-bottom: 1px solid var(--color-neutral-6);
 	}
-	.sapphire-popup-content-footer {
+	.popup-content-footer {
 		border-top: 1px solid var(--color-neutral-6);
 	}
 }
 
-.sapphire-popup-content[data-hasclose='true'] {
-	.sapphire-popup-content-header {
+.popup-content[data-hasclose='true'] {
+	.popup-content-header {
 		min-height: 33px;
 		&:empty {
 			display: block;
@@ -81,6 +80,6 @@ div[data-block$='SapphirePopupContent'] {
 	}
 }
 
-.sapphire-popup-content-footer:not(:has(> :not(:empty))) {
+.popup-content-footer:not(:has(> :not(:empty))) {
 	display: none;
 }

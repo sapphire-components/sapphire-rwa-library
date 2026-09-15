@@ -205,3 +205,10 @@ div[data-block$='AlertBar'] {
 		inset-inline-end: 4px;
 	}
 }
+
+.alertbar {
+	.btn-transparent {
+		box-shadow: inset 0 0 0 1px currentColor;
+		color: inherit;
+	}
+}

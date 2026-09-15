@@ -1,65 +1,65 @@
-.sapphire-popup-content[data-padding='none'] {
+.popup-content[data-padding='none'] {
 	padding: 0;
-	.sapphire-popup-content-body {
+	.popup-content-body {
 		margin-inline-end: unset;
 	}
 }
 
-.sapphire-popup-content[data-padding='s'] {
+.popup-content[data-padding='s'] {
 	padding: var(--space-s);
-	.sapphire-popup-content-header {
+	.popup-content-header {
 		margin-bottom: var(--space-xs);
 		padding-bottom: var(--space-xs);
 	}
-	.sapphire-popup-content-footer {
+	.popup-content-footer {
 		margin-top: var(--space-xs);
 		padding-top: var(--space-xs);
 	}
 }
 
-.sapphire-popup-content[data-padding='base'] {
+.popup-content[data-padding='base'] {
 	padding: var(--space-base);
-	.sapphire-popup-content-header {
+	.popup-content-header {
 		margin-bottom: var(--space-s);
 		padding-bottom: var(--space-s);
 	}
-	.sapphire-popup-content-footer {
+	.popup-content-footer {
 		margin-top: var(--space-s);
 		padding-top: var(--space-s);
 	}
 }
 
-.sapphire-popup-content[data-padding='m'] {
+.popup-content[data-padding='m'] {
 	padding: var(--space-m);
-	.sapphire-popup-content-header {
+	.popup-content-header {
 		margin-bottom: var(--space-base);
 		padding-bottom: var(--space-base);
 	}
-	.sapphire-popup-content-footer {
+	.popup-content-footer {
 		margin-top: var(--space-base);
 		padding-top: var(--space-base);
 	}
 }
 
-.sapphire-popup-content[data-padding='l'] {
+.popup-content[data-padding='l'] {
 	padding: var(--space-l);
-	.sapphire-popup-content-header {
+	.popup-content-header {
 		margin-bottom: var(--space-base);
 		padding-bottom: var(--space-base);
 	}
-	.sapphire-popup-content-footer {
+	.popup-content-footer {
 		margin-top: var(--space-base);
 		padding-top: var(--space-base);
 	}
 }
 
-.sapphire-popup-content[data-padding='xl'] {
+.popup-content[data-padding='xl'] {
 	padding: var(--space-xl);
-	.sapphire-popup-content-header {
+	.popup-content-header {
 		margin-bottom: var(--space-m);
 		padding-bottom: var(--space-m);
 	}
-	.sapphire-popup-content-footer {
+	.popup-content-footer {
 		margin-top: var(--space-m);
 		padding-top: var(--space-m);
 	}

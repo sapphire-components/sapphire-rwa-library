@@ -22,8 +22,8 @@
 
 .btn-transparent {
 	background-color: transparent;
-	box-shadow: inset 0 0 0 1px currentColor;
-	color: inherit;
+	box-shadow: inset 0 0 0 1px var(--color-border);
+	color: var(--color-neutral-8);
 	transition: background-color var(--transition-duration) var(--transition-easing);
 	&:hover {
 		background-color: color-mix(in srgb, currentColor 10%, transparent);

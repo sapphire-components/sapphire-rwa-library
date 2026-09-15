@@ -1,0 +1,20 @@
+.popup-content[data-width='s'] {
+	width: min(400px, calc(100vw - 48px));
+}
+
+.popup-content[data-width='m'] {
+	width: min(600px, calc(100vw - 48px));
+}
+
+.popup-content[data-width=''],
+.popup-content[data-width='l'] {
+	width: min(960px, calc(100vw - 48px));
+}
+
+.popup-content[data-width='xl'] {
+	width: min(1200px, calc(100vw - 48px));
+}
+
+.popup-content[data-width='full'] {
+	width: calc(100vw - 48px);
+}

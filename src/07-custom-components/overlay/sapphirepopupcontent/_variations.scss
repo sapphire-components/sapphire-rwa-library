@@ -1,7 +1,0 @@
-.sapphire-popup-content-body:has(.masterdetail) {
-	overflow-y: hidden;
-}
-
-.sapphire-popup-content-body .masterdetail {
-	height: calc(var(--sapphirepopupcontent-height) - var(--popupcontentheader-height) - var(--popupcontentfooter-height) - 16px);
-}

@@ -1,3 +1,4 @@
+import Helpers from '@utils/helpers';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface IMasterDetail extends BaseComponentInit {
@@ -6,21 +7,31 @@ interface IMasterDetail extends BaseComponentInit {
 }
 
 export default class MasterDetail extends BaseComponent {
-	// private actions: ITemplateConfigOptions['actions'];
-	// private configOptions!: ITemplateConfigOptions;
-	// private enabled!: boolean;
+	private resizeObserver!: ResizeObserver;
 
+	private readonly onResize = (): void => {
+		this.renderVariables();
+	};
 	constructor(configOptions: IMasterDetail) {
 		super(configOptions);
 
 		if (!this.widgetEl) {
-			console.warn('Template: root element not found for runtimeId', configOptions.runtimeId);
+			console.warn('MasterDetail: root element not found for runtimeId', configOptions.runtimeId);
 			return;
 		}
 
-		// this.actions = configOptions.actions;
-		// this.configOptions = configOptions;
-		// this.enabled = configOptions.enabled;
+		this.bindEvents();
+		this.renderVariables();
+	}
+
+	bindEvents(): void {
+		this.resizeObserver = new ResizeObserver(this.onResize);
+		this.resizeObserver.observe(document.documentElement);
+	}
+
+	renderVariables(): void {
+		this.widgetEl.style.removeProperty('--masterdetail-height');
+		this.widgetEl.style.setProperty('--masterdetail-height', `${Helpers.getOuterSize(this.widgetEl).height}px`);
 	}
 
 	parametersChanged(payload: IMasterDetail): void {
@@ -29,5 +40,6 @@ export default class MasterDetail extends BaseComponent {
 
 	destroy() {
 		super.destroy();
+		this.resizeObserver?.disconnect();
 	}
 }

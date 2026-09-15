@@ -1,8 +1,8 @@
-.sapphire-popup-content[data-theme='printdocument'] {
-	.sapphire-popup-content-body {
+.popup-content[data-theme='printdocument'] {
+	.popup-content-body {
 		overflow-y: unset;
 	}
-	.sapphire-popup-content-footer {
+	.popup-content-footer {
 		padding: 16px;
 	}
 	iframe[data-name='printpreview'] {

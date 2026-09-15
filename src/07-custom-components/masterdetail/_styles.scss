@@ -17,3 +17,14 @@ div[data-block$='MasterDetail'] {
 		scrollbar-width: thin;
 	}
 }
+
+.sapphire-popup-content-body .masterdetail {
+	max-height: var(--popupcontentbody-height);
+}
+
+.masterdetail-aside:has(.scrollablecontent) > div {
+	display: contents;
+	.scrollablecontent {
+		height: 100%;
+	}
+}

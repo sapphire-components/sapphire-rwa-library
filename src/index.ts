@@ -10,13 +10,13 @@ import LayoutWrapper from '@/03-core/layout';
 import Locale from '@/03-core/locale';
 
 import FilterBar from '@helpers/filterbar';
+import InputWrapper from '@helpers/inputwrapper';
 import LabelValue from '@helpers/labelvalue';
 import TableWrapper from '@helpers/tablewrapper';
-import InputWrapper from '@helpers/inputwrapper';
 
-import SapphirePopupContent from '@/07-custom-components/overlay/sapphirepopupcontent';
-import ScrollableContent from '@/07-custom-components/layout/scrollablecontent';
+import PopupContent from '@/07-custom-components/overlay/popupcontent';
 import ResponsiveGrid from '@/07-custom-components/layout/responsive-grid';
+import ScrollableContent from '@/07-custom-components/layout/scrollablecontent';
 
 import ActionPopup from '@/07-custom-components/overlay/actionpopup';
 import AlertBar from '@/07-custom-components/feedback/alertbar';
@@ -79,11 +79,11 @@ const SapphireRWALibrary = {
 	Locale,
 	MasterDetail,
 	Overlay,
+	PopupContent,
 	PrintDocument,
 	ResponsiveGrid,
 	SapphireDropdown,
 	SapphireInput,
-	SapphirePopupContent,
 	ScrollableContent,
 	Skeleton,
 	Status,
