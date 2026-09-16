@@ -26,6 +26,7 @@ import Chip from '@/07-custom-components/buttons/chip';
 import ColorPicker from '@/07-custom-components/utilities/colorpicker';
 import Country from '@/07-custom-components/utilities/country';
 import DropdownMenu from '@/07-custom-components/navigation/dropdownmenu';
+import HourPicker from '@/07-custom-components/datetime/hourpicker';
 import MasterDetail from '@custom-components/masterdetail';
 import Overlay from '@/07-custom-components/overlay/overlay';
 import SapphireDropdown from '@/07-custom-components/inputcontrols/sapphiredropdown';
@@ -34,7 +35,7 @@ import Skeleton from '@/07-custom-components/feedback/skeleton';
 import Status from '@/07-custom-components/feedback/status';
 import TextEditor from '@/07-custom-components/inputcontrols/texteditor';
 import Toast from '@/07-custom-components/feedback/toast';
-import WeekDayPicker from '@/07-custom-components/utilities/weekdaypicker';
+import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
 
 import PrintDocument from '@custom-patterns/printdocument';
@@ -73,6 +74,7 @@ const SapphireRWALibrary = {
 	DropdownMenu,
 	FilterBar,
 	Helpers,
+	HourPicker,
 	InputWrapper,
 	LabelValue,
 	LayoutWrapper,

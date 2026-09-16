@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.51 2026-09-15T14:21:15.712Z */
+/*!  SapphireRWALibrary PROD v0.6.52 2026-09-16T08:11:44.548Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -5472,6 +5472,175 @@ div[data-block$=Chip2] {
 .chip[data-hasclear=true] .chip-clear {
   display: inline-flex;
 }
+.hourpicker[data-size=xs] .hourpicker-component {
+  gap: 4px;
+}
+.hourpicker[data-size=xs] .hourpicker-input,
+.hourpicker[data-size=xs] .hourpicker-select {
+  border-radius: 4px;
+  font-size: 12px;
+  height: 22px;
+  min-height: 22px;
+  padding-inline: 6px;
+}
+.hourpicker[data-size=xs] .hourpicker-input {
+  padding-inline: 8px;
+}
+
+.hourpicker[data-size=s] .hourpicker-input,
+.hourpicker[data-size=s] .hourpicker-select {
+  height: 32px;
+  min-height: 32px;
+}
+div[data-block$=HourPicker] {
+  display: contents;
+}
+
+.hourpicker {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  vertical-align: middle;
+}
+.hourpicker-component {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+.hourpicker-input:focus-visible, .hourpicker-select:focus-visible {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  outline: none;
+}
+.hourpicker-input, .hourpicker-select {
+  appearance: auto;
+  background-color: var(--color-neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  height: 40px;
+  min-height: 40px;
+  text-align: center;
+}
+.hourpicker-input::placeholder, .hourpicker-select::placeholder {
+  color: var(--color-text-disabled);
+}
+.hourpicker-input {
+  padding-block: 0;
+  padding-inline: 12px;
+  width: 6.5rem;
+}
+.hourpicker-select {
+  padding-block: 0;
+  padding-inline: 8px;
+  width: 4.5rem;
+}
+.hourpicker-period {
+  width: 4.75rem;
+}
+.hourpicker-sep {
+  color: var(--color-neutral-7);
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  user-select: none;
+}
+
+.hourpicker[data-timeprecision=hour] .hourpicker-input {
+  width: 4.5rem;
+}
+
+.hourpicker[data-timeprecision=second] .hourpicker-input {
+  width: 8.5rem;
+}
+
+.hourpicker[data-theme=filter] .hourpicker-input,
+.hourpicker[data-theme=filter] .hourpicker-select {
+  background-color: var(--color-interactive);
+  border-radius: 100px;
+}
+
+.hourpicker[data-enabled=false] {
+  cursor: not-allowed;
+}
+.hourpicker[data-enabled=false] .hourpicker-input,
+.hourpicker[data-enabled=false] .hourpicker-select {
+  background-color: var(--color-background-disabled);
+  color: var(--color-text-disabled);
+  pointer-events: none;
+}
+.hourpicker[data-enabled=false] .hourpicker-sep {
+  color: var(--color-text-disabled);
+}
+
+.hourpicker[data-isvalid=false] .hourpicker-input,
+.hourpicker[data-isvalid=false] .hourpicker-select {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+}
+.weekdaypicker {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.weekdaypicker-day {
+  transition: background-color var(--transition-duration) var(--transition-easing);
+}
+.weekdaypicker-day:focus-visible {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  outline: none;
+}
+.weekdaypicker-day {
+  align-items: center;
+  aspect-ratio: 1;
+  background-color: var(--color-neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  box-shadow: var(--box-shadow-sm);
+  color: var(--color-neutral-9);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 14px;
+  justify-content: center;
+  line-height: 1;
+  min-height: 55px;
+  min-width: 55px;
+  padding: 0;
+}
+.weekdaypicker-day:hover:not(:disabled) {
+  background-color: var(--color-neutral-1);
+}
+.weekdaypicker-day[data-selected=true] {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-neutral-0);
+}
+.weekdaypicker-day[data-selected=true]:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+.weekdaypicker-day:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.weekdaypicker[data-enabled=false] .weekdaypicker-day {
+  cursor: not-allowed;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.weekdaypicker[data-density=compact] .weekdaypicker-day {
+  font-size: 12px;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.weekdaypicker[data-density=compact][data-weekdayformat=short] .weekdaypicker-day {
+  font-size: 11px;
+}
 div[data-block$=AlertBar] {
   display: contents;
 }
@@ -9077,69 +9246,6 @@ div[data-block$=SVGIcon] {
 
 .svg-icon[data-iconcolor=transparent] {
   --iconcolor: transparent;
-}
-.weekdaypicker {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.weekdaypicker-day {
-  transition: background-color var(--transition-duration) var(--transition-easing);
-}
-.weekdaypicker-day:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
-  outline: none;
-}
-.weekdaypicker-day {
-  align-items: center;
-  aspect-ratio: 1;
-  background-color: var(--color-neutral-0);
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  box-shadow: var(--box-shadow-sm);
-  color: var(--color-neutral-9);
-  cursor: pointer;
-  display: inline-flex;
-  flex: 0 0 auto;
-  font-size: 14px;
-  justify-content: center;
-  line-height: 1;
-  min-height: 55px;
-  min-width: 55px;
-  padding: 0;
-}
-.weekdaypicker-day:hover:not(:disabled) {
-  background-color: var(--color-neutral-1);
-}
-.weekdaypicker-day[data-selected=true] {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-neutral-0);
-}
-.weekdaypicker-day[data-selected=true]:hover:not(:disabled) {
-  background-color: var(--color-primary-dark);
-  border-color: var(--color-primary-dark);
-}
-.weekdaypicker-day:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.weekdaypicker[data-enabled=false] .weekdaypicker-day {
-  cursor: not-allowed;
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-.weekdaypicker[data-density=compact] .weekdaypicker-day {
-  font-size: 12px;
-  min-height: 40px;
-  min-width: 40px;
-}
-
-.weekdaypicker[data-density=compact][data-weekdayformat=short] .weekdaypicker-day {
-  font-size: 11px;
 }
 div[data-block$=PrintDocument] {
   display: contents;

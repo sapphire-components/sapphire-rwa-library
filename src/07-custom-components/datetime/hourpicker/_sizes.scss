@@ -1,0 +1,24 @@
+.hourpicker[data-size='xs'] {
+	.hourpicker-component {
+		gap: 4px;
+	}
+	.hourpicker-input,
+	.hourpicker-select {
+		border-radius: 4px;
+		font-size: 12px;
+		height: 22px;
+		min-height: 22px;
+		padding-inline: 6px;
+	}
+	.hourpicker-input {
+		padding-inline: 8px;
+	}
+}
+
+.hourpicker[data-size='s'] {
+	.hourpicker-input,
+	.hourpicker-select {
+		height: 32px;
+		min-height: 32px;
+	}
+}

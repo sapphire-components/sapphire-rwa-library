@@ -1,0 +1,103 @@
+@use '../../../01-foundations/_mixins.scss' as *;
+
+div[data-block$='HourPicker'] {
+	display: contents;
+}
+
+.hourpicker {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 4px;
+	vertical-align: middle;
+
+	&-component {
+		align-items: center;
+		display: inline-flex;
+		gap: 6px;
+	}
+
+	&-input,
+	&-select {
+		@include focus-visible();
+		appearance: auto;
+		background-color: var(--color-neutral-0);
+		border: 1px solid var(--color-border);
+		border-radius: 6px;
+		color: var(--color-text);
+		font-variant-numeric: tabular-nums;
+		height: 40px;
+		min-height: 40px;
+		text-align: center;
+
+		&::placeholder {
+			color: var(--color-text-disabled);
+		}
+	}
+
+	&-input {
+		padding-block: 0;
+		padding-inline: 12px;
+		width: 6.5rem;
+	}
+
+	&-select {
+		padding-block: 0;
+		padding-inline: 8px;
+		width: 4.5rem;
+	}
+
+	&-period {
+		width: 4.75rem;
+	}
+
+	&-sep {
+		color: var(--color-neutral-7);
+		flex: 0 0 auto;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+		user-select: none;
+	}
+}
+
+.hourpicker[data-timeprecision='hour'] {
+	.hourpicker-input {
+		width: 4.5rem;
+	}
+}
+
+.hourpicker[data-timeprecision='second'] {
+	.hourpicker-input {
+		width: 8.5rem;
+	}
+}
+
+.hourpicker[data-theme='filter'] {
+	.hourpicker-input,
+	.hourpicker-select {
+		background-color: var(--color-interactive);
+		border-radius: 100px;
+	}
+}
+
+.hourpicker[data-enabled='false'] {
+	cursor: not-allowed;
+
+	.hourpicker-input,
+	.hourpicker-select {
+		background-color: var(--color-background-disabled);
+		color: var(--color-text-disabled);
+		pointer-events: none;
+	}
+
+	.hourpicker-sep {
+		color: var(--color-text-disabled);
+	}
+}
+
+.hourpicker[data-isvalid='false'] {
+	.hourpicker-input,
+	.hourpicker-select {
+		background-color: var(--color-error-light);
+		border-color: var(--color-error);
+	}
+}
