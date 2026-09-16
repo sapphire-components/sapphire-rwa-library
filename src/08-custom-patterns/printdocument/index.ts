@@ -37,7 +37,7 @@ export default class PrintDocument extends BaseComponent {
 		// Wait for the popup content to be mounted
 		const startTime = Date.now();
 		const interval = setInterval(() => {
-			this.popupContent = document.querySelector<HTMLDivElement>('.sapphire-popup-content[data-theme="printdocument"]')!;
+			this.popupContent = document.querySelector<HTMLDivElement>('.popup-content[data-theme="printdocument"]')!;
 			if (this.popupContent) {
 				clearInterval(interval);
 				this.initialize();

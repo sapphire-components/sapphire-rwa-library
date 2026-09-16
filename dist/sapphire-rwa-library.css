@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.52 2026-09-16T08:11:44.548Z */
+/*!  SapphireRWALibrary PROD v0.6.53 2026-09-16T11:49:19.478Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -7291,7 +7291,7 @@ div[data-block$=MasterDetail] {
   scrollbar-width: thin;
 }
 
-.sapphire-popup-content-body .masterdetail {
+.popup-content-body .masterdetail {
   max-height: var(--popupcontentbody-height);
 }
 
@@ -7300,6 +7300,17 @@ div[data-block$=MasterDetail] {
 }
 .masterdetail-aside:has(.scrollablecontent) > div .scrollablecontent {
   height: 100%;
+}
+.masterdetail[data-asidewidth=m] .masterdetail-aside {
+  max-width: 160px;
+}
+
+.masterdetail[data-asidewidth=l] .masterdetail-aside {
+  max-width: 240px;
+}
+
+.masterdetail[data-asidewidth=xl] .masterdetail-aside {
+  max-width: 320px;
 }
 div[data-block$=DropdownMenu] {
   display: contents;
@@ -7458,7 +7469,7 @@ div[data-block$=TabContent] {
   visibility: hidden;
 }
 .sapphire-tabs-content {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
 }
@@ -7515,10 +7526,6 @@ div[data-block$=TabContent] {
   display: block;
 }
 
-.sapphire-tabs-content {
-  max-height: var(--tabs-max-height);
-}
-
 .sapphire-tabs-header-extra .overlay-trigger[aria-expanded=true] .sapphire-tabs-header-button .svg-icon {
   transform: rotate(180deg);
 }
@@ -7551,6 +7558,19 @@ div[data-block$=TabContent] {
 .sapphire-tabs[data-theme=pills] > .sapphire-tabs-header .sapphire-tabheader[data-active=true] .sapphire-tabheader-content {
   background-color: var(--color-primary-lighter);
   color: var(--color-primary);
+}
+.sapphire-tabs[data-hasscroll=true] .sapphire-tabs-content {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+.sapphire-tabs[data-isfullheight=true] .sapphire-tabs-content {
+  height: calc(100vh - var(--tabs-content-top, 0px) - var(--tabs-bottom-distance, 0px));
+}
+
+.popup-content .sapphire-tabs[data-isfullheight=true] .sapphire-tabs-content {
+  height: calc(var(--popupcontentfooter-top, 0px) - 8px - var(--tabs-content-top, 0px));
 }
 div[data-block$=ActionPopup] {
   display: contents;

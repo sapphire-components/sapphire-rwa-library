@@ -46,7 +46,7 @@ div[data-block$='TabContent'] {
 		}
 	}
 	&-content {
-		flex: 1;
+		flex: 1 1 auto;
 		min-height: 0;
 		min-width: 0;
 	}
@@ -104,10 +104,6 @@ div[data-block$='TabContent'] {
 
 .sapphire-tabcontent[data-active='true'] {
 	display: block;
-}
-
-.sapphire-tabs-content {
-	max-height: var(--tabs-max-height);
 }
 
 .sapphire-tabs-header-extra {

@@ -7,8 +7,11 @@ interface TabsConfigOptions extends BaseComponentInit {
 		OnChange: (tabIndex_in: number, tabIdentifier_in: string) => void;
 	};
 	activeTab: number;
+	bottomDistance: number;
 	enabled: boolean;
+	hasScroll: boolean;
 	height: number;
+	isFullHeight: boolean;
 	maxHeight: number;
 	minHeight: number;
 	theme: string;
@@ -19,6 +22,7 @@ export default class Tabs extends BaseComponent {
 	private configOptions!: TabsConfigOptions;
 	private moreWidth!: number;
 	private resizeObserver!: ResizeObserver;
+	private tabsContentContainer!: HTMLDivElement;
 	private tabsHeaderButton!: HTMLDivElement;
 	private tabsHeaderContainer!: HTMLDivElement;
 	private tabsHeaderItemsContainer!: HTMLDivElement;
@@ -36,6 +40,7 @@ export default class Tabs extends BaseComponent {
 		this.configOptions = configOptions;
 		this.activeTab = configOptions.activeTab;
 
+		this.tabsContentContainer = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-content`)!;
 		this.tabsHeaderButton = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header-button`)!;
 		this.tabsHeaderContainer = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header`)!;
 		this.tabsHeaderItemsContainer = this.widgetEl.querySelector<HTMLDivElement>(`.sapphire-tabs-header-items`)!;
@@ -45,26 +50,61 @@ export default class Tabs extends BaseComponent {
 		this.moreWidth = this.tabsHeaderButton.offsetWidth + 8;
 
 		this.setCSSProperties();
+		this.reflectStateAttributes();
 
 		Overlay.getInstance(this.tippyTooltipEl)?.initializeTippy();
 
 		this.render();
+		this.setTabsContentTop();
 
 		this.resizeObserver = new ResizeObserver(() => {
 			this.evaluateTabHeaderOverflow();
+			this.setTabsContentTop();
 		});
 		this.resizeObserver.observe(this.widgetEl);
+		this.observeLayoutResize(() => {
+			this.setTabsContentTop();
+		});
 	}
 
 	setCSSProperties(): void {
 		if (this.configOptions.height) {
-			this.widgetEl.style.setProperty('--tabs-height', `${this.configOptions.height}px`);
+			this.widgetEl.style.height = `${this.configOptions.height}px`;
+		} else {
+			this.widgetEl.style.height = '';
 		}
 		if (this.configOptions.maxHeight) {
-			this.widgetEl.style.setProperty('--tabs-max-height', `${this.configOptions.maxHeight}px`);
+			this.widgetEl.style.maxHeight = `${this.configOptions.maxHeight}px`;
+		} else {
+			this.widgetEl.style.maxHeight = '';
 		}
 		if (this.configOptions.minHeight) {
-			this.widgetEl.style.setProperty('--tabs-min-height', `${this.configOptions.minHeight}px`);
+			this.widgetEl.style.minHeight = `${this.configOptions.minHeight}px`;
+		} else {
+			this.widgetEl.style.minHeight = '';
+		}
+
+		this.widgetEl.style.setProperty('--tabs-bottom-distance', `${this.configOptions.bottomDistance || 0}px`);
+	}
+
+	reflectStateAttributes(): void {
+		this.widgetEl.dataset.enabled = this.configOptions.enabled ? 'true' : 'false';
+		this.widgetEl.dataset.hasscroll = this.configOptions.hasScroll ? 'true' : 'false';
+		this.widgetEl.dataset.isfullheight = this.configOptions.isFullHeight ? 'true' : 'false';
+	}
+
+	setTabsContentTop(): void {
+		if (!this.tabsContentContainer) return;
+
+		if (!this.configOptions.isFullHeight) {
+			this.widgetEl.style.removeProperty('--tabs-content-top');
+			return;
+		}
+
+		const top = Math.max(0, Math.round(this.tabsContentContainer.getBoundingClientRect().top));
+		const next = `${top}px`;
+		if (this.widgetEl.style.getPropertyValue('--tabs-content-top') !== next) {
+			this.widgetEl.style.setProperty('--tabs-content-top', next);
 		}
 	}
 
@@ -181,10 +221,38 @@ export default class Tabs extends BaseComponent {
 	}
 
 	parametersChanged(payload: TabsConfigOptions): void {
-		console.log('parametersChanged', this.runtimeId, this.activeTab, payload);
+		if (!this.widgetEl) return;
+
 		if (!Helpers.areTheyEqual(payload.activeTab, this.activeTab)) {
 			this.setTabIndex(payload.activeTab, '');
 		}
+
+		const cssChanged =
+			!Helpers.areTheyEqual(payload.bottomDistance, this.configOptions.bottomDistance) ||
+			!Helpers.areTheyEqual(payload.height, this.configOptions.height) ||
+			!Helpers.areTheyEqual(payload.maxHeight, this.configOptions.maxHeight) ||
+			!Helpers.areTheyEqual(payload.minHeight, this.configOptions.minHeight);
+
+		const attrsChanged =
+			!Helpers.areTheyEqual(payload.enabled, this.configOptions.enabled) ||
+			!Helpers.areTheyEqual(payload.hasScroll, this.configOptions.hasScroll) ||
+			!Helpers.areTheyEqual(payload.isFullHeight, this.configOptions.isFullHeight);
+
+		const themeChanged = !Helpers.areTheyEqual(payload.theme, this.configOptions.theme);
+
+		this.configOptions = { ...this.configOptions, ...payload };
+
+		if (cssChanged) {
+			this.setCSSProperties();
+		}
+		if (attrsChanged) {
+			this.reflectStateAttributes();
+		}
+		if (themeChanged) {
+			this.evaluateTabHeaderOverflow();
+		}
+
+		this.setTabsContentTop();
 	}
 
 	destroy() {

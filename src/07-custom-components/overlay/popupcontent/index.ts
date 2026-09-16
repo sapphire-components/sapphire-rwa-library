@@ -73,10 +73,12 @@ export default class PopupContent extends BaseComponent {
 		this.widgetEl.style.removeProperty('--popupcontent-min-height');
 		this.widgetEl.style.removeProperty('--popupcontentbody-height');
 		this.widgetEl.style.removeProperty('--popupcontentfooter-height');
+		this.widgetEl.style.removeProperty('--popupcontentfooter-top');
 		this.widgetEl.style.removeProperty('--popupcontentheader-height');
 
 		this.widgetEl.style.setProperty('--popupcontentbody-height', `${this.popupContentBody ? Helpers.getOuterSize(this.popupContentBody).height : 0}px`);
 		this.widgetEl.style.setProperty('--popupcontentfooter-height', `${this.popupContentFooter ? Helpers.getOuterSize(this.popupContentFooter).height : 0}px`);
+		this.widgetEl.style.setProperty('--popupcontentfooter-top', `${this.popupContentFooter.getBoundingClientRect().top}px`);
 		this.widgetEl.style.setProperty('--popupcontentheader-height', `${this.popupContentHeader ? Helpers.getOuterSize(this.popupContentHeader).height : 0}px`);
 
 		if (this.height) {

@@ -1,0 +1,17 @@
+.masterdetail[data-asidewidth='m'] {
+	.masterdetail-aside {
+		max-width: 160px;
+	}
+}
+
+.masterdetail[data-asidewidth='l'] {
+	.masterdetail-aside {
+		max-width: 240px;
+	}
+}
+
+.masterdetail[data-asidewidth='xl'] {
+	.masterdetail-aside {
+		max-width: 320px;
+	}
+}

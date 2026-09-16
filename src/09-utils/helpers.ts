@@ -144,11 +144,13 @@ export default class Helpers {
 		});
 	}
 
-	static getOuterSize(el: HTMLElement): { width: number; height: number } {
+	static getOuterSize(el: HTMLElement): { width: number; height: number; top: number; bottom: number } {
 		const style = getComputedStyle(el);
 		return {
 			width: el.offsetWidth + parseFloat(style.marginLeft) + parseFloat(style.marginRight),
 			height: el.offsetHeight + parseFloat(style.marginTop) + parseFloat(style.marginBottom),
+			top: el.offsetTop,
+			bottom: el.offsetTop + el.offsetHeight,
 		};
 	}
 }
