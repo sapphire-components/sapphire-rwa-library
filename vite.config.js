@@ -71,7 +71,7 @@ export default defineConfig(({ command, mode }) => {
 			copyPublicDir: true,
 			cssCodeSplit: false, // false when using lib
 			cssMinify: false,
-			// Keep sibling bundles (e.g. sapphire-rwa-icons.js) when rebuilding in watch mode.
+			// Keep sibling bundles (e.g. sapphire-rwa-icons.js, sapphire-rwa-ckeditor.js) when rebuilding in watch mode.
 			emptyOutDir: false,
 			lib: {
 				entry: 'src/index.ts',
@@ -132,6 +132,17 @@ function makeBanner(mode) {
 	return `/*!  SapphireRWALibrary ${mode.toUpperCase()} v${pkg.version} ${new Date().toISOString()} */\n`;
 }
 
+// Only the files this config emits. Walking all of dist races sibling watch
+// builds (ckeditor/flags/icons): Vite can truncate a sibling file mid-write,
+// this plugin then stamps the library banner onto empty content, and the
+// sibling banner plugin skips because the file already starts with `/*!`.
+const BANNER_TARGETS = new Set([
+	'sapphire-rwa-library.js',
+	'sapphire-rwa-library.css',
+	DOCS_OUT_FILE,
+	STATIC_ENTITIES_OUT_FILE,
+]);
+
 function bannerOnDisk(banner) {
 	return {
 		name: 'banner-on-disk',
@@ -141,14 +152,9 @@ function bannerOnDisk(banner) {
 			const outDir = options.dir ?? 'dist';
 			const root = path.resolve(process.cwd(), outDir);
 
-			const walk = (dir) =>
-				fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
-					const p = path.join(dir, d.name);
-					return d.isDirectory() ? walk(p) : [p];
-				});
-
-			for (const filePath of walk(root)) {
-				if (!filePath.endsWith('.js') && !filePath.endsWith('.css')) continue;
+			for (const fileName of BANNER_TARGETS) {
+				const filePath = path.join(root, fileName);
+				if (!fs.existsSync(filePath)) continue;
 
 				const content = fs.readFileSync(filePath, 'utf8');
 				if (content.startsWith('/*!')) continue; // avoid double-banner in watch mode

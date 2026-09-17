@@ -1,0 +1,269 @@
+import { Alignment, Bold, ClassicEditor, Essentials, Font, Italic, List, Paragraph, RemoveFormat, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
+import DOMPurify from 'dompurify';
+import Helpers from '@utils/helpers';
+import ckeditorCss from 'ckeditor5/ckeditor5.css?inline';
+import overridesCss from './ckeditor-overrides.css?inline';
+import { BaseComponent, type BaseComponentInit } from '@core/base';
+
+const RESIZE_DEBOUNCE_MS = 100;
+const READ_ONLY_LOCK = 'sapphire-rwa-ckeditor';
+const CKEDITOR_STYLE_ID = 'sapphire-rwa-ckeditor-css';
+const EMPTY_HTML = new Set(['', '<p></p>', '<p><br></p>', '<p>&nbsp;</p>', '<p> </p>']);
+
+function ensureCkeditorStyles(): void {
+	if (document.getElementById(CKEDITOR_STYLE_ID)) return;
+
+	const style = document.createElement('style');
+	style.id = CKEDITOR_STYLE_ID;
+	style.textContent = `${ckeditorCss}\n${overridesCss}`;
+	document.head.appendChild(style);
+}
+
+const EDITOR_PLUGINS = [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Font, Alignment, List, Table, TableToolbar, RemoveFormat];
+
+const EDITOR_TOOLBAR = [
+	'fontSize',
+	'bold',
+	'italic',
+	'underline',
+	'strikethrough',
+	'|',
+	'fontColor',
+	'fontBackgroundColor',
+	'|',
+	'alignment',
+	'|',
+	'numberedList',
+	'bulletedList',
+	'|',
+	'insertTable',
+	'|',
+	'removeFormat',
+];
+
+const instancesByIdentifier = new Map<string, CKEditor>();
+
+function normalizeHtml(html: string): string {
+	const withSpaces = html.replace(/&nbsp;|\u00A0/g, ' ');
+	const compact = withSpaces.replace(/\s+/g, ' ').trim();
+	if (EMPTY_HTML.has(compact)) return '';
+	return withSpaces;
+}
+
+function htmlToText(html: string): string {
+	const tmp = document.createElement('div');
+	tmp.innerHTML = html;
+	return (tmp.textContent ?? '')
+		.replace(/\u00A0/g, ' ')
+		.replace(/\n+/g, '\n')
+		.trim();
+}
+
+export interface ICKEditor extends BaseComponentInit {
+	actions: {
+		OnBlur: () => void;
+		OnChange: (text: string, html: string) => void;
+		OnFocus: () => void;
+	};
+	content: string;
+	enabled: boolean;
+	hasToolbar: boolean;
+	height: number;
+	placeholder: string;
+}
+
+export default class CKEditor extends BaseComponent {
+	#actions!: ICKEditor['actions'];
+	#blur = this.blur.bind(this);
+	#destroyed = false;
+	#editor: ClassicEditor | null = null;
+	#enabled!: boolean;
+	#focus = this.focus.bind(this);
+	#handleMouseEnter = this.handleMouseEnter.bind(this);
+	#handleMouseLeave = this.handleMouseLeave.bind(this);
+	#hasToolbar!: boolean;
+	#height!: number;
+	#hostEl!: HTMLElement;
+	#placeholder!: string;
+	#ready: Promise<ClassicEditor | null>;
+	#resizeDebounced?: ((...args: Parameters<ResizeObserverCallback>) => void) & { cancel: () => void };
+	#resizeObserver?: ResizeObserver;
+	#silentSet = false;
+
+	constructor(config: ICKEditor) {
+		super(config);
+
+		if (!this.widgetEl) {
+			console.warn('CKEditor: root element not found for runtimeId', config.runtimeId);
+			this.#ready = Promise.resolve(null);
+			return;
+		}
+
+		this.widgetEl.classList.add('ckeditor');
+		ensureCkeditorStyles();
+
+		this.#actions = config.actions;
+		this.#enabled = config.enabled;
+		this.#hasToolbar = config.hasToolbar;
+		this.#height = config.height;
+		this.#placeholder = config.placeholder;
+
+		this.widgetEl.dataset.enabled = String(this.#enabled);
+		this.widgetEl.dataset.hastoolbar = String(this.#hasToolbar);
+
+		this.#hostEl = this.widgetEl.querySelector('.ckeditor-host') as HTMLElement;
+		if (!this.#hostEl) {
+			this.#hostEl = document.createElement('div');
+			this.#hostEl.className = 'ckeditor-host';
+			this.widgetEl.appendChild(this.#hostEl);
+		}
+
+		if (this.identifier) {
+			instancesByIdentifier.set(this.identifier, this);
+		}
+
+		this.widgetEl.addEventListener('mouseenter', this.#handleMouseEnter);
+		this.widgetEl.addEventListener('mouseleave', this.#handleMouseLeave);
+
+		this.#resizeDebounced = Helpers.debounce(() => {
+			this.applyHeight();
+		}, RESIZE_DEBOUNCE_MS);
+		this.#resizeObserver = new ResizeObserver(this.#resizeDebounced);
+		this.#resizeObserver.observe(this.widgetEl);
+
+		this.#ready = this.createEditor(config.content ?? '');
+	}
+
+	static setContent(identifier: string, content: string): void {
+		const instance = instancesByIdentifier.get(identifier);
+		if (!instance) {
+			console.warn('CKEditor: no instance for identifier', identifier);
+			return;
+		}
+		instance.setHtml(content);
+	}
+
+	parametersChanged(payload: ICKEditor): void {
+		if (!Helpers.areTheyEqual(payload.enabled, this.#enabled)) {
+			this.#enabled = payload.enabled;
+			this.widgetEl.dataset.enabled = String(this.#enabled);
+			void this.applyEnabled();
+		}
+	}
+
+	destroy(): void {
+		this.#destroyed = true;
+
+		this.#resizeDebounced?.cancel();
+		this.#resizeDebounced = undefined;
+		this.#resizeObserver?.disconnect();
+		this.#resizeObserver = undefined;
+
+		this.widgetEl?.removeEventListener('mouseenter', this.#handleMouseEnter);
+		this.widgetEl?.removeEventListener('mouseleave', this.#handleMouseLeave);
+
+		if (this.identifier) {
+			instancesByIdentifier.delete(this.identifier);
+		}
+
+		void this.#ready.then((editor) => {
+			editor?.destroy();
+		});
+		this.#editor = null;
+
+		super.destroy();
+	}
+
+	setHtml(incomingHtml: string): void {
+		void this.#ready.then((editor) => {
+			if (!editor || this.#destroyed) return;
+			const safeHtml = DOMPurify.sanitize(incomingHtml ?? '', {
+				USE_PROFILES: { html: true },
+			});
+			this.#silentSet = true;
+			editor.setData(safeHtml);
+			this.#silentSet = false;
+		});
+	}
+
+	private async createEditor(content: string): Promise<ClassicEditor | null> {
+		try {
+			const editor = await ClassicEditor.create({
+				attachTo: this.#hostEl,
+				licenseKey: 'GPL',
+				plugins: EDITOR_PLUGINS,
+				toolbar: EDITOR_TOOLBAR,
+				placeholder: this.#placeholder,
+				fontSize: {
+					options: [{ title: 'Small', model: 'small' }, 'default', { title: 'Large', model: 'big' }, { title: 'Huge', model: 'huge' }],
+				},
+				table: {
+					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
+				},
+				root: {
+					initialData: content || '',
+				},
+			});
+
+			if (this.#destroyed) {
+				await editor.destroy();
+				return null;
+			}
+
+			this.#editor = editor;
+			this.attachEditorEvents(editor);
+			await this.applyEnabled();
+			this.applyHeight();
+			return editor;
+		} catch (error) {
+			console.error('CKEditor: failed to create editor', error);
+			return null;
+		}
+	}
+
+	private attachEditorEvents(editor: ClassicEditor): void {
+		editor.model.document.on('change:data', () => {
+			if (this.#silentSet) return;
+			const html = normalizeHtml(editor.getData());
+			const text = htmlToText(html);
+			this.#actions.OnChange(text, html);
+		});
+
+		editor.editing.view.document.on('focus', this.#focus);
+		editor.editing.view.document.on('blur', this.#blur);
+	}
+
+	private async applyEnabled(): Promise<void> {
+		const editor = this.#editor ?? (await this.#ready);
+		if (!editor || this.#destroyed) return;
+
+		if (this.#enabled) {
+			editor.disableReadOnlyMode(READ_ONLY_LOCK);
+		} else {
+			editor.enableReadOnlyMode(READ_ONLY_LOCK);
+		}
+	}
+
+	private applyHeight(): void {
+		if (!this.#height) return;
+		const editable = this.#editor?.ui.view.editable.element;
+		if (!editable) return;
+		editable.style.height = `${this.#height}px`;
+	}
+
+	handleMouseEnter(): void {
+		this.widgetEl.dataset.ishovered = 'true';
+	}
+
+	handleMouseLeave(): void {
+		this.widgetEl.dataset.ishovered = 'false';
+	}
+
+	blur(): void {
+		this.#actions.OnBlur();
+	}
+
+	focus(): void {
+		this.#actions.OnFocus();
+	}
+}

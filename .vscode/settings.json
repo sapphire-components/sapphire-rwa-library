@@ -33,6 +33,10 @@
 	"[css]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
+	"[markdown]": {
+		"editor.wordWrap": "bounded",
+		"editor.wordWrapColumn": 500
+	},
 	// Linting
 	"eslint.validate": ["javascript", "typescript"],
 	"stylelint.validate": ["css", "scss"],

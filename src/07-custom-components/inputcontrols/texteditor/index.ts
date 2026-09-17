@@ -114,6 +114,39 @@ export default class TextEditor extends BaseComponent {
 
 			this.quill = new Quill(this.#quillEditorEl, options);
 
+			/*
+			function normalizeHTMLForQuill(html: string): string {
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(html, 'text/html');
+				// Replace layout <th> with <td>
+				doc.querySelectorAll('th').forEach((th) => {
+					const td = doc.createElement('td');
+					// Copy attributes
+					[...th.attributes].forEach((attr) => {
+						td.setAttribute(attr.name, attr.value);
+					});
+					// Move children
+					while (th.firstChild) {
+						td.appendChild(th.firstChild);
+					}
+
+					th.replaceWith(td);
+				});
+				// Remove non-breaking-space-only cells
+				doc.querySelectorAll('td').forEach((td) => {
+					if (td.innerHTML.trim() === '&nbsp;') {
+						td.innerHTML = '<br>';
+					}
+				});
+				return doc.body.innerHTML;
+			}
+			const normalizedHTML = normalizeHTMLForQuill(this.#content);
+			console.log('normalizedHTML', normalizedHTML);
+			*/
+
+			// this.quill.clipboard.dangerouslyPasteHTML(0, normalizedHTML, 'user');
+			// this.quill.root.innerHTML = normalizedHTML;
+
 			if (this.#content) {
 				this.quill.clipboard.dangerouslyPasteHTML(0, this.#content, 'user');
 			}
@@ -187,10 +220,10 @@ export default class TextEditor extends BaseComponent {
 			this.quill?.enable(this.#enabled);
 		}
 
-		if (!Helpers.areTheyEqual(_payload.content, this.#content)) {
-			this.#content = _payload.content;
-			this.setQuillHtml(this.#content);
-		}
+		// if (!Helpers.areTheyEqual(_payload.content, this.#content)) {
+		// 	this.#content = _payload.content;
+		// 	this.setQuillHtml(this.#content);
+		// }
 	}
 
 	destroy(): void {
@@ -227,9 +260,7 @@ export default class TextEditor extends BaseComponent {
 		const safeHtml = DOMPurify.sanitize(incomingHtml ?? '', {
 			USE_PROFILES: { html: true },
 		});
-
 		const delta = this.quill?.clipboard.convert({ html: safeHtml });
-
 		this.quill?.setContents(delta ?? [], 'silent');
 	}
 }

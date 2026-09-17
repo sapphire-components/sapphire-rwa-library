@@ -1,0 +1,46 @@
+.ckeditor {
+	--ck-border-radius: 4px;
+	--ck-color-base-border: var(--color-border);
+	--ck-color-focus-border: var(--color-neutral-6);
+	--ck-color-toolbar-background: var(--color-neutral-0);
+	--ck-color-base-background: var(--color-neutral-0);
+
+	color: red !important;
+}
+
+.ckeditor .ck.ck-editor {
+	width: 100%;
+}
+
+.ckeditor .ck.ck-toolbar {
+	border-color: var(--color-border);
+	transition: border-color 180ms linear;
+}
+
+.ckeditor .ck.ck-editor__main > .ck-editor__editable {
+	background-color: var(--color-neutral-0);
+	border-color: var(--color-border);
+	transition: border-color 180ms linear;
+}
+
+.ckeditor[data-ishovered='true'] .ck.ck-toolbar,
+.ckeditor[data-ishovered='true'] .ck.ck-editor__main > .ck-editor__editable {
+	border-color: var(--color-neutral-6);
+}
+
+.ckeditor[data-enabled='false'] {
+	opacity: 0.3;
+	pointer-events: none;
+}
+
+.ckeditor[data-enabled='false'] .ck.ck-editor__main > .ck-editor__editable {
+	background-color: var(--color-neutral-3);
+}
+
+.ckeditor[data-hastoolbar='false'] .ck.ck-editor__top {
+	display: none;
+}
+
+.ckeditor[data-hastoolbar='false'] .ck.ck-editor__main > .ck-editor__editable {
+	border-radius: var(--ck-border-radius);
+}
