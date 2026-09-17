@@ -91,9 +91,15 @@ export function withPrecision(time: TimeParts, precision: TimePrecision): TimePa
 	return { hours: time.hours, minutes: time.minutes, seconds: time.seconds };
 }
 
-export function formatTime(time: TimeParts | null): string {
+export function formatTime(time: TimeParts | null, precision: TimePrecision = TimePrecisions.second): string {
 	if (!time) {
 		return EMPTY_OPTION;
+	}
+	if (precision === TimePrecisions.hour) {
+		return pad2(time.hours);
+	}
+	if (precision === TimePrecisions.minute) {
+		return `${pad2(time.hours)}:${pad2(time.minutes)}`;
 	}
 	return `${pad2(time.hours)}:${pad2(time.minutes)}:${pad2(time.seconds)}`;
 }

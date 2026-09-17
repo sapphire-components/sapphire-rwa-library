@@ -578,7 +578,7 @@ export default class HourPicker extends BaseComponent {
 	}
 
 	private setValue(next: TimeParts | null, emit: boolean): void {
-		const previous = formatTime(this.#value);
+		const previous = formatTime(this.#value, this.#timePrecision);
 		this.#value = next;
 		if (next) {
 			this.#period = periodOf(next.hours);
@@ -586,7 +586,7 @@ export default class HourPicker extends BaseComponent {
 		this.widgetEl.dataset.hasvalue = next ? 'true' : 'false';
 		this.syncEnabled();
 
-		const formatted = formatTime(next);
+		const formatted = formatTime(next, this.#timePrecision);
 		if (emit && formatted !== previous) {
 			this.#actions?.OnChange(formatted);
 		}
