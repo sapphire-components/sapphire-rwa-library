@@ -11,14 +11,7 @@ declare global {
 	}
 
 	interface SapphireRWALibrary {
-		CKEditor?: CKEditorConstructor;
 		[key: string]: any;
-	}
-
-	interface CKEditorConstructor {
-		new (config: any): any;
-		getInstance(element: HTMLElement): any;
-		setContent(identifier: string, content: string): void;
 	}
 
 	interface SapphireRWAIcons {

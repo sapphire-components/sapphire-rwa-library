@@ -4,8 +4,6 @@
 	--ck-color-focus-border: var(--color-neutral-6);
 	--ck-color-toolbar-background: var(--color-neutral-0);
 	--ck-color-base-background: var(--color-neutral-0);
-
-	color: red !important;
 }
 
 .ckeditor .ck.ck-editor {
@@ -20,6 +18,7 @@
 .ckeditor .ck.ck-editor__main > .ck-editor__editable {
 	background-color: var(--color-neutral-0);
 	border-color: var(--color-border);
+	height: var(--ckeditor-height, auto);
 	transition: border-color 180ms linear;
 }
 

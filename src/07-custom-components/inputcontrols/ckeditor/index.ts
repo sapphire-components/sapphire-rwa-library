@@ -1,8 +1,8 @@
-import { Alignment, Bold, ClassicEditor, Essentials, Font, Italic, List, Paragraph, RemoveFormat, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
 import DOMPurify from 'dompurify';
 import Helpers from '@utils/helpers';
 import ckeditorCss from 'ckeditor5/ckeditor5.css?inline';
 import overridesCss from './ckeditor-overrides.css?inline';
+import { Alignment, Bold, ClassicEditor, Essentials, Font, Italic, List, Paragraph, RemoveFormat, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 const RESIZE_DEBOUNCE_MS = 100;
@@ -40,8 +40,6 @@ const EDITOR_TOOLBAR = [
 	'|',
 	'removeFormat',
 ];
-
-const instancesByIdentifier = new Map<string, CKEditor>();
 
 function normalizeHtml(html: string): string {
 	const withSpaces = html.replace(/&nbsp;|\u00A0/g, ' ');
@@ -99,7 +97,6 @@ export default class CKEditor extends BaseComponent {
 			return;
 		}
 
-		this.widgetEl.classList.add('ckeditor');
 		ensureCkeditorStyles();
 
 		this.#actions = config.actions;
@@ -118,12 +115,10 @@ export default class CKEditor extends BaseComponent {
 			this.widgetEl.appendChild(this.#hostEl);
 		}
 
-		if (this.identifier) {
-			instancesByIdentifier.set(this.identifier, this);
-		}
-
 		this.widgetEl.addEventListener('mouseenter', this.#handleMouseEnter);
 		this.widgetEl.addEventListener('mouseleave', this.#handleMouseLeave);
+
+		this.applyHeight();
 
 		this.#resizeDebounced = Helpers.debounce(() => {
 			this.applyHeight();
@@ -132,15 +127,6 @@ export default class CKEditor extends BaseComponent {
 		this.#resizeObserver.observe(this.widgetEl);
 
 		this.#ready = this.createEditor(config.content ?? '');
-	}
-
-	static setContent(identifier: string, content: string): void {
-		const instance = instancesByIdentifier.get(identifier);
-		if (!instance) {
-			console.warn('CKEditor: no instance for identifier', identifier);
-			return;
-		}
-		instance.setHtml(content);
 	}
 
 	parametersChanged(payload: ICKEditor): void {
@@ -161,10 +147,6 @@ export default class CKEditor extends BaseComponent {
 
 		this.widgetEl?.removeEventListener('mouseenter', this.#handleMouseEnter);
 		this.widgetEl?.removeEventListener('mouseleave', this.#handleMouseLeave);
-
-		if (this.identifier) {
-			instancesByIdentifier.delete(this.identifier);
-		}
 
 		void this.#ready.then((editor) => {
 			editor?.destroy();
@@ -245,10 +227,10 @@ export default class CKEditor extends BaseComponent {
 	}
 
 	private applyHeight(): void {
-		if (!this.#height) return;
-		const editable = this.#editor?.ui.view.editable.element;
-		if (!editable) return;
-		editable.style.height = `${this.#height}px`;
+		if (!this.#height || !this.widgetEl) return;
+		// Prefer a CSS custom property on the widget: CKEditor re-renders the
+		// editable on focus/blur and clears inline styles, which caused height jumps.
+		this.widgetEl.style.setProperty('--ckeditor-height', `${this.#height}px`);
 	}
 
 	handleMouseEnter(): void {
