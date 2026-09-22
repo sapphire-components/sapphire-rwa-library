@@ -8,12 +8,12 @@
 
 .sapphire-tabs[data-isfullheight='true'] {
 	.sapphire-tabs-content {
-		height: calc(100vh - var(--tabs-content-top, 0px) - var(--tabs-bottom-distance, 0px));
+		height: calc(100vh - var(--tabs-content-top) - var(--tabs-bottom-distance));
 	}
 }
 
 .popup-content .sapphire-tabs[data-isfullheight='true'] {
 	.sapphire-tabs-content {
-		height: calc(var(--popupcontentfooter-top, 0px) - 8px - var(--tabs-content-top, 0px));
+		height: calc(var(--popupcontentfooter-top) - 8px - var(--tabs-content-top));
 	}
 }

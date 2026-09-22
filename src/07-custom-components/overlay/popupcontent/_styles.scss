@@ -82,5 +82,5 @@ div[data-block$='PopupContent'] {
 }
 
 .popup-content-footer:not(:has(> :not(:empty))) {
-	display: none;
+	// display: none;
 }

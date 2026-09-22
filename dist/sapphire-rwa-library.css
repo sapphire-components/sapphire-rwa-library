@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.62 2026-09-22T13:40:29.409Z */
+/*!  SapphireRWALibrary PROD v0.6.63 2026-09-22T13:50:49.611Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -7957,11 +7957,11 @@ div[data-block$=TabContent] {
 }
 
 .sapphire-tabs[data-isfullheight=true] .sapphire-tabs-content {
-  height: calc(100vh - var(--tabs-content-top, 0px) - var(--tabs-bottom-distance, 0px));
+  height: calc(100vh - var(--tabs-content-top) - var(--tabs-bottom-distance));
 }
 
 .popup-content .sapphire-tabs[data-isfullheight=true] .sapphire-tabs-content {
-  height: calc(var(--popupcontentfooter-top, 0px) - 8px - var(--tabs-content-top, 0px));
+  height: calc(var(--popupcontentfooter-top) - 8px - var(--tabs-content-top));
 }
 div[data-block$=ActionPopup] {
   display: contents;
@@ -8416,10 +8416,6 @@ div[data-block$=PopupContent] {
 }
 .popup-content[data-hasclose=true] .popup-content-header:empty {
   display: block;
-}
-
-.popup-content-footer:not(:has(> :not(:empty))) {
-  display: none;
 }
 .popup-content[data-theme=printdocument] .popup-content-body {
   overflow-y: unset;
