@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.58 2026-09-22T09:04:37.849Z */
+/*!  SapphireRWALibrary PROD v0.6.60 2026-09-22T12:20:10.799Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -4561,6 +4561,106 @@ div[data-block$=LabelValue] {
   height: unset;
   padding: var(--space-xs) var(--space-s);
 }
+.tablewrapper-norecords {
+  background-color: var(--color-surface);
+  border: solid 1px var(--color-border);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  display: none;
+  min-height: 150px;
+  place-items: center;
+}
+
+.tablewrapper[data-norecords=true] > .tablewrapper-table .table-header {
+  pointer-events: none;
+}
+.tablewrapper[data-norecords=true] > .tablewrapper-norecords {
+  display: grid;
+}
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.table-row {
+  cursor: move;
+}
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging {
+  cursor: grabbing;
+  /* drop-shadow follows the row silhouette; box-shadow / transform on <tr> are ignored */
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.12)) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.2));
+  position: relative;
+  z-index: 2;
+}
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging td {
+  background-color: var(--color-neutral-0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  position: relative;
+  transform: translateY(-4px);
+  z-index: 2;
+}
+.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-primary), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-panel {
+  align-items: center;
+  background-color: var(--color-neutral-0);
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: var(--space-s);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] table > tbody > tr.table-row > td:first-child {
+  position: relative;
+}
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay {
+  align-items: center;
+  background-color: var(--color-neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: var(--box-shadow-sm);
+  color: var(--color-neutral-9);
+  display: inline-flex;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  gap: var(--space-xxs);
+  left: 0;
+  line-height: 1;
+  min-width: 50px;
+  padding: 8px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  user-select: none;
+  white-space: nowrap;
+  width: auto;
+  z-index: 3;
+}
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-arrow {
+  color: var(--color-neutral-6);
+}
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-target {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  box-shadow: none;
+  color: inherit;
+  field-sizing: content;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  min-width: 3ch;
+  outline: solid 1px var(--color-neutral-5);
+  padding: 0;
+  pointer-events: auto;
+  text-align: center;
+  user-select: auto;
+}
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-target:focus {
+  background-color: var(--color-neutral-1);
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
 div[data-widthcomponent=auto] {
   width: fit-content;
 }
@@ -4935,14 +5035,410 @@ div[data-widthcomponent=auto] {
   width: fit-content;
 }
 
+.tablewrapper[data-isloading=true] table {
+  opacity: 0.5;
+}
+
+.tablewrapper[data-columnfixedwidths=true] table {
+  table-layout: fixed;
+}
+.tablewrapper[data-columnfixedwidths=true] th,
+.tablewrapper[data-columnfixedwidths=true] td {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.tablewrapper[data-theme~=pagination-compact] .pagination .pagination-counter {
+  display: none;
+}
+.tablewrapper[data-theme~=pagination-compact] .pagination .pagination-button {
+  font-size: 14px;
+  height: 24px;
+  min-width: 24px;
+}
+div[data-widthcomponent=auto] {
+  width: fit-content;
+}
+
+div[data-widthcomponent=xs2] {
+  max-width: 48px;
+  width: 100%;
+}
+
+.max-width-xs2 {
+  max-width: 48px;
+}
+
+.min-width-xs2 {
+  min-width: 48px;
+}
+
+.width-xs2 {
+  max-width: 48px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xs] {
+  max-width: 80px;
+  width: 100%;
+}
+
+.max-width-xs {
+  max-width: 80px;
+}
+
+.min-width-xs {
+  min-width: 80px;
+}
+
+.width-xs {
+  max-width: 80px;
+  width: 100%;
+}
+
+div[data-widthcomponent=s] {
+  max-width: 120px;
+  width: 100%;
+}
+
+.max-width-s {
+  max-width: 120px;
+}
+
+.min-width-s {
+  min-width: 120px;
+}
+
+.width-s {
+  max-width: 120px;
+  width: 100%;
+}
+
+div[data-widthcomponent=m] {
+  max-width: 160px;
+  width: 100%;
+}
+
+.max-width-m {
+  max-width: 160px;
+}
+
+.min-width-m {
+  min-width: 160px;
+}
+
+.width-m {
+  max-width: 160px;
+  width: 100%;
+}
+
+div[data-widthcomponent=l] {
+  max-width: 240px;
+  width: 100%;
+}
+
+.max-width-l {
+  max-width: 240px;
+}
+
+.min-width-l {
+  min-width: 240px;
+}
+
+.width-l {
+  max-width: 240px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl] {
+  max-width: 320px;
+  width: 100%;
+}
+
+.max-width-xl {
+  max-width: 320px;
+}
+
+.min-width-xl {
+  min-width: 320px;
+}
+
+.width-xl {
+  max-width: 320px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl2] {
+  max-width: 480px;
+  width: 100%;
+}
+
+.max-width-xl2 {
+  max-width: 480px;
+}
+
+.min-width-xl2 {
+  min-width: 480px;
+}
+
+.width-xl2 {
+  max-width: 480px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl3] {
+  max-width: 640px;
+  width: 100%;
+}
+
+.max-width-xl3 {
+  max-width: 640px;
+}
+
+.min-width-xl3 {
+  min-width: 640px;
+}
+
+.width-xl3 {
+  max-width: 640px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl4] {
+  max-width: 800px;
+  width: 100%;
+}
+
+.max-width-xl4 {
+  max-width: 800px;
+}
+
+.min-width-xl4 {
+  min-width: 800px;
+}
+
+.width-xl4 {
+  max-width: 800px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl5] {
+  max-width: 960px;
+  width: 100%;
+}
+
+.max-width-xl5 {
+  max-width: 960px;
+}
+
+.min-width-xl5 {
+  min-width: 960px;
+}
+
+.width-xl5 {
+  max-width: 960px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl6] {
+  max-width: 1120px;
+  width: 100%;
+}
+
+.max-width-xl6 {
+  max-width: 1120px;
+}
+
+.min-width-xl6 {
+  min-width: 1120px;
+}
+
+.width-xl6 {
+  max-width: 1120px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl7] {
+  max-width: 1280px;
+  width: 100%;
+}
+
+.max-width-xl7 {
+  max-width: 1280px;
+}
+
+.min-width-xl7 {
+  min-width: 1280px;
+}
+
+.width-xl7 {
+  max-width: 1280px;
+  width: 100%;
+}
+
+div[data-widthcomponent=full] {
+  max-width: 100%;
+  width: 100%;
+}
+
+.max-width-full {
+  max-width: 100%;
+}
+
+.min-width-full {
+  min-width: 100%;
+}
+
+.width-full {
+  max-width: 100%;
+  width: 100%;
+}
+
+div[data-widthcomponent=auto] {
+  max-width: fit-content;
+  width: 100%;
+}
+
+.max-width-auto {
+  max-width: fit-content;
+}
+
+.min-width-auto {
+  min-width: fit-content;
+}
+
+.width-auto {
+  max-width: fit-content;
+  width: 100%;
+}
+
+.tablewrapper[data-columnfixedwidths=false] .width-xs2 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xs {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-s {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-m {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-l {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl2 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl3 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl4 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl5 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl6 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl7 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-full {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-auto {
+  width: unset;
+}
+
+.tablewrapper[data-columnfixedwidths=true] th.width-xs2,
+.tablewrapper[data-columnfixedwidths=true] td.width-xs2 {
+  min-width: 48px;
+  width: 48px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xs,
+.tablewrapper[data-columnfixedwidths=true] td.width-xs {
+  min-width: 80px;
+  width: 80px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-s,
+.tablewrapper[data-columnfixedwidths=true] td.width-s {
+  min-width: 120px;
+  width: 120px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-m,
+.tablewrapper[data-columnfixedwidths=true] td.width-m {
+  min-width: 160px;
+  width: 160px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-l,
+.tablewrapper[data-columnfixedwidths=true] td.width-l {
+  min-width: 240px;
+  width: 240px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl {
+  min-width: 320px;
+  width: 320px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl2,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl2 {
+  min-width: 480px;
+  width: 480px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl3,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl3 {
+  min-width: 640px;
+  width: 640px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl4,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl4 {
+  min-width: 800px;
+  width: 800px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl5,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl5 {
+  min-width: 960px;
+  width: 960px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl6,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl6 {
+  min-width: 1120px;
+  width: 1120px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl7,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl7 {
+  min-width: 1280px;
+  width: 1280px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-full,
+.tablewrapper[data-columnfixedwidths=true] td.width-full {
+  min-width: 100%;
+  width: 100%;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-auto,
+.tablewrapper[data-columnfixedwidths=true] td.width-auto {
+  min-width: fit-content;
+  width: fit-content;
+}
+
 .tablewrapper {
   max-height: var(--tablewrapper-max-height);
   overflow-x: auto;
   position: relative;
   scrollbar-width: thin;
+  width: 100%;
 }
 .tablewrapper .tablewrapper-table {
   display: contents;
+}
+.tablewrapper table {
+  border-collapse: collapse;
+  width: 100%;
 }
 .tablewrapper table thead {
   height: 48px;
@@ -4979,102 +5475,8 @@ div[data-widthcomponent=auto] {
   text-align: center;
 }
 
-.tablewrapper[data-columnfixedwidths=true] table {
-  table-layout: fixed;
-}
-.tablewrapper[data-columnfixedwidths=true] th,
-.tablewrapper[data-columnfixedwidths=true] td {
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
 .tablewrapper .table-row.is-clickable {
   cursor: pointer;
-}
-
-.tablewrapper[data-reorderablerows=true] table > tbody > tr.table-row {
-  cursor: move;
-}
-.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging {
-  cursor: grabbing;
-  /* drop-shadow follows the row silhouette; box-shadow / transform on <tr> are ignored */
-  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.12)) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.2));
-  position: relative;
-  z-index: 2;
-}
-.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging td {
-  background-color: var(--color-neutral-0);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  position: relative;
-  transform: translateY(-4px);
-  z-index: 2;
-}
-.tablewrapper[data-reorderablerows=true] table > tbody > tr.is-dragging td:first-child {
-  box-shadow: inset 3px 0 0 var(--color-primary), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-panel {
-  align-items: center;
-  background-color: var(--color-neutral-0);
-  display: flex;
-  justify-content: flex-end;
-  padding-bottom: var(--space-s);
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] table > tbody > tr.table-row > td:first-child {
-  position: relative;
-}
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay {
-  align-items: center;
-  background-color: var(--color-neutral-0);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  box-shadow: var(--box-shadow-sm);
-  color: var(--color-neutral-9);
-  display: inline-flex;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 900;
-  gap: var(--space-xxs);
-  left: 0;
-  line-height: 1;
-  min-width: 50px;
-  padding: 8px;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  user-select: none;
-  white-space: nowrap;
-  width: auto;
-  z-index: 3;
-}
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-arrow {
-  color: var(--color-neutral-6);
-}
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-target {
-  appearance: none;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  box-shadow: none;
-  color: inherit;
-  field-sizing: content;
-  font: inherit;
-  font-variant-numeric: tabular-nums;
-  margin: 0;
-  min-width: 3ch;
-  outline: solid 1px var(--color-neutral-5);
-  padding: 0;
-  pointer-events: auto;
-  text-align: center;
-  user-select: auto;
-}
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-target:focus {
-  background-color: var(--color-neutral-1);
-  border-radius: 2px;
-  box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 
 .tablewrapper .table[data-isfixed=true] thead {
@@ -5103,27 +5505,6 @@ div[data-widthcomponent=auto] {
   padding: 8px;
   position: sticky;
   z-index: 1;
-}
-
-.tablewrapper[data-isloading=true] table {
-  opacity: 0.5;
-}
-
-.tablewrapper-norecords {
-  background-color: var(--color-surface);
-  border: solid 1px var(--color-border);
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  display: none;
-  min-height: 150px;
-  place-items: center;
-}
-
-.tablewrapper[data-norecords=true] > .tablewrapper-table .table-header {
-  pointer-events: none;
-}
-.tablewrapper[data-norecords=true] > .tablewrapper-norecords {
-  display: grid;
 }
 div[data-block$=ButtonChoice] {
   display: contents;
@@ -5157,7 +5538,6 @@ div[data-block$=ButtonChoice].buttonchoice-wrapper,
   font-size: 14px;
   gap: 8px;
   height: auto;
-  justify-content: center;
   min-height: 36px;
   padding-block: 0;
   padding-inline: 12px;
@@ -7281,17 +7661,25 @@ div[data-block$=MasterDetail] {
 .masterdetail {
   display: flex;
   gap: 16px;
+  width: 100%;
 }
 .masterdetail-aside {
+  flex: 1;
   overflow-y: auto;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
 }
 .masterdetail-content {
-  background-color: var(--color-background);
+  flex: 1;
+  min-width: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
+}
+
+.masterdetail[data-theme~=aside-no-scroll] .masterdetail-aside {
+  scrollbar-gutter: unset;
+  scrollbar-width: none;
 }
 
 .popup-content-body .masterdetail {

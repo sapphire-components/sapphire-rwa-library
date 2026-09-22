@@ -5,16 +5,26 @@ div[data-block$='MasterDetail'] {
 .masterdetail {
 	display: flex;
 	gap: 16px;
+	width: 100%;
 	&-aside {
+		flex: 1;
 		overflow-y: auto;
 		scrollbar-gutter: stable;
 		scrollbar-width: thin;
 	}
 	&-content {
-		background-color: var(--color-background);
+		flex: 1;
+		min-width: 0;
 		overflow-y: auto;
 		scrollbar-gutter: stable;
 		scrollbar-width: thin;
+	}
+}
+
+.masterdetail[data-theme~='aside-no-scroll'] {
+	.masterdetail-aside {
+		scrollbar-gutter: unset;
+		scrollbar-width: none;
 	}
 }
 

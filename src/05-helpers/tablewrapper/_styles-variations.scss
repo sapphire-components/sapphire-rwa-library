@@ -1,0 +1,31 @@
+@use '../../09-utils/_widthcomponent.scss' as *;
+.tablewrapper[data-isloading='true'] {
+	table {
+		opacity: 0.5;
+	}
+}
+
+.tablewrapper[data-columnfixedwidths='true'] {
+	table {
+		table-layout: fixed;
+	}
+	th,
+	td {
+		@extend .width-m;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+}
+
+.tablewrapper[data-theme~='pagination-compact'] {
+	.pagination {
+		.pagination-counter {
+			display: none;
+		}
+		.pagination-button {
+			font-size: 14px;
+			height: 24px;
+			min-width: 24px;
+		}
+	}
+}
