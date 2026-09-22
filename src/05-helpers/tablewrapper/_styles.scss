@@ -216,7 +216,10 @@
 }
 
 .tablewrapper[data-norecords='true'] {
-	.tablewrapper-norecords {
+	> .tablewrapper-table .table-header {
+		pointer-events: none;
+	}
+	> .tablewrapper-norecords {
 		display: grid;
 	}
 }

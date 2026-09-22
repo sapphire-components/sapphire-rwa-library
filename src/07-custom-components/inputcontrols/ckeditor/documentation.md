@@ -28,7 +28,10 @@ A rich-text editor built on CKEditor 5 Classic (open-source / vanilla JS). The w
 
 ###### Toolbar (v1)
 
-Fixed Classic toolbar (token-string `ToolbarOptions` is not supported yet). Controls, in order: font size (Small / Regular / Large / Huge), bold, italic, underline, strikethrough, font colour, highlight, alignment, numbered list, bullet list, table, clear formatting.
+Fixed Classic toolbar (token-string `ToolbarOptions` is not supported yet). Controls, in order: font size (Small / Regular / Large / Huge), bold, italic, underline, strikethrough, font colour, highlight, alignment, numbered list, bullet list, table, clear formatting, source, full screen.
+
+- **Source** toggles an HTML view of the document. Edits are applied when source mode is turned off, and markup outside the enabled features (bold, lists, tables, and so on) is dropped. `Change` fires with the filtered HTML at that point.
+- **Full screen** covers the viewport. There is no menu bar in that mode. The configured `Height` applies to the normal editor and to the source view; full screen uses CKEditor's own layout.
 
 <hr>
 

@@ -2,7 +2,7 @@ import DOMPurify from 'dompurify';
 import Helpers from '@utils/helpers';
 import ckeditorCss from 'ckeditor5/ckeditor5.css?inline';
 import overridesCss from './ckeditor-overrides.css?inline';
-import { Alignment, Bold, ClassicEditor, Essentials, Font, Italic, List, Paragraph, RemoveFormat, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
+import { Alignment, Bold, ClassicEditor, Essentials, Font, Fullscreen, Italic, List, Paragraph, RemoveFormat, SourceEditing, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 const RESIZE_DEBOUNCE_MS = 100;
@@ -19,7 +19,7 @@ function ensureCkeditorStyles(): void {
 	document.head.appendChild(style);
 }
 
-const EDITOR_PLUGINS = [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Font, Alignment, List, Table, TableToolbar, RemoveFormat];
+const EDITOR_PLUGINS = [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Font, Alignment, List, Table, TableToolbar, RemoveFormat, SourceEditing, Fullscreen];
 
 const EDITOR_TOOLBAR = [
 	'fontSize',
@@ -39,6 +39,9 @@ const EDITOR_TOOLBAR = [
 	'insertTable',
 	'|',
 	'removeFormat',
+	'|',
+	'sourceEditing',
+	'fullscreen',
 ];
 
 function normalizeHtml(html: string): string {
@@ -181,6 +184,11 @@ export default class CKEditor extends BaseComponent {
 				},
 				table: {
 					contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
+				},
+				fullscreen: {
+					menuBar: {
+						isVisible: false,
+					},
 				},
 				root: {
 					initialData: content || '',

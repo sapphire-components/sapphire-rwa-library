@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.57 2026-09-18T11:00:36.304Z */
+/*!  SapphireRWALibrary PROD v0.6.58 2026-09-22T09:04:37.849Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -5119,7 +5119,10 @@ div[data-widthcomponent=auto] {
   place-items: center;
 }
 
-.tablewrapper[data-norecords=true] .tablewrapper-norecords {
+.tablewrapper[data-norecords=true] > .tablewrapper-table .table-header {
+  pointer-events: none;
+}
+.tablewrapper[data-norecords=true] > .tablewrapper-norecords {
   display: grid;
 }
 div[data-block$=ButtonChoice] {

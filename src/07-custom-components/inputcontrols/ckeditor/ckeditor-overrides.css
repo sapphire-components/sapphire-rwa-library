@@ -22,8 +22,17 @@
 	transition: border-color 180ms linear;
 }
 
+.ckeditor .ck.ck-editor__main > .ck-source-editing-area {
+	height: var(--ckeditor-height, auto);
+}
+
+.ckeditor .ck.ck-editor__main > .ck-source-editing-area textarea {
+	overflow: auto;
+}
+
 .ckeditor[data-ishovered='true'] .ck.ck-toolbar,
-.ckeditor[data-ishovered='true'] .ck.ck-editor__main > .ck-editor__editable {
+.ckeditor[data-ishovered='true'] .ck.ck-editor__main > .ck-editor__editable,
+.ckeditor[data-ishovered='true'] .ck.ck-editor__main > .ck-source-editing-area textarea {
 	border-color: var(--color-neutral-6);
 }
 

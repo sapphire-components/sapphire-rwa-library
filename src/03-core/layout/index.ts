@@ -13,6 +13,9 @@ export default class LayoutWrapper extends BaseComponent {
 	private tableEl: HTMLDivElement | null = null;
 
 	private handleLayoutVerticalScroll = (): void => {
+		this.filterBarEl = document.querySelector<HTMLDivElement>('.filterbar[data-issticky="true"]');
+		this.tableEl = document.querySelector<HTMLDivElement>('.tablewrapper[data-isstickyheader="true"] .table');
+
 		if (this.filterBarEl) {
 			this.filterBarEl.dataset.isfixed = 'false';
 		}
