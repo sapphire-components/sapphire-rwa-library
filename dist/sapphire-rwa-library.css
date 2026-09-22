@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.60 2026-09-22T12:20:10.799Z */
+/*!  SapphireRWALibrary PROD v0.6.61 2026-09-22T13:17:46.087Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -7680,10 +7680,6 @@ div[data-block$=MasterDetail] {
 .masterdetail[data-theme~=aside-no-scroll] .masterdetail-aside {
   scrollbar-gutter: unset;
   scrollbar-width: none;
-}
-
-.popup-content-body .masterdetail {
-  max-height: var(--popupcontentbody-height);
 }
 
 .masterdetail-aside:has(.scrollablecontent) > div {

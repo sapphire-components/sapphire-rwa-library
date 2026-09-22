@@ -21,18 +21,24 @@ export default class PopupContent extends BaseComponent {
 	private popupContentFooter!: HTMLDivElement;
 	private popupContentHeader!: HTMLDivElement;
 	private readonly actions!: IPopupContent['actions'];
+	private resizeFrame = 0;
 	private resizeObserver!: ResizeObserver;
 
 	private readonly onClickClose = (): void => {
 		this.actions.OnClose();
 	};
 	private readonly onKeyDown = (event: KeyboardEvent): void => {
+		console.log('PopupContent: onKeyDown', event);
+
 		if (this.closeOnEsc && event.key === 'Escape') {
 			this.actions.OnClose();
 		}
 	};
 	private readonly onResize = (): void => {
-		this.renderVariables();
+		cancelAnimationFrame(this.resizeFrame);
+		this.resizeFrame = requestAnimationFrame(() => {
+			this.renderVariables();
+		});
 	};
 
 	constructor(init: IPopupContent) {
@@ -66,26 +72,40 @@ export default class PopupContent extends BaseComponent {
 
 		this.resizeObserver = new ResizeObserver(this.onResize);
 		this.resizeObserver.observe(document.documentElement);
+		this.popupContentHeader && this.resizeObserver.observe(this.popupContentHeader);
+		this.popupContentBody && this.resizeObserver.observe(this.popupContentBody);
+		this.popupContentFooter && this.resizeObserver.observe(this.popupContentFooter);
 	}
 
 	renderVariables(): void {
-		this.widgetEl.style.removeProperty('--popupcontent-height');
-		this.widgetEl.style.removeProperty('--popupcontent-min-height');
-		this.widgetEl.style.removeProperty('--popupcontentbody-height');
-		this.widgetEl.style.removeProperty('--popupcontentfooter-height');
-		this.widgetEl.style.removeProperty('--popupcontentfooter-top');
-		this.widgetEl.style.removeProperty('--popupcontentheader-height');
+		const bodyHeight = this.popupContentBody ? Helpers.getOuterSize(this.popupContentBody).height : 0;
+		const footerHeight = this.popupContentFooter ? Helpers.getOuterSize(this.popupContentFooter).height : 0;
+		const footerTop = this.popupContentFooter ? this.popupContentFooter.getBoundingClientRect().top : 0;
+		const headerHeight = this.popupContentHeader ? Helpers.getOuterSize(this.popupContentHeader).height : 0;
 
-		this.widgetEl.style.setProperty('--popupcontentbody-height', `${this.popupContentBody ? Helpers.getOuterSize(this.popupContentBody).height : 0}px`);
-		this.widgetEl.style.setProperty('--popupcontentfooter-height', `${this.popupContentFooter ? Helpers.getOuterSize(this.popupContentFooter).height : 0}px`);
-		this.widgetEl.style.setProperty('--popupcontentfooter-top', `${this.popupContentFooter.getBoundingClientRect().top}px`);
-		this.widgetEl.style.setProperty('--popupcontentheader-height', `${this.popupContentHeader ? Helpers.getOuterSize(this.popupContentHeader).height : 0}px`);
+		this.setVariable('--popupcontentbody-height', `${bodyHeight}px`);
+		this.setVariable('--popupcontentfooter-height', `${footerHeight}px`);
+		this.setVariable('--popupcontentfooter-top', `${footerTop}px`);
+		this.setVariable('--popupcontentheader-height', `${headerHeight}px`);
 
 		if (this.height) {
-			this.widgetEl.style.setProperty('--popupcontent-height', `${this.height}px`);
+			this.widgetEl.style.removeProperty('--popupcontent-min-height');
+			this.setVariable('--popupcontent-height', `${this.height}px`);
 		} else if (this.minHeight) {
-			this.widgetEl.style.setProperty('--popupcontent-min-height', `${this.minHeight}px`);
+			this.widgetEl.style.removeProperty('--popupcontent-height');
+			this.setVariable('--popupcontent-min-height', `${this.minHeight}px`);
+		} else {
+			this.widgetEl.style.removeProperty('--popupcontent-height');
+			this.widgetEl.style.removeProperty('--popupcontent-min-height');
 		}
+	}
+
+	private setVariable(name: string, value: string): void {
+		if (this.widgetEl.style.getPropertyValue(name) === value) {
+			return;
+		}
+
+		this.widgetEl.style.setProperty(name, value);
 	}
 
 	parametersChanged(payload: IPopupContent): void {
@@ -95,6 +115,7 @@ export default class PopupContent extends BaseComponent {
 	destroy(): void {
 		this.closeButton?.removeEventListener('click', this.onClickClose);
 		document.removeEventListener('keydown', this.onKeyDown);
+		cancelAnimationFrame(this.resizeFrame);
 		this.resizeObserver?.disconnect();
 	}
 }

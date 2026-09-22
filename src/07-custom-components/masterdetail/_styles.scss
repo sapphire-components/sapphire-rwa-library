@@ -28,9 +28,9 @@ div[data-block$='MasterDetail'] {
 	}
 }
 
-.popup-content-body .masterdetail {
-	max-height: var(--popupcontentbody-height);
-}
+// .popup-content-body .masterdetail {
+// max-height: var(--popupcontentbody-height);
+// }
 
 .masterdetail-aside:has(.scrollablecontent) > div {
 	display: contents;
