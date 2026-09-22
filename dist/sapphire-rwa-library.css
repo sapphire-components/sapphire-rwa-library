@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.61 2026-09-22T13:17:46.087Z */
+/*!  SapphireRWALibrary PROD v0.6.62 2026-09-22T13:40:29.409Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -7682,6 +7682,10 @@ div[data-block$=MasterDetail] {
   scrollbar-width: none;
 }
 
+.popup-content-body .masterdetail {
+  height: 100%;
+}
+
 .masterdetail-aside:has(.scrollablecontent) > div {
   display: contents;
 }
@@ -8358,6 +8362,7 @@ div[data-block$=PopupContent] {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: var(--popupcontent-height);
   max-height: calc(100vh - 48px);
   position: relative;
 }

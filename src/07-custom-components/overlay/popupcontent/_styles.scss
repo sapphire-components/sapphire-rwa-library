@@ -19,8 +19,10 @@ div[data-block$='PopupContent'] {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
+	height: var(--popupcontent-height);
 	max-height: calc(100vh - 48px);
 	position: relative;
+
 	&-header {
 		@extend .heading4;
 		flex: 0 0 auto;
@@ -54,7 +56,6 @@ div[data-block$='PopupContent'] {
 			justify-self: end;
 		}
 	}
-
 	&-close {
 		inset-inline-end: 16px;
 		position: absolute;

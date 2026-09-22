@@ -28,8 +28,6 @@ export default class PopupContent extends BaseComponent {
 		this.actions.OnClose();
 	};
 	private readonly onKeyDown = (event: KeyboardEvent): void => {
-		console.log('PopupContent: onKeyDown', event);
-
 		if (this.closeOnEsc && event.key === 'Escape') {
 			this.actions.OnClose();
 		}
