@@ -36,33 +36,24 @@
 		z-index: 3;
 	}
 
-	table > tbody > tr.table-row > td:first-child {
-		position: relative;
+	.tablewrapper-reorder-stashed {
+		display: none !important;
 	}
 
-	.tablewrapper-reorder-overlay {
+	.tablewrapper-reorder-position {
 		align-items: center;
-		background-color: var(--color-neutral-0);
-		border: 1px solid var(--color-border);
-		border-radius: 4px;
-		box-shadow: var(--box-shadow-sm);
 		color: var(--color-neutral-9);
 		display: inline-flex;
 		font-size: 11px;
 		font-variant-numeric: tabular-nums;
 		font-weight: 900;
 		gap: var(--space-xxs);
-		left: 0;
 		line-height: 1;
-		min-width: 50px;
-		padding: 8px;
+		margin: 0;
+		padding: 0;
 		pointer-events: none;
-		position: absolute;
-		top: 0;
 		user-select: none;
 		white-space: nowrap;
-		width: auto;
-		z-index: 3;
 
 		.tablewrapper-reorder-arrow {
 			color: var(--color-neutral-6);

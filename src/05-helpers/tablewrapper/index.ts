@@ -46,8 +46,9 @@ export default class TableWrapper extends BaseComponent {
 
 	private static readonly DRAG_THRESHOLD_PX = 2;
 	private static readonly INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, label, [role="button"], [role="link"], [contenteditable="true"]';
-	private static readonly OVERLAY_CLASS = 'tablewrapper-reorder-overlay';
+	private static readonly POSITION_CLASS = 'tablewrapper-reorder-position';
 	private static readonly ROW_SELECTOR = ':scope > tbody > tr';
+	private static readonly STASH_CLASS = 'tablewrapper-reorder-stashed';
 
 	private handleRowClick = (event: Event): void => {
 		if (this.ignoreNextClick) return;
@@ -124,7 +125,7 @@ export default class TableWrapper extends BaseComponent {
 		event.preventDefault();
 		this.reorderToPointer(event.clientY);
 		if (!this.reorderOnDrop) {
-			this.updateReorderOverlays();
+			this.updateReorderPositions();
 		}
 	};
 
@@ -413,7 +414,7 @@ export default class TableWrapper extends BaseComponent {
 					this.actions.OnReorder?.(JSON.stringify(newOrder));
 				}
 			} else {
-				this.updateReorderOverlays();
+				this.updateReorderPositions();
 				this.updateCommitButton();
 			}
 		}
@@ -438,7 +439,7 @@ export default class TableWrapper extends BaseComponent {
 		}
 
 		this.ensureReorderPanel();
-		this.updateReorderOverlays();
+		this.updateReorderPositions();
 		this.updateCommitButton();
 	}
 
@@ -468,7 +469,7 @@ export default class TableWrapper extends BaseComponent {
 
 		this.actions.OnReorder?.(JSON.stringify(this.getRowIds()));
 		this.captureReorderOrigins();
-		this.updateReorderOverlays();
+		this.updateReorderPositions();
 		this.updateCommitButton();
 	};
 
@@ -477,16 +478,51 @@ export default class TableWrapper extends BaseComponent {
 		this.reorderPanelEl?.remove();
 		this.reorderPanelEl = undefined;
 		this.reorderCommitEl = undefined;
-		this.tableEl?.querySelectorAll(`.${TableWrapper.OVERLAY_CLASS}`).forEach((overlay) => overlay.remove());
+		this.tableEl?.querySelectorAll<HTMLTableCellElement>(`${TableWrapper.ROW_SELECTOR} > td:first-child`).forEach((cell) => {
+			this.restoreFirstCell(cell);
+		});
 		this.reorderOriginByRow = new WeakMap();
 	}
 
-	private ensureRowOverlay(row: HTMLTableRowElement): HTMLElement {
-		const existing = row.querySelector<HTMLElement>(`:scope .${TableWrapper.OVERLAY_CLASS}`);
+	private stashFirstCell(cell: HTMLTableCellElement): void {
+		Array.from(cell.childNodes).forEach((node) => {
+			if (node instanceof HTMLElement) {
+				if (node.classList.contains(TableWrapper.POSITION_CLASS) || node.classList.contains(TableWrapper.STASH_CLASS)) return;
+				node.classList.add(TableWrapper.STASH_CLASS);
+				return;
+			}
+
+			if (node.nodeType !== Node.TEXT_NODE || !(node.textContent ?? '').trim()) return;
+
+			const wrap = document.createElement('span');
+			wrap.className = TableWrapper.STASH_CLASS;
+			wrap.dataset.reorderTextWrap = 'true';
+			node.replaceWith(wrap);
+			wrap.appendChild(node);
+		});
+	}
+
+	private restoreFirstCell(cell: HTMLTableCellElement): void {
+		cell.querySelector(`:scope > .${TableWrapper.POSITION_CLASS}`)?.remove();
+		cell.querySelectorAll<HTMLElement>(`:scope > .${TableWrapper.STASH_CLASS}`).forEach((node) => {
+			node.classList.remove(TableWrapper.STASH_CLASS);
+			if (node.dataset.reorderTextWrap === 'true') {
+				node.replaceWith(...Array.from(node.childNodes));
+			}
+		});
+	}
+
+	private ensureRowPosition(row: HTMLTableRowElement): HTMLElement | null {
+		const firstCell = row.querySelector<HTMLTableCellElement>(':scope > td');
+		if (!firstCell) return null;
+
+		this.stashFirstCell(firstCell);
+
+		const existing = firstCell.querySelector<HTMLElement>(`:scope > .${TableWrapper.POSITION_CLASS}`);
 		if (existing) return existing;
 
-		const overlay = document.createElement('div');
-		overlay.className = TableWrapper.OVERLAY_CLASS;
+		const position = document.createElement('div');
+		position.className = TableWrapper.POSITION_CLASS;
 
 		const originEl = document.createElement('span');
 		originEl.className = 'tablewrapper-reorder-origin';
@@ -506,14 +542,10 @@ export default class TableWrapper extends BaseComponent {
 		targetEl.addEventListener('pointerdown', this.handleTargetPointerDown);
 		targetEl.addEventListener('focus', this.handleTargetFocus);
 
-		overlay.append(originEl, arrowEl, targetEl);
+		position.append(originEl, arrowEl, targetEl);
+		firstCell.appendChild(position);
 
-		const firstCell = row.querySelector<HTMLTableCellElement>(':scope > td');
-		if (firstCell) {
-			firstCell.prepend(overlay);
-		}
-
-		return overlay;
+		return position;
 	}
 
 	private getRowOrigin(row: HTMLTableRowElement, index: number): number {
@@ -583,20 +615,22 @@ export default class TableWrapper extends BaseComponent {
 		}
 
 		this.moveRowToPosition(tableRow, position);
-		this.updateReorderOverlays();
+		this.updateReorderPositions();
 		this.updateCommitButton();
 	}
 
-	private updateReorderOverlays(): void {
+	private updateReorderPositions(): void {
 		if (!this.isStagedReorder()) return;
 
 		const rows = this.getBodyRows();
 		const dirty = rows.some((row, index) => this.getRowOrigin(row, index) !== index + 1);
 
 		rows.forEach((row, index) => {
-			const overlay = this.ensureRowOverlay(row);
-			const originEl = overlay.querySelector('.tablewrapper-reorder-origin');
-			const targetEl = overlay.querySelector<HTMLInputElement>('.tablewrapper-reorder-target');
+			const position = this.ensureRowPosition(row);
+			if (!position) return;
+
+			const originEl = position.querySelector('.tablewrapper-reorder-origin');
+			const targetEl = position.querySelector<HTMLInputElement>('.tablewrapper-reorder-target');
 			if (!originEl || !targetEl) return;
 
 			const current = index + 1;
@@ -605,7 +639,7 @@ export default class TableWrapper extends BaseComponent {
 				targetEl.value = String(current);
 			}
 			targetEl.disabled = this.isLoading;
-			overlay.dataset.hasTarget = dirty ? 'true' : 'false';
+			position.dataset.hasTarget = dirty ? 'true' : 'false';
 		});
 	}
 

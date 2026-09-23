@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.64 2026-09-23T07:45:43.635Z */
+/*!  SapphireRWALibrary PROD v0.6.65 2026-09-23T08:17:08.928Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -4625,37 +4625,28 @@ div[data-block$=LabelValue] {
   top: 0;
   z-index: 3;
 }
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] table > tbody > tr.table-row > td:first-child {
-  position: relative;
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-stashed {
+  display: none !important;
 }
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay {
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-position {
   align-items: center;
-  background-color: var(--color-neutral-0);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  box-shadow: var(--box-shadow-sm);
   color: var(--color-neutral-9);
   display: inline-flex;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   font-weight: 900;
   gap: var(--space-xxs);
-  left: 0;
   line-height: 1;
-  min-width: 50px;
-  padding: 8px;
+  margin: 0;
+  padding: 0;
   pointer-events: none;
-  position: absolute;
-  top: 0;
   user-select: none;
   white-space: nowrap;
-  width: auto;
-  z-index: 3;
 }
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-arrow {
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-position .tablewrapper-reorder-arrow {
   color: var(--color-neutral-6);
 }
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-target {
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-position .tablewrapper-reorder-target {
   appearance: none;
   background: transparent;
   border: none;
@@ -4673,7 +4664,7 @@ div[data-block$=LabelValue] {
   text-align: center;
   user-select: auto;
 }
-.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-overlay .tablewrapper-reorder-target:focus {
+.tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-position .tablewrapper-reorder-target:focus {
   background-color: var(--color-neutral-1);
   border-radius: 2px;
   box-shadow: inset 0 0 0 1px var(--color-primary);
