@@ -1,4 +1,5 @@
 import Helpers from '@utils/helpers';
+import { LocalStorageKeys } from '@utils/local-storage-keys';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface LayoutWrapperInit extends BaseComponentInit {
@@ -9,10 +10,17 @@ interface LayoutWrapperInit extends BaseComponentInit {
 export default class LayoutWrapper extends BaseComponent {
 	private auxiliarOverlayObserver?: ResizeObserver;
 	private auxiliarOverlaySkip = false;
+	private documentationCloseEl: HTMLButtonElement | null = null;
 	private filterBarEl: HTMLDivElement | null = null;
 	private layoutWrapperEl: HTMLDivElement | null;
 	private screenContainerEl: HTMLDivElement | null;
 	private tableEl: HTMLDivElement | null = null;
+
+	private onDocumentationCloseClick = (): void => {
+		Helpers.writeToLocalStorage(LocalStorageKeys.showDocumentation, false);
+		document.body.dataset.showdocumentation = 'false';
+		this.syncDesignSystemAuxiliarOverlay();
+	};
 
 	private handleLayoutVerticalScroll = (): void => {
 		this.filterBarEl = document.querySelector<HTMLDivElement>('.filterbar[data-issticky="true"]');
@@ -65,7 +73,14 @@ export default class LayoutWrapper extends BaseComponent {
 		this.layoutWrapperEl = document.querySelector<HTMLDivElement>('.layoutwrapper');
 		this.screenContainerEl = document.querySelector<HTMLDivElement>('.screen-container');
 
-		if (!this.screenContainerEl || !this.layoutWrapperEl) {
+		if (!this.layoutWrapperEl) {
+			return;
+		}
+
+		this.applyStoredDocumentationVisibility();
+		this.bindDocumentationClose();
+
+		if (!this.screenContainerEl) {
 			return;
 		}
 
@@ -76,6 +91,47 @@ export default class LayoutWrapper extends BaseComponent {
 
 		this.screenContainerEl.addEventListener('scroll', this.handleLayoutVerticalScroll);
 		this.bindDesignSystemAuxiliarOverlay();
+	}
+
+	private isDocumentationLayout(wrapper: HTMLElement): boolean {
+		return wrapper.classList.contains('designsystem') || wrapper.hasAttribute('data-documentationwidth');
+	}
+
+	private applyStoredDocumentationVisibility(): void {
+		const wrapper = this.layoutWrapperEl;
+		if (!wrapper || !this.isDocumentationLayout(wrapper)) {
+			return;
+		}
+
+		if (Helpers.readFromLocalStorage<boolean>(LocalStorageKeys.showDocumentation) === false) {
+			document.body.dataset.showdocumentation = 'false';
+		}
+	}
+
+	private bindDocumentationClose(): void {
+		const wrapper = this.layoutWrapperEl;
+		if (!wrapper || !this.isDocumentationLayout(wrapper)) {
+			return;
+		}
+
+		const auxiliar = wrapper.querySelector<HTMLElement>('.layoutwrapper-body-auxiliar');
+		if (!auxiliar) {
+			return;
+		}
+
+		let button = auxiliar.querySelector<HTMLButtonElement>(':scope > .layoutwrapper-body-auxiliar-close');
+		if (!button) {
+			button = document.createElement('button');
+			button.type = 'button';
+			button.className = 'btn btn-icon btn-xsmall btn-tertiary layoutwrapper-body-auxiliar-close';
+			button.setAttribute('aria-label', 'Close documentation');
+			button.innerHTML = Helpers.placeIcon('x', 's');
+			button.querySelector('.svg-icon')?.setAttribute('aria-hidden', 'true');
+			auxiliar.prepend(button);
+		}
+
+		this.documentationCloseEl = button;
+		button.addEventListener('click', this.onDocumentationCloseClick);
 	}
 
 	private bindDesignSystemAuxiliarOverlay(): void {
@@ -174,6 +230,7 @@ export default class LayoutWrapper extends BaseComponent {
 	}
 
 	destroy(): void {
+		this.documentationCloseEl?.removeEventListener('click', this.onDocumentationCloseClick);
 		this.auxiliarOverlayObserver?.disconnect();
 		super.destroy();
 	}

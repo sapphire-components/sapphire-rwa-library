@@ -4,6 +4,7 @@
  */
 export const LocalStorageKeys = {
 	locale: '$OS_Users$CurrentLocale',
+	showDocumentation: 'sph-designsystem-show-documentation',
 
 	dropdownMenu(runtimeId: string): string {
 		return `sph-dropdownmenu-${runtimeId}`;
