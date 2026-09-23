@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.63 2026-09-22T13:50:49.611Z */
+/*!  SapphireRWALibrary PROD v0.6.64 2026-09-23T07:45:43.635Z */
 a:focus-visible,
 select:focus-visible,
 .btn:focus-visible,
@@ -2662,6 +2662,23 @@ div[data-block$=BreadcrumbsItem] {
   font-size: var(--font-size-xs);
   height: 22px;
   padding: var(--space-none) var(--space-s);
+}
+.list-updating {
+  margin: 0;
+}
+.list-updating:before {
+  border-color: var(--color-primary-light);
+  border-top-color: var(--color-primary);
+}
+.list-updating.small:before {
+  border-width: 3px;
+  height: 22px;
+  width: 22px;
+}
+.list-updating.xsmall:before {
+  border-width: 2px;
+  height: 16px;
+  width: 16px;
 }
 .osui-tabs {
   overflow: unset;

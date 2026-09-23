@@ -1,0 +1,21 @@
+.list-updating {
+	margin: 0;
+	&:before {
+		border-color: var(--color-primary-light);
+		border-top-color: var(--color-primary);
+	}
+	&.small {
+		&:before {
+			border-width: 3px;
+			height: 22px;
+			width: 22px;
+		}
+	}
+	&.xsmall {
+		&:before {
+			border-width: 2px;
+			height: 16px;
+			width: 16px;
+		}
+	}
+}
