@@ -71,7 +71,7 @@ export default defineConfig(({ command, mode }) => {
 			copyPublicDir: true,
 			cssCodeSplit: false, // false when using lib
 			cssMinify: false,
-			// Keep sibling bundles (e.g. sapphire-rwa-icons.js, sapphire-rwa-ckeditor.js) when rebuilding in watch mode.
+			// Keep sibling bundles (e.g. sapphire-rwa-icons.js, sapphire-rwa-ckeditor.js, sapphire-rwa-texteditor.js) when rebuilding in watch mode.
 			emptyOutDir: false,
 			lib: {
 				entry: 'src/index.ts',
@@ -133,7 +133,7 @@ function makeBanner(mode) {
 }
 
 // Only the files this config emits. Walking all of dist races sibling watch
-// builds (ckeditor/flags/icons): Vite can truncate a sibling file mid-write,
+// builds (ckeditor/flags/icons/texteditor): Vite can truncate a sibling file mid-write,
 // this plugin then stamps the library banner onto empty content, and the
 // sibling banner plugin skips because the file already starts with `/*!`.
 const BANNER_TARGETS = new Set([

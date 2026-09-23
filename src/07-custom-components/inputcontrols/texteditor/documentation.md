@@ -2,6 +2,8 @@
 
 A rich-text editor built on Quill (`snow` theme), with an optional custom toolbar and table editing (`quill-table-better`). The widget root (`.texteditor`) hosts a `.quill-editor` node; Quill Snow and table-better styles are injected into the document once.
 
+- TextEditor lives in a **separate script**, `sapphire-rwa-texteditor.js`. Include it on the block or screen that uses this widget, **after** `sapphire-rwa-library.js` and **before** the `OnReady` that constructs `SapphireRWALibrary.TextEditor`. The main library does not embed Quill.
+- If the script is missing, `SapphireRWALibrary.TextEditor` is undefined — the `OnReady` construct will fail. There is no runtime fetch.
 - The editor is created only when `Mode` is `html`. Other mode values leave the host empty.
 - `Content` is HTML. On init it is pasted into the editor. Changing the `Content` input afterwards (`parametersChanged`) does **not** update the editor; use the `SetTextEditorContent` client action instead.
 - `Change` fires on every Quill `text-change` with both plain text and semantic HTML. An empty editor emits empty strings (not Quill's default `<p><br></p>`). Non-breaking spaces in the HTML are normalized to regular spaces. Applying content via `SetTextEditorContent` is silent and does not fire `Change`.

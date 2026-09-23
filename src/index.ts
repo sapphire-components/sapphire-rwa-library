@@ -33,7 +33,6 @@ import SapphireDropdown from '@/07-custom-components/inputcontrols/sapphiredropd
 import SapphireInput from '@/07-custom-components/inputcontrols/sapphireinput';
 import Skeleton from '@/07-custom-components/feedback/skeleton';
 import Status from '@/07-custom-components/feedback/status';
-import TextEditor from '@/07-custom-components/inputcontrols/texteditor';
 import Toast from '@/07-custom-components/feedback/toast';
 import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
@@ -93,7 +92,6 @@ const SapphireRWALibrary = {
 	TabHeader,
 	TableWrapper,
 	Tabs,
-	TextEditor,
 	Toast: new Toast(),
 	WeekDayPicker,
 	init,
