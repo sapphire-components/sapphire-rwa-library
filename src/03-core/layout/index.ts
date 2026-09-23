@@ -7,6 +7,8 @@ interface LayoutWrapperInit extends BaseComponentInit {
 }
 
 export default class LayoutWrapper extends BaseComponent {
+	private auxiliarOverlayObserver?: ResizeObserver;
+	private auxiliarOverlaySkip = false;
 	private filterBarEl: HTMLDivElement | null = null;
 	private layoutWrapperEl: HTMLDivElement | null;
 	private screenContainerEl: HTMLDivElement | null;
@@ -73,7 +75,69 @@ export default class LayoutWrapper extends BaseComponent {
 		this.observeLayoutResize(this.handleLayoutResize);
 
 		this.screenContainerEl.addEventListener('scroll', this.handleLayoutVerticalScroll);
+		this.bindDesignSystemAuxiliarOverlay();
 	}
+
+	private bindDesignSystemAuxiliarOverlay(): void {
+		const wrapper = this.layoutWrapperEl;
+		if (!wrapper?.classList.contains('designsystem')) {
+			return;
+		}
+
+		this.auxiliarOverlayObserver = new ResizeObserver(() => {
+			if (this.auxiliarOverlaySkip) {
+				return;
+			}
+			this.syncDesignSystemAuxiliarOverlay();
+		});
+		this.auxiliarOverlayObserver.observe(document.documentElement);
+		this.auxiliarOverlayObserver.observe(wrapper);
+
+		const body = wrapper.querySelector<HTMLElement>('.layoutwrapper-body');
+		const content = wrapper.querySelector<HTMLElement>('.layoutwrapper-body-content');
+		const auxiliar = wrapper.querySelector<HTMLElement>('.layoutwrapper-body-auxiliar');
+		if (body) {
+			this.auxiliarOverlayObserver.observe(body);
+		}
+		if (content) {
+			this.auxiliarOverlayObserver.observe(content);
+		}
+		if (auxiliar) {
+			this.auxiliarOverlayObserver.observe(auxiliar);
+		}
+
+		this.syncDesignSystemAuxiliarOverlay();
+	}
+
+	private syncDesignSystemAuxiliarOverlay = (): void => {
+		const wrapper = this.layoutWrapperEl;
+		if (!wrapper?.classList.contains('designsystem')) {
+			return;
+		}
+
+		const auxiliar = wrapper.querySelector<HTMLElement>('.layoutwrapper-body-auxiliar');
+		if (!auxiliar || getComputedStyle(auxiliar).display === 'none') {
+			delete wrapper.dataset.auxiliaroverlay;
+			return;
+		}
+
+		const wasOverlay = wrapper.dataset.auxiliaroverlay === 'true';
+		if (wasOverlay) {
+			delete wrapper.dataset.auxiliaroverlay;
+		}
+
+		const overflows = auxiliar.getBoundingClientRect().right > document.documentElement.clientWidth + 1;
+		if (overflows) {
+			wrapper.dataset.auxiliaroverlay = 'true';
+		}
+
+		if (wasOverlay || overflows) {
+			this.auxiliarOverlaySkip = true;
+			requestAnimationFrame(() => {
+				this.auxiliarOverlaySkip = false;
+			});
+		}
+	};
 
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
 		if (this.tableEl && this.tableEl.dataset.isfixed === 'true') {
@@ -110,6 +174,7 @@ export default class LayoutWrapper extends BaseComponent {
 	}
 
 	destroy(): void {
+		this.auxiliarOverlayObserver?.disconnect();
 		super.destroy();
 	}
 }

@@ -41,4 +41,18 @@ div[data-block$='LayoutBlank'] {
 		padding-right: 8px;
 		scrollbar-gutter: stable both-edges;
 	}
+	&[data-auxiliaroverlay='true'] {
+		.layoutwrapper-body {
+			position: relative;
+		}
+		.layoutwrapper-body-auxiliar {
+			inset-inline-end: 24px;
+			bottom: 24px;
+			max-width: calc(100% - 48px);
+			position: absolute;
+			top: 24px;
+			width: 600px;
+			z-index: 4;
+		}
+	}
 }
