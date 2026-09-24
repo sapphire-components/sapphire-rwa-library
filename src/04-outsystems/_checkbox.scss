@@ -1,3 +1,17 @@
+input[data-checkbox]:focus-visible,
+.has-accessible-features input[data-checkbox]:focus-visible {
+	box-shadow: none;
+	outline: 2px solid var(--color-primary-dark);
+	outline-offset: -2px;
+}
+
+input[data-checkbox]:checked:focus-visible,
+input[data-checkbox]:indeterminate:focus-visible,
+.has-accessible-features input[data-checkbox]:checked:focus-visible,
+.has-accessible-features input[data-checkbox]:indeterminate:focus-visible {
+	outline-color: var(--color-neutral-0);
+}
+
 .small[data-checkbox] {
 	height: 16px;
 	width: 16px;

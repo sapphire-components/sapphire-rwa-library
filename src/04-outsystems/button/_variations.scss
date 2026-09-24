@@ -1,6 +1,9 @@
 .btn-primary {
+	--btn-focus: var(--color-neutral-0);
+	--btn-focus-inner: var(--color-primary-darker);
+	--btn-ring: var(--color-primary);
 	background-color: var(--color-primary);
-	box-shadow: inset 0 0 0 1px var(--color-primary);
+	box-shadow: inset 0 0 0 1px var(--btn-ring);
 	color: var(--color-neutral-0);
 	&:hover {
 		background-color: var(--color-primary-dark);
@@ -11,18 +14,24 @@
 }
 
 .btn-tertiary {
+	--btn-ring: transparent;
 	background-color: transparent;
-	box-shadow: inset 0 0 0 1px transparent;
+	box-shadow: inset 0 0 0 1px var(--btn-ring);
 	transition: background-color var(--transition-duration) var(--transition-easing);
 
 	&:hover {
 		background-color: color-mix(in srgb, currentColor 10%, transparent);
 	}
+
+	&:focus-visible {
+		box-shadow: inset 0 0 0 2px var(--btn-focus);
+	}
 }
 
 .btn-transparent {
+	--btn-ring: var(--color-border);
 	background-color: transparent;
-	box-shadow: inset 0 0 0 1px var(--color-border);
+	box-shadow: inset 0 0 0 1px var(--btn-ring);
 	color: var(--color-neutral-8);
 	transition: background-color var(--transition-duration) var(--transition-easing);
 	&:hover {
@@ -31,8 +40,11 @@
 }
 
 .btn-destructive {
+	--btn-focus: var(--color-neutral-0);
+	--btn-focus-inner: var(--color-red-dark);
+	--btn-ring: var(--color-red);
 	background-color: var(--color-red);
-	box-shadow: inset 0 0 0 1px var(--color-red);
+	box-shadow: inset 0 0 0 1px var(--btn-ring);
 	color: var(--color-neutral-0);
 	&:hover {
 		background-color: var(--color-red-dark);
@@ -43,8 +55,10 @@
 }
 
 .btn-destructive-secondary {
+	--btn-focus: var(--color-red);
+	--btn-ring: var(--color-red-light);
 	background-color: var(--color-neutral-0);
-	box-shadow: inset 0 0 0 1px var(--color-red-light);
+	box-shadow: inset 0 0 0 1px var(--btn-ring);
 	color: var(--color-red);
 	&:hover {
 		background-color: var(--color-red-lightest);

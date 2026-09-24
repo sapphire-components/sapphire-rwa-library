@@ -365,7 +365,13 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private getRowIds(): string[] {
-		return this.getBodyRows().map((row) => this.getRowId(row));
+		const rowIds = this.getBodyRows().map((row) => this.getRowId(row));
+		if (rowIds.length === 0) {
+			console.warn('TableWrapper: No row IDs found.');
+		} else if (rowIds.some((id) => id == null || id === '')) {
+			console.warn('TableWrapper: Some rows have invalid IDs.', rowIds);
+		}
+		return rowIds;
 	}
 
 	private reorderToPointer(clientY: number): void {
@@ -407,6 +413,8 @@ export default class TableWrapper extends BaseComponent {
 			window.setTimeout(() => {
 				this.ignoreNextClick = false;
 			}, 300);
+
+			console.log('TableWrapper: finishPointerDrag', this.reorderOnDrop);
 
 			if (this.reorderOnDrop) {
 				const newOrder = this.getRowIds();

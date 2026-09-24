@@ -3,7 +3,8 @@
 A button that reveals a dropdown panel of actions. It supports two modes: a regular button whose label toggles the panel, and a split button where the label runs its own `Click` action while a dedicated chevron opens the panel.
 
 - In regular mode the label is the trigger: activating it (click or `Enter`/`Space`, `ArrowDown` to open) toggles the panel.
-- In split-button mode a chevron is appended after the label and becomes the trigger; the label instead fires the `Click` event.
+- In split-button mode a chevron is appended after the label and becomes the trigger; the label instead fires the `Click` event. Tab reaches the label and the chevron separately.
+- Keyboard focus (`:focus-visible`) uses the same inset stroke as `.btn`, on whichever of those controls is focused.
 - The panel closes when a menu action (link or button) is activated, on `Escape`, or on click outside. Form controls inside the panel do not close it.
 
 <hr>

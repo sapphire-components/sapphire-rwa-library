@@ -3,6 +3,7 @@
 Restyles the OutSystems **Button** widget. Keep the platform `btn` class and add modifiers in **Style Classes**. Combine at most one appearance, one size, and one shape.
 
 - With `btn` only, the control is the secondary / neutral button: 36px min-height, 14px type, 4px corners, an inset border (`--color-border`), and a `--color-neutral-1` hover fill.
+- Keyboard focus (`:focus-visible`) is an inset stroke. It stays inside the button, including when a parent clips with `overflow: hidden`. Mouse clicks do not show it.
 - Icons (`.svg-icon`) inherit the button colour and scale with the size class (20px at the default size).
 - Consecutive buttons (`.btn + .btn`) pick up an inline-start gap from the theme.
 - The platform loading spinner (`span.btn-animation`) is hidden.

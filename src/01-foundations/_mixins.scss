@@ -2,20 +2,26 @@
 	transition: $property $duration $easing;
 }
 
-@mixin focus-visible($width: 1px, $color: var(--color-primary)) {
+@mixin focus-visible($width: 2px, $color: var(--color-primary-dark)) {
 	&:focus-visible {
-		box-shadow:
-			0 0 0 2px white,
-			0 0 0 4px var(--focus-ring-outer);
+		box-shadow: inset 0 0 0 $width $color;
 		outline: none;
+
+		@media (forced-colors: active) {
+			outline: $width solid CanvasText;
+			outline-offset: -$width;
+		}
 	}
 }
 
-@mixin focus($width: 1px, $color: var(--color-primary)) {
+@mixin focus($width: 2px, $color: var(--color-primary-dark)) {
 	&:focus {
-		box-shadow:
-			0 0 0 2px white,
-			0 0 0 4px var(--focus-ring-outer);
+		box-shadow: inset 0 0 0 $width $color;
 		outline: none;
+
+		@media (forced-colors: active) {
+			outline: $width solid CanvasText;
+			outline-offset: -$width;
+		}
 	}
 }

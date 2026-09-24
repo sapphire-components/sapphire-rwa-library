@@ -15,8 +15,7 @@ export interface IButtonDropdown extends BaseComponentInit {
 }
 
 const DEFAULT_PLACEMENT = 'bottom-start';
-const FOCUSABLE_SELECTOR =
-	'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default class ButtonDropdown extends BaseComponent {
 	#actions!: IButtonDropdown['actions'];
@@ -53,6 +52,7 @@ export default class ButtonDropdown extends BaseComponent {
 		this.#validationMessage = config.validationMessage ?? '';
 
 		this.#labelEl = this.widgetEl.querySelector('.buttondropdown-label') as HTMLElement;
+
 		this.#actionsEl = this.widgetEl.querySelector('.buttondropdown-actions') as HTMLElement;
 
 		if (!this.#labelEl || !this.#actionsEl) {
@@ -90,6 +90,7 @@ export default class ButtonDropdown extends BaseComponent {
 		if (this.#isSplitButton) {
 			this.#arrowEl = this.#createArrow();
 			this.#labelEl.after(this.#arrowEl);
+			this.#labelEl.tabIndex = 0;
 			this.#triggerEl = this.#arrowEl;
 		} else {
 			this.#triggerEl = this.#labelEl;
@@ -287,9 +288,7 @@ export default class ButtonDropdown extends BaseComponent {
 	}
 
 	#focusables(): HTMLElement[] {
-		return Array.from(this.#actionsEl.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-			(el) => !el.hasAttribute('disabled') && el.offsetParent !== null,
-		);
+		return Array.from(this.#actionsEl.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
 	}
 
 	#moveFocus(direction: 1 | -1): void {

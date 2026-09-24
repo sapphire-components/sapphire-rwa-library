@@ -1,14 +1,25 @@
-/*!  SapphireRWALibrary PROD v0.6.69 2026-09-23T13:15:39.554Z */
+/*!  SapphireRWALibrary PROD v0.6.70 2026-09-24T17:09:35.957Z */
 a:focus-visible,
 select:focus-visible,
-.btn:focus-visible,
-input[data-checkbox]:focus-visible,
+textarea:focus-visible,
 input[data-input]:focus-visible,
 input[data-switch]:focus-visible,
 .osui-tabs__header-item.osui-tabs--is-active:focus-visible,
 .vscomp-ele-wrapper:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  a:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  input[data-input]:focus-visible,
+  input[data-switch]:focus-visible,
+  .osui-tabs__header-item.osui-tabs--is-active:focus-visible,
+  .vscomp-ele-wrapper:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .is-rtl .svg-icon[data-iconname=caret-double-right],
 .is-rtl .svg-icon[data-iconname=caret-double-left],
@@ -2620,10 +2631,6 @@ div[data-block$=BreadcrumbsItem] {
 .button-group {
   display: inline-flex;
 }
-.button-group .button-group-item:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
-  outline: none;
-}
 .button-group .button-group-item {
   overflow-wrap: normal;
   white-space: nowrap;
@@ -2631,6 +2638,20 @@ div[data-block$=BreadcrumbsItem] {
 }
 .button-group .button-group-item .svg-icon {
   vertical-align: middle;
+}
+.button-group .button-group-item:not(.btn):focus-visible {
+  /* Stroke sits inside the border so a parent with overflow:hidden cannot clip it. */
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
+  outline: none;
+}
+@media (forced-colors: active) {
+  .button-group .button-group-item:not(.btn):focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -3px;
+  }
+}
+.button-group .button-group-item:not(.btn).button-group-item-selected:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-neutral-0), inset 0 0 0 3px var(--color-primary-darker);
 }
 
 .button-group.small .button-group-item {
@@ -2642,6 +2663,20 @@ div[data-block$=BreadcrumbsItem] {
   height: 20px;
   padding-inline: var(--space-s);
 }
+input[data-checkbox]:focus-visible,
+.has-accessible-features input[data-checkbox]:focus-visible {
+  box-shadow: none;
+  outline: 2px solid var(--color-primary-dark);
+  outline-offset: -2px;
+}
+
+input[data-checkbox]:checked:focus-visible,
+input[data-checkbox]:indeterminate:focus-visible,
+.has-accessible-features input[data-checkbox]:checked:focus-visible,
+.has-accessible-features input[data-checkbox]:indeterminate:focus-visible {
+  outline-color: var(--color-neutral-0);
+}
+
 .small[data-checkbox] {
   height: 16px;
   width: 16px;
@@ -2730,8 +2765,14 @@ span:has(> [data-switch]) {
 }
 
 input[data-switch]:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  input[data-switch]:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 input[data-switch] {
   vertical-align: bottom;
@@ -3249,10 +3290,13 @@ input.not-valid + span.validation-message {
 }
 
 .btn {
+  --btn-focus: var(--color-primary-dark);
+  --btn-focus-inner: transparent;
+  --btn-ring: var(--color-border);
   align-items: center;
   border: none;
   border-radius: 4px;
-  box-shadow: inset 0 0 0 1px var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-8);
   display: inline-flex;
   font-size: 14px;
@@ -3266,7 +3310,15 @@ input.not-valid + span.validation-message {
   background-color: var(--color-neutral-1);
 }
 .btn:focus-visible {
-  box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 0 2px #ffffff, 0 0 0 4px #00bfa5;
+  /* Stroke sits inside the border box so a parent with overflow:hidden cannot clip it. */
+  box-shadow: inset 0 0 0 1px var(--btn-ring), inset 0 0 0 3px var(--btn-focus), inset 0 0 0 4px var(--btn-focus-inner);
+  outline: none;
+}
+@media (forced-colors: active) {
+  .btn:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -3px;
+  }
 }
 .btn .svg-icon[data-size] {
   color: var(--color-neutral-8);
@@ -3334,8 +3386,11 @@ input.not-valid + span.validation-message {
   width: 24px;
 }
 .btn-primary {
+  --btn-focus: var(--color-neutral-0);
+  --btn-focus-inner: var(--color-primary-darker);
+  --btn-ring: var(--color-primary);
   background-color: var(--color-primary);
-  box-shadow: inset 0 0 0 1px var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-0);
 }
 .btn-primary:hover {
@@ -3346,17 +3401,22 @@ input.not-valid + span.validation-message {
 }
 
 .btn-tertiary {
+  --btn-ring: transparent;
   background-color: transparent;
-  box-shadow: inset 0 0 0 1px transparent;
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   transition: background-color var(--transition-duration) var(--transition-easing);
 }
 .btn-tertiary:hover {
   background-color: color-mix(in srgb, currentColor 10%, transparent);
 }
+.btn-tertiary:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--btn-focus);
+}
 
 .btn-transparent {
+  --btn-ring: var(--color-border);
   background-color: transparent;
-  box-shadow: inset 0 0 0 1px var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-8);
   transition: background-color var(--transition-duration) var(--transition-easing);
 }
@@ -3365,8 +3425,11 @@ input.not-valid + span.validation-message {
 }
 
 .btn-destructive {
+  --btn-focus: var(--color-neutral-0);
+  --btn-focus-inner: var(--color-red-dark);
+  --btn-ring: var(--color-red);
   background-color: var(--color-red);
-  box-shadow: inset 0 0 0 1px var(--color-red);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-0);
 }
 .btn-destructive:hover {
@@ -3377,8 +3440,10 @@ input.not-valid + span.validation-message {
 }
 
 .btn-destructive-secondary {
+  --btn-focus: var(--color-red);
+  --btn-ring: var(--color-red-light);
   background-color: var(--color-neutral-0);
-  box-shadow: inset 0 0 0 1px var(--color-red-light);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-red);
 }
 .btn-destructive-secondary:hover {
@@ -4074,8 +4139,14 @@ div[data-block$=InputWrapper] {
   transform: translateY(-50%);
 }
 .inputwrapper-clear:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .inputwrapper-clear:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .inputwrapper-clear {
   align-items: center;
@@ -5550,20 +5621,15 @@ div[data-block$=ButtonChoice].buttonchoice,
 }
 div[data-block$=ButtonChoice].buttonchoice-wrapper,
 .buttonchoice-wrapper {
+  --btn-focus: var(--color-primary-dark);
+  --btn-focus-inner: transparent;
+  --btn-ring: var(--color-border);
   transition: background-color var(--transition-duration) var(--transition-easing);
-}
-div[data-block$=ButtonChoice].buttonchoice-wrapper:focus-visible,
-.buttonchoice-wrapper:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
-  outline: none;
-}
-div[data-block$=ButtonChoice].buttonchoice-wrapper,
-.buttonchoice-wrapper {
   align-items: center;
   background-color: var(--color-neutral-0);
   border: none;
   border-radius: 4px;
-  box-shadow: inset 0 0 0 1px var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-8);
   cursor: pointer;
   display: inline-flex;
@@ -5600,10 +5666,28 @@ div[data-block$=ButtonChoice].buttonchoice-content,
 .buttonchoice-content {
   min-width: 0;
 }
+div[data-block$=ButtonChoice].buttonchoice[data-type] .buttonchoice-wrapper:focus-visible, div[data-block$=ButtonChoice].buttonchoice[data-type][data-isselected=true] .buttonchoice-wrapper:focus-visible,
+.buttonchoice[data-type] .buttonchoice-wrapper:focus-visible,
+.buttonchoice[data-type][data-isselected=true] .buttonchoice-wrapper:focus-visible {
+  /* Beats later variant box-shadows so the inset stroke survives selected and alert states. */
+  box-shadow: inset 0 0 0 1px var(--btn-ring), inset 0 0 0 3px var(--btn-focus), inset 0 0 0 4px var(--btn-focus-inner);
+  outline: none;
+}
+@media (forced-colors: active) {
+  div[data-block$=ButtonChoice].buttonchoice[data-type] .buttonchoice-wrapper:focus-visible, div[data-block$=ButtonChoice].buttonchoice[data-type][data-isselected=true] .buttonchoice-wrapper:focus-visible,
+  .buttonchoice[data-type] .buttonchoice-wrapper:focus-visible,
+  .buttonchoice[data-type][data-isselected=true] .buttonchoice-wrapper:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -3px;
+  }
+}
 
 .buttonchoice[data-isselected=true] .buttonchoice-wrapper {
+  --btn-focus: var(--color-neutral-0);
+  --btn-focus-inner: var(--color-primary-darker);
+  --btn-ring: var(--color-primary);
   background-color: var(--color-primary);
-  box-shadow: inset 0 0 0 1px var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-0);
 }
 .buttonchoice[data-isselected=true] .buttonchoice-wrapper:hover {
@@ -5617,8 +5701,11 @@ div[data-block$=ButtonChoice].buttonchoice-content,
   cursor: not-allowed;
 }
 .buttonchoice[data-enabled=false] .buttonchoice-wrapper {
+  --btn-focus: var(--color-primary-dark);
+  --btn-focus-inner: transparent;
+  --btn-ring: var(--color-border);
   background-color: var(--color-background-disabled);
-  box-shadow: inset 0 0 0 1px var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text-disabled);
   pointer-events: none;
 }
@@ -5627,8 +5714,11 @@ div[data-block$=ButtonChoice].buttonchoice-content,
 }
 
 .buttonchoice[data-isvalid=false] .buttonchoice-wrapper {
+  --btn-focus: var(--color-primary-dark);
+  --btn-focus-inner: transparent;
+  --btn-ring: var(--color-error);
   background-color: var(--color-error-light);
-  box-shadow: inset 0 0 0 1px var(--color-error);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text);
 }
 .buttonchoice[data-isvalid=false] .buttonchoice-wrapper:hover {
@@ -5642,58 +5732,77 @@ div[data-block$=ButtonChoice].buttonchoice-content,
   display: none;
 }
 .buttonchoice[data-type=alert-info] .buttonchoice-wrapper {
+  --btn-ring: var(--color-info);
   background-color: var(--color-info-light);
-  box-shadow: inset 0 0 0 1px var(--color-info);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text);
 }
 
 .buttonchoice[data-type=alert-info][data-isselected=true] .buttonchoice-wrapper {
+  --btn-focus: var(--color-neutral-0);
+  --btn-focus-inner: var(--color-info-dark);
+  --btn-ring: var(--color-info);
   background-color: var(--color-info);
-  box-shadow: inset 0 0 0 1px var(--color-info);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-0);
 }
 
 .buttonchoice[data-type=alert-success] .buttonchoice-wrapper {
+  --btn-ring: var(--color-success);
   background-color: var(--color-success-light);
-  box-shadow: inset 0 0 0 1px var(--color-success);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text);
 }
 
 .buttonchoice[data-type=alert-success][data-isselected=true] .buttonchoice-wrapper {
+  --btn-focus: var(--color-neutral-0);
+  --btn-focus-inner: var(--color-success-dark);
+  --btn-ring: var(--color-success);
   background-color: var(--color-success);
-  box-shadow: inset 0 0 0 1px var(--color-success);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-0);
 }
 
 .buttonchoice[data-type=alert-warning] .buttonchoice-wrapper {
+  --btn-ring: var(--color-warning);
   background-color: var(--color-warning-light);
-  box-shadow: inset 0 0 0 1px var(--color-warning);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text);
 }
 
 .buttonchoice[data-type=alert-warning][data-isselected=true] .buttonchoice-wrapper {
+  --btn-focus: var(--color-neutral-0);
+  --btn-focus-inner: var(--color-warning-dark);
+  --btn-ring: var(--color-warning);
   background-color: var(--color-warning);
-  box-shadow: inset 0 0 0 1px var(--color-warning);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-0);
 }
 
 .buttonchoice[data-type=alert-error] .buttonchoice-wrapper {
+  --btn-ring: var(--color-error);
   background-color: var(--color-error-light);
-  box-shadow: inset 0 0 0 1px var(--color-error);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text);
 }
 
 .buttonchoice[data-type=alert-error][data-isselected=true] .buttonchoice-wrapper {
+  --btn-focus: var(--color-neutral-0);
+  --btn-focus-inner: var(--color-error-dark);
+  --btn-ring: var(--color-error);
   background-color: var(--color-error);
-  box-shadow: inset 0 0 0 1px var(--color-error);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-0);
 }
 .buttondropdown[data-isvalid=false] .buttondropdown-label,
 .buttondropdown[data-isvalid=false] .buttondropdown-arrow,
 .buttondropdown[data-isvalid=false] .buttondropdown-label:hover,
 .buttondropdown[data-isvalid=false] .buttondropdown-arrow:hover {
+  --btn-focus: var(--color-primary-dark);
+  --btn-focus-inner: transparent;
+  --btn-ring: var(--color-error);
   background-color: var(--color-error-light) !important;
-  box-shadow: inset 0 0 0 1px var(--color-error);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text);
 }
 .buttondropdown[data-isvalid=false] .svg-icon {
@@ -5705,8 +5814,11 @@ div[data-block$=ButtonChoice].buttonchoice-content,
 }
 .buttondropdown[data-enabled=false] .buttondropdown-label,
 .buttondropdown[data-enabled=false] .buttondropdown-arrow {
+  --btn-focus: var(--color-primary-dark);
+  --btn-focus-inner: transparent;
+  --btn-ring: var(--color-border);
   background-color: var(--color-background-disabled) !important;
-  box-shadow: inset 0 0 0 1px var(--color-border);
+  box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-text-disabled);
   pointer-events: none;
 }
@@ -5739,6 +5851,46 @@ div[data-block$=ButtonChoice].buttonchoice-content,
 }
 .buttondropdown[data-size=small] .btn.btn-icon {
   width: 30px !important;
+}
+
+/* Later and more specific than the split, invalid, and disabled borders. */
+.buttondropdown .buttondropdown-label:focus-visible,
+.buttondropdown .buttondropdown-arrow:focus-visible,
+.buttondropdown[data-issplitbutton=true] .buttondropdown-label:focus-visible,
+.buttondropdown[data-issplitbutton=true] .buttondropdown-arrow:focus-visible,
+.buttondropdown[data-issplitbutton=true] .buttondropdown-label.btn-primary:focus-visible,
+.buttondropdown[data-isvalid=false] .buttondropdown-label:focus-visible,
+.buttondropdown[data-isvalid=false] .buttondropdown-arrow:focus-visible,
+.buttondropdown[data-enabled=false] .buttondropdown-label:focus-visible,
+.buttondropdown[data-enabled=false] .buttondropdown-arrow:focus-visible,
+.buttondropdown[data-issplitbutton=true][data-isvalid=false] .buttondropdown-label:focus-visible,
+.buttondropdown[data-issplitbutton=true][data-isvalid=false] .buttondropdown-label.btn-primary:focus-visible,
+.buttondropdown[data-issplitbutton=true][data-enabled=false] .buttondropdown-label:focus-visible,
+.buttondropdown[data-issplitbutton=true][data-enabled=false] .buttondropdown-label.btn-primary:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--btn-ring, var(--color-border)), inset 0 0 0 3px var(--btn-focus, var(--color-primary-dark)), inset 0 0 0 4px var(--btn-focus-inner, transparent);
+  outline: none;
+}
+@media (forced-colors: active) {
+  .buttondropdown .buttondropdown-label:focus-visible,
+  .buttondropdown .buttondropdown-arrow:focus-visible,
+  .buttondropdown[data-issplitbutton=true] .buttondropdown-label:focus-visible,
+  .buttondropdown[data-issplitbutton=true] .buttondropdown-arrow:focus-visible,
+  .buttondropdown[data-issplitbutton=true] .buttondropdown-label.btn-primary:focus-visible,
+  .buttondropdown[data-isvalid=false] .buttondropdown-label:focus-visible,
+  .buttondropdown[data-isvalid=false] .buttondropdown-arrow:focus-visible,
+  .buttondropdown[data-enabled=false] .buttondropdown-label:focus-visible,
+  .buttondropdown[data-enabled=false] .buttondropdown-arrow:focus-visible,
+  .buttondropdown[data-issplitbutton=true][data-isvalid=false] .buttondropdown-label:focus-visible,
+  .buttondropdown[data-issplitbutton=true][data-isvalid=false] .buttondropdown-label.btn-primary:focus-visible,
+  .buttondropdown[data-issplitbutton=true][data-enabled=false] .buttondropdown-label:focus-visible,
+  .buttondropdown[data-issplitbutton=true][data-enabled=false] .buttondropdown-label.btn-primary:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -3px;
+  }
+}
+
+.buttondropdown:not([data-isvalid=false]):not([data-enabled=false]) :is(.buttondropdown-label, .buttondropdown-arrow).btn-tertiary:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--btn-focus, var(--color-primary-dark));
 }
 div[data-block$=ButtonDropdown] {
   display: inline-flex;
@@ -5835,8 +5987,14 @@ div[data-block$=Chip2] {
   min-width: 0;
 }
 .chip-clear:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .chip-clear:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .chip-clear {
   align-items: center;
@@ -5859,8 +6017,14 @@ div[data-block$=Chip2] {
 }
 
 .chip[data-isselectable=true]:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .chip[data-isselectable=true]:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .chip[data-isselectable=true] {
   cursor: pointer;
@@ -5874,8 +6038,14 @@ div[data-block$=Chip2] {
 }
 
 .chip[data-isclickable=true]:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .chip[data-isclickable=true]:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .chip[data-isclickable=true] {
   cursor: pointer;
@@ -5923,8 +6093,14 @@ div[data-block$=HourPicker] {
   gap: 6px;
 }
 .hourpicker-input:focus-visible, .hourpicker-select:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .hourpicker-input:focus-visible, .hourpicker-select:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .hourpicker-input, .hourpicker-select {
   appearance: auto;
@@ -6003,8 +6179,14 @@ div[data-block$=HourPicker] {
   transition: background-color var(--transition-duration) var(--transition-easing);
 }
 .weekdaypicker-day:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .weekdaypicker-day:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .weekdaypicker-day {
   align-items: center;
@@ -6102,8 +6284,14 @@ div[data-block$=AlertBar] {
   display: none;
 }
 .alertbar-close:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .alertbar-close:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .alertbar-close {
   align-items: center;
@@ -6651,8 +6839,14 @@ div[data-block$=SapphireDropdown] {
   width: 100%;
 }
 .sapphiredropdown-trigger:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphiredropdown-trigger:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphiredropdown-trigger {
   align-items: center;
@@ -6706,8 +6900,14 @@ div[data-block$=SapphireDropdown] {
   color: var(--color-neutral-6);
 }
 .sapphiredropdown-clear:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphiredropdown-clear:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphiredropdown-clear {
   align-items: center;
@@ -6766,8 +6966,14 @@ div[data-block$=SapphireDropdown] {
   flex: 0 0 auto;
 }
 .sapphiredropdown-search-input:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphiredropdown-search-input:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphiredropdown-search-input {
   background: transparent;
@@ -6783,8 +6989,14 @@ div[data-block$=SapphireDropdown] {
   color: var(--color-neutral-6);
 }
 .sapphiredropdown-search-clear:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphiredropdown-search-clear:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphiredropdown-search-clear {
   align-items: center;
@@ -7468,8 +7680,14 @@ div[data-block$=SapphireInput] {
   gap: 4px;
 }
 .sapphireinput-minus:focus-visible, .sapphireinput-plus:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphireinput-minus:focus-visible, .sapphireinput-plus:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphireinput-minus, .sapphireinput-plus {
   cursor: pointer;
@@ -7498,8 +7716,14 @@ div[data-block$=SapphireInput] {
   width: 20px;
 }
 .sapphireinput-clear:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphireinput-clear:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphireinput-clear {
   cursor: pointer;
@@ -7743,8 +7967,14 @@ div[data-block$=DropdownMenu] {
   user-select: none;
 }
 .dropdownmenu-header:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .dropdownmenu-header:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .dropdownmenu-header {
   align-items: flex-start;
@@ -7777,8 +8007,14 @@ div[data-block$=DropdownMenu] {
   display: none;
 }
 .dropdownmenu-items a:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .dropdownmenu-items a:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .dropdownmenu-items a {
   color: var(--color-neutral-9);
@@ -7868,8 +8104,14 @@ div[data-block$=TabContent] {
   display: contents;
 }
 .sapphire-tabs-header-button:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphire-tabs-header-button:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphire-tabs-header-button {
   align-items: center;
@@ -7923,8 +8165,14 @@ div[data-block$=TabContent] {
 }
 
 .sapphire-tabheader:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .sapphire-tabheader:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .sapphire-tabheader {
   width: fit-content;
@@ -8022,8 +8270,14 @@ body.actionpopup-locked {
 }
 
 .actionpopup-dialog:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .actionpopup-dialog:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .actionpopup-dialog {
   background-color: var(--color-neutral-0);
@@ -8175,8 +8429,14 @@ div[data-block$=Overlay] {
   display: inline-flex;
 }
 .overlay-trigger:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .overlay-trigger:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .overlay-trigger:empty {
   display: none;
@@ -8225,6 +8485,18 @@ a.overlay-item:hover {
   background-color: var(--color-neutral-3);
   color: var(--color-neutral-9);
   text-decoration: none;
+}
+.overlay-item:focus-visible,
+a.overlay-item:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
+  outline: none;
+}
+@media (forced-colors: active) {
+  .overlay-item:focus-visible,
+  a.overlay-item:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .overlay-item.sapphire-tabheader,
 a.overlay-item.sapphire-tabheader {
@@ -8498,8 +8770,14 @@ div[data-block$=ColorPicker] {
   display: none;
 }
 .colorpicker-trigger:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .colorpicker-trigger:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .colorpicker-trigger {
   background-color: var(--color-neutral-0);
@@ -8551,8 +8829,14 @@ div[data-block$=ColorPicker] {
 }
 
 .colorpicker-sv:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .colorpicker-sv:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .colorpicker-sv {
   background: linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, var(--colorpicker-hue, #ff0000));
@@ -8578,8 +8862,14 @@ div[data-block$=ColorPicker] {
 }
 
 .colorpicker-hue:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .colorpicker-hue:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .colorpicker-hue {
   background: linear-gradient(to bottom, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
@@ -8628,8 +8918,14 @@ div[data-block$=ColorPicker] {
 }
 
 .colorpicker-input:focus {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--focus-ring-outer);
+  box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
+}
+@media (forced-colors: active) {
+  .colorpicker-input:focus {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 .colorpicker-input {
   background-color: var(--color-neutral-0);
