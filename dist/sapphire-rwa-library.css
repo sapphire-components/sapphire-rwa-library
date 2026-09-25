@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.70 2026-09-24T17:09:35.957Z */
+/*!  SapphireRWALibrary PROD v0.6.71 2026-09-25T14:33:29.933Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -7842,25 +7842,25 @@ div[data-block$=SapphireInput] {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
-div[data-block$=ResponsiveGrid] {
+div[data-block$=ResponsiveContainers] {
   display: contents;
 }
 
-.responsive-grid {
+.responsive-containers--grid {
   display: grid;
-  gap: var(--responsive-grid-gap);
-  grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-min-col-width), 1fr));
+  gap: var(--responsive-containers-gap);
+  grid-template-columns: repeat(auto-fit, minmax(var(--responsive-containers-min-col-width), 1fr));
 }
-.responsive-grid > div {
-  display: contents;
+.responsive-containers--masonry {
+  column-gap: var(--responsive-containers-gap);
+  columns: var(--responsive-containers-min-col-width);
 }
-
-.responsive-grid-item {
-  max-width: var(--responsive-grid-max-col-width, unset);
-  min-width: 0;
-}
-.responsive-grid-item > div > .card-basic {
-  height: 100%;
+.responsive-containers--masonry .responsive-container-item {
+  break-inside: avoid;
+  display: inline-block;
+  margin-bottom: var(--responsive-containers-gap);
+  vertical-align: top;
+  width: 100%;
 }
 div[data-block$=ScrollableContent] {
   display: contents;

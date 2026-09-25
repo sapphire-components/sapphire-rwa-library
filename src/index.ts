@@ -1,3 +1,4 @@
+import '@core/favicon';
 import '@core/init-bootstrap';
 
 import { installBodyPlatformClassStripper } from '@core/stripBodyPlatformClasses';
@@ -15,7 +16,7 @@ import LabelValue from '@helpers/labelvalue';
 import TableWrapper from '@helpers/tablewrapper';
 
 import PopupContent from '@/07-custom-components/overlay/popupcontent';
-import ResponsiveGrid from '@/07-custom-components/layout/responsive-grid';
+import ResponsiveContainers from '@/07-custom-components/layout/responsive-containers';
 import ScrollableContent from '@/07-custom-components/layout/scrollablecontent';
 
 import ActionPopup from '@/07-custom-components/overlay/actionpopup';
@@ -82,7 +83,7 @@ const SapphireRWALibrary = {
 	Overlay,
 	PopupContent,
 	PrintDocument,
-	ResponsiveGrid,
+	ResponsiveContainers,
 	SapphireDropdown,
 	SapphireInput,
 	ScrollableContent,

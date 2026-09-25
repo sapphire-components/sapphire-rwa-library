@@ -1,0 +1,24 @@
+div[data-block$='ResponsiveContainers'] {
+	display: contents;
+}
+
+.responsive-containers {
+	&--grid {
+		display: grid;
+		gap: var(--responsive-containers-gap);
+		grid-template-columns: repeat(auto-fit, minmax(var(--responsive-containers-min-col-width), 1fr));
+	}
+
+	&--masonry {
+		column-gap: var(--responsive-containers-gap);
+		columns: var(--responsive-containers-min-col-width);
+
+		.responsive-container-item {
+			break-inside: avoid;
+			display: inline-block;
+			margin-bottom: var(--responsive-containers-gap);
+			vertical-align: top;
+			width: 100%;
+		}
+	}
+}
