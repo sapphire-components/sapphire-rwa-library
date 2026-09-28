@@ -81,6 +81,7 @@ div[data-block$='PopupContent'] {
 	}
 }
 
-.popup-content-footer:not(:has(> :not(:empty))) {
-	// display: none;
+.popup-content-footer:has(> .popup-content-footer-left:empty):has(> .popup-content-footer-center:empty):has(> .popup-content-footer-right:empty) {
+	margin-top: 0;
+	padding-top: 0;
 }

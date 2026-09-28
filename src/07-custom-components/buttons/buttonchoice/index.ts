@@ -8,12 +8,13 @@ export interface IButtonChoice extends BaseComponentInit {
 		OnChange: (isSelected: boolean) => void;
 	};
 	allowMultiple: boolean;
+	allowUnselect: boolean;
 	enabled: boolean;
 	groupName: string;
 	isSelected: boolean;
 	isValid: boolean;
-	validationMessage: string;
 	type: AlertType | '' | null;
+	validationMessage: string;
 }
 
 const ICON_MULTIPLE = 'square';
@@ -26,6 +27,7 @@ const instances = new Set<ButtonChoice>();
 export default class ButtonChoice extends BaseComponent {
 	#actions!: IButtonChoice['actions'];
 	#allowMultiple = false;
+	#allowUnselect = true;
 	#enabled = true;
 	#groupName = '';
 	#iconEl: HTMLElement | null = null;
@@ -146,6 +148,9 @@ export default class ButtonChoice extends BaseComponent {
 		if (payload.allowMultiple !== undefined) {
 			this.#allowMultiple = Boolean(payload.allowMultiple);
 		}
+		if (payload.allowUnselect !== undefined) {
+			this.#allowUnselect = Boolean(payload.allowUnselect);
+		}
 		if (payload.enabled !== undefined) {
 			this.#enabled = Boolean(payload.enabled);
 		}
@@ -172,6 +177,7 @@ export default class ButtonChoice extends BaseComponent {
 	}
 
 	private toggle(): void {
+		if (this.#isSelected && !this.#allowMultiple && !this.#allowUnselect) return;
 		this.setSelected(!this.#isSelected);
 	}
 
@@ -216,6 +222,7 @@ export default class ButtonChoice extends BaseComponent {
 		this.widgetEl.dataset.isselected = this.#isSelected ? 'true' : 'false';
 		this.widgetEl.dataset.enabled = this.#enabled ? 'true' : 'false';
 		this.widgetEl.dataset.allowmultiple = this.#allowMultiple ? 'true' : 'false';
+		this.widgetEl.dataset.allowunselect = this.#allowUnselect ? 'true' : 'false';
 		this.widgetEl.dataset.groupname = this.#groupName;
 		this.widgetEl.dataset.isvalid = this.#isValid ? 'true' : 'false';
 		this.widgetEl.dataset.type = this.#type;

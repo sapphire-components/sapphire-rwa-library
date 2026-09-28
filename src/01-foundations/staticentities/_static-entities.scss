@@ -3,6 +3,7 @@
 	border: solid 1px var(--color-border);
 	border-radius: 8px;
 	box-shadow: var(--box-shadow-md);
+	font-size: 14px;
 	padding: 16px;
 	h6 {
 		margin-bottom: 8px;
@@ -10,7 +11,7 @@
 	table {
 		th,
 		td {
-			padding-inline: 24px;
+			padding-inline: 16px;
 			text-align: start;
 			&:first-child {
 				padding-inline-start: 0;
