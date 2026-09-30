@@ -1,9 +1,18 @@
 .button-group {
 	display: inline-flex;
+
+	> div {
+		flex-wrap: wrap;
+	}
+
 	.button-group-item {
+		flex: 0 0 auto;
 		overflow-wrap: normal;
 		white-space: nowrap;
 		word-break: normal;
+		[data-expression] {
+			white-space: unset;
+		}
 		.svg-icon {
 			vertical-align: middle;
 		}

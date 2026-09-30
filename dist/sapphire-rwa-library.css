@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.72 2026-09-28T13:28:55.808Z */
+/*!  SapphireRWALibrary PROD v0.6.73 2026-09-30T07:53:59.542Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1093,7 +1093,7 @@ body.is-rtl .ThemeGrid_MarginGutter {
   margin-inline-start: 0;
 }
 
-.list.list-group {
+.list.list-group[data-virtualization-disabled] {
   overflow: unset;
 }
 
@@ -2632,10 +2632,17 @@ div[data-block$=BreadcrumbsItem] {
 .button-group {
   display: inline-flex;
 }
+.button-group > div {
+  flex-wrap: wrap;
+}
 .button-group .button-group-item {
+  flex: 0 0 auto;
   overflow-wrap: normal;
   white-space: nowrap;
   word-break: normal;
+}
+.button-group .button-group-item [data-expression] {
+  white-space: unset;
 }
 .button-group .button-group-item .svg-icon {
   vertical-align: middle;

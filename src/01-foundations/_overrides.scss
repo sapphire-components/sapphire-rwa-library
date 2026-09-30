@@ -41,7 +41,7 @@ body.is-rtl .ThemeGrid_MarginGutter {
 	}
 }
 
-.list.list-group {
+.list.list-group[data-virtualization-disabled] {
 	overflow: unset;
 }
 
