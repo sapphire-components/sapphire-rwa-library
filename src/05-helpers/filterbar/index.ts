@@ -8,6 +8,7 @@ interface FilterBarInit extends BaseComponentInit {
 export default class FilterBar extends BaseComponent {
 	private lastWidgetRect?: { top: number; width: number; height: number };
 	private placeholderEl!: HTMLDivElement;
+	private widgetDivObserver?: MutationObserver;
 	private wrapperEl!: HTMLDivElement;
 
 	constructor(init: FilterBarInit) {
@@ -22,8 +23,25 @@ export default class FilterBar extends BaseComponent {
 
 		this.createPlaceholder();
 		this.setWidgetRect();
+		this.observeWidgetDivs();
 
 		this.observeLayoutResize(this.handleLayoutResize);
+	}
+
+	private observeWidgetDivs(): void {
+		this.widgetDivObserver = new MutationObserver((mutations) => {
+			const divChanged = mutations.some((mutation) =>
+				[...mutation.addedNodes, ...mutation.removedNodes].some((node) => node instanceof HTMLDivElement),
+			);
+			if (divChanged) {
+				this.setWidgetRect();
+			}
+		});
+
+		this.widgetDivObserver.observe(this.widgetEl, {
+			childList: true,
+			subtree: true,
+		});
 	}
 
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
@@ -56,6 +74,8 @@ export default class FilterBar extends BaseComponent {
 	}
 
 	destroy(): void {
+		this.widgetDivObserver?.disconnect();
+		this.widgetDivObserver = undefined;
 		super.destroy();
 		this.placeholderEl.remove();
 	}

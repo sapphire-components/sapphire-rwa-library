@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.73 2026-09-30T07:53:59.542Z */
+/*!  SapphireRWALibrary PROD v0.6.74 2026-09-30T15:33:48.795Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -3340,6 +3340,14 @@ input.not-valid + span.validation-message {
 .btn span.btn-animation {
   display: none;
 }
+.btn:is(:disabled, [disabled]), .btn:is(:disabled, [disabled]):is(:hover, :focus, :focus-visible, :active) {
+  background-color: var(--color-background-disabled);
+  box-shadow: inset 0 0 0 1px var(--color-text-disabled);
+  color: var(--color-text-disabled);
+}
+.btn:is(:disabled, [disabled]) .svg-icon[data-size], .btn:is(:disabled, [disabled]):is(:hover, :focus, :focus-visible, :active) .svg-icon[data-size] {
+  color: var(--color-text-disabled);
+}
 .btn-sharp {
   border-radius: 0;
 }
@@ -4720,13 +4728,12 @@ div[data-block$=LabelValue] {
 
 .tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-panel {
   align-items: center;
-  background-color: var(--color-neutral-0);
+  background-color: transparent;
   display: flex;
   justify-content: flex-end;
   padding-bottom: var(--space-s);
   position: sticky;
   top: 0;
-  z-index: 3;
 }
 .tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-stashed {
   display: none !important;
@@ -4735,9 +4742,9 @@ div[data-block$=LabelValue] {
   align-items: center;
   color: var(--color-neutral-9);
   display: inline-flex;
-  font-size: 11px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
-  font-weight: 900;
+  font-weight: 600;
   gap: var(--space-xxs);
   line-height: 1;
   margin: 0;
@@ -10591,6 +10598,17 @@ div[data-block$=PrintDocument] {
 
 .margin-left-xxxxl {
   margin-left: 100px !important;
+}
+.text-decoration-line-through {
+  text-decoration: line-through;
+}
+
+.text-decoration-underline {
+  text-decoration: underline;
+}
+
+.text-decoration-none {
+  text-decoration: none;
 }
 .validation-message {
   align-items: center;

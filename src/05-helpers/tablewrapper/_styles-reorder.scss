@@ -27,13 +27,12 @@
 .tablewrapper[data-reorderablerows='true'][data-reorderondrop='false'] {
 	.tablewrapper-reorder-panel {
 		align-items: center;
-		background-color: var(--color-neutral-0);
+		background-color: transparent;
 		display: flex;
 		justify-content: flex-end;
 		padding-bottom: var(--space-s);
 		position: sticky;
 		top: 0;
-		z-index: 3;
 	}
 
 	.tablewrapper-reorder-stashed {
@@ -44,9 +43,9 @@
 		align-items: center;
 		color: var(--color-neutral-9);
 		display: inline-flex;
-		font-size: 11px;
+		font-size: 14px;
 		font-variant-numeric: tabular-nums;
-		font-weight: 900;
+		font-weight: 600;
 		gap: var(--space-xxs);
 		line-height: 1;
 		margin: 0;
