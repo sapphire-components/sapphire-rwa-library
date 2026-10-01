@@ -1,7 +1,7 @@
 {
 	"name": "sapphire-rwa-library",
 	"private": true,
-	"version": "0.6.74",
+	"version": "0.6.75",
 	"type": "module",
 	"scripts": {
 		"dev": "vite build --mode dev && vite build --mode dev --config vite.icons.config.js && vite build --mode dev --config vite.flags.config.js && vite build --mode dev --config vite.ckeditor.config.js && vite build --mode dev --config vite.texteditor.config.js && concurrently \"npm run serve:dist\" \"npm run build:watch\"",
@@ -15,21 +15,21 @@
 		"release:major": "release-it major --ci --config .release-it.json"
 	},
 	"dependencies": {
-		"ckeditor5": "^48.5.1",
-		"concurrently": "^10.0.4",
-		"dompurify": "^3.4.12",
-		"esbuild": "^0.28.1",
-		"marked": "^18.0.7",
-		"prettier": "^3.9.6",
+		"ckeditor5": "^48.5.2",
+		"concurrently": "^10.0.5",
+		"dompurify": "^3.4.16",
+		"esbuild": "^0.28.2",
+		"marked": "^18.0.14",
+		"prettier": "^3.9.9",
 		"quill": "^2.0.3",
 		"quill-table-better": "^1.2.3",
-		"release-it": "^21.0.0",
-		"sass": "^1.102.0",
-		"source-map-js": "^1.2.1",
-		"stylelint": "^17.14.1",
+		"release-it": "^21.1.0",
+		"sass": "^1.105.1",
+		"source-map-js": "^1.2.2",
+		"stylelint": "^17.15.0",
 		"stylelint-order": "^8.1.1",
 		"typescript": "^7.0.2",
-		"vite": "^8.1.5",
+		"vite": "^8.3.1",
 		"vite-plugin-mkcert": "^2.1.0"
 	}
 }

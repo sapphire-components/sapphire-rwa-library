@@ -1,0 +1,13 @@
+.sidepanel[data-padding='base'] {
+	.scrollablecontent-header,
+	.scrollablecontent-body,
+	.scrollablecontent-footer {
+		padding: var(--space-base);
+	}
+}
+
+.sidepanel[data-padding='base'] {
+	.scrollablecontent-body {
+		padding-inline-end: calc(var(--space-base) - 8px);
+	}
+}

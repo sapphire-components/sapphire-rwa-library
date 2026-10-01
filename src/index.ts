@@ -15,10 +15,6 @@ import InputWrapper from '@helpers/inputwrapper';
 import LabelValue from '@helpers/labelvalue';
 import TableWrapper from '@helpers/tablewrapper';
 
-import PopupContent from '@/07-custom-components/overlay/popupcontent';
-import ResponsiveContainers from '@/07-custom-components/layout/responsive-containers';
-import ScrollableContent from '@/07-custom-components/layout/scrollablecontent';
-
 import ActionPopup from '@/07-custom-components/overlay/actionpopup';
 import AlertBar from '@/07-custom-components/feedback/alertbar';
 import ButtonChoice from '@/07-custom-components/buttons/buttonchoice';
@@ -30,8 +26,12 @@ import DropdownMenu from '@/07-custom-components/navigation/dropdownmenu';
 import HourPicker from '@/07-custom-components/datetime/hourpicker';
 import MasterDetail from '@custom-components/masterdetail';
 import Overlay from '@/07-custom-components/overlay/overlay';
+import PopupContent from '@/07-custom-components/overlay/popupcontent';
+import ResponsiveContainers from '@/07-custom-components/layout/responsive-containers';
 import SapphireDropdown from '@/07-custom-components/inputcontrols/sapphiredropdown';
 import SapphireInput from '@/07-custom-components/inputcontrols/sapphireinput';
+import ScrollableContent from '@/07-custom-components/layout/scrollablecontent';
+import SidePanel from '@/07-custom-components/overlay/sidepanel';
 import Skeleton from '@/07-custom-components/feedback/skeleton';
 import Status from '@/07-custom-components/feedback/status';
 import Toast from '@/07-custom-components/feedback/toast';
@@ -87,6 +87,7 @@ const SapphireRWALibrary = {
 	SapphireDropdown,
 	SapphireInput,
 	ScrollableContent,
+	SidePanel,
 	Skeleton,
 	Status,
 	TabContent,

@@ -1,0 +1,83 @@
+div[data-block$='SidePanel'] {
+	display: contents;
+}
+
+.sidepanel {
+	background-color: var(--color-neutral-0);
+	bottom: 0;
+	box-shadow: var(--box-shadow-xl);
+	color: var(--color-text);
+	display: none;
+	flex-direction: column;
+	left: auto;
+	max-width: 100%;
+	overflow: hidden;
+	position: fixed;
+	right: 0;
+	top: 0;
+	width: 400px;
+	z-index: 401;
+
+	&:focus,
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+.sidepanel[data-open='true'] {
+	animation: sidepanel-enter 200ms ease;
+	display: flex;
+}
+
+html[dir='rtl'] .sidepanel {
+	left: 0;
+	right: auto;
+}
+
+.sidepanel-body {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: auto;
+}
+
+.sidepanel-close {
+	inset-block-start: var(--space-s);
+	inset-inline-end: var(--space-s);
+	min-height: 0;
+	position: absolute;
+	z-index: 1;
+
+	// `.btn` sets `display: inline-flex`, which outranks the UA `[hidden]` rule.
+	&[hidden] {
+		display: none;
+	}
+}
+
+html[dir='rtl'] .sidepanel-close {
+	left: var(--space-s);
+	right: auto;
+}
+
+.sidepanel-backdrop {
+	background-color: rgba(0, 0, 0, 0.25);
+	display: none;
+	inset: 0;
+	position: fixed;
+	z-index: 400;
+}
+
+.sidepanel-backdrop[data-open='true'] {
+	display: block;
+}
+
+.sidepanel-backdrop[data-closeonesc='true'] {
+	cursor: pointer;
+}
+
+body.sidepanel-locked {
+	overflow: hidden;
+}
+
+.sidepanel-body .scrollablecontent {
+	height: 100%;
+}

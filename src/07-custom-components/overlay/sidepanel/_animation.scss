@@ -1,0 +1,29 @@
+@keyframes sidepanel-enter {
+	from {
+		transform: translateX(100%);
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes sidepanel-enter-rtl {
+	from {
+		transform: translateX(-100%);
+	}
+
+	to {
+		transform: translateX(0);
+	}
+}
+
+html[dir='rtl'] .sidepanel[data-open='true'] {
+	animation-name: sidepanel-enter-rtl;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidepanel[data-open='true'] {
+		animation: none;
+	}
+}
