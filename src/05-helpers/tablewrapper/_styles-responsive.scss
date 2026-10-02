@@ -1,0 +1,23 @@
+@container (max-width: 900px) {
+	.tablewrapper[data-columnfixedwidths] {
+		tr {
+			border-bottom: solid 1px var(--color-border);
+			display: flex;
+			flex-direction: column;
+		}
+
+		thead,
+		.table .table-header.table-header-clone {
+			display: none;
+		}
+
+		td {
+			border: none !important;
+			display: block;
+			height: unset !important;
+			max-width: unset !important;
+			min-width: unset !important;
+			width: 100% !important;
+		}
+	}
+}

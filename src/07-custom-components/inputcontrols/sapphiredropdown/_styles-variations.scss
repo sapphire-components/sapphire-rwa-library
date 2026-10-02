@@ -17,11 +17,14 @@
 
 .sapphiredropdown[data-enabled='false'] {
 	cursor: not-allowed;
+
 	.sapphiredropdown-trigger {
 		background-color: var(--color-background-disabled);
 		color: var(--color-text-disabled);
 		pointer-events: none;
 	}
+
+	.sapphiredropdown-clear,
 	.sapphiredropdown-chevron {
 		color: var(--color-text-disabled);
 	}

@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.75 2026-10-01T12:41:38.307Z */
+/*!  SapphireRWALibrary PROD v0.6.76 2026-10-02T14:42:23.206Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -2648,7 +2648,6 @@ div[data-block$=BreadcrumbsItem] {
   vertical-align: middle;
 }
 .button-group .button-group-item:not(.btn):focus-visible {
-  /* Stroke sits inside the border so a parent with overflow:hidden cannot clip it. */
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
 }
@@ -2660,6 +2659,15 @@ div[data-block$=BreadcrumbsItem] {
 }
 .button-group .button-group-item:not(.btn).button-group-item-selected:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-neutral-0), inset 0 0 0 3px var(--color-primary-darker);
+}
+.button-group .button-group-item:is(:disabled, [disabled]), .button-group .button-group-item:is(:disabled, [disabled]):is(:hover, :focus, :focus-visible, :active), .button-group .button-group-item.button-group-item-selected:is(:disabled, [disabled]), .button-group .button-group-item.button-group-item-selected:is(:disabled, [disabled]):is(:hover, :focus, :focus-visible, :active) {
+  background-color: var(--color-background-disabled);
+  box-shadow: inset 0 0 0 1px var(--color-text-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+.button-group .button-group-item:is(:disabled, [disabled]) .svg-icon, .button-group .button-group-item:is(:disabled, [disabled]):is(:hover, :focus, :focus-visible, :active) .svg-icon, .button-group .button-group-item.button-group-item-selected:is(:disabled, [disabled]) .svg-icon, .button-group .button-group-item.button-group-item-selected:is(:disabled, [disabled]):is(:hover, :focus, :focus-visible, :active) .svg-icon {
+  color: var(--color-text-disabled);
 }
 
 .button-group.small .button-group-item {
@@ -2683,6 +2691,24 @@ input[data-checkbox]:indeterminate:focus-visible,
 .has-accessible-features input[data-checkbox]:checked:focus-visible,
 .has-accessible-features input[data-checkbox]:indeterminate:focus-visible {
   outline-color: var(--color-neutral-0);
+}
+
+input[data-checkbox]:is(:disabled, [disabled]),
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]) {
+  cursor: not-allowed;
+}
+input[data-checkbox]:is(:disabled, [disabled]):before, input[data-checkbox]:is(:disabled, [disabled]):hover:before, input[data-checkbox]:is(:disabled, [disabled]):checked:before, input[data-checkbox]:is(:disabled, [disabled]):indeterminate:before,
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]):before,
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]):hover:before,
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]):checked:before,
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]):indeterminate:before {
+  background-color: var(--color-background-disabled);
+  border-color: var(--color-text-disabled);
+}
+input[data-checkbox]:is(:disabled, [disabled]):checked:after, input[data-checkbox]:is(:disabled, [disabled]):indeterminate:after,
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]):checked:after,
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]):indeterminate:after {
+  border-color: var(--color-text-disabled);
 }
 
 .small[data-checkbox] {
@@ -2729,6 +2755,12 @@ input[data-checkbox]:indeterminate:focus-visible,
   font-size: var(--font-size-xs);
   height: 22px;
   padding: var(--space-none) var(--space-s);
+}
+
+.form-control[data-input][disabled],
+.form-control[data-textarea][disabled] {
+  background-color: var(--color-background-disabled);
+  color: var(--color-text-disabled);
 }
 .list-updating {
   margin: 0;
@@ -4779,6 +4811,25 @@ div[data-block$=LabelValue] {
   border-radius: 2px;
   box-shadow: inset 0 0 0 1px var(--color-primary);
 }
+@container (max-width: 900px) {
+  .tablewrapper[data-columnfixedwidths] tr {
+    border-bottom: solid 1px var(--color-border);
+    display: flex;
+    flex-direction: column;
+  }
+  .tablewrapper[data-columnfixedwidths] thead,
+  .tablewrapper[data-columnfixedwidths] .table .table-header.table-header-clone {
+    display: none;
+  }
+  .tablewrapper[data-columnfixedwidths] td {
+    border: none !important;
+    display: block;
+    height: unset !important;
+    max-width: unset !important;
+    min-width: unset !important;
+    width: 100% !important;
+  }
+}
 div[data-widthcomponent=auto] {
   width: fit-content;
 }
@@ -5545,6 +5596,7 @@ div[data-widthcomponent=auto] {
 }
 
 .tablewrapper {
+  container-type: inline-size;
   max-height: var(--tablewrapper-max-height);
   overflow-x: auto;
   position: relative;
@@ -5712,20 +5764,20 @@ div[data-block$=ButtonChoice].buttonchoice[data-type] .buttonchoice-wrapper:focu
   color: var(--color-neutral-0);
 }
 
-.buttonchoice[data-enabled=false] {
+.buttonchoice[data-enabled=false][data-type] {
   cursor: not-allowed;
 }
-.buttonchoice[data-enabled=false] .buttonchoice-wrapper {
-  --btn-focus: var(--color-primary-dark);
-  --btn-focus-inner: transparent;
-  --btn-ring: var(--color-border);
-  background-color: var(--color-background-disabled);
-  box-shadow: inset 0 0 0 1px var(--btn-ring);
-  color: var(--color-text-disabled);
-  pointer-events: none;
+.buttonchoice[data-enabled=false][data-type] .buttonchoice-wrapper {
+  --btn-focus: var(--color-primary-dark) !important;
+  --btn-focus-inner: transparent !important;
+  --btn-ring: var(--color-border) !important;
+  background-color: var(--color-background-disabled) !important;
+  box-shadow: inset 0 0 0 1px var(--btn-ring) !important;
+  color: var(--color-text-disabled) !important;
+  pointer-events: none !important;
 }
-.buttonchoice[data-enabled=false] .buttonchoice-wrapper .svg-icon[data-size] {
-  color: var(--color-text-disabled);
+.buttonchoice[data-enabled=false][data-type] .buttonchoice-wrapper .svg-icon[data-size] {
+  color: var(--color-text-disabled) !important;
 }
 
 .buttonchoice[data-isvalid=false] .buttonchoice-wrapper {
@@ -6027,46 +6079,55 @@ div[data-block$=Chip2] {
   color: var(--color-neutral-9);
 }
 .chip-clear:disabled {
-  color: var(--color-neutral-5);
+  color: var(--color-text-disabled);
   cursor: not-allowed;
 }
 
-.chip[data-isselectable=true]:focus-visible {
+.chip[data-isselectable=true]:not([data-enabled=false]):focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
 }
 @media (forced-colors: active) {
-  .chip[data-isselectable=true]:focus-visible {
+  .chip[data-isselectable=true]:not([data-enabled=false]):focus-visible {
     outline: 2px solid CanvasText;
     outline-offset: -2px;
   }
 }
-.chip[data-isselectable=true] {
+.chip[data-isselectable=true]:not([data-enabled=false]) {
   cursor: pointer;
 }
-.chip[data-isselectable=true]:hover {
+.chip[data-isselectable=true]:not([data-enabled=false]):hover {
   background-color: var(--color-neutral-1);
 }
 
-.chip[data-isselected=true] {
+.chip[data-isselected=true]:not([data-enabled=false]) {
   background-color: var(--color-neutral-3) !important;
 }
 
-.chip[data-isclickable=true]:focus-visible {
+.chip[data-isclickable=true]:not([data-enabled=false]):focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
 }
 @media (forced-colors: active) {
-  .chip[data-isclickable=true]:focus-visible {
+  .chip[data-isclickable=true]:not([data-enabled=false]):focus-visible {
     outline: 2px solid CanvasText;
     outline-offset: -2px;
   }
 }
-.chip[data-isclickable=true] {
+.chip[data-isclickable=true]:not([data-enabled=false]) {
   cursor: pointer;
 }
-.chip[data-isclickable=true]:hover {
+.chip[data-isclickable=true]:not([data-enabled=false]):hover {
   background-color: var(--color-neutral-1);
+}
+
+.chip[data-enabled=false] {
+  background-color: var(--color-background-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+.chip[data-enabled=false] .svg-icon {
+  color: var(--color-text-disabled);
 }
 
 .chip[data-hasclear=true] .chip-clear {
@@ -6840,6 +6901,7 @@ div[data-block$=Status] {
   color: var(--color-text-disabled);
   pointer-events: none;
 }
+.sapphiredropdown[data-enabled=false] .sapphiredropdown-clear,
 .sapphiredropdown[data-enabled=false] .sapphiredropdown-chevron {
   color: var(--color-text-disabled);
 }
@@ -6912,7 +6974,7 @@ div[data-block$=SapphireDropdown] {
   white-space: nowrap;
 }
 .sapphiredropdown-value[data-placeholder=true] {
-  color: var(--color-neutral-6);
+  color: var(--color-text-disabled);
 }
 .sapphiredropdown-clear:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);
@@ -7169,17 +7231,17 @@ div[data-block$=SapphireDropdown] {
 .sapphiredropdown-loading[hidden] {
   display: none;
 }
-.sapphireinput[data-enabled=false] {
+.sapphireinput[data-enabled=false][data-theme] {
   cursor: not-allowed;
 }
-.sapphireinput[data-enabled=false] .sapphireinput-minus,
-.sapphireinput[data-enabled=false] .sapphireinput-plus,
-.sapphireinput[data-enabled=false] .sapphireinput-icon,
-.sapphireinput[data-enabled=false] .sapphireinput-clear {
+.sapphireinput[data-enabled=false][data-theme] .sapphireinput-minus,
+.sapphireinput[data-enabled=false][data-theme] .sapphireinput-plus,
+.sapphireinput[data-enabled=false][data-theme] .sapphireinput-icon,
+.sapphireinput[data-enabled=false][data-theme] .sapphireinput-clear {
   color: var(--color-text-disabled);
   pointer-events: none;
 }
-.sapphireinput[data-enabled=false] .form-control[data-input] {
+.sapphireinput[data-enabled=false][data-theme] .form-control[data-input] {
   background-color: var(--color-background-disabled);
   color: var(--color-text-disabled);
   pointer-events: none;

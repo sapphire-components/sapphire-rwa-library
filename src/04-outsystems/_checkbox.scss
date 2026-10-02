@@ -12,6 +12,24 @@ input[data-checkbox]:indeterminate:focus-visible,
 	outline-color: var(--color-neutral-0);
 }
 
+input[data-checkbox]:is(:disabled, [disabled]),
+.has-accessible-features input[data-checkbox]:is(:disabled, [disabled]) {
+	cursor: not-allowed;
+
+	&:before,
+	&:hover:before,
+	&:checked:before,
+	&:indeterminate:before {
+		background-color: var(--color-background-disabled);
+		border-color: var(--color-text-disabled);
+	}
+
+	&:checked:after,
+	&:indeterminate:after {
+		border-color: var(--color-text-disabled);
+	}
+}
+
 .small[data-checkbox] {
 	height: 16px;
 	width: 16px;

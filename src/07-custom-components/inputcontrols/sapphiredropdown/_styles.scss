@@ -58,7 +58,7 @@ div[data-block$='SapphireDropdown'] {
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		&[data-placeholder='true'] {
-			color: var(--color-neutral-6);
+			color: var(--color-text-disabled);
 		}
 	}
 	&-clear {

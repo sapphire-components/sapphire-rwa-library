@@ -3,3 +3,9 @@
 	height: 22px;
 	padding: var(--space-none) var(--space-s);
 }
+
+.form-control[data-input][disabled],
+.form-control[data-textarea][disabled] {
+	background-color: var(--color-background-disabled);
+	color: var(--color-text-disabled);
+}
