@@ -38,6 +38,7 @@ import Toast from '@/07-custom-components/feedback/toast';
 import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
 
+import MultiLevel from '@/08-custom-patterns/multilevel';
 import PrintDocument from '@custom-patterns/printdocument';
 
 import Helpers from '@utils/helpers';
@@ -80,6 +81,7 @@ const SapphireRWALibrary = {
 	LayoutWrapper,
 	Locale,
 	MasterDetail,
+	MultiLevel,
 	Overlay,
 	PopupContent,
 	PrintDocument,

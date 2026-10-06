@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.76 2026-10-02T14:42:23.206Z */
+/*!  SapphireRWALibrary PROD v0.6.77 2026-10-06T17:02:06.238Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -10183,6 +10183,107 @@ div[data-block$=SVGIcon] {
 
 .svg-icon[data-iconcolor=transparent] {
   --iconcolor: transparent;
+}
+div[data-block$=MultiLevel] {
+  display: block;
+}
+
+.multilevel {
+  --multilevel-gap: 8px;
+  --multilevel-indent: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.multilevel-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.multilevel-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--multilevel-gap);
+}
+
+.multilevel-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-height: 28px;
+  padding-inline-start: calc(var(--level) * var(--multilevel-indent));
+  position: relative;
+}
+
+.multilevel-add-child {
+  opacity: 0.2;
+  transition: opacity 0.15s ease;
+}
+.multilevel-add-child .buttondropdown-label {
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-neutral-6);
+  font-size: 12px;
+  min-height: 24px;
+  padding-inline: 6px;
+}
+.multilevel-add-child:hover, .multilevel-add-child:focus-within, .multilevel-add-child:has([aria-expanded=true]) {
+  opacity: 1;
+}
+.multilevel-add-child:hover .buttondropdown-label, .multilevel-add-child:focus-within .buttondropdown-label, .multilevel-add-child:has([aria-expanded=true]) .buttondropdown-label {
+  background-color: var(--color-neutral-0);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-neutral-8);
+}
+
+.multilevel-elbow {
+  border-inline-start: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  height: calc(50% + var(--multilevel-gap));
+  inset-inline-start: calc((var(--level) - 1) * var(--multilevel-indent) + 8px);
+  pointer-events: none;
+  position: absolute;
+  top: calc(var(--multilevel-gap) * -1);
+  width: calc(var(--multilevel-indent) - 12px);
+}
+
+.multilevel-filter {
+  background: var(--color-neutral-0);
+  border: 0;
+  border-block-end: 1px solid var(--color-border);
+  color: inherit;
+  font: inherit;
+  padding: 8px;
+  width: 100%;
+}
+.multilevel-filter:focus {
+  outline: none;
+}
+
+.multilevel-filter-options {
+  display: flex;
+  flex-direction: column;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.multilevel-add-option {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 8px;
+  text-align: start;
+}
+.multilevel-add-option:hover {
+  background: var(--color-neutral-1);
+}
+.multilevel-add-option[hidden] {
+  display: none;
 }
 div[data-block$=PrintDocument] {
   display: contents;
