@@ -5,7 +5,8 @@ import Helpers from '@utils/helpers';
 interface IMultiLevel extends BaseComponentInit {
 	actions: {
 		OnAddChild: (parentId: number) => void;
-		OnChange: (items: string) => void;
+		OnChangeSelected: (items: string) => void;
+		OnChangeTree: (items: string) => void;
 	};
 	enabled: boolean;
 	itemsAdd: IMultiLevelItem[];
@@ -36,6 +37,7 @@ export default class MultiLevel extends BaseComponent {
 	private itemsTree: IMultiLevelItem[] = [];
 	private itemsRoot: IMultiLevelItem[] = [];
 	private modeEdit = false;
+	private modeSelect = false;
 	private textAddChild = '';
 	private textAddRoot = '';
 
@@ -93,6 +95,23 @@ export default class MultiLevel extends BaseComponent {
 		this.addChild(parentId, id);
 	};
 
+	private readonly onSelectChange = (event: Event): void => {
+		const input = (event.target as HTMLElement).closest<HTMLInputElement>('.multilevel-select');
+		if (!input || !this.listEl.contains(input) || !this.modeSelect) return;
+
+		const id = Number(input.dataset.id);
+		if (!Number.isFinite(id)) return;
+
+		const item = this.itemsTree.find((entry) => entry.Id === id);
+		if (!item) return;
+
+		item.Selected = input.checked;
+		const chip = input.closest<HTMLElement>('.chip');
+		if (chip) chip.dataset.isselected = item.Selected ? 'true' : 'false';
+
+		this.actions?.OnChangeSelected(JSON.stringify(this.selectedIds()));
+	};
+
 	private readonly onAddRootLabelClick = (event: MouseEvent): void => {
 		const label = event.currentTarget as HTMLButtonElement;
 		if (label.getAttribute('aria-expanded') === 'true') return;
@@ -122,6 +141,7 @@ export default class MultiLevel extends BaseComponent {
 		this.actions = init.actions;
 		this.enabled = init.enabled;
 		this.modeEdit = init.modeEdit;
+		this.modeSelect = init.modeSelect;
 		this.textAddChild = init.textAddChild ?? '';
 		this.textAddRoot = init.textAddRoot ?? '';
 		this.itemsAdd = this.asItems(init.itemsAdd);
@@ -166,6 +186,11 @@ export default class MultiLevel extends BaseComponent {
 			changed = true;
 		}
 
+		if (payload.modeSelect !== undefined && payload.modeSelect !== this.modeSelect) {
+			this.modeSelect = payload.modeSelect;
+			changed = true;
+		}
+
 		const rootTextChanged = payload.textAddRoot !== undefined && payload.textAddRoot !== this.textAddRoot;
 		const childTextChanged = payload.textAddChild !== undefined && payload.textAddChild !== this.textAddChild;
 		if (payload.textAddRoot !== undefined) this.textAddRoot = payload.textAddRoot;
@@ -189,6 +214,7 @@ export default class MultiLevel extends BaseComponent {
 		this.addActionsEl?.removeEventListener('click', this.onAddOptionClick);
 		this.listEl?.removeEventListener('click', this.onListClick, true);
 		this.listEl?.removeEventListener('keydown', this.onListKeyDown, true);
+		this.listEl?.removeEventListener('change', this.onSelectChange);
 		this.destroyChildDropdowns();
 		this.addDropdown?.destroy();
 		super.destroy();
@@ -234,6 +260,7 @@ export default class MultiLevel extends BaseComponent {
 		this.addActionsEl.addEventListener('click', this.onAddOptionClick);
 		this.listEl.addEventListener('click', this.onListClick, true);
 		this.listEl.addEventListener('keydown', this.onListKeyDown, true);
+		this.listEl.addEventListener('change', this.onSelectChange);
 		this.render();
 	}
 
@@ -322,7 +349,12 @@ export default class MultiLevel extends BaseComponent {
 		const actionsEl = this.childMenus.get(parentId);
 		const optionsEl = actionsEl?.querySelector<HTMLElement>('.multilevel-filter-options');
 		if (!optionsEl) return;
-		this.fillOptions(optionsEl, this.itemsAdd, parentId);
+		this.fillOptions(optionsEl, this.availableChildItems(parentId), parentId);
+	}
+
+	private availableChildItems(parentId: number): IMultiLevelItem[] {
+		const children = this.itemsTree.filter((item) => item.ParentId === parentId);
+		return this.itemsAdd.filter((item) => !children.some((child) => child.Id === item.Id && child.Label === item.Label));
 	}
 
 	private fillOptions(optionsEl: HTMLElement, items: IMultiLevelItem[], parentId?: number): void {
@@ -455,6 +487,8 @@ export default class MultiLevel extends BaseComponent {
 			chip.append(icon);
 		}
 
+		if (this.modeSelect) chip.append(this.createSelectCheckbox(item));
+
 		const content = document.createElement('div');
 		content.className = 'chip-content';
 		content.textContent = this.itemText(item);
@@ -462,6 +496,23 @@ export default class MultiLevel extends BaseComponent {
 
 		if (this.modeEdit) chip.append(this.createClearButton(item));
 		return chip;
+	}
+
+	private createSelectCheckbox(item: IMultiLevelItem): HTMLInputElement {
+		const input = document.createElement('input');
+		input.type = 'checkbox';
+		input.className = 'multilevel-select small';
+		input.setAttribute('data-checkbox', '');
+		input.dataset.id = String(item.Id);
+		input.checked = item.Selected;
+		input.disabled = !this.enabled;
+		return input;
+	}
+
+	private selectedIds(): number[] {
+		return this.orderedItems()
+			.filter((item) => item.Selected)
+			.map((item) => item.Id);
 	}
 
 	private createClearButton(item: IMultiLevelItem): HTMLButtonElement {
@@ -577,7 +628,7 @@ export default class MultiLevel extends BaseComponent {
 	}
 
 	private emitChange(): void {
-		this.actions?.OnChange(JSON.stringify(this.itemsTree));
+		this.actions?.OnChangeTree(JSON.stringify(this.itemsTree));
 	}
 
 	private nextRootOrder(): number {
