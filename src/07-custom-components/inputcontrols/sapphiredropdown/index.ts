@@ -5,6 +5,7 @@ import { ValidationMessage } from '@utils/validation-message';
 import { tmplOption, tmplPanel } from './templates';
 
 interface ISapphireDropdownConfig {
+	ChipClick: boolean;
 	Clear: boolean;
 	HasChips: boolean;
 	HasSelectAll: boolean;
@@ -31,6 +32,7 @@ interface ISapphireDropdownOption {
 
 interface ISapphireDropdownActions {
 	OnChange: (selected: string) => void;
+	OnChipClick: (value: string) => void;
 	OnClear: () => void;
 	OnScrollEnded: () => void;
 	OnSearch: (keyword: string) => void;
@@ -261,6 +263,30 @@ export default class SapphireDropdown extends BaseComponent {
 		const value = chipEl?.dataset.value ?? '';
 		if (!value) return;
 		this.removeChipValue(value);
+	};
+
+	private readonly onChipClick = (event: MouseEvent): void => {
+		if (!this.config.ChipClick || !this.enabled) return;
+		const target = event.target as HTMLElement;
+		if (target.closest('.chip-clear')) return;
+		const chipEl = target.closest<HTMLElement>('.chip');
+		if (!chipEl || !this.chipsContainerEl?.contains(chipEl)) return;
+		const value = chipEl.dataset.value ?? '';
+		if (!value) return;
+		this.actions.OnChipClick(value);
+	};
+
+	private readonly onChipKeyDown = (event: KeyboardEvent): void => {
+		if (!this.config.ChipClick || !this.enabled) return;
+		if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+		const target = event.target as HTMLElement;
+		if (target.closest('.chip-clear')) return;
+		const chipEl = target.closest<HTMLElement>('.chip');
+		if (!chipEl || !this.chipsContainerEl?.contains(chipEl)) return;
+		event.preventDefault();
+		const value = chipEl.dataset.value ?? '';
+		if (!value) return;
+		this.actions.OnChipClick(value);
 	};
 
 	constructor(init: ISapphireDropdown) {
@@ -531,10 +557,7 @@ export default class SapphireDropdown extends BaseComponent {
 
 		for (const optionEl of this.optionEls()) {
 			const option = this.optionByValue(optionEl.dataset.value ?? '');
-			const matches =
-				normalized === '' ||
-				(option?.Label?.toLowerCase().includes(normalized) ?? false) ||
-				(option?.Description?.toLowerCase().includes(normalized) ?? false);
+			const matches = normalized === '' || (option?.Label?.toLowerCase().includes(normalized) ?? false) || (option?.Description?.toLowerCase().includes(normalized) ?? false);
 			optionEl.hidden = !matches;
 		}
 
@@ -612,6 +635,8 @@ export default class SapphireDropdown extends BaseComponent {
 		this.clearEl?.addEventListener('keydown', this.onClearKeyDown);
 		this.chipsContainerEl?.addEventListener('click', this.onChipClearClick);
 		this.chipsContainerEl?.addEventListener('keydown', this.onChipClearKeyDown);
+		this.chipsContainerEl?.addEventListener('click', this.onChipClick);
+		this.chipsContainerEl?.addEventListener('keydown', this.onChipKeyDown);
 	}
 
 	private toggle(): void {
@@ -846,6 +871,13 @@ export default class SapphireDropdown extends BaseComponent {
 		chipEl.dataset.value = option.Value;
 		chipEl.dataset.hasclear = 'true';
 		chipEl.dataset.enabled = this.enabled ? 'true' : 'false';
+		chipEl.dataset.isclickable = this.config.ChipClick ? 'true' : 'false';
+
+		if (this.config.ChipClick) {
+			chipEl.setAttribute('role', 'button');
+			chipEl.tabIndex = this.enabled ? 0 : -1;
+			chipEl.toggleAttribute('aria-disabled', !this.enabled);
+		}
 
 		if (this.config.ShowIcon && option.Icon) {
 			const iconEl = document.createElement('div');
@@ -994,8 +1026,7 @@ export default class SapphireDropdown extends BaseComponent {
 		const incomingValues = new Set(this.optionsList.map((option) => option.Value));
 		const renderedPrepended = this.optionEls().filter((optionEl) => !incomingValues.has(optionEl.dataset.value ?? ''));
 		const missing = this.missingSelected();
-		const samePrepended =
-			renderedPrepended.length === missing.length && renderedPrepended.every((optionEl, index) => optionEl.dataset.value === missing[index].Value);
+		const samePrepended = renderedPrepended.length === missing.length && renderedPrepended.every((optionEl, index) => optionEl.dataset.value === missing[index].Value);
 
 		if (samePrepended) {
 			this.refreshSelectedState();
@@ -1117,6 +1148,8 @@ export default class SapphireDropdown extends BaseComponent {
 		this.clearEl?.removeEventListener('keydown', this.onClearKeyDown);
 		this.chipsContainerEl?.removeEventListener('click', this.onChipClearClick);
 		this.chipsContainerEl?.removeEventListener('keydown', this.onChipClearKeyDown);
+		this.chipsContainerEl?.removeEventListener('click', this.onChipClick);
+		this.chipsContainerEl?.removeEventListener('keydown', this.onChipKeyDown);
 
 		this.tippyInstance?.destroy();
 		this.tippyInstance = null;

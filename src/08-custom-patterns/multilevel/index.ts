@@ -19,14 +19,17 @@ interface IMultiLevel extends BaseComponentInit {
 }
 
 interface IMultiLevelItem {
+	AllowChild: boolean;
 	Description: string;
 	Enabled: boolean;
 	Icon: string;
 	Id: number;
+	Key?: number;
 	Label: string;
 	Level: number;
 	Order: number;
 	ParentId: number;
+	ParentKey?: number;
 	Selected: boolean;
 }
 
@@ -41,17 +44,20 @@ export default class MultiLevel extends BaseComponent {
 	private textAddChild = '';
 	private textAddRoot = '';
 
-	private addActionsEl!: HTMLElement;
-	private addOptionsEl!: HTMLElement;
-	private addDropdown!: ButtonDropdown;
+	private addActionsEl?: HTMLElement;
+	private addOptionsEl?: HTMLElement;
+	private addDropdown?: ButtonDropdown;
 	private childDropdowns: ButtonDropdown[] = [];
-	private childMenus = new Map<number, HTMLElement>();
+	private childMenus = new Map<string, HTMLElement>();
 	private listEl!: HTMLElement;
+	private nextKey = 1;
+	private pendingMenuKey: string | null = null;
 	private pendingParentId: number | null = null;
+	private pendingParentIndex: number | null = null;
 
 	private readonly onAddOptionClick = (event: MouseEvent): void => {
 		const option = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-id]');
-		if (!option || !this.addActionsEl.contains(option)) return;
+		if (!option || !this.addActionsEl?.contains(option)) return;
 
 		const id = Number(option.dataset.id);
 		if (!Number.isFinite(id)) return;
@@ -64,9 +70,9 @@ export default class MultiLevel extends BaseComponent {
 			event.preventDefault();
 			event.stopPropagation();
 
-			const id = Number(clear.dataset.id);
-			if (!Number.isFinite(id)) return;
-			this.removeItem(id);
+			const index = Number(clear.dataset.index);
+			if (!Number.isFinite(index)) return;
+			this.removeItem(index);
 			return;
 		}
 
@@ -99,10 +105,10 @@ export default class MultiLevel extends BaseComponent {
 		const input = (event.target as HTMLElement).closest<HTMLInputElement>('.multilevel-select');
 		if (!input || !this.listEl.contains(input) || !this.modeSelect) return;
 
-		const id = Number(input.dataset.id);
-		if (!Number.isFinite(id)) return;
+		const index = Number(input.dataset.index);
+		if (!Number.isFinite(index)) return;
 
-		const item = this.itemsTree.find((entry) => entry.Id === id);
+		const item = this.itemsTree[index];
 		if (!item) return;
 
 		item.Selected = input.checked;
@@ -115,7 +121,7 @@ export default class MultiLevel extends BaseComponent {
 	private readonly onAddRootLabelClick = (event: MouseEvent): void => {
 		const label = event.currentTarget as HTMLButtonElement;
 		if (label.getAttribute('aria-expanded') === 'true') return;
-		this.focusFilter(this.addActionsEl);
+		this.focusFilter(this.addActionsEl ?? null);
 	};
 
 	private readonly onFilterInput = (event: Event): void => {
@@ -145,7 +151,7 @@ export default class MultiLevel extends BaseComponent {
 		this.textAddChild = init.textAddChild ?? '';
 		this.textAddRoot = init.textAddRoot ?? '';
 		this.itemsAdd = this.asItems(init.itemsAdd);
-		this.itemsTree = this.asItems(init.itemsTree);
+		this.itemsTree = this.bindKeys(this.asItems(init.itemsTree));
 		this.itemsRoot = this.asItems(init.itemsRoot);
 		this.build();
 	}
@@ -158,7 +164,7 @@ export default class MultiLevel extends BaseComponent {
 		if (payload.enabled !== undefined && payload.enabled !== this.enabled) {
 			this.enabled = payload.enabled;
 			this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
-			this.addDropdown.parametersChanged(this.dropdownConfig());
+			this.addDropdown?.parametersChanged(this.dropdownConfig());
 			changed = true;
 		}
 
@@ -167,8 +173,8 @@ export default class MultiLevel extends BaseComponent {
 
 		if (payload.itemsTree !== undefined) {
 			const itemsTree = this.asItems(payload.itemsTree);
-			if (!Helpers.areTheyEqual(itemsTree, this.itemsTree)) {
-				this.itemsTree = itemsTree;
+			if (this.treeChanged(itemsTree)) {
+				this.itemsTree = this.bindKeys(itemsTree);
 				changed = true;
 			}
 		}
@@ -197,7 +203,9 @@ export default class MultiLevel extends BaseComponent {
 		if (payload.textAddChild !== undefined) this.textAddChild = payload.textAddChild;
 
 		if (changed) {
+			this.pendingMenuKey = null;
 			this.pendingParentId = null;
+			this.pendingParentIndex = null;
 			this.render();
 			return;
 		}
@@ -208,15 +216,11 @@ export default class MultiLevel extends BaseComponent {
 	}
 
 	destroy(): void {
-		this.widgetEl?.querySelector<HTMLButtonElement>('.multilevel-header .buttondropdown-label')?.removeEventListener('click', this.onAddRootLabelClick);
-		this.addActionsEl?.querySelector<HTMLInputElement>('.multilevel-filter')?.removeEventListener('input', this.onFilterInput);
-		this.addActionsEl?.querySelector<HTMLInputElement>('.multilevel-filter')?.removeEventListener('keydown', this.onFilterKeyDown);
-		this.addActionsEl?.removeEventListener('click', this.onAddOptionClick);
+		this.unmountRootDropdown();
 		this.listEl?.removeEventListener('click', this.onListClick, true);
 		this.listEl?.removeEventListener('keydown', this.onListKeyDown, true);
 		this.listEl?.removeEventListener('change', this.onSelectChange);
 		this.destroyChildDropdowns();
-		this.addDropdown?.destroy();
 		super.destroy();
 	}
 
@@ -224,6 +228,19 @@ export default class MultiLevel extends BaseComponent {
 		this.widgetEl.classList.add('multilevel');
 		this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
 		this.widgetEl.replaceChildren();
+
+		this.listEl = document.createElement('div');
+		this.listEl.className = 'multilevel-list';
+		this.widgetEl.append(this.listEl);
+
+		this.listEl.addEventListener('click', this.onListClick, true);
+		this.listEl.addEventListener('keydown', this.onListKeyDown, true);
+		this.listEl.addEventListener('change', this.onSelectChange);
+		this.render();
+	}
+
+	private mountRootDropdown(): void {
+		if (this.addDropdown) return;
 
 		const header = document.createElement('div');
 		header.className = 'multilevel-header';
@@ -249,19 +266,23 @@ export default class MultiLevel extends BaseComponent {
 
 		dropdownEl.append(label, this.addActionsEl);
 		header.append(dropdownEl);
-
-		this.listEl = document.createElement('div');
-		this.listEl.className = 'multilevel-list';
-
-		this.widgetEl.append(header, this.listEl);
+		this.widgetEl.prepend(header);
 
 		label.addEventListener('click', this.onAddRootLabelClick);
 		this.addDropdown = new ButtonDropdown(this.dropdownConfig());
 		this.addActionsEl.addEventListener('click', this.onAddOptionClick);
-		this.listEl.addEventListener('click', this.onListClick, true);
-		this.listEl.addEventListener('keydown', this.onListKeyDown, true);
-		this.listEl.addEventListener('change', this.onSelectChange);
-		this.render();
+	}
+
+	private unmountRootDropdown(): void {
+		this.widgetEl?.querySelector<HTMLButtonElement>('.multilevel-header .buttondropdown-label')?.removeEventListener('click', this.onAddRootLabelClick);
+		this.addActionsEl?.querySelector<HTMLInputElement>('.multilevel-filter')?.removeEventListener('input', this.onFilterInput);
+		this.addActionsEl?.querySelector<HTMLInputElement>('.multilevel-filter')?.removeEventListener('keydown', this.onFilterKeyDown);
+		this.addActionsEl?.removeEventListener('click', this.onAddOptionClick);
+		this.addDropdown?.destroy();
+		this.addDropdown = undefined;
+		this.addActionsEl = undefined;
+		this.addOptionsEl = undefined;
+		this.widgetEl?.querySelector('.multilevel-header')?.remove();
 	}
 
 	private dropdownConfig(): IButtonDropdown {
@@ -281,11 +302,15 @@ export default class MultiLevel extends BaseComponent {
 	}
 
 	private render(): void {
+		if (this.modeEdit) this.mountRootDropdown();
+		else this.unmountRootDropdown();
 		this.renderAddMenu();
 		this.renderList();
 	}
 
 	private renderAddMenu(): void {
+		if (!this.addOptionsEl) return;
+
 		const used = new Set(this.itemsTree.map((item) => item.Id));
 		const available = this.itemsRoot.filter((item) => !used.has(item.Id));
 		this.fillOptions(this.addOptionsEl, available);
@@ -305,8 +330,7 @@ export default class MultiLevel extends BaseComponent {
 			const labelEl = dropdownEl?.querySelector<HTMLButtonElement>('.buttondropdown-label');
 			if (!dropdownEl || !actionsEl || !labelEl) continue;
 
-			const parentId = Number(dropdownEl.dataset.parentId);
-			if (Number.isFinite(parentId)) this.childMenus.set(parentId, actionsEl);
+			this.childMenus.set(dropdownEl.id, actionsEl);
 
 			this.childDropdowns.push(new ButtonDropdown(this.childDropdownConfig(dropdownEl.id)));
 			actionsEl.addEventListener('click', this.onAddChildClick);
@@ -337,24 +361,36 @@ export default class MultiLevel extends BaseComponent {
 
 	private requestChildOptions(label: HTMLButtonElement): void {
 		const parentId = Number(label.dataset.parentId);
-		if (!Number.isFinite(parentId)) return;
+		const index = Number(label.dataset.index);
+		const menuKey = label.closest<HTMLElement>('.multilevel-add-child')?.id ?? '';
+		if (!Number.isFinite(parentId) || !menuKey) return;
 
+		this.pendingMenuKey = menuKey;
 		this.pendingParentId = parentId;
+		this.pendingParentIndex = Number.isFinite(index) ? index : null;
 		this.fillChildMenu(parentId);
-		this.focusFilter(this.childMenus.get(parentId) ?? null);
+		this.focusFilter(this.childMenus.get(menuKey) ?? null);
 		this.actions?.OnAddChild(parentId);
 	}
 
 	private fillChildMenu(parentId: number): void {
-		const actionsEl = this.childMenus.get(parentId);
+		const actionsEl = this.pendingMenuKey ? this.childMenus.get(this.pendingMenuKey) : undefined;
 		const optionsEl = actionsEl?.querySelector<HTMLElement>('.multilevel-filter-options');
 		if (!optionsEl) return;
 		this.fillOptions(optionsEl, this.availableChildItems(parentId), parentId);
 	}
 
 	private availableChildItems(parentId: number): IMultiLevelItem[] {
-		const children = this.itemsTree.filter((item) => item.ParentId === parentId);
+		const parent = this.parentInstance(parentId);
+		const children = parent ? this.itemsTree.filter((item) => item.ParentKey === parent.Key) : [];
 		return this.itemsAdd.filter((item) => !children.some((child) => child.Id === item.Id && child.Label === item.Label));
+	}
+
+	private parentInstance(parentId: number): IMultiLevelItem | undefined {
+		if (this.pendingParentIndex != null && this.itemsTree[this.pendingParentIndex]?.Id === parentId) {
+			return this.itemsTree[this.pendingParentIndex];
+		}
+		return this.itemsTree.find((item) => item.Id === parentId);
 	}
 
 	private fillOptions(optionsEl: HTMLElement, items: IMultiLevelItem[], parentId?: number): void {
@@ -409,8 +445,8 @@ export default class MultiLevel extends BaseComponent {
 		}
 	}
 
-	private childDropdownId(parentId: number): string {
-		return `${this.runtimeId}-add-child-${parentId}`;
+	private childDropdownId(index: number): string {
+		return `${this.runtimeId}-add-child-${index}`;
 	}
 
 	private createAddOption(item: IMultiLevelItem, parentId?: number): HTMLButtonElement {
@@ -443,14 +479,15 @@ export default class MultiLevel extends BaseComponent {
 			row.append(elbow);
 		}
 
-		row.append(this.createChip(item));
-		if (this.modeEdit) row.append(this.createChildDropdown(item));
+		const index = this.itemsTree.indexOf(item);
+		row.append(this.createChip(item, index));
+		if (this.modeEdit && item.AllowChild) row.append(this.createChildDropdown(item, index));
 		return row;
 	}
 
-	private createChildDropdown(parent: IMultiLevelItem): HTMLElement {
+	private createChildDropdown(parent: IMultiLevelItem, index: number): HTMLElement {
 		const dropdownEl = document.createElement('div');
-		dropdownEl.id = this.childDropdownId(parent.Id);
+		dropdownEl.id = this.childDropdownId(index);
 		dropdownEl.className = 'buttondropdown multilevel-add-child';
 		dropdownEl.dataset.parentId = String(parent.Id);
 
@@ -458,6 +495,7 @@ export default class MultiLevel extends BaseComponent {
 		label.type = 'button';
 		label.className = 'btn buttondropdown-label';
 		label.dataset.parentId = String(parent.Id);
+		label.dataset.index = String(index);
 		this.setButtonLabel(label, this.textAddChild);
 
 		const actionsEl = document.createElement('div');
@@ -472,7 +510,7 @@ export default class MultiLevel extends BaseComponent {
 		return dropdownEl;
 	}
 
-	private createChip(item: IMultiLevelItem): HTMLElement {
+	private createChip(item: IMultiLevelItem, index: number): HTMLElement {
 		const chip = document.createElement('div');
 		chip.className = 'chip';
 		chip.dataset.enabled = this.enabled && item.Enabled ? 'true' : 'false';
@@ -487,23 +525,24 @@ export default class MultiLevel extends BaseComponent {
 			chip.append(icon);
 		}
 
-		if (this.modeSelect) chip.append(this.createSelectCheckbox(item));
+		if (this.modeSelect) chip.append(this.createSelectCheckbox(item, index));
 
 		const content = document.createElement('div');
 		content.className = 'chip-content';
 		content.textContent = this.itemText(item);
 		chip.append(content);
 
-		if (this.modeEdit) chip.append(this.createClearButton(item));
+		if (this.modeEdit) chip.append(this.createClearButton(item, index));
 		return chip;
 	}
 
-	private createSelectCheckbox(item: IMultiLevelItem): HTMLInputElement {
+	private createSelectCheckbox(item: IMultiLevelItem, index: number): HTMLInputElement {
 		const input = document.createElement('input');
 		input.type = 'checkbox';
 		input.className = 'multilevel-select small';
 		input.setAttribute('data-checkbox', '');
 		input.dataset.id = String(item.Id);
+		input.dataset.index = String(index);
 		input.checked = item.Selected;
 		input.disabled = !this.enabled;
 		return input;
@@ -515,11 +554,12 @@ export default class MultiLevel extends BaseComponent {
 			.map((item) => item.Id);
 	}
 
-	private createClearButton(item: IMultiLevelItem): HTMLButtonElement {
+	private createClearButton(item: IMultiLevelItem, index: number): HTMLButtonElement {
 		const clear = document.createElement('button');
 		clear.type = 'button';
 		clear.className = 'chip-clear';
 		clear.dataset.id = String(item.Id);
+		clear.dataset.index = String(index);
 		clear.setAttribute('aria-label', 'Remove');
 		clear.disabled = !this.enabled;
 		clear.innerHTML = Helpers.placeIcon('x', 's');
@@ -536,11 +576,11 @@ export default class MultiLevel extends BaseComponent {
 		const groups = new Map<number, { index: number; item: IMultiLevelItem }[]>();
 
 		this.itemsTree.forEach((item, index) => {
-			const parentId = item.ParentId ?? 0;
-			const siblings = groups.get(parentId);
+			const parentKey = item.ParentKey ?? 0;
+			const siblings = groups.get(parentKey);
 			const entry = { index, item };
 			if (siblings) siblings.push(entry);
-			else groups.set(parentId, [entry]);
+			else groups.set(parentKey, [entry]);
 		});
 
 		for (const siblings of groups.values()) {
@@ -548,14 +588,16 @@ export default class MultiLevel extends BaseComponent {
 		}
 
 		const ordered: IMultiLevelItem[] = [];
-		const seen = new Set<number>();
+		const path = new Set<number>();
 
-		const visit = (parentId: number): void => {
-			for (const { item } of groups.get(parentId) ?? []) {
-				if (seen.has(item.Id)) continue;
-				seen.add(item.Id);
+		const visit = (parentKey: number): void => {
+			for (const { item } of groups.get(parentKey) ?? []) {
+				const key = item.Key ?? 0;
+				if (path.has(key)) continue;
 				ordered.push(item);
-				visit(item.Id);
+				path.add(key);
+				visit(key);
+				path.delete(key);
 			}
 		};
 
@@ -572,9 +614,11 @@ export default class MultiLevel extends BaseComponent {
 
 		const added: IMultiLevelItem = {
 			...source,
+			Key: this.allocateKey(),
 			Level: 0,
 			Order: this.nextRootOrder(),
 			ParentId: 0,
+			ParentKey: 0,
 		};
 
 		this.itemsTree = [...this.itemsTree, added];
@@ -584,17 +628,19 @@ export default class MultiLevel extends BaseComponent {
 
 	private addChild(parentId: number, id: number): void {
 		if (!this.enabled || !this.modeEdit) return;
-		if (this.itemsTree.some((item) => item.Id === id)) return;
 
-		const parent = this.itemsTree.find((item) => item.Id === parentId);
+		const parent = this.pendingParentIndex != null && this.itemsTree[this.pendingParentIndex]?.Id === parentId ? this.itemsTree[this.pendingParentIndex] : this.itemsTree.find((item) => item.Id === parentId);
 		const source = this.itemsAdd.find((item) => item.Id === id);
-		if (!parent || !source) return;
+		if (parent?.Key == null || !source) return;
+		if (this.itemsTree.some((item) => item.ParentKey === parent.Key && item.Id === source.Id && item.Label === source.Label)) return;
 
 		const added: IMultiLevelItem = {
 			...source,
+			Key: this.allocateKey(),
 			Level: parent.Level + 1,
-			Order: this.nextSiblingOrder(parentId),
-			ParentId: parentId,
+			Order: this.nextSiblingOrder(parent.Key),
+			ParentId: parent.Id,
+			ParentKey: parent.Key,
 		};
 
 		this.itemsTree = [...this.itemsTree, added];
@@ -602,28 +648,30 @@ export default class MultiLevel extends BaseComponent {
 		this.emitChange();
 	}
 
-	private removeItem(id: number): void {
+	private removeItem(index: number): void {
 		if (!this.enabled || !this.modeEdit) return;
-		if (!this.itemsTree.some((item) => item.Id === id)) return;
 
-		const remove = this.idsWithDescendants(id);
-		this.itemsTree = this.itemsTree.filter((item) => !remove.has(item.Id));
+		const item = this.itemsTree[index];
+		if (!item) return;
+
+		const remove = this.branchItems(item);
+		this.itemsTree = this.itemsTree.filter((entry) => !remove.has(entry));
 		this.render();
 		this.emitChange();
 	}
 
-	private idsWithDescendants(id: number): Set<number> {
-		const remove = new Set<number>([id]);
+	private branchItems(root: IMultiLevelItem): Set<IMultiLevelItem> {
+		const remove = new Set<IMultiLevelItem>([root]);
 
-		const visit = (parentId: number): void => {
+		const visit = (parentKey: number): void => {
 			for (const item of this.itemsTree) {
-				if (item.ParentId !== parentId || remove.has(item.Id)) continue;
-				remove.add(item.Id);
-				visit(item.Id);
+				if (item.ParentKey !== parentKey || remove.has(item)) continue;
+				remove.add(item);
+				visit(item.Key ?? 0);
 			}
 		};
 
-		visit(id);
+		visit(root.Key ?? 0);
 		return remove;
 	}
 
@@ -635,13 +683,73 @@ export default class MultiLevel extends BaseComponent {
 		return this.nextSiblingOrder(0);
 	}
 
-	private nextSiblingOrder(parentId: number): number {
+	private nextSiblingOrder(parentKey: number): number {
 		let max = 0;
 		for (const item of this.itemsTree) {
-			if (item.ParentId !== parentId) continue;
+			if ((item.ParentKey ?? 0) !== parentKey) continue;
 			if (item.Order > max) max = item.Order;
 		}
 		return max + 1;
+	}
+
+	private allocateKey(): number {
+		return this.nextKey++;
+	}
+
+	// Key / ParentKey are assigned here. An echoed list often comes back without them
+	// (or with 0). That must not count as a new tree, or the open add-child menu is rebuilt away.
+	private treeChanged(incoming: IMultiLevelItem[]): boolean {
+		if (incoming.length !== this.itemsTree.length) return true;
+
+		for (let index = 0; index < incoming.length; index++) {
+			if (!this.sameNode(incoming[index], this.itemsTree[index])) return true;
+		}
+
+		return false;
+	}
+
+	private sameNode(incoming: IMultiLevelItem, existing: IMultiLevelItem): boolean {
+		if (incoming.AllowChild !== existing.AllowChild) return false;
+		if (incoming.Description !== existing.Description) return false;
+		if (incoming.Enabled !== existing.Enabled) return false;
+		if (incoming.Icon !== existing.Icon) return false;
+		if (incoming.Id !== existing.Id) return false;
+		if (incoming.Label !== existing.Label) return false;
+		if (incoming.Level !== existing.Level) return false;
+		if (incoming.Order !== existing.Order) return false;
+		if (incoming.ParentId !== existing.ParentId) return false;
+		if (incoming.Selected !== existing.Selected) return false;
+		if (typeof incoming.Key === 'number' && incoming.Key > 0 && incoming.Key !== existing.Key) return false;
+		if (typeof incoming.ParentKey === 'number' && incoming.ParentKey > 0 && incoming.ParentKey !== existing.ParentKey) return false;
+		return true;
+	}
+
+	// Catalog Id is shared by copies. Key / ParentKey keep each copy's children on that copy alone.
+	private bindKeys(items: IMultiLevelItem[]): IMultiLevelItem[] {
+		let max = 0;
+		for (const item of items) {
+			if (typeof item.Key === 'number' && item.Key > max) max = item.Key;
+		}
+		this.nextKey = Math.max(this.nextKey, max + 1);
+
+		for (const item of items) {
+			if (typeof item.Key !== 'number' || item.Key <= 0) item.Key = this.allocateKey();
+		}
+
+		const byKey = new Map(items.map((item) => [item.Key, item]));
+
+		for (const item of items) {
+			if (typeof item.ParentKey === 'number' && (item.ParentKey === 0 || byKey.has(item.ParentKey))) continue;
+			if (!item.ParentId) {
+				item.ParentKey = 0;
+				continue;
+			}
+
+			const parent = items.find((entry) => entry !== item && entry.Id === item.ParentId);
+			item.ParentKey = parent?.Key ?? 0;
+		}
+
+		return items;
 	}
 
 	private asItems(value: IMultiLevelItem[] | undefined): IMultiLevelItem[] {

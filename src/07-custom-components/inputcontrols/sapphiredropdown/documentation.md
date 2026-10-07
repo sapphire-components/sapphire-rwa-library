@@ -41,6 +41,7 @@ A combobox-style dropdown for selecting one or many options from a list. It supp
 
 | Property              | Type      | Description                                                                                                             |
 | --------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `ChipClick`           | `Boolean` | When `True`, chips in the chips area are clickable and fire `ChipClick` with the option `Value`. The chip clear button still only removes the chip. |
 | `Clear`               | `Boolean` | When `True`, shows a clear control on the trigger while there is a selection.                                           |
 | `HasChips`            | `Boolean` | When `True`, renders selected options as clearable chips below the trigger.                                             |
 | `HasSelectAll`        | `Boolean` | When `True` and `Multiple` is `True`, adds a select-all row at the top of the list.                                     |
@@ -64,6 +65,7 @@ A combobox-style dropdown for selecting one or many options from a list. It supp
 | Name          | Description                                                                                                   | Arguments                                                            |
 | ------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | `Change`      | Fired when the selection changes.                                                                             | `Identifier` (`Text`), `EmittedList` (`SapphireDropdownOption List`) |
+| `ChipClick`   | Fired when a chip is activated and `Config.ChipClick` is `True` (click, or `Enter` / `Space` on the chip).    | `Identifier` (`Text`), `Value` (`Text`)                              |
 | `Clear`       | Fired when the trigger clear control clears the entire selection (also followed by `Change`).                 | `Identifier` (`Text`)                                                |
 | `ScrollEnded` | Fired when the options list is scrolled to (near) the bottom; resets when the user scrolls away from the end. | `Identifier` (`Text`)                                                |
 | `SearchClear` | Fired when the search field is cleared.                                                                       | `Identifier` (`Text`)                                                |
