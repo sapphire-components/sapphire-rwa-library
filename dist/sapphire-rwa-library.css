@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.79 2026-10-07T15:02:30.457Z */
+/*!  SapphireRWALibrary PROD v0.6.80 2026-10-08T10:38:57.512Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5607,7 +5607,6 @@ div[data-widthcomponent=auto] {
   display: contents;
 }
 .tablewrapper table {
-  border-collapse: collapse;
   width: 100%;
 }
 .tablewrapper table thead {

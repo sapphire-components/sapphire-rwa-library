@@ -132,6 +132,7 @@ export default class ButtonDropdown extends BaseComponent {
 			onShow: (instance: TippyInstance) => {
 				instance.setProps({ placement: this.#resolvePlacement() });
 				this.#applyOverlayWidth();
+				this.#hydrateEmptyIcons();
 			},
 			onShown: () => {
 				if (this.#openWithKeyboard) this.#focusEdge(true);
@@ -165,6 +166,20 @@ export default class ButtonDropdown extends BaseComponent {
 			popper.style.removeProperty('--trigger-width');
 		}
 		this.#tippyInstance?.popperInstance?.update?.();
+	}
+
+	// OutSystems svg-icon widgets inside a hidden overlay can render as an empty
+	// div that only keeps data-iconname. Paint the sprite reference in onShow,
+	// after the actions DOM is mounted and before the panel becomes visible.
+	#hydrateEmptyIcons(): void {
+		this.#actionsEl.querySelectorAll<HTMLElement>('div.svg-icon').forEach((icon) => {
+			if (icon.innerHTML.trim() !== '') return;
+
+			const iconName = icon.dataset.iconname;
+			if (!iconName) return;
+
+			icon.innerHTML = `<svg fill="currentColor"><use xlink:href="#svg-icon-${iconName}"></use></svg>`;
+		});
 	}
 
 	#resolvePlacement(): string {

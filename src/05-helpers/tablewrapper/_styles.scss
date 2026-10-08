@@ -11,7 +11,7 @@
 		display: contents;
 	}
 	table {
-		border-collapse: collapse;
+		// border-collapse: collapse; I removed this because the table header glitches when having a scroll on the table
 		width: 100%;
 		thead {
 			height: 48px;

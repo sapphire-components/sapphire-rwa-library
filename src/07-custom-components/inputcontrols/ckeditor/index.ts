@@ -2,7 +2,7 @@ import DOMPurify from 'dompurify';
 import Helpers from '@utils/helpers';
 import ckeditorCss from 'ckeditor5/ckeditor5.css?inline';
 import overridesCss from './ckeditor-overrides.css?inline';
-import { Alignment, Bold, ClassicEditor, Essentials, Font, Fullscreen, Italic, List, Paragraph, RemoveFormat, SourceEditing, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
+import { Alignment, AutoLink, Bold, ClassicEditor, Essentials, Font, Fullscreen, Italic, Link, List, Paragraph, RemoveFormat, SourceEditing, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 const RESIZE_DEBOUNCE_MS = 100;
@@ -19,7 +19,7 @@ function ensureCkeditorStyles(): void {
 	document.head.appendChild(style);
 }
 
-const EDITOR_PLUGINS = [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Font, Alignment, List, Table, TableToolbar, RemoveFormat, SourceEditing, Fullscreen];
+const EDITOR_PLUGINS = [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Link, AutoLink, Font, Alignment, List, Table, TableToolbar, RemoveFormat, SourceEditing, Fullscreen];
 
 const EDITOR_TOOLBAR = [
 	'fontSize',
@@ -27,6 +27,7 @@ const EDITOR_TOOLBAR = [
 	'italic',
 	'underline',
 	'strikethrough',
+	'link',
 	'|',
 	'fontColor',
 	'fontBackgroundColor',
@@ -179,6 +180,10 @@ export default class CKEditor extends BaseComponent {
 				plugins: EDITOR_PLUGINS,
 				toolbar: EDITOR_TOOLBAR,
 				placeholder: this.#placeholder,
+				link: {
+					addTargetToExternalLinks: true,
+					defaultProtocol: 'https://',
+				},
 				fontSize: {
 					options: [{ title: 'Small', model: 'small' }, 'default', { title: 'Large', model: 'big' }, { title: 'Huge', model: 'huge' }],
 				},
