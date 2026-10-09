@@ -1,4 +1,5 @@
 import Helpers from '@utils/helpers';
+import { createLoadingOverlay } from '@utils/loader';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface ILazyList extends BaseComponentInit {
@@ -28,6 +29,7 @@ export default class LazyList extends BaseComponent {
 	private itemsTotal = 0;
 	private lazyListPlaceholderEl!: HTMLElement;
 	private listResizeObserver?: ResizeObserver;
+	private loadingEl?: HTMLDivElement;
 	private maxHeight = 0;
 	private observedListEl?: HTMLElement;
 	private pageSize = 0;
@@ -45,6 +47,7 @@ export default class LazyList extends BaseComponent {
 	}, 80);
 
 	private readonly handleScroll = (): void => {
+		this.syncLoadingShield();
 		if (this.avgRowHeight > 0 && this.widgetEl.scrollTop > 0) {
 			this.avgLocked = true;
 		}
@@ -139,6 +142,8 @@ export default class LazyList extends BaseComponent {
 		window.removeEventListener('resize', this.handleViewportResize);
 		this.listResizeObserver?.disconnect();
 		this.rowsObserver?.disconnect();
+		this.loadingEl?.remove();
+		this.loadingEl = undefined;
 		this.spacerTopEl?.remove();
 		this.spacerBottomEl?.remove();
 		super.destroy();
@@ -208,6 +213,28 @@ export default class LazyList extends BaseComponent {
 	private reflectState(): void {
 		this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
 		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
+		this.widgetEl.setAttribute('aria-busy', this.isLoading ? 'true' : 'false');
+		if (this.lazyListPlaceholderEl) this.lazyListPlaceholderEl.inert = this.isLoading;
+		this.updateLoadingState();
+	}
+
+	private updateLoadingState(): void {
+		if (this.isLoading) {
+			if (!this.loadingEl) {
+				this.loadingEl = createLoadingOverlay();
+				this.widgetEl.appendChild(this.loadingEl);
+			}
+			this.syncLoadingShield();
+			return;
+		}
+
+		this.loadingEl?.remove();
+		this.loadingEl = undefined;
+	}
+
+	private syncLoadingShield(): void {
+		if (!this.loadingEl) return;
+		this.loadingEl.style.transform = `translateY(${this.widgetEl.scrollTop}px)`;
 	}
 
 	private applyVirtualHeight(): void {

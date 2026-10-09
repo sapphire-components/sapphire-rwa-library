@@ -28,6 +28,12 @@ div[data-block$='LazyList'] {
 		display: contents;
 	}
 
+	> .sapphire-loading-overlay {
+		background-color: color-mix(in srgb, var(--color-neutral-0) 72%, transparent);
+		pointer-events: auto;
+		z-index: 2;
+	}
+
 	.list.list-group {
 		max-height: none;
 		overflow: visible;

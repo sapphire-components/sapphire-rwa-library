@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.82 2026-10-09T10:15:55.538Z */
+/*!  SapphireRWALibrary PROD v0.6.83 2026-10-09T10:36:05.397Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -10221,6 +10221,11 @@ div[data-block$=LazyList] {
 }
 .lazylist > .lazylist-placeholder {
   display: contents;
+}
+.lazylist > .sapphire-loading-overlay {
+  background-color: color-mix(in srgb, var(--color-neutral-0) 72%, transparent);
+  pointer-events: auto;
+  z-index: 2;
 }
 .lazylist .list.list-group {
   max-height: none;
