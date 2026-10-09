@@ -1,36 +1,63 @@
-import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
-import { createSpinner } from '@utils/loader';
-
-const RESIZE_DEBOUNCE_MS = 100;
-const SKELETON_OVERSCAN = 4;
-const SKELETON_BAR_WIDTHS = ['72%', '46%', '64%', '38%'];
+import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 interface ILazyList extends BaseComponentInit {
 	actions: {
 		OnScroll: (startIndex: number, pageSize: number) => void;
 	};
+	bottomDistance: number;
 	enabled: boolean;
+	height: number;
 	isLoading: boolean;
-	rowHeight: number;
 	itemsTotal: number;
+	maxHeight: number;
 	pageSize: number;
 	startIndex: number;
+	theme: string;
 }
 
 export default class LazyList extends BaseComponent {
 	private actions!: ILazyList['actions'];
+	private avgLocked = false;
+	private avgRowHeight = 0;
+	private bottomDistance = 0;
+	private enabled = true;
+	private height = 0;
+	private initialStartIndex = 0;
 	private isLoading = false;
-	private itemsTotal!: number;
-	private listEl?: HTMLElement;
-	private loadingEl?: HTMLElement;
-	private pageSize!: number;
-	private resizeDebounced?: ((...args: Parameters<ResizeObserverCallback>) => void) & { cancel: () => void };
-	private resizeObserver?: ResizeObserver;
-	private rowHeight!: number;
-	private scrollFrame = 0;
-	private skeletonColumnCount = 0;
-	private skeletonPool: HTMLElement[] = [];
+	private itemsTotal = 0;
+	private lazyListPlaceholderEl!: HTMLElement;
+	private listResizeObserver?: ResizeObserver;
+	private maxHeight = 0;
+	private observedListEl?: HTMLElement;
+	private pageSize = 0;
+	private requestedStartIndex: number | null = null;
+	private scrollCheckPending = false;
+	private rowsObserver?: MutationObserver;
+	private spacerBottomEl?: HTMLDivElement;
+	private spacerTopEl?: HTMLDivElement;
+	private startIndex = 0;
+
+	private measureQueued = false;
+
+	private readonly requestPageDebounced = Helpers.debounce((): void => {
+		this.requestPageForScroll();
+	}, 80);
+
+	private readonly handleScroll = (): void => {
+		if (this.avgRowHeight > 0 && this.widgetEl.scrollTop > 0) {
+			this.avgLocked = true;
+		}
+		if (this.isLoading) {
+			this.scrollCheckPending = true;
+			return;
+		}
+		this.requestPageDebounced();
+	};
+
+	private readonly handleViewportResize = (): void => {
+		this.setViewport();
+	};
 
 	constructor(init: ILazyList) {
 		super(init);
@@ -41,237 +68,244 @@ export default class LazyList extends BaseComponent {
 		}
 
 		this.actions = init.actions;
+		this.enabled = init.enabled !== false;
 		this.isLoading = init.isLoading;
-		this.itemsTotal = init.itemsTotal;
-		this.pageSize = init.pageSize;
-		this.rowHeight = init.rowHeight;
-		this.evaluateTableHeight();
+		this.bottomDistance = this.readNumber(init.bottomDistance);
+		this.height = this.readNumber(init.height);
+		this.maxHeight = this.readNumber(init.maxHeight);
+		this.itemsTotal = this.readNumber(init.itemsTotal);
+		this.pageSize = this.readNumber(init.pageSize);
+		this.startIndex = this.readNumber(init.startIndex);
+		this.initialStartIndex = this.startIndex;
 
-		this.resizeDebounced = Helpers.debounce(() => {
-			this.evaluateTableHeight();
-			this.bindList();
-			this.syncSkeletons();
-			this.updateLoadingState();
-		}, RESIZE_DEBOUNCE_MS);
-		this.resizeObserver = new ResizeObserver(this.resizeDebounced);
-		this.resizeObserver.observe(this.widgetEl);
+		this.widgetEl.classList.add('lazylist');
+		this.lazyListPlaceholderEl = this.widgetEl.querySelector<HTMLElement>(':scope > .lazylist-placeholder') ?? this.widgetEl.querySelector<HTMLElement>('.lazylist-placeholder')!;
 
-		this.applyColumnTemplate();
-		this.bindList();
-		this.updateLoadingState();
-		this.scheduleSkeletonSync();
-	}
+		if (!this.lazyListPlaceholderEl) {
+			console.warn('LazyList: .lazylist-placeholder not found for runtimeId', init.runtimeId);
+			return;
+		}
 
-	private readonly onListScroll = (): void => {
-		this.scheduleSkeletonSync();
-		this.placeLoadingShield();
-	};
+		this.setupSpacers();
+		this.setViewport();
+		this.reflectState();
+		this.observeRows();
 
-	private readonly blockLoadingInteraction = (event: Event): void => {
-		event.preventDefault();
-	};
+		this.widgetEl.addEventListener('scroll', this.handleScroll, { passive: true });
+		window.addEventListener('resize', this.handleViewportResize);
+		this.observeLayoutResize(this.handleViewportResize, 50);
 
-	private readonly onListScrollEnd = (): void => {
-		this.emitOnScroll();
-	};
-
-	private applyColumnTemplate(): void {
-		const rowEl = this.widgetEl.querySelector<HTMLElement>('.lazylist-row');
-		if (!rowEl) return;
-
-		const columnEls = [...rowEl.querySelectorAll<HTMLElement>(':scope > div > div')];
-		if (!columnEls.length) return;
-
-		const hasWidthFull = columnEls.some((columnEl) => columnEl.classList.contains('width-full'));
-		const templateColumns = hasWidthFull ? columnEls.map((columnEl) => (columnEl.classList.contains('width-full') ? 'minmax(0, 1fr)' : 'max-content')).join(' ') : `repeat(${columnEls.length}, auto)`;
-
-		this.widgetEl.style.setProperty('--lazylist-template-columns', templateColumns);
-	}
-
-	evaluateTableHeight(): void {
-		const tableHeight = this.itemsTotal * this.rowHeight;
-		this.widgetEl.style.setProperty('--lazylist-row-height', `${this.rowHeight}px`);
-		this.widgetEl.style.setProperty('--lazylist-visible-rows', `${this.pageSize}`);
-		this.widgetEl.style.setProperty('--lazylist-container-height', `${tableHeight}px`);
+		this.scheduleMeasure();
 	}
 
 	parametersChanged(payload: ILazyList): void {
-		if (!this.widgetEl) return;
+		if (!this.widgetEl || !this.lazyListPlaceholderEl) return;
 
-		this.actions = payload.actions;
-		this.isLoading = payload.isLoading;
-		this.itemsTotal = payload.itemsTotal;
-		this.pageSize = payload.pageSize;
-		this.rowHeight = payload.rowHeight;
-		this.applyColumnTemplate();
-		this.evaluateTableHeight();
-		this.bindList();
-		this.updateLoadingState();
-		this.syncSkeletons();
-	}
+		const viewportChanged = payload.bottomDistance !== undefined || payload.height !== undefined || payload.maxHeight !== undefined;
 
-	private bindList(): void {
-		const nextList = this.widgetEl.querySelector<HTMLElement>('.list.list-group') ?? undefined;
-		if (nextList === this.listEl) return;
+		if (payload.enabled !== undefined) this.enabled = payload.enabled;
 
-		this.listEl?.removeEventListener('scroll', this.onListScroll);
-		this.listEl?.removeEventListener('scrollend', this.onListScrollEnd);
-		this.clearSkeletons();
-		this.listEl = nextList;
-		this.listEl?.addEventListener('scroll', this.onListScroll, { passive: true });
-		this.listEl?.addEventListener('scrollend', this.onListScrollEnd);
-	}
+		const finishedLoading = payload.isLoading !== undefined && payload.isLoading === false && this.isLoading;
+		if (payload.isLoading !== undefined) this.isLoading = payload.isLoading;
+		if (payload.bottomDistance !== undefined) this.bottomDistance = this.readNumber(payload.bottomDistance);
+		if (payload.height !== undefined) this.height = this.readNumber(payload.height);
+		if (payload.maxHeight !== undefined) this.maxHeight = this.readNumber(payload.maxHeight);
+		if (payload.itemsTotal !== undefined) this.itemsTotal = this.readNumber(payload.itemsTotal);
+		if (payload.pageSize !== undefined) this.pageSize = this.readNumber(payload.pageSize);
 
-	private updateLoadingState(): void {
-		const listEl = this.listEl;
-		if (!listEl) return;
-
-		listEl.classList.toggle('is-loading', this.isLoading);
-		listEl.setAttribute('aria-busy', this.isLoading ? 'true' : 'false');
-
-		if (!this.isLoading) {
-			this.loadingEl?.remove();
-			this.loadingEl = undefined;
-			return;
+		if (payload.startIndex !== undefined) {
+			this.startIndex = this.readNumber(payload.startIndex);
+			if (this.avgRowHeight > 0 && this.startIndex !== this.initialStartIndex) {
+				this.avgLocked = true;
+			}
+			if (this.requestedStartIndex === this.startIndex) {
+				this.requestedStartIndex = null;
+			}
 		}
 
-		if (!this.loadingEl) {
-			this.loadingEl = document.createElement('div');
-			this.loadingEl.className = 'lazylist-loading';
-			this.loadingEl.setAttribute('aria-hidden', 'true');
-			this.loadingEl.appendChild(createSpinner());
-			this.loadingEl.addEventListener('wheel', this.blockLoadingInteraction, { passive: false });
-			this.loadingEl.addEventListener('touchmove', this.blockLoadingInteraction, { passive: false });
-		}
+		this.reflectState();
+		if (viewportChanged) this.setViewport();
+		this.scheduleMeasure();
 
-		if (this.loadingEl.parentElement !== listEl) {
-			listEl.appendChild(this.loadingEl);
+		if (finishedLoading && this.scrollCheckPending) {
+			this.scrollCheckPending = false;
+			this.requestPageDebounced();
 		}
-
-		this.placeLoadingShield();
 	}
 
-	private placeLoadingShield(): void {
-		const listEl = this.listEl;
-		if (!this.isLoading || !this.loadingEl || !listEl) return;
-
-		this.loadingEl.style.height = `${listEl.clientHeight}px`;
-		this.loadingEl.style.top = `${listEl.scrollTop}px`;
-		this.loadingEl.style.width = `${listEl.clientWidth}px`;
-	}
-
-	private emitOnScroll(): void {
-		const listEl = this.listEl;
-		if (!listEl || this.rowHeight <= 0) return;
-
-		const maxIndex = Math.max(0, this.itemsTotal - 1);
-		const startIndex = Math.min(maxIndex, Math.floor(listEl.scrollTop / this.rowHeight));
-
-		console.log(startIndex, this.pageSize);
-
-		this.actions.OnScroll(startIndex, this.pageSize);
-	}
-
-	private scheduleSkeletonSync(): void {
-		if (this.scrollFrame) return;
-
-		this.scrollFrame = requestAnimationFrame(() => {
-			this.scrollFrame = 0;
-			this.syncSkeletons();
-		});
-	}
-
-	private syncSkeletons(): void {
-		const listEl = this.listEl;
-		if (!listEl || this.rowHeight <= 0 || this.itemsTotal <= 0) {
-			this.clearSkeletons();
-			return;
-		}
-
-		const columnCount = this.getColumnCount();
-		if (!columnCount) return;
-
-		if (columnCount !== this.skeletonColumnCount) {
-			this.clearSkeletons();
-			this.skeletonColumnCount = columnCount;
-		}
-
-		const indexes = this.visibleSkeletonIndexes(listEl.querySelectorAll('.lazylist-row').length);
-		while (this.skeletonPool.length < indexes.length) {
-			const skeleton = this.createSkeletonRow(columnCount);
-			this.skeletonPool.push(skeleton);
-			listEl.appendChild(skeleton);
-		}
-		while (this.skeletonPool.length > indexes.length) {
-			this.skeletonPool.pop()?.remove();
-		}
-
-		const columnTemplate = getComputedStyle(listEl).gridTemplateColumns;
-		const rowWidth = listEl.clientWidth;
-		indexes.forEach((index, poolIndex) => {
-			const skeleton = this.skeletonPool[poolIndex];
-			skeleton.style.gridTemplateColumns = columnTemplate;
-			skeleton.style.top = `${index * this.rowHeight}px`;
-			skeleton.style.width = `${rowWidth}px`;
-		});
-	}
-
-	private visibleSkeletonIndexes(loadedCount: number): number[] {
-		const listEl = this.listEl;
-		if (!listEl) return [];
-
-		const first = Math.max(loadedCount, Math.floor(listEl.scrollTop / this.rowHeight) - SKELETON_OVERSCAN);
-		const last = Math.min(this.itemsTotal - 1, Math.ceil((listEl.scrollTop + listEl.clientHeight) / this.rowHeight) - 1 + SKELETON_OVERSCAN);
-		if (last < first) return [];
-
-		const indexes: number[] = [];
-		for (let index = first; index <= last; index++) {
-			indexes.push(index);
-		}
-		return indexes;
-	}
-
-	private getColumnCount(): number {
-		const rowEl = this.widgetEl.querySelector<HTMLElement>('.lazylist-row');
-		if (!rowEl) return 0;
-		return rowEl.querySelectorAll(':scope > div > div').length;
-	}
-
-	private createSkeletonRow(columnCount: number): HTMLElement {
-		const row = document.createElement('div');
-		row.className = 'lazylist-skeleton';
-		row.setAttribute('aria-hidden', 'true');
-
-		for (let column = 0; column < columnCount; column++) {
-			const bar = document.createElement('span');
-			bar.style.width = SKELETON_BAR_WIDTHS[column % SKELETON_BAR_WIDTHS.length];
-			row.appendChild(bar);
-		}
-
-		return row;
-	}
-
-	private clearSkeletons(): void {
-		this.skeletonPool.forEach((skeleton) => skeleton.remove());
-		this.skeletonPool = [];
-		this.skeletonColumnCount = 0;
-	}
-
-	destroy() {
-		if (this.scrollFrame) {
-			cancelAnimationFrame(this.scrollFrame);
-			this.scrollFrame = 0;
-		}
-		this.resizeDebounced?.cancel();
-		this.resizeDebounced = undefined;
-		this.resizeObserver?.disconnect();
-		this.resizeObserver = undefined;
-		this.listEl?.removeEventListener('scroll', this.onListScroll);
-		this.listEl?.removeEventListener('scrollend', this.onListScrollEnd);
-		this.listEl = undefined;
-		this.loadingEl?.remove();
-		this.loadingEl = undefined;
-		this.clearSkeletons();
+	destroy(): void {
+		this.requestPageDebounced.cancel();
+		this.widgetEl?.removeEventListener('scroll', this.handleScroll);
+		window.removeEventListener('resize', this.handleViewportResize);
+		this.listResizeObserver?.disconnect();
+		this.rowsObserver?.disconnect();
+		this.spacerTopEl?.remove();
+		this.spacerBottomEl?.remove();
 		super.destroy();
+	}
+
+	private setupSpacers(): void {
+		this.spacerTopEl = this.createSpacer('top');
+		this.spacerBottomEl = this.createSpacer('bottom');
+		this.widgetEl.insertBefore(this.spacerTopEl, this.lazyListPlaceholderEl);
+		this.widgetEl.appendChild(this.spacerBottomEl);
+	}
+
+	private createSpacer(edge: 'top' | 'bottom'): HTMLDivElement {
+		const spacer = document.createElement('div');
+		spacer.className = `lazylist-spacer lazylist-spacer-${edge}`;
+		spacer.setAttribute('aria-hidden', 'true');
+		return spacer;
+	}
+
+	private observeRows(): void {
+		this.rowsObserver = new MutationObserver(() => {
+			this.scheduleMeasure();
+		});
+		this.rowsObserver.observe(this.lazyListPlaceholderEl, { childList: true, subtree: true });
+	}
+
+	private scheduleMeasure(): void {
+		if (this.measureQueued) return;
+		this.measureQueued = true;
+		requestAnimationFrame(() => {
+			this.measureQueued = false;
+			if (!this.widgetEl) return;
+			this.applyVirtualHeight();
+		});
+	}
+
+	private setViewport(): void {
+		const hasHeight = this.height > 0;
+		const hasMaxHeight = this.maxHeight > 0;
+
+		this.widgetEl.dataset.fillviewport = !hasHeight && !hasMaxHeight ? 'true' : 'false';
+		this.widgetEl.dataset.hasmaxheight = hasMaxHeight ? 'true' : 'false';
+		this.widgetEl.dataset.hasspecificheight = hasHeight ? 'true' : 'false';
+
+		if (hasHeight) {
+			this.widgetEl.style.setProperty('--lazylist-height', `${this.height}px`);
+		} else {
+			this.widgetEl.style.removeProperty('--lazylist-height');
+		}
+
+		if (hasMaxHeight) {
+			this.widgetEl.style.setProperty('--lazylist-max-height', `${this.maxHeight}px`);
+		} else {
+			this.widgetEl.style.removeProperty('--lazylist-max-height');
+		}
+
+		this.widgetEl.style.setProperty('--lazylist-bottom', `${this.bottomDistance}px`);
+
+		if (!hasHeight && !hasMaxHeight) {
+			const top = Math.max(0, Math.round(this.widgetEl.getBoundingClientRect().top));
+			this.widgetEl.style.setProperty('--lazylist-top', `${top}px`);
+		} else {
+			this.widgetEl.style.removeProperty('--lazylist-top');
+		}
+	}
+
+	private reflectState(): void {
+		this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
+		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
+	}
+
+	private applyVirtualHeight(): void {
+		const list = this.getListEl();
+		if (list) this.prepareList(list);
+
+		const rows = this.getRows();
+		this.captureAverage(rows);
+		this.observeList();
+
+		if (!this.spacerTopEl || !this.spacerBottomEl) return;
+
+		const avg = this.avgRowHeight;
+		if (avg <= 0 || this.itemsTotal <= 0) {
+			this.spacerTopEl.style.height = '0px';
+			this.spacerBottomEl.style.height = '0px';
+			return;
+		}
+
+		const start = Math.min(this.startIndex, this.itemsTotal);
+		const rendered = Math.min(rows.length, this.itemsTotal - start);
+		const below = Math.max(0, this.itemsTotal - start - rendered);
+
+		this.spacerTopEl.style.height = `${start * avg}px`;
+		this.spacerBottomEl.style.height = `${below * avg}px`;
+	}
+
+	private captureAverage(rows: HTMLElement[]): void {
+		if (this.avgLocked || this.isLoading || rows.length === 0) return;
+
+		const next = this.measureStride(rows);
+		if (next <= 0) return;
+		this.avgRowHeight = next;
+	}
+
+	private measureStride(rows: HTMLElement[]): number {
+		const first = rows[0].getBoundingClientRect();
+		if (rows.length === 1) return first.height;
+
+		const last = rows[rows.length - 1].getBoundingClientRect();
+		const span = last.top - first.top;
+		if (span <= 0) return first.height;
+		return span / (rows.length - 1);
+	}
+
+	private prepareList(list: HTMLElement): void {
+		list.style.height = 'auto';
+		list.style.maxHeight = 'none';
+		list.style.overflow = 'visible';
+	}
+
+	private observeList(): void {
+		const list = this.getListEl();
+		if (!list || list === this.observedListEl) return;
+
+		this.listResizeObserver?.disconnect();
+		this.observedListEl = list;
+		this.listResizeObserver = new ResizeObserver(() => {
+			this.scheduleMeasure();
+		});
+		this.listResizeObserver.observe(list);
+	}
+
+	private requestPageForScroll(): void {
+		if (!this.enabled || this.isLoading || this.avgRowHeight <= 0 || this.pageSize <= 0 || !this.actions) return;
+
+		const rows = this.getRows();
+		if (rows.length === 0 || this.itemsTotal === 0) return;
+
+		const firstVisible = Math.max(0, Math.floor(this.widgetEl.scrollTop / this.avgRowHeight));
+		const loadedEnd = this.startIndex + rows.length;
+		if (firstVisible >= this.startIndex && firstVisible < loadedEnd) {
+			this.requestedStartIndex = null;
+			return;
+		}
+
+		const maxStart = Math.max(0, this.itemsTotal - this.pageSize);
+		const pageStart = Math.min(maxStart, Math.floor(firstVisible / this.pageSize) * this.pageSize);
+		if (pageStart === this.startIndex || pageStart === this.requestedStartIndex) return;
+
+		this.requestedStartIndex = pageStart;
+		this.actions.OnScroll(pageStart, this.pageSize);
+	}
+
+	private getListEl(): HTMLElement | null {
+		if (!this.lazyListPlaceholderEl) return null;
+		return this.lazyListPlaceholderEl.querySelector<HTMLElement>(':scope > .list.list-group') ?? this.lazyListPlaceholderEl.querySelector<HTMLElement>('.list.list-group');
+	}
+
+	private getRows(): HTMLElement[] {
+		const list = this.getListEl();
+		if (!list) return [];
+		return Array.from(list.querySelectorAll<HTMLElement>('.lazylist-row'));
+	}
+
+	private readNumber(value: number | undefined): number {
+		const parsed = Helpers.toNumber(value);
+		if (parsed == null || !Number.isFinite(parsed) || parsed <= 0) return 0;
+		return parsed;
 	}
 }

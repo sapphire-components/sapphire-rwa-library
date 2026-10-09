@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.81 2026-10-09T08:53:00.864Z */
+/*!  SapphireRWALibrary PROD v0.6.82 2026-10-09T10:15:55.538Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -10188,14 +10188,7 @@ div[data-block$=LazyListRow] {
 }
 
 .lazylist-row {
-  background-color: var(--color-neutral-0);
-  display: grid;
-  grid-column: 1/-1;
-  grid-template-columns: subgrid;
   outline: 1px solid red;
-  position: relative;
-  width: 100%;
-  z-index: 1;
 }
 .lazylist-row:hover {
   background-color: var(--color-neutral-1);
@@ -10203,86 +10196,40 @@ div[data-block$=LazyListRow] {
 .lazylist-row > div {
   display: contents;
 }
-.lazylist-row > div > div {
-  min-width: 0;
-  padding: 8px 16px;
-}
-.lazylist-row > div > div.width-s {
-  max-width: 120px;
-  width: max-content;
-}
-.lazylist-row > div > div.width-m {
-  max-width: 160px;
-  width: max-content;
-}
-.lazylist-row > div > div.width-l {
-  max-width: 240px;
-  width: max-content;
-}
-.lazylist-row > div > div.width-full {
-  min-width: 0;
-}
 div[data-block$=LazyList] {
   display: contents;
 }
 
 .lazylist {
+  display: block;
   outline: 1px solid blue;
-}
-.lazylist > div {
-  display: contents;
-}
-.lazylist > div > div.list.list-group {
-  align-content: start;
-  display: grid;
-  grid-auto-rows: var(--lazylist-row-height);
-  grid-template-columns: var(--lazylist-template-columns);
-  height: calc(var(--lazylist-visible-rows) * var(--lazylist-row-height));
+  overflow-x: hidden;
   overflow-y: auto;
   position: relative;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
+  width: 100%;
 }
-.lazylist > div > div.list.list-group.is-loading {
+.lazylist[data-fillviewport=true] {
+  height: calc(100vh - var(--lazylist-top, 0px) - var(--lazylist-bottom, 0px));
+}
+.lazylist[data-hasmaxheight=true] {
+  max-height: var(--lazylist-max-height);
+}
+.lazylist[data-hasspecificheight=true] {
+  height: var(--lazylist-height);
+}
+.lazylist > .lazylist-placeholder {
+  display: contents;
+}
+.lazylist .list.list-group {
+  max-height: none;
+  overflow: visible;
+}
+
+.lazylist-spacer {
   pointer-events: none;
-}
-.lazylist > div > div.list.list-group::before {
-  content: "";
-  height: var(--lazylist-container-height);
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 1px;
-}
-.lazylist > div > div.list.list-group > .lazylist-skeleton {
-  align-items: center;
-  background-color: var(--color-neutral-0);
-  box-shadow: inset 0 -1px 0 var(--color-neutral-3);
-  display: grid;
-  height: var(--lazylist-row-height);
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  z-index: 0;
-}
-.lazylist > div > div.list.list-group > .lazylist-skeleton > span {
-  animation: skeleton-pulse 1.5s infinite;
-  background-color: var(--color-neutral-5);
-  border-radius: var(--border-radius-soft);
-  display: block;
-  height: 12px;
-  margin-inline: 16px;
-}
-.lazylist > div > div.list.list-group > .lazylist-loading {
-  align-items: center;
-  background-color: rgba(19, 24, 25, 0.35);
-  display: flex;
-  justify-content: center;
-  left: 0;
-  pointer-events: auto;
-  position: absolute;
-  z-index: 2;
+  width: 100%;
 }
 div[data-block$=MultiLevel] {
   display: block;
