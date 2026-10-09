@@ -37,6 +37,39 @@ div[data-block$='LazyList'] {
 	.list.list-group {
 		max-height: none;
 		overflow: visible;
+		position: relative;
+		z-index: 1;
+	}
+}
+
+.lazylist-skeletons {
+	left: 0;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	z-index: 0;
+}
+
+.lazylist-skeleton {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	justify-content: center;
+	overflow: hidden;
+	padding-block: 8px;
+	padding-inline: 16px;
+
+	span {
+		animation: skeleton-pulse 1.5s infinite;
+		border-radius: var(--border-radius-soft);
+		display: block;
+		flex: 0 0 10px;
+		height: 10px;
+
+		&:last-child {
+			width: 62%;
+		}
 	}
 }
 

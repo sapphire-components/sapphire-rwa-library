@@ -33,9 +33,12 @@ export default class LazyList extends BaseComponent {
 	private maxHeight = 0;
 	private observedListEl?: HTMLElement;
 	private pageSize = 0;
+	private requestedPageSize: number | null = null;
 	private requestedStartIndex: number | null = null;
-	private scrollCheckPending = false;
 	private rowsObserver?: MutationObserver;
+	private skeletonAfterEl?: HTMLDivElement;
+	private skeletonBeforeEl?: HTMLDivElement;
+	private skeletonKey = '';
 	private spacerBottomEl?: HTMLDivElement;
 	private spacerTopEl?: HTMLDivElement;
 	private startIndex = 0;
@@ -44,22 +47,21 @@ export default class LazyList extends BaseComponent {
 
 	private readonly requestPageDebounced = Helpers.debounce((): void => {
 		this.requestPageForScroll();
-	}, 80);
+	}, 200);
 
 	private readonly handleScroll = (): void => {
 		this.syncLoadingShield();
+		this.syncSkeletons();
 		if (this.avgRowHeight > 0 && this.widgetEl.scrollTop > 0) {
 			this.avgLocked = true;
-		}
-		if (this.isLoading) {
-			this.scrollCheckPending = true;
-			return;
 		}
 		this.requestPageDebounced();
 	};
 
 	private readonly handleViewportResize = (): void => {
 		this.setViewport();
+		this.syncSkeletons();
+		this.updatePageSize();
 	};
 
 	constructor(init: ILazyList) {
@@ -90,6 +92,7 @@ export default class LazyList extends BaseComponent {
 		}
 
 		this.setupSpacers();
+		this.setupSkeletons();
 		this.setViewport();
 		this.reflectState();
 		this.observeRows();
@@ -108,13 +111,11 @@ export default class LazyList extends BaseComponent {
 
 		if (payload.enabled !== undefined) this.enabled = payload.enabled;
 
-		const finishedLoading = payload.isLoading !== undefined && payload.isLoading === false && this.isLoading;
 		if (payload.isLoading !== undefined) this.isLoading = payload.isLoading;
 		if (payload.bottomDistance !== undefined) this.bottomDistance = this.readNumber(payload.bottomDistance);
 		if (payload.height !== undefined) this.height = this.readNumber(payload.height);
 		if (payload.maxHeight !== undefined) this.maxHeight = this.readNumber(payload.maxHeight);
 		if (payload.itemsTotal !== undefined) this.itemsTotal = this.readNumber(payload.itemsTotal);
-		if (payload.pageSize !== undefined) this.pageSize = this.readNumber(payload.pageSize);
 
 		if (payload.startIndex !== undefined) {
 			this.startIndex = this.readNumber(payload.startIndex);
@@ -123,17 +124,13 @@ export default class LazyList extends BaseComponent {
 			}
 			if (this.requestedStartIndex === this.startIndex) {
 				this.requestedStartIndex = null;
+				this.requestedPageSize = null;
 			}
 		}
 
 		this.reflectState();
 		if (viewportChanged) this.setViewport();
 		this.scheduleMeasure();
-
-		if (finishedLoading && this.scrollCheckPending) {
-			this.scrollCheckPending = false;
-			this.requestPageDebounced();
-		}
 	}
 
 	destroy(): void {
@@ -144,6 +141,8 @@ export default class LazyList extends BaseComponent {
 		this.rowsObserver?.disconnect();
 		this.loadingEl?.remove();
 		this.loadingEl = undefined;
+		this.skeletonBeforeEl?.remove();
+		this.skeletonAfterEl?.remove();
 		this.spacerTopEl?.remove();
 		this.spacerBottomEl?.remove();
 		super.destroy();
@@ -154,6 +153,26 @@ export default class LazyList extends BaseComponent {
 		this.spacerBottomEl = this.createSpacer('bottom');
 		this.widgetEl.insertBefore(this.spacerTopEl, this.lazyListPlaceholderEl);
 		this.widgetEl.appendChild(this.spacerBottomEl);
+	}
+
+	private setupSkeletons(): void {
+		this.skeletonBeforeEl = this.createSkeletonGroup('before');
+		this.skeletonAfterEl = this.createSkeletonGroup('after');
+		this.widgetEl.append(this.skeletonBeforeEl, this.skeletonAfterEl);
+	}
+
+	private createSkeletonGroup(edge: 'before' | 'after'): HTMLDivElement {
+		const group = document.createElement('div');
+		group.className = `lazylist-skeletons lazylist-skeletons-${edge}`;
+		group.setAttribute('aria-hidden', 'true');
+		return group;
+	}
+
+	private createSkeletonRow(): HTMLDivElement {
+		const row = document.createElement('div');
+		row.className = 'lazylist-skeleton';
+		row.append(document.createElement('span'), document.createElement('span'));
+		return row;
 	}
 
 	private createSpacer(edge: 'top' | 'bottom'): HTMLDivElement {
@@ -251,6 +270,7 @@ export default class LazyList extends BaseComponent {
 		if (avg <= 0 || this.itemsTotal <= 0) {
 			this.spacerTopEl.style.height = '0px';
 			this.spacerBottomEl.style.height = '0px';
+			this.syncSkeletons();
 			return;
 		}
 
@@ -260,10 +280,12 @@ export default class LazyList extends BaseComponent {
 
 		this.spacerTopEl.style.height = `${start * avg}px`;
 		this.spacerBottomEl.style.height = `${below * avg}px`;
+		this.updatePageSize();
+		this.syncSkeletons();
 	}
 
 	private captureAverage(rows: HTMLElement[]): void {
-		if (this.avgLocked || this.isLoading || rows.length === 0) return;
+		if (this.avgLocked || rows.length === 0) return;
 
 		const next = this.measureStride(rows);
 		if (next <= 0) return;
@@ -298,25 +320,89 @@ export default class LazyList extends BaseComponent {
 		this.listResizeObserver.observe(list);
 	}
 
-	private requestPageForScroll(): void {
-		if (!this.enabled || this.isLoading || this.avgRowHeight <= 0 || this.pageSize <= 0 || !this.actions) return;
+	private updatePageSize(): void {
+		if (this.avgRowHeight <= 0 || this.widgetEl.clientHeight <= 0) return;
 
-		const rows = this.getRows();
-		if (rows.length === 0 || this.itemsTotal === 0) return;
+		const next = this.fittedPageSize();
+		if (next === this.pageSize) return;
+		this.pageSize = next;
+		this.requestPageDebounced();
+	}
+
+	private fittedPageSize(): number {
+		const fitted = Math.max(1, Math.ceil(this.widgetEl.clientHeight / this.avgRowHeight) + 1);
+		if (this.itemsTotal <= 0) return fitted;
+		return Math.min(this.itemsTotal, fitted);
+	}
+
+	private requestPageForScroll(): void {
+		if (!this.enabled || !this.actions || this.avgRowHeight <= 0 || this.pageSize <= 0 || this.itemsTotal <= 0) return;
 
 		const firstVisible = Math.max(0, Math.floor(this.widgetEl.scrollTop / this.avgRowHeight));
-		const loadedEnd = this.startIndex + rows.length;
-		if (firstVisible >= this.startIndex && firstVisible < loadedEnd) {
-			this.requestedStartIndex = null;
+		const maxStart = Math.max(0, this.itemsTotal - this.pageSize);
+		const desired = Math.min(maxStart, firstVisible);
+		const needed = Math.min(this.pageSize, this.itemsTotal - desired);
+		const rendered = Math.min(this.getRows().length, this.itemsTotal - this.startIndex);
+		const sameRequest = desired === this.requestedStartIndex && this.pageSize === this.requestedPageSize;
+		if (sameRequest) return;
+		if (desired === this.startIndex && rendered === needed) return;
+
+		this.requestedStartIndex = desired;
+		this.requestedPageSize = this.pageSize;
+		this.actions.OnScroll(desired, this.pageSize);
+	}
+
+	private syncSkeletons(): void {
+		if (!this.skeletonBeforeEl || !this.skeletonAfterEl) return;
+
+		const avg = this.avgRowHeight;
+		if (avg <= 0 || this.itemsTotal <= 0) {
+			this.renderSkeletonGroup(this.skeletonBeforeEl, 0, 0, 0);
+			this.renderSkeletonGroup(this.skeletonAfterEl, 0, 0, 0);
+			this.skeletonKey = '';
 			return;
 		}
 
-		const maxStart = Math.max(0, this.itemsTotal - this.pageSize);
-		const pageStart = Math.min(maxStart, Math.floor(firstVisible / this.pageSize) * this.pageSize);
-		if (pageStart === this.startIndex || pageStart === this.requestedStartIndex) return;
+		const loadedStart = Math.min(this.startIndex, this.itemsTotal);
+		const loadedEnd = Math.min(this.itemsTotal, loadedStart + this.getRows().length);
+		const overscan = Math.max(1, Math.ceil((this.widgetEl.clientHeight || avg) / avg));
+		const viewStart = Math.max(0, Math.floor(this.widgetEl.scrollTop / avg) - overscan);
+		const viewEnd = Math.min(this.itemsTotal, Math.ceil((this.widgetEl.scrollTop + this.widgetEl.clientHeight) / avg) + overscan);
 
-		this.requestedStartIndex = pageStart;
-		this.actions.OnScroll(pageStart, this.pageSize);
+		const beforeFrom = viewStart;
+		const beforeCount = Math.max(0, Math.min(viewEnd, loadedStart) - beforeFrom);
+		const afterFrom = Math.max(viewStart, loadedEnd);
+		const afterCount = Math.max(0, viewEnd - afterFrom);
+		const key = `${beforeFrom}:${beforeCount}:${afterFrom}:${afterCount}:${avg}`;
+		if (key === this.skeletonKey) return;
+		this.skeletonKey = key;
+
+		this.renderSkeletonGroup(this.skeletonBeforeEl, beforeFrom, beforeCount, avg);
+		this.renderSkeletonGroup(this.skeletonAfterEl, afterFrom, afterCount, avg);
+	}
+
+	private renderSkeletonGroup(group: HTMLDivElement, from: number, count: number, avg: number): void {
+		if (count <= 0 || avg <= 0) {
+			group.replaceChildren();
+			group.hidden = true;
+			return;
+		}
+
+		group.hidden = false;
+		group.style.top = `${from * avg}px`;
+
+		while (group.childElementCount < count) {
+			group.appendChild(this.createSkeletonRow());
+		}
+		while (group.childElementCount > count) {
+			group.lastElementChild?.remove();
+		}
+
+		const height = `${avg}px`;
+		for (const child of group.children) {
+			const row = child as HTMLElement;
+			if (row.style.height !== height) row.style.height = height;
+		}
 	}
 
 	private getListEl(): HTMLElement | null {

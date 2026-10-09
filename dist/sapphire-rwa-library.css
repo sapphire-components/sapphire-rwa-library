@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.83 2026-10-09T10:36:05.397Z */
+/*!  SapphireRWALibrary PROD v0.6.84 2026-10-09T11:34:02.920Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -10230,6 +10230,37 @@ div[data-block$=LazyList] {
 .lazylist .list.list-group {
   max-height: none;
   overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+.lazylist-skeletons {
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: 0;
+}
+
+.lazylist-skeleton {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  overflow: hidden;
+  padding-block: 8px;
+  padding-inline: 16px;
+}
+.lazylist-skeleton span {
+  animation: skeleton-pulse 1.5s infinite;
+  border-radius: var(--border-radius-soft);
+  display: block;
+  flex: 0 0 10px;
+  height: 10px;
+}
+.lazylist-skeleton span:last-child {
+  width: 62%;
 }
 
 .lazylist-spacer {
