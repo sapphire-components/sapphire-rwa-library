@@ -1,0 +1,69 @@
+div[data-block$='LazyList'] {
+	display: contents;
+}
+
+.lazylist {
+	outline: 1px solid blue;
+
+	> div {
+		display: contents;
+
+		> div.list.list-group {
+			align-content: start;
+			display: grid;
+			grid-auto-rows: var(--lazylist-row-height);
+			grid-template-columns: var(--lazylist-template-columns);
+			height: calc(var(--lazylist-visible-rows) * var(--lazylist-row-height));
+			overflow-y: auto;
+			position: relative;
+			scrollbar-gutter: stable;
+			scrollbar-width: thin;
+
+			&.is-loading {
+				pointer-events: none;
+			}
+
+			&::before {
+				content: '';
+				height: var(--lazylist-container-height);
+				left: 0;
+				pointer-events: none;
+				position: absolute;
+				top: 0;
+				width: 1px;
+			}
+
+			> .lazylist-skeleton {
+				align-items: center;
+				background-color: var(--color-neutral-0);
+				box-shadow: inset 0 -1px 0 var(--color-neutral-3);
+				display: grid;
+				height: var(--lazylist-row-height);
+				left: 0;
+				pointer-events: none;
+				position: absolute;
+				z-index: 0;
+
+				> span {
+					animation: skeleton-pulse 1.5s infinite;
+					background-color: var(--color-neutral-5);
+					border-radius: var(--border-radius-soft);
+					display: block;
+					height: 12px;
+					margin-inline: 16px;
+				}
+			}
+
+			> .lazylist-loading {
+				align-items: center;
+				background-color: rgba(19, 24, 25, 0.35);
+				display: flex;
+				justify-content: center;
+				left: 0;
+				pointer-events: auto;
+				position: absolute;
+				z-index: 2;
+			}
+		}
+	}
+}

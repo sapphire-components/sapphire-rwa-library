@@ -1,0 +1,41 @@
+div[data-block$='LazyListRow'] {
+	display: contents;
+}
+
+.lazylist-row {
+	background-color: var(--color-neutral-0);
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	outline: 1px solid red;
+	position: relative;
+	width: 100%;
+	z-index: 1;
+
+	&:hover {
+		background-color: var(--color-neutral-1);
+	}
+
+	> div {
+		display: contents;
+		> div {
+			min-width: 0;
+			padding: 8px 16px;
+			&.width-s {
+				max-width: 120px;
+				width: max-content;
+			}
+			&.width-m {
+				max-width: 160px;
+				width: max-content;
+			}
+			&.width-l {
+				max-width: 240px;
+				width: max-content;
+			}
+			&.width-full {
+				min-width: 0;
+			}
+		}
+	}
+}
