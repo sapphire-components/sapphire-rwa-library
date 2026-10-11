@@ -2,13 +2,71 @@ div[data-block$='LazyListRow'] {
 	display: contents;
 }
 
+div[data-block$='LazyListRow']:first-child {
+	.lazylist-row {
+		border-top: none;
+	}
+}
+
 .lazylist-row {
-	outline: 1px solid red;
+	background-color: var(--color-neutral-0);
+	border-top: 1px solid var(--color-border);
+	padding: 12px;
 	&:hover {
 		background-color: var(--color-neutral-1);
 	}
-
 	> div {
 		display: contents;
+	}
+}
+
+@mixin lazylist-column {
+	flex: 1 1 0;
+	min-width: 0;
+	padding: 12px;
+	word-break: break-all;
+
+	&.width-025x {
+		flex: 0.25 1 0;
+	}
+	&.width-05x {
+		flex: 0.5 1 0;
+	}
+	&.width-2x {
+		flex: 2 1 0;
+	}
+	&.width-3x {
+		flex: 3 1 0;
+	}
+	&.width-4x {
+		flex: 4 1 0;
+	}
+	&.width-5x {
+		flex: 5 1 0;
+	}
+}
+
+.lazylist[data-simulatetable='true'] {
+	.lazylist-header-placeholder,
+	.lazylist-row {
+		display: flex;
+		flex-wrap: nowrap;
+		padding: 0;
+		width: 100%;
+	}
+
+	.lazylist-header-placeholder {
+		> div:not([data-container]) {
+			display: contents;
+		}
+
+		> div[data-container],
+		> div > div[data-container] {
+			@include lazylist-column;
+		}
+	}
+
+	.lazylist-row > div > div[data-container] {
+		@include lazylist-column;
 	}
 }
