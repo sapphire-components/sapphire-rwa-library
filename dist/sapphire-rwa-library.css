@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.85 2026-10-11T15:43:05.091Z */
+/*!  SapphireRWALibrary PROD v0.6.87 2026-10-11T16:31:23.435Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -10286,7 +10286,7 @@ div[data-block$=LazyList].lazylist,
 }
 div[data-block$=LazyList].lazylist[data-fillviewport=true],
 .lazylist[data-fillviewport=true] {
-  height: calc(100vh - var(--lazylist-top, 0px) - var(--lazylist-bottom, 0px));
+  height: calc(100vh - var(--lazylist-top, 0px) - var(--lazylist-bottom, 0px) - 1px);
 }
 div[data-block$=LazyList].lazylist[data-hasmaxheight=true],
 .lazylist[data-hasmaxheight=true] {
@@ -10347,6 +10347,36 @@ div[data-block$=LazyList].lazylist .lazylist-sort .svg-icon[data-caret=down],
 div[data-block$=LazyList].lazylist .lazylist-rows-placeholder,
 .lazylist .lazylist-rows-placeholder {
   display: contents;
+}
+div[data-block$=LazyList].lazylist .lazylist-norecords-placeholder,
+.lazylist .lazylist-norecords-placeholder {
+  display: none;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 50px;
+  place-items: center;
+  position: relative;
+}
+div[data-block$=LazyList].lazylist .lazylist-norecords-placeholder > div,
+.lazylist .lazylist-norecords-placeholder > div {
+  display: contents;
+}
+div[data-block$=LazyList].lazylist[data-norecords=true],
+.lazylist[data-norecords=true] {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+div[data-block$=LazyList].lazylist[data-norecords=true] > .lazylist-header-placeholder,
+.lazylist[data-norecords=true] > .lazylist-header-placeholder {
+  flex: 0 0 auto;
+  opacity: 0.5;
+  pointer-events: none;
+}
+div[data-block$=LazyList].lazylist[data-norecords=true] > .lazylist-norecords-placeholder,
+.lazylist[data-norecords=true] > .lazylist-norecords-placeholder {
+  display: grid;
 }
 div[data-block$=LazyList].lazylist > .sapphire-loading-overlay,
 .lazylist > .sapphire-loading-overlay {

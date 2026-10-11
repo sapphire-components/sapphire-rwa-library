@@ -11,6 +11,7 @@ interface ILazyList extends BaseComponentInit {
 	enabled: boolean;
 	height: number;
 	isLoading: boolean;
+	isPristine: boolean;
 	itemsTotal: number;
 	maxHeight: number;
 	pageSize: number;
@@ -25,6 +26,7 @@ export default class LazyList extends BaseComponent {
 	private actions!: ILazyList['actions'];
 	private avgLocked = false;
 	private avgRowHeight = 0;
+	private isPristine = true;
 	private bottomDistance = 0;
 	private enabled = true;
 	private extraRows = 0;
@@ -121,6 +123,7 @@ export default class LazyList extends BaseComponent {
 		this.sortColumn = this.readText(init.sortColumn);
 		this.sortDirection = this.readText(init.sortDirection);
 		this.simulateTable = init.simulateTable === true;
+		if (init.isPristine !== undefined) this.isPristine = init.isPristine === true;
 
 		this.lazyListHeaderPlaceholderEl = this.widgetEl.querySelector<HTMLElement>(':scope > .lazylist-header-placeholder')!;
 		this.lazyListRowsPlaceholderEl = this.widgetEl.querySelector<HTMLElement>(':scope > .lazylist-rows-placeholder')!;
@@ -128,6 +131,7 @@ export default class LazyList extends BaseComponent {
 		this.placeHeader();
 		this.observeHeader();
 		this.syncSortHeaders();
+		this.syncNoRecords();
 		this.setupSpacers();
 		this.setupSkeletons();
 		this.setViewport();
@@ -149,6 +153,7 @@ export default class LazyList extends BaseComponent {
 		if (payload.enabled !== undefined) this.enabled = payload.enabled;
 
 		if (payload.isLoading !== undefined) this.isLoading = payload.isLoading;
+		if (payload.isPristine !== undefined) this.isPristine = payload.isPristine === true;
 		if (payload.bottomDistance !== undefined) this.bottomDistance = this.readNumber(payload.bottomDistance);
 		if (payload.height !== undefined) this.height = this.readNumber(payload.height);
 		if (payload.maxHeight !== undefined) this.maxHeight = this.readNumber(payload.maxHeight);
@@ -183,6 +188,7 @@ export default class LazyList extends BaseComponent {
 		this.reflectState();
 		if (viewportChanged) this.setViewport();
 		this.syncSortHeaders();
+		this.syncNoRecords();
 		if (sortChanged) this.scrollToTop();
 		this.scheduleMeasure();
 	}
@@ -339,8 +345,15 @@ export default class LazyList extends BaseComponent {
 		return spacer;
 	}
 
+	private syncNoRecords(): void {
+		if (!this.widgetEl) return;
+		const hasRecords = this.itemsTotal > 0 || this.getRows().length > 0;
+		this.widgetEl.dataset.norecords = !this.isPristine && !hasRecords ? 'true' : 'false';
+	}
+
 	private observeRows(): void {
 		this.rowsObserver = new MutationObserver(() => {
+			this.syncNoRecords();
 			this.scheduleMeasure();
 		});
 		this.rowsObserver.observe(this.lazyListRowsPlaceholderEl, { childList: true, subtree: true });

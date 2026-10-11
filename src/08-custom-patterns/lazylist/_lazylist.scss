@@ -15,7 +15,7 @@ div[data-block$='LazyList'].lazylist,
 	width: 100%;
 
 	&[data-fillviewport='true'] {
-		height: calc(100vh - var(--lazylist-top, 0px) - var(--lazylist-bottom, 0px));
+		height: calc(100vh - var(--lazylist-top, 0px) - var(--lazylist-bottom, 0px) - 1px);
 	}
 
 	&[data-hasmaxheight='true'] {
@@ -76,6 +76,33 @@ div[data-block$='LazyList'].lazylist,
 
 	.lazylist-rows-placeholder {
 		display: contents;
+	}
+
+	.lazylist-norecords-placeholder {
+		display: none;
+		flex: 1 1 0;
+		min-height: 0;
+		overflow: auto;
+		padding: 50px;
+		place-items: center;
+		position: relative;
+		> div {
+			display: contents;
+		}
+	}
+
+	&[data-norecords='true'] {
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+		> .lazylist-header-placeholder {
+			flex: 0 0 auto;
+			opacity: 0.5;
+			pointer-events: none;
+		}
+		> .lazylist-norecords-placeholder {
+			display: grid;
+		}
 	}
 
 	> .sapphire-loading-overlay {
