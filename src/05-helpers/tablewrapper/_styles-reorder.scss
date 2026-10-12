@@ -43,19 +43,22 @@
 		align-items: center;
 		color: var(--color-neutral-9);
 		display: inline-flex;
-		font-size: 14px;
+		font-size: 15px;
 		font-variant-numeric: tabular-nums;
 		font-weight: 600;
 		gap: var(--space-xxs);
+		justify-content: center;
 		line-height: 1;
 		margin: 0;
 		padding: 0;
 		pointer-events: none;
 		user-select: none;
 		white-space: nowrap;
+		width: 100%;
 
 		.tablewrapper-reorder-arrow {
 			color: var(--color-neutral-6);
+			margin-inline: 2px;
 		}
 
 		.tablewrapper-reorder-target {
@@ -71,7 +74,7 @@
 			margin: 0;
 			min-width: 3ch;
 			outline: solid 1px var(--color-neutral-5);
-			padding: 0;
+			padding: 8px;
 			pointer-events: auto;
 			text-align: center;
 			user-select: auto;

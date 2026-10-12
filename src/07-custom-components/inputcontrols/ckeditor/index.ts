@@ -66,6 +66,8 @@ export interface ICKEditor extends BaseComponentInit {
 	actions: {
 		OnBlur: () => void;
 		OnChange: (text: string, html: string) => void;
+		/** `true` while edits emit `OnChange`. `false` while Source mode bypasses the model. */
+		OnChangeDetection?: (isActive: boolean) => void;
 		OnFocus: () => void;
 	};
 	content: string;
@@ -229,6 +231,12 @@ export default class CKEditor extends BaseComponent {
 			const html = normalizeHtml(editor.getData());
 			const text = htmlToText(html);
 			this.#actions.OnChange(text, html);
+		});
+
+		// Source mode writes a textarea, not the model, so `change:data` stays silent until Source is turned off.
+		const sourceEditing = editor.plugins.get(SourceEditing);
+		sourceEditing.on('change:isSourceEditingMode', (_evt, _name, isSourceEditingMode) => {
+			this.#actions.OnChangeDetection?.(!isSourceEditingMode);
 		});
 
 		editor.editing.view.document.on('focus', this.#focus);

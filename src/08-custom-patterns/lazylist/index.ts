@@ -79,10 +79,14 @@ export default class LazyList extends BaseComponent {
 		const target = event.target;
 		if (!(target instanceof Element)) return;
 
-		const control = target.closest<HTMLElement>('.lazylist-sort');
-		if (!control || !this.lazyListHeaderPlaceholderEl?.contains(control)) return;
+		const columnEl = target.closest<HTMLElement>('[data-sort]');
+		if (!columnEl || !this.lazyListHeaderPlaceholderEl?.contains(columnEl)) return;
+		if ((columnEl.getAttribute('data-sort') ?? '').toLowerCase() !== 'true') return;
 
-		const column = control.dataset.column ?? '';
+		const interactive = target.closest('a, button, input, select, textarea');
+		if (interactive && interactive !== columnEl && !interactive.classList.contains('lazylist-sort')) return;
+
+		const column = columnEl.dataset.column ?? '';
 		if (!column) return;
 
 		const direction = this.nextSortDirection(column);

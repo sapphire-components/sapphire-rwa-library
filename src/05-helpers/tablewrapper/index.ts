@@ -36,6 +36,7 @@ export default class TableWrapper extends BaseComponent {
 	private pageCount = 0;
 	private reorderCommitEl?: HTMLButtonElement;
 	private reorderImmediately = true;
+	private reorderInputColumn = 1;
 	private reorderOriginByRow = new WeakMap<HTMLTableRowElement, number>();
 	private reorderPanelEl?: HTMLDivElement;
 	private reorderableRows;
@@ -152,6 +153,7 @@ export default class TableWrapper extends BaseComponent {
 		this.isStickyHeader = this.configOptions.isStickyHeader && !this.configOptions.maxHeight;
 		this.pageCount = this.configOptions.pageCount;
 		this.reorderImmediately = this.configOptions.reorderImmediately;
+		this.reorderInputColumn = this.resolveReorderInputColumn(this.configOptions.reorderInputColumn);
 		this.reorderableRows = this.configOptions.reorderableRows;
 
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
@@ -287,6 +289,14 @@ export default class TableWrapper extends BaseComponent {
 		if (payload.reorderImmediately !== undefined && payload.reorderImmediately !== this.reorderImmediately) {
 			this.reorderImmediately = payload.reorderImmediately;
 			this.handleReorderableRows();
+		}
+
+		if (payload.reorderInputColumn !== undefined) {
+			const nextColumn = this.resolveReorderInputColumn(payload.reorderInputColumn);
+			if (nextColumn !== this.reorderInputColumn) {
+				this.reorderInputColumn = nextColumn;
+				this.syncStagedReorderUi();
+			}
 		}
 
 		if (payload.isLoading !== undefined && payload.isLoading !== this.isLoading) {
@@ -487,13 +497,25 @@ export default class TableWrapper extends BaseComponent {
 		this.reorderPanelEl?.remove();
 		this.reorderPanelEl = undefined;
 		this.reorderCommitEl = undefined;
-		this.tableEl?.querySelectorAll<HTMLTableCellElement>(`${TableWrapper.ROW_SELECTOR} > td:first-child`).forEach((cell) => {
-			this.restoreFirstCell(cell);
+		this.tableEl?.querySelectorAll<HTMLTableCellElement>(`${TableWrapper.ROW_SELECTOR} > td`).forEach((cell) => {
+			if (cell.querySelector(`:scope > .${TableWrapper.POSITION_CLASS}, :scope > .${TableWrapper.STASH_CLASS}`)) {
+				this.restoreCell(cell);
+			}
 		});
 		this.reorderOriginByRow = new WeakMap();
 	}
 
-	private stashFirstCell(cell: HTMLTableCellElement): void {
+	private resolveReorderInputColumn(value: number | undefined): number {
+		if (value === undefined || !Number.isInteger(value) || value < 1) return 1;
+		return value;
+	}
+
+	private getReorderCell(row: HTMLTableRowElement): HTMLTableCellElement | null {
+		const cells = row.querySelectorAll<HTMLTableCellElement>(':scope > td');
+		return cells[this.reorderInputColumn - 1] ?? null;
+	}
+
+	private stashCell(cell: HTMLTableCellElement): void {
 		Array.from(cell.childNodes).forEach((node) => {
 			if (node instanceof HTMLElement) {
 				if (node.classList.contains(TableWrapper.POSITION_CLASS) || node.classList.contains(TableWrapper.STASH_CLASS)) return;
@@ -511,7 +533,7 @@ export default class TableWrapper extends BaseComponent {
 		});
 	}
 
-	private restoreFirstCell(cell: HTMLTableCellElement): void {
+	private restoreCell(cell: HTMLTableCellElement): void {
 		cell.querySelector(`:scope > .${TableWrapper.POSITION_CLASS}`)?.remove();
 		cell.querySelectorAll<HTMLElement>(`:scope > .${TableWrapper.STASH_CLASS}`).forEach((node) => {
 			node.classList.remove(TableWrapper.STASH_CLASS);
@@ -522,12 +544,22 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private ensureRowPosition(row: HTMLTableRowElement): HTMLElement | null {
-		const firstCell = row.querySelector<HTMLTableCellElement>(':scope > td');
-		if (!firstCell) return null;
+		const cell = this.getReorderCell(row);
+		const existingPosition = row.querySelector<HTMLElement>(`:scope > td > .${TableWrapper.POSITION_CLASS}`);
+		if (existingPosition) {
+			const host = existingPosition.parentElement as HTMLTableCellElement | null;
+			if (host && host !== cell) {
+				this.restoreCell(host);
+			} else if (host === cell) {
+				return existingPosition;
+			}
+		}
 
-		this.stashFirstCell(firstCell);
+		if (!cell) return null;
 
-		const existing = firstCell.querySelector<HTMLElement>(`:scope > .${TableWrapper.POSITION_CLASS}`);
+		this.stashCell(cell);
+
+		const existing = cell.querySelector<HTMLElement>(`:scope > .${TableWrapper.POSITION_CLASS}`);
 		if (existing) return existing;
 
 		const position = document.createElement('div');
@@ -552,7 +584,7 @@ export default class TableWrapper extends BaseComponent {
 		targetEl.addEventListener('focus', this.handleTargetFocus);
 
 		position.append(originEl, arrowEl, targetEl);
-		firstCell.appendChild(position);
+		cell.appendChild(position);
 
 		return position;
 	}

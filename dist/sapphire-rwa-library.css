@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.88 2026-10-12T09:28:01.247Z */
+/*!  SapphireRWALibrary PROD v0.6.89 2026-10-12T13:58:54.437Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -4774,19 +4774,22 @@ div[data-block$=LabelValue] {
   align-items: center;
   color: var(--color-neutral-9);
   display: inline-flex;
-  font-size: 14px;
+  font-size: 15px;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   gap: var(--space-xxs);
+  justify-content: center;
   line-height: 1;
   margin: 0;
   padding: 0;
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
+  width: 100%;
 }
 .tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-position .tablewrapper-reorder-arrow {
   color: var(--color-neutral-6);
+  margin-inline: 2px;
 }
 .tablewrapper[data-reorderablerows=true][data-reorderondrop=false] .tablewrapper-reorder-position .tablewrapper-reorder-target {
   appearance: none;
@@ -4801,7 +4804,7 @@ div[data-block$=LabelValue] {
   margin: 0;
   min-width: 3ch;
   outline: solid 1px var(--color-neutral-5);
-  padding: 0;
+  padding: 8px;
   pointer-events: auto;
   text-align: center;
   user-select: auto;
@@ -10244,6 +10247,11 @@ div[data-block$=LazyListRow]:first-child .lazylist-row {
 .lazylist[data-simulatetable=true] .lazylist-header-placeholder > div > div[data-container].width-5x {
   flex: 5 1 0;
 }
+.lazylist[data-simulatetable=true] .lazylist-header-placeholder > div[data-container],
+.lazylist[data-simulatetable=true] .lazylist-header-placeholder > div > div[data-container] {
+  align-items: center;
+  display: flex;
+}
 .lazylist[data-simulatetable=true] .lazylist-row > div > div[data-container] {
   flex: 1 1 0;
   min-width: 0;
@@ -10312,18 +10320,46 @@ div[data-block$=LazyList].lazylist:not([data-simulatetable=true]) .lazylist-head
 .lazylist:not([data-simulatetable=true]) .lazylist-header-placeholder {
   padding: 12px;
 }
+div[data-block$=LazyList].lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i],
+.lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i] {
+  cursor: pointer;
+}
+div[data-block$=LazyList].lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover,
+.lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover {
+  color: var(--color-neutral-10);
+}
+div[data-block$=LazyList].lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover *,
+.lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover * {
+  color: var(--color-neutral-10);
+}
+div[data-block$=LazyList].lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover .lazylist-sort .svg-icon,
+div[data-block$=LazyList].lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover .lazylist-sort .svg-icon *,
+.lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover .lazylist-sort .svg-icon,
+.lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i]:hover .lazylist-sort .svg-icon * {
+  color: var(--iconcolor);
+}
 div[data-block$=LazyList].lazylist .lazylist-header-placeholder [data-sort=true i],
 .lazylist .lazylist-header-placeholder [data-sort=true i] {
   align-items: center;
+  color: var(--color-neutral-8);
   display: flex;
   gap: 8px;
+}
+div[data-block$=LazyList].lazylist .lazylist-header-placeholder [data-sort=true i] *,
+.lazylist .lazylist-header-placeholder [data-sort=true i] * {
+  color: var(--color-neutral-8);
+}
+div[data-block$=LazyList].lazylist .lazylist-header-placeholder [data-sort=true i] .lazylist-sort .svg-icon,
+div[data-block$=LazyList].lazylist .lazylist-header-placeholder [data-sort=true i] .lazylist-sort .svg-icon *,
+.lazylist .lazylist-header-placeholder [data-sort=true i] .lazylist-sort .svg-icon,
+.lazylist .lazylist-header-placeholder [data-sort=true i] .lazylist-sort .svg-icon * {
+  color: var(--iconcolor);
 }
 div[data-block$=LazyList].lazylist .lazylist-sort,
 .lazylist .lazylist-sort {
   align-items: center;
   background: transparent;
   border: 0;
-  cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
   flex-direction: column;

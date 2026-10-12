@@ -42,17 +42,43 @@ div[data-block$='LazyList'].lazylist,
 		padding: 12px;
 	}
 
+	&[data-simulatetable='true'][data-enabled='true']:not([data-isloading='true']) .lazylist-header-placeholder [data-sort='true' i] {
+		cursor: pointer;
+
+		&:hover {
+			color: var(--color-neutral-10);
+
+			* {
+				color: var(--color-neutral-10);
+			}
+
+			.lazylist-sort .svg-icon,
+			.lazylist-sort .svg-icon * {
+				color: var(--iconcolor);
+			}
+		}
+	}
+
 	.lazylist-header-placeholder [data-sort='true' i] {
 		align-items: center;
+		color: var(--color-neutral-8);
 		display: flex;
 		gap: 8px;
+
+		* {
+			color: var(--color-neutral-8);
+		}
+
+		.lazylist-sort .svg-icon,
+		.lazylist-sort .svg-icon * {
+			color: var(--iconcolor);
+		}
 	}
 
 	.lazylist-sort {
 		align-items: center;
 		background: transparent;
 		border: 0;
-		cursor: pointer;
 		display: inline-flex;
 		flex: 0 0 auto;
 		flex-direction: column;

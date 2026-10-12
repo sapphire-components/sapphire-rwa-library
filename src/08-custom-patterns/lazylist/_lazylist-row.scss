@@ -63,6 +63,8 @@ div[data-block$='LazyListRow']:first-child {
 		> div[data-container],
 		> div > div[data-container] {
 			@include lazylist-column;
+			align-items: center;
+			display: flex;
 		}
 	}
 
