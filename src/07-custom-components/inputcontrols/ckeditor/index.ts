@@ -2,7 +2,7 @@ import DOMPurify from 'dompurify';
 import Helpers from '@utils/helpers';
 import ckeditorCss from 'ckeditor5/ckeditor5.css?inline';
 import overridesCss from './ckeditor-overrides.css?inline';
-import { Alignment, AutoLink, Bold, ClassicEditor, Essentials, Font, Fullscreen, Italic, Link, List, Paragraph, RemoveFormat, SourceEditing, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
+import { Alignment, AutoLink, Bold, ClassicEditor, Essentials, Font, Fullscreen, Image, ImageInsertViaUrl, ImageTextAlternative, ImageToolbar, Italic, Link, LinkImage, List, Paragraph, RemoveFormat, SourceEditing, Strikethrough, Table, TableToolbar, Underline } from 'ckeditor5';
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 const RESIZE_DEBOUNCE_MS = 100;
@@ -19,7 +19,7 @@ function ensureCkeditorStyles(): void {
 	document.head.appendChild(style);
 }
 
-const EDITOR_PLUGINS = [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Link, AutoLink, Font, Alignment, List, Table, TableToolbar, RemoveFormat, SourceEditing, Fullscreen];
+const EDITOR_PLUGINS = [Essentials, Paragraph, Bold, Italic, Underline, Strikethrough, Link, AutoLink, LinkImage, Font, Alignment, List, Table, TableToolbar, Image, ImageToolbar, ImageInsertViaUrl, ImageTextAlternative, RemoveFormat, SourceEditing, Fullscreen];
 
 const EDITOR_TOOLBAR = [
 	'fontSize',
@@ -28,6 +28,7 @@ const EDITOR_TOOLBAR = [
 	'underline',
 	'strikethrough',
 	'link',
+	'insertImage',
 	'|',
 	'fontColor',
 	'fontBackgroundColor',
@@ -183,6 +184,12 @@ export default class CKEditor extends BaseComponent {
 				link: {
 					addTargetToExternalLinks: true,
 					defaultProtocol: 'https://',
+				},
+				image: {
+					insert: {
+						integrations: ['url'],
+					},
+					toolbar: ['linkImage', '|', 'imageTextAlternative'],
 				},
 				fontSize: {
 					options: [{ title: 'Small', model: 'small' }, 'default', { title: 'Large', model: 'big' }, { title: 'Huge', model: 'huge' }],

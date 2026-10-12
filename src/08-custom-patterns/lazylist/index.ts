@@ -26,42 +26,41 @@ export default class LazyList extends BaseComponent {
 	private actions!: ILazyList['actions'];
 	private avgLocked = false;
 	private avgRowHeight = 0;
-	private isPristine = true;
 	private bottomDistance = 0;
 	private enabled = true;
 	private extraRows = 0;
+	private headerObserver?: MutationObserver;
 	private height = 0;
 	private initialStartIndex = 0;
 	private isLoading = false;
+	private isPristine = true;
 	private itemsTotal = 0;
 	private lazyListHeaderPlaceholderEl!: HTMLElement;
 	private lazyListRowsPlaceholderEl!: HTMLElement;
 	private listResizeObserver?: ResizeObserver;
 	private loadingEl?: HTMLDivElement;
 	private maxHeight = 0;
+	private measureQueued = false;
 	private observedListEl?: HTMLElement;
 	private pageSize = 0;
 	private pageSizeSettled = false;
-	private rowsAtBump = -1;
-	private skeletonBumpPending = false;
 	private requestedPageSize: number | null = null;
 	private requestedStartIndex: number | null = null;
+	private rowsAtBump = -1;
 	private rowsObserver?: MutationObserver;
 	private simulateTable = false;
 	private skeletonAfterEl?: HTMLDivElement;
 	private skeletonBeforeEl?: HTMLDivElement;
+	private skeletonBumpPending = false;
 	private skeletonKey = '';
 	private sortColumn = '';
 	private sortDirection = '';
 	private sortPin: { column: string; direction: string } | null = null;
-	private headerObserver?: MutationObserver;
 	private spacerBottomEl?: HTMLDivElement;
 	private spacerTopEl?: HTMLDivElement;
 	private startIndex = 0;
 	private suppressScroll = false;
 	private viewportHeight = 0;
-
-	private measureQueued = false;
 
 	private readonly requestPageDebounced = Helpers.debounce((): void => {
 		this.coverVisibleSkeleton();

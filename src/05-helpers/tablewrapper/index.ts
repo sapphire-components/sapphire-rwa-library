@@ -13,7 +13,8 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 	isStickyHeader: boolean;
 	maxHeight: number;
 	pageCount: number;
-	reorderOnDrop: boolean;
+	reorderImmediately: boolean;
+	reorderInputColumn: number;
 	reorderableRows: boolean;
 }
 
@@ -34,7 +35,7 @@ export default class TableWrapper extends BaseComponent {
 	private loadingEl?: HTMLDivElement;
 	private pageCount = 0;
 	private reorderCommitEl?: HTMLButtonElement;
-	private reorderOnDrop = true;
+	private reorderImmediately = true;
 	private reorderOriginByRow = new WeakMap<HTMLTableRowElement, number>();
 	private reorderPanelEl?: HTMLDivElement;
 	private reorderableRows;
@@ -124,7 +125,7 @@ export default class TableWrapper extends BaseComponent {
 
 		event.preventDefault();
 		this.reorderToPointer(event.clientY);
-		if (!this.reorderOnDrop) {
+		if (!this.reorderImmediately) {
 			this.updateReorderPositions();
 		}
 	};
@@ -150,7 +151,7 @@ export default class TableWrapper extends BaseComponent {
 		this.isPristine = this.configOptions.isPristine;
 		this.isStickyHeader = this.configOptions.isStickyHeader && !this.configOptions.maxHeight;
 		this.pageCount = this.configOptions.pageCount;
-		this.reorderOnDrop = this.configOptions.reorderOnDrop;
+		this.reorderImmediately = this.configOptions.reorderImmediately;
 		this.reorderableRows = this.configOptions.reorderableRows;
 
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
@@ -224,7 +225,7 @@ export default class TableWrapper extends BaseComponent {
 
 	handleReorderableRows(): void {
 		this.widgetEl.dataset.reorderablerows = this.reorderableRows ? 'true' : 'false';
-		this.widgetEl.dataset.reorderondrop = this.reorderOnDrop ? 'true' : 'false';
+		this.widgetEl.dataset.reorderondrop = this.reorderImmediately ? 'true' : 'false';
 		this.syncStagedReorderUi();
 	}
 
@@ -283,8 +284,8 @@ export default class TableWrapper extends BaseComponent {
 			this.handleReorderableRows();
 		}
 
-		if (payload.reorderOnDrop !== undefined && payload.reorderOnDrop !== this.reorderOnDrop) {
-			this.reorderOnDrop = payload.reorderOnDrop;
+		if (payload.reorderImmediately !== undefined && payload.reorderImmediately !== this.reorderImmediately) {
+			this.reorderImmediately = payload.reorderImmediately;
 			this.handleReorderableRows();
 		}
 
@@ -414,9 +415,9 @@ export default class TableWrapper extends BaseComponent {
 				this.ignoreNextClick = false;
 			}, 300);
 
-			console.log('TableWrapper: finishPointerDrag', this.reorderOnDrop);
+			console.log('TableWrapper: finishPointerDrag', this.reorderImmediately);
 
-			if (this.reorderOnDrop) {
+			if (this.reorderImmediately) {
 				const newOrder = this.getRowIds();
 				if (newOrder.join('\0') !== this.dragStartOrder.join('\0')) {
 					this.actions.OnReorder?.(JSON.stringify(newOrder));
@@ -435,7 +436,7 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private isStagedReorder(): boolean {
-		return Boolean(this.reorderableRows && !this.reorderOnDrop);
+		return Boolean(this.reorderableRows && !this.reorderImmediately);
 	}
 
 	private syncStagedReorderUi(): void {

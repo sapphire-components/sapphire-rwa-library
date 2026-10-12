@@ -28,11 +28,12 @@ A rich-text editor built on CKEditor 5 Classic (open-source / vanilla JS). The w
 
 ###### Toolbar (v1)
 
-Fixed Classic toolbar (token-string `ToolbarOptions` is not supported yet). Controls, in order: font size (Small / Regular / Large / Huge), bold, italic, underline, strikethrough, link, font colour, highlight, alignment, numbered list, bullet list, table, clear formatting, source, full screen.
+Fixed Classic toolbar (token-string `ToolbarOptions` is not supported yet). Controls, in order: font size (Small / Regular / Large / Huge), bold, italic, underline, strikethrough, link, image, font colour, highlight, alignment, numbered list, bullet list, table, clear formatting, source, full screen.
 
 - **Link** inserts or edits a hyperlink on the current selection. The balloon asks for a URL. `https://` is added when the protocol is omitted, and an email address becomes `mailto:`. External links (`http`, `https`, or `//`) are saved with `target="_blank"` and `rel="noopener noreferrer"`. Typing or pasting a URL also turns it into a link.
+- **Image** inserts an image from a URL. The toolbar button asks for the image address (a full URL, for example `https://…`). There is no file upload. Click the image to open its toolbar: **Link** makes the image open an external URL, using the same link rules as text (`https://` when the protocol is omitted, `target="_blank"` and `rel="noopener noreferrer"` on external links). **Alt text** sets the image alternative. Select an existing image and use the image button again to replace its URL.
 
-- **Source** toggles an HTML view of the document. Edits are applied when source mode is turned off, and markup outside the enabled features (bold, lists, tables, and so on) is dropped. `Change` fires with the filtered HTML at that point.
+- **Source** toggles an HTML view of the document. Edits are applied when source mode is turned off, and markup outside the enabled features (bold, lists, tables, images, and so on) is dropped. `Change` fires with the filtered HTML at that point.
 - **Full screen** covers the viewport. There is no menu bar in that mode. The configured `Height` applies to the normal editor and to the source view; full screen uses CKEditor's own layout.
 
 <hr>
