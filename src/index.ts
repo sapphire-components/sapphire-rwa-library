@@ -37,7 +37,7 @@ import Status from '@/07-custom-components/feedback/status';
 import Toast from '@/07-custom-components/feedback/toast';
 import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
-import Suggestion from '@/07-custom-components/inputcontrols/suggestion';
+import Autocomplete from '@/07-custom-components/inputcontrols/autocomplete';
 
 import MultiLevel from '@/08-custom-patterns/multilevel';
 import LazyList from '@custom-patterns/lazylist';
@@ -95,7 +95,7 @@ const SapphireRWALibrary = {
 	SidePanel,
 	Skeleton,
 	Status,
-	Suggestion,
+	Autocomplete,
 	TabContent,
 	TabHeader,
 	TableWrapper,

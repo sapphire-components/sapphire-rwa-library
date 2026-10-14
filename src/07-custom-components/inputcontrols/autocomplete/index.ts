@@ -2,7 +2,7 @@ import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
 import { createSpinner } from '@utils/loader';
 
-interface ISuggestion extends BaseComponentInit {
+interface IAutocomplete extends BaseComponentInit {
 	actions: {
 		OnAdd: (value: string) => void;
 		OnClear: () => void;
@@ -15,6 +15,7 @@ interface ISuggestion extends BaseComponentInit {
 	hasChips: boolean;
 	hasEmitButton: boolean;
 	isLoading: boolean;
+	keyword: string;
 	optionValues: string;
 	searchDebounce: number;
 	searchServerSide: boolean;
@@ -26,8 +27,8 @@ interface ISuggestion extends BaseComponentInit {
 	theme: string;
 }
 
-export default class Suggestion extends BaseComponent {
-	private actions!: ISuggestion['actions'];
+export default class Autocomplete extends BaseComponent {
+	private actions!: IAutocomplete['actions'];
 	private allowAdd = false;
 	private enabled = true;
 	private hasChips = false;
@@ -43,6 +44,10 @@ export default class Suggestion extends BaseComponent {
 	private textPrompt = '';
 	private theme = '';
 
+	// Keyword input: the search the current optionValues were built for.
+	// Empty means nothing has been applied yet, so the list stays empty.
+	private appliedKeyword = '';
+	// Text the user has typed. Empty while a committed value is only displayed.
 	private keyword = '';
 	private isEditing = false;
 	private isOpen = false;
@@ -135,12 +140,13 @@ export default class Suggestion extends BaseComponent {
 	private readonly onInput = (): void => {
 		const next = this.inputEl.value;
 		// Committed single-select text is shown in the field but is not `keyword`,
-		// so a manual wipe of that text still has to emit an empty OnSearch.
+		// so wiping it drops any applied keyword and, in server-side mode, emits OnSearch('').
 		const previousText = this.isEditing || this.hasChips ? this.keyword : (this.selectedValues[0] ?? '');
 		const becameEmpty = previousText.trim() !== '' && next.trim() === '';
 
 		this.isEditing = true;
 		this.keyword = next;
+		if (next.trim() === '') this.appliedKeyword = '';
 		this.clearActive();
 		this.updateInputChrome();
 		this.renderOptions();
@@ -151,7 +157,7 @@ export default class Suggestion extends BaseComponent {
 			return;
 		}
 
-		if (next.trim() !== '' && this.searchServerSide) this.emitKeywordDebounced(next);
+		if (this.searchServerSide && next.trim() !== '') this.emitKeywordDebounced(next.trim());
 	};
 
 	private readonly onInputKeyDown = (event: KeyboardEvent): void => {
@@ -217,7 +223,7 @@ export default class Suggestion extends BaseComponent {
 	};
 
 	private readonly onListClick = (event: MouseEvent): void => {
-		const optionEl = (event.target as HTMLElement).closest<HTMLElement>('.suggestion-option');
+		const optionEl = (event.target as HTMLElement).closest<HTMLElement>('.autocomplete-option');
 		if (!optionEl) return;
 		const value = optionEl.dataset.value ?? '';
 		if (!value) return;
@@ -265,13 +271,15 @@ export default class Suggestion extends BaseComponent {
 		this.removeChip(value);
 	};
 
-	constructor(init: ISuggestion) {
+	constructor(init: IAutocomplete) {
 		super(init);
 
 		if (!this.widgetEl) {
-			console.warn('Suggestion: root element not found for runtimeId', init.runtimeId);
+			console.warn('Autocomplete: root element not found for runtimeId', init.runtimeId);
 			return;
 		}
+
+		console.log('init', init);
 
 		this.actions = init.actions;
 		this.allowAdd = init.allowAdd;
@@ -282,6 +290,7 @@ export default class Suggestion extends BaseComponent {
 		this.optionValues = this.parseStringList(init.optionValues);
 		this.searchDebounce = this.readDelay(init.searchDebounce);
 		this.searchServerSide = init.searchServerSide;
+		this.appliedKeyword = init.keyword ?? '';
 		this.selectedValues = this.parseStringList(init.selectedValues);
 		this.textAdd = init.textAdd ?? '';
 		this.textEmit = init.textEmit ?? '';
@@ -316,17 +325,17 @@ export default class Suggestion extends BaseComponent {
 
 	private buildDom(): void {
 		this.widgetEl.replaceChildren();
-		this.widgetEl.classList.add('suggestion');
+		this.widgetEl.classList.add('autocomplete');
 
 		this.chipsEl = document.createElement('div');
-		this.chipsEl.className = 'suggestion-chips';
+		this.chipsEl.className = 'autocomplete-chips';
 
 		this.fieldEl = document.createElement('div');
-		this.fieldEl.className = 'suggestion-field';
+		this.fieldEl.className = 'autocomplete-field';
 
 		this.inputEl = document.createElement('input');
 		this.inputEl.type = 'text';
-		this.inputEl.className = 'suggestion-input';
+		this.inputEl.className = 'autocomplete-input';
 		this.inputEl.autocomplete = 'off';
 		this.inputEl.spellcheck = false;
 		this.inputEl.disabled = !this.enabled;
@@ -339,7 +348,7 @@ export default class Suggestion extends BaseComponent {
 
 		this.clearEl = document.createElement('button');
 		this.clearEl.type = 'button';
-		this.clearEl.className = 'suggestion-clear';
+		this.clearEl.className = 'autocomplete-clear';
 		this.clearEl.setAttribute('aria-label', 'Clear');
 		this.clearEl.hidden = true;
 		this.clearEl.innerHTML = Helpers.placeIcon('x', 's');
@@ -348,36 +357,36 @@ export default class Suggestion extends BaseComponent {
 
 		this.emitEl = document.createElement('button');
 		this.emitEl.type = 'button';
-		this.emitEl.className = 'btn btn-primary suggestion-emit';
+		this.emitEl.className = 'btn btn-primary autocomplete-emit';
 		this.emitEl.hidden = !this.hasEmitButton;
 		this.emitEl.disabled = !this.canEmit();
 		this.emitEl.textContent = this.textEmit;
 
 		this.controlsEl = document.createElement('div');
-		this.controlsEl.className = 'suggestion-controls';
+		this.controlsEl.className = 'autocomplete-controls';
 		this.controlsEl.append(this.fieldEl, this.emitEl);
 		this.widgetEl.append(this.chipsEl, this.controlsEl);
 
 		this.panelEl = document.createElement('div');
-		this.panelEl.className = 'suggestion-panel';
+		this.panelEl.className = 'autocomplete-panel';
 
 		this.listEl = document.createElement('ul');
-		this.listEl.className = 'suggestion-list';
+		this.listEl.className = 'autocomplete-list';
 		this.listEl.id = this.listId;
 		this.listEl.setAttribute('role', 'listbox');
 
 		this.emptyEl = document.createElement('div');
-		this.emptyEl.className = 'suggestion-empty';
+		this.emptyEl.className = 'autocomplete-empty';
 		this.emptyEl.hidden = true;
 
 		this.loadingEl = document.createElement('div');
-		this.loadingEl.className = 'suggestion-loading';
+		this.loadingEl.className = 'autocomplete-loading';
 		this.loadingEl.hidden = true;
 		this.loadingEl.appendChild(createSpinner());
 
 		this.addEl = document.createElement('button');
 		this.addEl.type = 'button';
-		this.addEl.className = 'suggestion-add';
+		this.addEl.className = 'autocomplete-add';
 		this.addEl.textContent = this.textAdd;
 		this.addEl.hidden = !this.allowAdd;
 
@@ -406,13 +415,14 @@ export default class Suggestion extends BaseComponent {
 	private bindKeywordEmitter(): void {
 		this.emitKeywordDebounced?.cancel();
 		this.emitKeywordDebounced = Helpers.debounce((keyword: string) => {
+			if (!this.searchServerSide) return;
 			this.actions.OnSearch(keyword);
 		}, this.searchDebounce);
 	}
 
 	private initTippy(): void {
 		if (typeof window.tippy !== 'function') {
-			console.warn('Suggestion: window.tippy is not available');
+			console.warn('Autocomplete: window.tippy is not available');
 			return;
 		}
 
@@ -528,6 +538,7 @@ export default class Suggestion extends BaseComponent {
 		if (!this.enabled) return;
 		const hadText = this.inputEl.value.length > 0;
 		this.keyword = '';
+		this.appliedKeyword = '';
 		this.isEditing = true;
 		this.keepInputEmpty = true;
 		this.inputEl.value = '';
@@ -549,6 +560,7 @@ export default class Suggestion extends BaseComponent {
 			}
 			this.actions.OnSelect(JSON.stringify(this.selectedValues));
 			this.keyword = '';
+			this.appliedKeyword = '';
 			this.isEditing = true;
 			this.inputEl.value = '';
 			this.updateInputChrome();
@@ -563,6 +575,7 @@ export default class Suggestion extends BaseComponent {
 		this.selectedValues = [value];
 		this.actions.OnSelect(JSON.stringify(this.selectedValues));
 		this.keyword = '';
+		this.appliedKeyword = '';
 		this.isEditing = false;
 		this.inputEl.value = value;
 		this.updateInputChrome();
@@ -584,6 +597,7 @@ export default class Suggestion extends BaseComponent {
 
 		this.actions.OnAdd(text);
 		this.keyword = '';
+		this.appliedKeyword = '';
 		this.isEditing = true;
 		this.inputEl.value = '';
 		this.clearActive();
@@ -595,6 +609,8 @@ export default class Suggestion extends BaseComponent {
 
 	private emitKeywordNow(keyword: string): void {
 		this.emitKeywordDebounced?.cancel();
+		if (keyword.trim() === '') this.appliedKeyword = '';
+		if (!this.searchServerSide) return;
 		this.actions.OnSearch(keyword);
 	}
 
@@ -659,20 +675,21 @@ export default class Suggestion extends BaseComponent {
 		this.activeIndex = null;
 		this.inputEl.removeAttribute('aria-activedescendant');
 
-		const awaitingKeyword = this.searchServerSide && this.keyword.trim() === '';
+		const awaitingKeyword = this.searchServerSide && !this.hasAppliedKeyword();
 		const options = this.isLoading || awaitingKeyword ? [] : this.optionsForList();
+		const highlight = this.searchServerSide ? this.appliedKeyword : this.keyword;
 
 		for (const [index, value] of options.entries()) {
 			const optionEl = document.createElement('li');
-			optionEl.className = 'suggestion-option';
+			optionEl.className = 'autocomplete-option';
 			optionEl.id = `${this.runtimeId}-opt-${index}`;
 			optionEl.dataset.value = value;
 			optionEl.dataset.active = 'false';
 			optionEl.setAttribute('role', 'option');
 
 			const label = document.createElement('span');
-			label.className = 'suggestion-option-label';
-			this.appendHighlightedLabel(label, value, this.keyword);
+			label.className = 'autocomplete-option-label';
+			this.appendHighlightedLabel(label, value, highlight);
 			optionEl.appendChild(label);
 			this.listEl.appendChild(optionEl);
 		}
@@ -694,7 +711,7 @@ export default class Suggestion extends BaseComponent {
 		// left an empty panel when there was nothing to select.
 		if (awaitingKeyword || noResults) {
 			const note = document.createElement('li');
-			note.className = 'suggestion-empty';
+			note.className = 'autocomplete-empty';
 			note.setAttribute('role', 'presentation');
 			note.textContent = awaitingKeyword ? this.textPrompt : this.textNoRecords;
 			this.listEl.appendChild(note);
@@ -731,6 +748,12 @@ export default class Suggestion extends BaseComponent {
 		if (last < value.length) label.append(document.createTextNode(value.slice(last)));
 	}
 
+	// Server-side optionValues are the result set for Keyword. An empty Keyword
+	// means nothing has been written yet, so the list stays empty.
+	private hasAppliedKeyword(): boolean {
+		return this.appliedKeyword.trim() !== '';
+	}
+
 	private optionsForList(): string[] {
 		const selected = new Set(this.selectedValues);
 		let options = this.optionValues.filter((value) => !selected.has(value));
@@ -744,7 +767,7 @@ export default class Suggestion extends BaseComponent {
 	}
 
 	private optionEls(): HTMLElement[] {
-		return Array.from(this.listEl.querySelectorAll<HTMLElement>('.suggestion-option'));
+		return Array.from(this.listEl.querySelectorAll<HTMLElement>('.autocomplete-option'));
 	}
 
 	private moveActive(direction: 1 | -1): void {
@@ -809,7 +832,7 @@ export default class Suggestion extends BaseComponent {
 		return Number.isFinite(delay) && delay > 0 ? delay : 0;
 	}
 
-	parametersChanged(payload: ISuggestion): void {
+	parametersChanged(payload: IAutocomplete): void {
 		if (!this.widgetEl) return;
 
 		let needsRender = false;
@@ -854,6 +877,14 @@ export default class Suggestion extends BaseComponent {
 			this.searchServerSide = payload.searchServerSide;
 			this.emitKeywordDebounced.cancel();
 			needsRender = true;
+		}
+
+		if (payload.keyword !== undefined) {
+			const nextKeyword = payload.keyword ?? '';
+			if (nextKeyword !== this.appliedKeyword) {
+				this.appliedKeyword = nextKeyword;
+				needsRender = true;
+			}
 		}
 
 		if (payload.searchDebounce !== undefined && payload.searchDebounce !== this.searchDebounce) {

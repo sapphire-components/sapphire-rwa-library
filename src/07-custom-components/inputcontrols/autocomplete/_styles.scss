@@ -1,10 +1,10 @@
 @use '../../../01-foundations/_mixins.scss' as *;
 
-div[data-block$='Suggestion'] {
+div[data-block$='Autocomplete'] {
 	display: contents;
 }
 
-.suggestion {
+.autocomplete {
 	display: inline-flex;
 	flex-direction: column;
 	position: relative;
@@ -101,20 +101,20 @@ div[data-block$='Suggestion'] {
 	}
 }
 
-.suggestion[data-haschips='true'] {
-	.suggestion-chips:not(:empty) {
+.autocomplete[data-haschips='true'] {
+	.autocomplete-chips:not(:empty) {
 		display: flex;
 	}
 }
 
-.suggestion[data-enabled='false'] {
-	.suggestion-clear {
+.autocomplete[data-enabled='false'] {
+	.autocomplete-clear {
 		color: var(--color-text-disabled);
 		pointer-events: none;
 	}
 }
 
-.tippy-box:has(.suggestion-panel) {
+.tippy-box:has(.autocomplete-panel) {
 	background: var(--color-neutral-0);
 	border: 1px solid var(--color-neutral-4);
 	border-radius: 8px;
@@ -125,7 +125,7 @@ div[data-block$='Suggestion'] {
 	}
 }
 
-.suggestion-panel {
+.autocomplete-panel {
 	display: flex;
 	flex-direction: column;
 	max-height: 320px;
@@ -133,7 +133,7 @@ div[data-block$='Suggestion'] {
 	width: var(--trigger-width, auto);
 }
 
-.suggestion-list {
+.autocomplete-list {
 	flex: 1 1 auto;
 	list-style: none;
 	margin: 0;
@@ -146,7 +146,7 @@ div[data-block$='Suggestion'] {
 	}
 }
 
-.suggestion-option {
+.autocomplete-option {
 	border-radius: 4px;
 	color: var(--color-neutral-9);
 	cursor: pointer;
@@ -171,7 +171,7 @@ div[data-block$='Suggestion'] {
 	}
 }
 
-.suggestion-empty {
+.autocomplete-empty {
 	color: var(--color-neutral-6);
 	cursor: default;
 	display: block;
@@ -184,7 +184,7 @@ div[data-block$='Suggestion'] {
 	}
 }
 
-.suggestion-loading {
+.autocomplete-loading {
 	align-items: center;
 	display: flex;
 	justify-content: center;
@@ -195,7 +195,7 @@ div[data-block$='Suggestion'] {
 	}
 }
 
-.suggestion-add {
+.autocomplete-add {
 	@include focus-visible();
 	background: transparent;
 	border: none;
