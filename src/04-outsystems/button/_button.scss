@@ -59,4 +59,8 @@
 			color: var(--color-text-disabled);
 		}
 	}
+
+	&[hidden] {
+		display: none;
+	}
 }

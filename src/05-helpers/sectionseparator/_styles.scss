@@ -1,0 +1,25 @@
+@use '../../01-foundations/typography' as *;
+
+div[data-block='SectionSeparator'] {
+	display: contents;
+}
+
+.sectionseparator {
+	margin-bottom: var(--space-l);
+
+	hr {
+		border: 0;
+		border-top: solid 1px var(--color-border);
+		display: block;
+		margin-block: var(--space-m);
+		width: 100%;
+	}
+
+	&-title {
+		@extend .heading2;
+		margin-bottom: var(--space-s);
+	}
+	&-lead {
+		font-weight: var(--font-light);
+	}
+}
