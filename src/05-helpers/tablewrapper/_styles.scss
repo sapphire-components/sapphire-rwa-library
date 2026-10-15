@@ -93,3 +93,12 @@
 		z-index: 1;
 	}
 }
+
+.tablewrapper {
+	.sortable.sort-disabled {
+		pointer-events: none;
+		.sortable-icon {
+			opacity: 0.3;
+		}
+	}
+}

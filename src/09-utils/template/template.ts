@@ -1,29 +1,27 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 
-interface ITemplateConfigOptions extends BaseComponentInit {
+interface ITemplate extends BaseComponentInit {
 	actions: {};
 	enabled: boolean;
 }
 
 export default class Template extends BaseComponent {
 	// private actions: ITemplateConfigOptions['actions'];
-	// private configOptions!: ITemplateConfigOptions;
 	// private enabled!: boolean;
 
-	constructor(configOptions: ITemplateConfigOptions) {
-		super(configOptions);
+	constructor(init: ITemplate) {
+		super(init);
 
 		if (!this.widgetEl) {
-			console.warn('Template: root element not found for runtimeId', configOptions.runtimeId);
+			console.warn('Template: root element not found for runtimeId', init.runtimeId);
 			return;
 		}
 
 		// this.actions = configOptions.actions;
-		// this.configOptions = configOptions;
 		// this.enabled = configOptions.enabled;
 	}
 
-	parametersChanged(payload: ITemplateConfigOptions): void {
+	parametersChanged(payload: ITemplate): void {
 		console.log(payload);
 	}
 

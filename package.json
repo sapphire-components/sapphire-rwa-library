@@ -1,7 +1,7 @@
 {
 	"name": "sapphire-rwa-library",
 	"private": true,
-	"version": "0.6.93",
+	"version": "0.6.94",
 	"type": "module",
 	"scripts": {
 		"dev": "vite build --mode dev && vite build --mode dev --config vite.icons.config.js && vite build --mode dev --config vite.flags.config.js && vite build --mode dev --config vite.ckeditor.config.js && vite build --mode dev --config vite.texteditor.config.js && concurrently \"npm run serve:dist\" \"npm run build:watch\"",
@@ -19,6 +19,7 @@
 		"concurrently": "^10.0.5",
 		"dompurify": "^3.4.16",
 		"esbuild": "^0.28.2",
+		"libphonenumber-js": "^1.13.15",
 		"marked": "^18.0.14",
 		"prettier": "^3.9.9",
 		"quill": "^2.0.3",

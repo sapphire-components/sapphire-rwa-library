@@ -9,6 +9,7 @@ div[data-block$='LabelValue'] {
 	display: inline-flex;
 	gap: 8px;
 	&-label {
+		color: var(--color-neutral-8);
 		font-size: var(--font-size-s);
 		&:has(label:empty) {
 			display: none !important;

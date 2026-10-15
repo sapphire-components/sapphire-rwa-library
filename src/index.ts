@@ -26,6 +26,7 @@ import DropdownMenu from '@/07-custom-components/navigation/dropdownmenu';
 import HourPicker from '@/07-custom-components/datetime/hourpicker';
 import MasterDetail from '@custom-components/masterdetail';
 import Overlay from '@/07-custom-components/overlay/overlay';
+import PhoneInput from '@/07-custom-components/inputcontrols/phoneinput';
 import PopupContent from '@/07-custom-components/overlay/popupcontent';
 import ResponsiveContainers from '@/07-custom-components/layout/responsive-containers';
 import SapphireDropdown from '@/07-custom-components/inputcontrols/sapphiredropdown';
@@ -85,6 +86,7 @@ const SapphireRWALibrary = {
 	MasterDetail,
 	MultiLevel,
 	Overlay,
+	PhoneInput,
 	PopupContent,
 	LazyList,
 	PrintDocument,
