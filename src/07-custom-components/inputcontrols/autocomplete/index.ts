@@ -7,6 +7,7 @@ interface IAutocomplete extends BaseComponentInit {
 		OnAdd: (value: string) => void;
 		OnClear: () => void;
 		OnEmit: (value: string) => void;
+		OnScroll: (startIndex: number) => void;
 		OnSearch: (keyword: string) => void;
 		OnSelect: (value: string) => void;
 	};
@@ -18,7 +19,10 @@ interface IAutocomplete extends BaseComponentInit {
 	keyword: string;
 	optionValues: string;
 	searchDebounce: number;
+	searchPageSize: number;
 	searchServerSide: boolean;
+	searchStartIndex: number;
+	searchTotalCount: number;
 	selectedValues: string;
 	textAdd: string;
 	textEmit: string;
@@ -36,7 +40,13 @@ export default class Autocomplete extends BaseComponent {
 	private isLoading = false;
 	private optionValues: string[] = [];
 	private searchDebounce = 0;
+	private searchPageSize = 0;
 	private searchServerSide = false;
+	private searchStartIndex = 0;
+	private searchTotalCount = 0;
+	// Start index the rows currently on screen belong to. searchStartIndex can
+	// move first; the rows stay put until optionValues for that index arrive.
+	private pageStartIndex = 0;
 	private selectedValues: string[] = [];
 	private textAdd = '';
 	private textEmit = '';
@@ -66,6 +76,10 @@ export default class Autocomplete extends BaseComponent {
 	private chipsEl!: HTMLDivElement;
 	private panelEl!: HTMLDivElement;
 	private listEl!: HTMLUListElement;
+	private spacerTopEl!: HTMLLIElement;
+	private spacerBottomEl!: HTMLLIElement;
+	private skeletonBeforeEl!: HTMLLIElement;
+	private skeletonAfterEl!: HTMLLIElement;
 	private emptyEl!: HTMLDivElement;
 	private loadingEl!: HTMLDivElement;
 	private addEl!: HTMLButtonElement;
@@ -76,6 +90,23 @@ export default class Autocomplete extends BaseComponent {
 	private lastFieldTop = 0;
 	private lastFieldLeft = 0;
 	private emitKeywordDebounced!: ((keyword: string) => void) & { cancel: () => void };
+	private avgLocked = false;
+	private avgRowHeight = 0;
+	private requestedStartIndex: number | null = null;
+	private skeletonKey = '';
+	private suppressScroll = false;
+	private virtualLayoutQueued = false;
+	private alignToRowsOnOpen = false;
+
+	private readonly requestPageDebounced = Helpers.debounce((): void => {
+		this.requestPageForScroll();
+	}, 200);
+
+	private readonly handleListScroll = (): void => {
+		if (this.suppressScroll || !this.isVirtualized()) return;
+		this.syncSkeletons();
+		this.requestPageDebounced();
+	};
 
 	private readonly syncPanelWidth = (): void => {
 		const popper = this.tippyInstance?.popper;
@@ -279,8 +310,6 @@ export default class Autocomplete extends BaseComponent {
 			return;
 		}
 
-		console.log('init', init);
-
 		this.actions = init.actions;
 		this.allowAdd = init.allowAdd;
 		this.enabled = init.enabled;
@@ -289,7 +318,11 @@ export default class Autocomplete extends BaseComponent {
 		this.isLoading = init.isLoading;
 		this.optionValues = this.parseStringList(init.optionValues);
 		this.searchDebounce = this.readDelay(init.searchDebounce);
+		this.searchPageSize = this.readCount(init.searchPageSize);
 		this.searchServerSide = init.searchServerSide;
+		this.searchStartIndex = this.readCount(init.searchStartIndex);
+		this.searchTotalCount = this.readCount(init.searchTotalCount);
+		this.pageStartIndex = this.searchStartIndex;
 		this.appliedKeyword = init.keyword ?? '';
 		this.selectedValues = this.parseStringList(init.selectedValues);
 		this.textAdd = init.textAdd ?? '';
@@ -375,6 +408,12 @@ export default class Autocomplete extends BaseComponent {
 		this.listEl.id = this.listId;
 		this.listEl.setAttribute('role', 'listbox');
 
+		this.spacerTopEl = this.createSpacer();
+		this.spacerBottomEl = this.createSpacer();
+		this.skeletonBeforeEl = this.createSkeletonGroup();
+		this.skeletonAfterEl = this.createSkeletonGroup();
+		this.listEl.append(this.spacerTopEl, this.spacerBottomEl, this.skeletonBeforeEl, this.skeletonAfterEl);
+
 		this.emptyEl = document.createElement('div');
 		this.emptyEl.className = 'autocomplete-empty';
 		this.emptyEl.hidden = true;
@@ -405,6 +444,7 @@ export default class Autocomplete extends BaseComponent {
 		this.clearEl.addEventListener('click', this.onClearClick);
 		this.listEl.addEventListener('mousedown', this.onListMouseDown);
 		this.listEl.addEventListener('click', this.onListClick);
+		this.listEl.addEventListener('scroll', this.handleListScroll, { passive: true });
 		this.addEl.addEventListener('click', this.onAddClick);
 		this.addEl.addEventListener('keydown', this.onAddKeyDown);
 		this.emitEl.addEventListener('click', this.onEmitClick);
@@ -440,6 +480,8 @@ export default class Autocomplete extends BaseComponent {
 				const placement = window.SapphireRWALibrary?.State?.isRTL ? 'bottom-end' : 'bottom-start';
 				instance.setProps({ placement });
 				this.syncPanelWidth();
+				this.alignToRowsOnOpen = true;
+				this.scheduleVirtualLayout();
 			},
 			// Tippy hides on the same press that focuses the field, which leaves
 			// isOpen stuck and later focuses do nothing. Keep it open while focused.
@@ -496,7 +538,10 @@ export default class Autocomplete extends BaseComponent {
 
 		// A committed single value sits in the field for display. It is not a search.
 		if (!wasVisible && !this.hasChips && !this.isEditing) this.keyword = '';
-		if (!wasVisible) this.renderOptions();
+		if (!wasVisible) {
+			this.clearSkeletons();
+			this.renderOptions();
+		}
 
 		this.tippyInstance?.show();
 		this.startPositionWatch();
@@ -618,7 +663,11 @@ export default class Autocomplete extends BaseComponent {
 
 	private emitKeywordNow(keyword: string): void {
 		this.emitKeywordDebounced?.cancel();
-		if (keyword.trim() === '') this.appliedKeyword = '';
+		if (keyword.trim() === '') {
+			this.appliedKeyword = '';
+			this.requestedStartIndex = null;
+			this.requestPageDebounced.cancel();
+		}
 		if (!this.searchServerSide) return;
 		this.actions.OnSearch(keyword);
 	}
@@ -680,18 +729,22 @@ export default class Autocomplete extends BaseComponent {
 	}
 
 	private renderOptions(): void {
-		this.listEl.replaceChildren();
+		for (const child of [...this.listEl.children]) {
+			if (this.isVirtualChrome(child)) continue;
+			child.remove();
+		}
 		this.activeIndex = null;
 		this.inputEl.removeAttribute('aria-activedescendant');
 
 		const awaitingKeyword = this.searchServerSide && !this.hasAppliedKeyword();
-		const options = this.isLoading || awaitingKeyword ? [] : this.optionsForList();
+		const virtualized = this.isVirtualized();
+		const options = (this.isLoading && !virtualized) || awaitingKeyword ? [] : this.optionsForList();
 		const highlight = this.searchServerSide ? this.appliedKeyword : this.keyword;
 
 		for (const [index, value] of options.entries()) {
 			const optionEl = document.createElement('li');
 			optionEl.className = 'autocomplete-option';
-			optionEl.id = `${this.runtimeId}-opt-${index}`;
+			optionEl.id = `${this.runtimeId}-opt-${this.pageStartIndex + index}`;
 			optionEl.dataset.value = value;
 			optionEl.dataset.active = 'false';
 			optionEl.setAttribute('role', 'option');
@@ -700,16 +753,19 @@ export default class Autocomplete extends BaseComponent {
 			label.className = 'autocomplete-option-label';
 			this.appendHighlightedLabel(label, value, highlight);
 			optionEl.appendChild(label);
-			this.listEl.appendChild(optionEl);
+			this.spacerBottomEl.before(optionEl);
 		}
 
-		this.updatePanelVisibility(awaitingKeyword, options.length === 0);
+		this.updatePanelVisibility(awaitingKeyword, !virtualized && options.length === 0);
+		// Place the new page and its spacer in the same frame. A deferred layout
+		// let the previous rows sit in the new window for one paint.
+		this.applyVirtualLayout();
 	}
 
 	private updatePanelVisibility(awaitingKeyword: boolean, noResults: boolean): void {
-		this.loadingEl.toggleAttribute('hidden', !this.isLoading);
+		this.loadingEl.toggleAttribute('hidden', !this.isLoading || this.isVirtualized());
 
-		if (this.isLoading) {
+		if (this.isLoading && !this.isVirtualized()) {
 			this.listEl.toggleAttribute('hidden', true);
 			this.emptyEl.toggleAttribute('hidden', true);
 			this.tippyInstance?.popperInstance?.update?.();
@@ -723,7 +779,7 @@ export default class Autocomplete extends BaseComponent {
 			note.className = 'autocomplete-empty';
 			note.setAttribute('role', 'presentation');
 			note.textContent = awaitingKeyword ? this.textPrompt : this.textNoRecords;
-			this.listEl.appendChild(note);
+			this.spacerBottomEl.before(note);
 		}
 
 		this.listEl.toggleAttribute('hidden', false);
@@ -764,6 +820,10 @@ export default class Autocomplete extends BaseComponent {
 	}
 
 	private optionsForList(): string[] {
+		// The server page is already the window for searchStartIndex. Filtering it
+		// would shift the scroll math, so selected values stay in the page.
+		if (this.isVirtualized()) return this.optionValues;
+
 		const selected = new Set(this.selectedValues);
 		let options = this.optionValues.filter((value) => !selected.has(value));
 
@@ -773,6 +833,234 @@ export default class Autocomplete extends BaseComponent {
 		}
 
 		return options;
+	}
+
+	// Server-side results are one page. searchTotalCount sizes the scroll;
+	// scrolling asks for the page that covers the viewport.
+	private isVirtualized(): boolean {
+		return this.searchServerSide && this.hasAppliedKeyword() && this.searchTotalCount > 0 && this.searchPageSize > 0;
+	}
+
+	private isVirtualChrome(el: Element): boolean {
+		return el === this.spacerTopEl || el === this.spacerBottomEl || el === this.skeletonBeforeEl || el === this.skeletonAfterEl;
+	}
+
+	private createSpacer(): HTMLLIElement {
+		const spacer = document.createElement('li');
+		spacer.className = 'autocomplete-spacer';
+		spacer.setAttribute('role', 'presentation');
+		spacer.setAttribute('aria-hidden', 'true');
+		return spacer;
+	}
+
+	private createSkeletonGroup(): HTMLLIElement {
+		const group = document.createElement('li');
+		group.className = 'autocomplete-skeletons';
+		group.setAttribute('role', 'presentation');
+		group.setAttribute('aria-hidden', 'true');
+		group.hidden = true;
+		return group;
+	}
+
+	private createSkeletonRow(): HTMLDivElement {
+		const row = document.createElement('div');
+		row.className = 'autocomplete-skeleton';
+		row.appendChild(document.createElement('span'));
+		return row;
+	}
+
+	private scheduleVirtualLayout(): void {
+		if (this.virtualLayoutQueued) return;
+		this.virtualLayoutQueued = true;
+		requestAnimationFrame(() => {
+			this.virtualLayoutQueued = false;
+			if (!this.listEl) return;
+			this.applyVirtualLayout();
+		});
+	}
+
+	private applyVirtualLayout(): void {
+		if (!this.spacerTopEl || !this.spacerBottomEl) return;
+
+		if (!this.isVirtualized()) {
+			this.spacerTopEl.style.height = '0px';
+			this.spacerBottomEl.style.height = '0px';
+			this.clearSkeletons();
+			return;
+		}
+
+		this.captureAverage(this.optionEls());
+		const avg = this.rowHeight();
+		const total = this.searchTotalCount;
+		const start = Math.min(this.pageStartIndex, total);
+		const rendered = Math.min(this.optionEls().length, Math.max(0, total - start));
+		const below = Math.max(0, total - start - rendered);
+		const scrollTop = this.listEl.scrollTop;
+
+		this.suppressScroll = true;
+		this.spacerTopEl.style.height = `${start * avg}px`;
+		this.spacerBottomEl.style.height = `${below * avg}px`;
+		if (this.listEl.scrollTop !== scrollTop) this.listEl.scrollTop = scrollTop;
+		this.suppressScroll = false;
+
+		this.syncSkeletons();
+		if (!this.alignToRowsOnOpen) return;
+		this.alignToRowsOnOpen = false;
+		this.scrollToLoadedRows();
+	}
+
+	private captureAverage(rows: HTMLElement[]): void {
+		if (this.avgLocked || rows.length === 0) return;
+		const next = this.measureStride(rows);
+		if (next <= 0) return;
+		this.avgRowHeight = next;
+		this.avgLocked = true;
+	}
+
+	private measureStride(rows: HTMLElement[]): number {
+		const first = rows[0].getBoundingClientRect();
+		if (first.height <= 0) return 0;
+		if (rows.length === 1) return first.height;
+
+		const last = rows[rows.length - 1].getBoundingClientRect();
+		const span = last.top - first.top;
+		if (span <= 0) return first.height;
+		return span / (rows.length - 1);
+	}
+
+	private rowHeight(): number {
+		return this.avgRowHeight > 0 ? this.avgRowHeight : 36;
+	}
+
+	private scrollToLoadedRows(): void {
+		const rows = this.optionEls();
+		if (!this.isVirtualized() || rows.length === 0) return;
+
+		const target = Math.max(0, this.contentTop(rows[0]));
+		this.suppressScroll = true;
+		this.listEl.scrollTop = target;
+		this.suppressScroll = false;
+		this.skeletonKey = '';
+		this.syncSkeletons();
+	}
+
+	private resetVirtualScroll(): void {
+		this.requestedStartIndex = null;
+		this.skeletonKey = '';
+		if (!this.listEl) return;
+		this.suppressScroll = true;
+		this.listEl.scrollTop = 0;
+		this.suppressScroll = false;
+	}
+
+	private requestPageForScroll(): void {
+		if (!this.enabled || this.isLoading || !this.isVirtualized() || this.avgRowHeight <= 0) return;
+		if (this.listEl.clientHeight <= 0) return;
+
+		const avg = this.avgRowHeight;
+		const total = this.searchTotalCount;
+		const pageSize = this.searchPageSize;
+		const loadedStart = this.pageStartIndex;
+		const loadedEnd = loadedStart + this.optionEls().length;
+		const firstVisible = Math.max(0, Math.floor(this.listEl.scrollTop / avg));
+		const lastVisible = Math.ceil((this.listEl.scrollTop + this.listEl.clientHeight) / avg);
+
+		if (loadedEnd > loadedStart && firstVisible >= loadedStart && lastVisible <= loadedEnd) return;
+
+		const maxStart = Math.max(0, total - pageSize);
+		const desired = Math.min(maxStart, firstVisible);
+		if (desired === loadedStart || desired === this.requestedStartIndex) return;
+
+		this.requestedStartIndex = desired;
+		this.actions.OnScroll?.(desired);
+	}
+
+	private syncSkeletons(): void {
+		if (!this.skeletonBeforeEl || !this.skeletonAfterEl) return;
+		if (!this.isVirtualized()) {
+			this.clearSkeletons();
+			return;
+		}
+
+		const avg = this.rowHeight();
+		const total = this.searchTotalCount;
+		const rows = this.optionEls();
+		const loadedStart = Math.min(this.pageStartIndex, total);
+		const loadedEnd = Math.min(total, loadedStart + rows.length);
+		const viewHeight = this.listEl.clientHeight || avg;
+		const overscan = Math.max(1, Math.ceil(viewHeight / avg));
+		const viewStart = Math.max(0, Math.floor(this.listEl.scrollTop / avg) - overscan);
+		const viewEnd = Math.min(total, Math.ceil((this.listEl.scrollTop + viewHeight) / avg) + overscan);
+
+		let beforeCount = Math.max(0, Math.min(viewEnd, loadedStart) - viewStart);
+		const afterFrom = Math.max(viewStart, loadedEnd);
+		let afterCount = Math.max(0, viewEnd - afterFrom);
+		const edges = this.renderedEdges(rows);
+		const gap = this.visibleGap(edges);
+
+		if (gap.below > 8 && loadedEnd < total) {
+			afterCount = Math.max(afterCount, Math.min(Math.ceil(gap.below / avg), total - loadedEnd));
+		}
+		if (gap.above > 8 && loadedStart > 0) {
+			beforeCount = Math.max(beforeCount, Math.min(Math.ceil(gap.above / avg), loadedStart));
+		}
+
+		const beforeTop = edges && beforeCount > 0 ? edges.top - beforeCount * avg : viewStart * avg;
+		const afterTop = edges && afterCount > 0 ? edges.bottom : afterFrom * avg;
+		const key = `${Math.round(beforeTop)}:${beforeCount}:${Math.round(afterTop)}:${afterCount}:${Math.round(avg)}`;
+		if (key === this.skeletonKey) return;
+		this.skeletonKey = key;
+
+		this.renderSkeletonGroup(this.skeletonBeforeEl, beforeTop, beforeCount, avg);
+		this.renderSkeletonGroup(this.skeletonAfterEl, afterTop, afterCount, avg);
+	}
+
+	private visibleGap(edges: { top: number; bottom: number } | null): { above: number; below: number } {
+		const viewTop = this.listEl.scrollTop;
+		const viewBottom = this.listEl.scrollTop + this.listEl.clientHeight;
+		if (!edges) return { above: 0, below: Math.max(0, viewBottom - viewTop) };
+		return {
+			above: Math.max(0, edges.top - viewTop),
+			below: Math.max(0, viewBottom - edges.bottom),
+		};
+	}
+
+	private renderedEdges(rows: HTMLElement[]): { top: number; bottom: number } | null {
+		if (rows.length === 0) return null;
+		const firstTop = this.contentTop(rows[0]);
+		const last = rows[rows.length - 1];
+		return { top: firstTop, bottom: this.contentTop(last) + last.getBoundingClientRect().height };
+	}
+
+	private contentTop(el: HTMLElement): number {
+		const scroller = this.listEl.getBoundingClientRect();
+		return el.getBoundingClientRect().top - scroller.top + this.listEl.scrollTop;
+	}
+
+	private renderSkeletonGroup(group: HTMLLIElement, top: number, count: number, avg: number): void {
+		if (count <= 0 || avg <= 0) {
+			group.replaceChildren();
+			group.hidden = true;
+			return;
+		}
+
+		group.hidden = false;
+		group.style.top = `${top}px`;
+
+		while (group.childElementCount < count) group.appendChild(this.createSkeletonRow());
+		while (group.childElementCount > count) group.lastElementChild?.remove();
+
+		const height = `${avg}px`;
+		for (const child of group.children) {
+			const row = child as HTMLElement;
+			if (row.style.height !== height) row.style.height = height;
+		}
+	}
+
+	private clearSkeletons(): void {
+		this.skeletonKey = '';
+		this.renderSkeletonGroup(this.skeletonBeforeEl, 0, 0, 0);
+		this.renderSkeletonGroup(this.skeletonAfterEl, 0, 0, 0);
 	}
 
 	private optionEls(): HTMLElement[] {
@@ -841,6 +1129,12 @@ export default class Autocomplete extends BaseComponent {
 		return Number.isFinite(delay) && delay > 0 ? delay : 0;
 	}
 
+	private readCount(value: number | undefined): number {
+		const parsed = Helpers.toNumber(value);
+		if (parsed == null || !Number.isFinite(parsed) || parsed < 0) return 0;
+		return Math.floor(parsed);
+	}
+
 	parametersChanged(payload: IAutocomplete): void {
 		if (!this.widgetEl) return;
 
@@ -892,6 +1186,28 @@ export default class Autocomplete extends BaseComponent {
 			const nextKeyword = payload.keyword ?? '';
 			if (nextKeyword !== this.appliedKeyword) {
 				this.appliedKeyword = nextKeyword;
+				this.resetVirtualScroll();
+				needsRender = true;
+			}
+		}
+
+		if (payload.searchPageSize !== undefined) {
+			const nextPageSize = this.readCount(payload.searchPageSize);
+			if (nextPageSize !== this.searchPageSize) {
+				this.searchPageSize = nextPageSize;
+				needsRender = true;
+			}
+		}
+
+		if (payload.searchStartIndex !== undefined) {
+			const nextStartIndex = this.readCount(payload.searchStartIndex);
+			if (nextStartIndex !== this.searchStartIndex) this.searchStartIndex = nextStartIndex;
+		}
+
+		if (payload.searchTotalCount !== undefined) {
+			const nextTotalCount = this.readCount(payload.searchTotalCount);
+			if (nextTotalCount !== this.searchTotalCount) {
+				this.searchTotalCount = nextTotalCount;
 				needsRender = true;
 			}
 		}
@@ -924,13 +1240,17 @@ export default class Autocomplete extends BaseComponent {
 
 		if (payload.isLoading !== undefined && payload.isLoading !== this.isLoading) {
 			this.isLoading = payload.isLoading;
-			needsRender = true;
+			if (!this.isVirtualized()) needsRender = true;
 		}
 
 		if (payload.optionValues !== undefined) {
 			const nextOptions = this.parseStringList(payload.optionValues);
 			if (!Helpers.areTheyEqual(nextOptions, this.optionValues)) {
 				this.optionValues = nextOptions;
+				// Start index is already the requested page. Pin the new rows to it
+				// only once they arrive, so the previous page never jumps into view.
+				this.pageStartIndex = this.searchStartIndex;
+				if (this.requestedStartIndex === this.pageStartIndex) this.requestedStartIndex = null;
 				needsRender = true;
 			}
 		}
@@ -948,9 +1268,11 @@ export default class Autocomplete extends BaseComponent {
 		}
 
 		this.updateInputChrome();
-		if (!needsRender) return;
-		this.renderChips();
-		this.renderOptions();
+		if (needsRender) {
+			this.renderChips();
+			this.renderOptions();
+		}
+		if (this.isVirtualized() && !this.isLoading) this.requestPageDebounced();
 	}
 
 	destroy(): void {
@@ -959,6 +1281,7 @@ export default class Autocomplete extends BaseComponent {
 		if (this.selectFrame !== null) window.cancelAnimationFrame(this.selectFrame);
 		this.cancelScheduledClose();
 		this.emitKeywordDebounced?.cancel();
+		this.requestPageDebounced.cancel();
 		this.stopPositionWatch();
 		this.fieldResizeObserver?.disconnect();
 
@@ -973,6 +1296,7 @@ export default class Autocomplete extends BaseComponent {
 		this.clearEl?.removeEventListener('click', this.onClearClick);
 		this.listEl?.removeEventListener('mousedown', this.onListMouseDown);
 		this.listEl?.removeEventListener('click', this.onListClick);
+		this.listEl?.removeEventListener('scroll', this.handleListScroll);
 		this.addEl?.removeEventListener('click', this.onAddClick);
 		this.addEl?.removeEventListener('keydown', this.onAddKeyDown);
 		this.emitEl?.removeEventListener('click', this.onEmitClick);

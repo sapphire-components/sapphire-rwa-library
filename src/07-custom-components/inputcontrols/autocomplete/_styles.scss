@@ -138,11 +138,48 @@ div[data-block$='Autocomplete'] {
 	list-style: none;
 	margin: 0;
 	min-height: 0;
+	overflow-anchor: none;
 	overflow-y: auto;
 	padding: 4px;
+	position: relative;
+
+	* {
+		overflow-anchor: none;
+	}
 
 	&[hidden] {
 		display: none;
+	}
+}
+
+.autocomplete-spacer {
+	display: block;
+	pointer-events: none;
+	width: 100%;
+}
+
+.autocomplete-skeletons {
+	left: 4px;
+	pointer-events: none;
+	position: absolute;
+	right: 4px;
+	z-index: 0;
+}
+
+.autocomplete-skeleton {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	padding-block: 8px;
+	padding-inline: 8px;
+
+	span {
+		animation: skeleton-pulse 1.5s infinite;
+		background-color: var(--color-neutral-4);
+		border-radius: var(--border-radius-soft);
+		display: block;
+		height: 12px;
+		width: 68%;
 	}
 }
 
@@ -152,6 +189,8 @@ div[data-block$='Autocomplete'] {
 	cursor: pointer;
 	display: flex;
 	padding: 8px;
+	position: relative;
+	z-index: 1;
 
 	&:hover,
 	&[data-active='true'] {
