@@ -513,6 +513,10 @@ export default class Autocomplete extends BaseComponent {
 		this.tippyInstance?.hide();
 		this.closing = false;
 
+		// Dismissing the panel is not a search. Cancel a pending OnSearch so it
+		// does not fire after the overlay is gone.
+		this.emitKeywordDebounced?.cancel();
+
 		if (this.hasChips) return;
 
 		// An explicit clear stays empty. Dismissing a search still restores the selection.
@@ -522,12 +526,17 @@ export default class Autocomplete extends BaseComponent {
 			return;
 		}
 
-		const hadKeyword = this.keyword.trim() !== '';
+		// The written keyword is what the current server results belong to.
+		// Leave it in the field so reopening shows the same term.
+		if (this.searchServerSide && this.keyword.trim() !== '') {
+			this.updateInputChrome();
+			return;
+		}
+
 		this.keyword = '';
 		this.isEditing = false;
 		this.inputEl.value = this.selectedValues[0] ?? '';
 		this.updateInputChrome();
-		if (hadKeyword) this.emitKeywordNow('');
 	}
 
 	private shouldSelectCommitted(): boolean {
