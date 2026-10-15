@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.94 2026-10-15T16:39:01.407Z */
+/*!  SapphireRWALibrary PROD v0.6.95 2026-10-15T17:34:03.967Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -2767,6 +2767,11 @@ i.fa {
 .alert i.fa {
   color: inherit;
 }
+.form-control[data-input],
+.form-control[data-textarea] {
+  border-color: var(--color-border);
+}
+
 .form-control.input-xsmall[data-input] {
   font-size: var(--font-size-xs);
   height: 22px;
@@ -7578,7 +7583,7 @@ div[data-block$=SapphireDropdown] {
   align-items: center;
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-radius-soft);
   cursor: pointer;
   display: flex;
   gap: 8px;
