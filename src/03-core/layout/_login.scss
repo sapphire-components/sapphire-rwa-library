@@ -30,7 +30,8 @@ body:has(.layoutwrapper[data-theme='login']) {
 	border-radius: 8px;
 	box-shadow: var(--box-shadow-md);
 	left: unset;
-	max-width: 400px;
+	max-width: 450px;
+	min-width: 350px;
 	padding: 24px;
 	position: fixed;
 	right: 10%;

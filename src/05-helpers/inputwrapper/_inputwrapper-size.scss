@@ -7,14 +7,26 @@
 	.inputwrapper-icon {
 		inset-inline-start: 8px;
 	}
-	.inputwrapper-clear {
+	.inputwrapper-clear,
+	.inputwrapper-password {
 		inset-inline-end: 8px;
 	}
 }
 
-.inputwrapper[data-size='xs'][data-hasclear='true'] {
+.inputwrapper[data-size='xs'][data-hasclear='true'],
+.inputwrapper[data-size='xs'][data-haspassword='true'] {
 	.form-control[data-input] {
 		padding-inline-end: 24px;
+	}
+}
+
+.inputwrapper[data-size='xs'][data-haspassword='true'][data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 44px;
+	}
+
+	.inputwrapper-clear {
+		inset-inline-end: 28px;
 	}
 }
 
@@ -32,14 +44,26 @@
 	.inputwrapper-icon {
 		inset-inline-start: 12px;
 	}
-	.inputwrapper-clear {
+	.inputwrapper-clear,
+	.inputwrapper-password {
 		inset-inline-end: 12px;
 	}
 }
 
-.inputwrapper[data-size='s'][data-hasclear='true'] {
+.inputwrapper[data-size='s'][data-hasclear='true'],
+.inputwrapper[data-size='s'][data-haspassword='true'] {
 	.form-control[data-input] {
 		padding-inline-end: 32px;
+	}
+}
+
+.inputwrapper[data-size='s'][data-haspassword='true'][data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 52px;
+	}
+
+	.inputwrapper-clear {
+		inset-inline-end: 32px;
 	}
 }
 

@@ -18,6 +18,8 @@ export default class InputWrapper extends BaseComponent {
 	private iconEl: HTMLElement | null = null;
 	private iconName!: string;
 	private inputEl: HTMLInputElement | null = null;
+	private passwordToggleEl: HTMLButtonElement | null = null;
+	private passwordVisible = false;
 	private valueAttrObserver?: MutationObserver;
 	private valuePatched = false;
 	private wrapperEl!: HTMLElement;
@@ -45,6 +47,24 @@ export default class InputWrapper extends BaseComponent {
 		this.updateHasContent();
 	};
 
+	private readonly onPasswordToggleClick = (event: MouseEvent): void => {
+		event.preventDefault();
+		event.stopPropagation();
+		this.togglePasswordVisibility();
+	};
+
+	private readonly onPasswordToggleKeyDown = (event: KeyboardEvent): void => {
+		if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+		event.preventDefault();
+		event.stopPropagation();
+		this.togglePasswordVisibility();
+	};
+
+	private readonly onPasswordToggleMouseDown = (event: MouseEvent): void => {
+		// Keep the caret in the field while revealing or hiding the value.
+		event.preventDefault();
+	};
+
 	constructor(init: IInputWrapper) {
 		super(init);
 
@@ -67,6 +87,7 @@ export default class InputWrapper extends BaseComponent {
 		this.updateHasContent();
 		this.buildIcon();
 		this.buildClearButton();
+		this.syncPasswordAffordance();
 		this.bindEvents();
 	}
 
@@ -107,10 +128,15 @@ export default class InputWrapper extends BaseComponent {
 			this.valuePatched = true;
 		}
 
-		this.valueAttrObserver = new MutationObserver(() => this.updateHasContent());
+		this.valueAttrObserver = new MutationObserver((mutations) => {
+			this.updateHasContent();
+			if (mutations.some((mutation) => mutation.attributeName === 'type')) {
+				this.syncPasswordAffordance();
+			}
+		});
 		this.valueAttrObserver.observe(this.inputEl, {
 			attributes: true,
-			attributeFilter: ['value'],
+			attributeFilter: ['type', 'value'],
 		});
 	}
 
@@ -163,6 +189,72 @@ export default class InputWrapper extends BaseComponent {
 		this.clearEl = null;
 	}
 
+	private isPasswordInput(): boolean {
+		if (!this.inputEl) return false;
+		if (this.passwordVisible) return true;
+		return this.inputEl.type === 'password' || this.inputEl.closest('.input-password') !== null;
+	}
+
+	private syncPasswordAffordance(): void {
+		const show = this.isPasswordInput();
+		this.wrapperEl.dataset.haspassword = show ? 'true' : 'false';
+
+		if (!show) {
+			this.removePasswordToggle();
+			return;
+		}
+
+		if (!this.passwordToggleEl) {
+			this.buildPasswordToggle();
+			return;
+		}
+
+		this.syncPasswordToggle();
+	}
+
+	private buildPasswordToggle(): void {
+		this.removePasswordToggle();
+		if (!this.inputEl) return;
+
+		this.passwordToggleEl = document.createElement('button');
+		this.passwordToggleEl.type = 'button';
+		this.passwordToggleEl.className = 'inputwrapper-password';
+		this.passwordToggleEl.disabled = !this.enabled;
+		this.syncPasswordToggle();
+
+		this.passwordToggleEl.addEventListener('mousedown', this.onPasswordToggleMouseDown);
+		this.passwordToggleEl.addEventListener('click', this.onPasswordToggleClick);
+		this.passwordToggleEl.addEventListener('keydown', this.onPasswordToggleKeyDown);
+
+		(this.clearEl ?? this.inputEl).after(this.passwordToggleEl);
+	}
+
+	private syncPasswordToggle(): void {
+		if (!this.passwordToggleEl) return;
+		const iconName = this.passwordVisible ? 'eye-fill' : 'eye-closed';
+		this.passwordToggleEl.innerHTML = Helpers.placeIcon(iconName, 's');
+		this.passwordToggleEl.querySelector('.svg-icon')?.setAttribute('aria-hidden', 'true');
+		this.passwordToggleEl.dataset.visible = this.passwordVisible ? 'true' : 'false';
+		this.passwordToggleEl.setAttribute('aria-pressed', this.passwordVisible ? 'true' : 'false');
+		this.passwordToggleEl.setAttribute('aria-label', this.passwordVisible ? 'Hide password' : 'Show password');
+	}
+
+	private togglePasswordVisibility(): void {
+		if (!this.enabled || !this.inputEl || !this.isPasswordInput()) return;
+		this.passwordVisible = !this.passwordVisible;
+		this.inputEl.type = this.passwordVisible ? 'text' : 'password';
+		this.syncPasswordToggle();
+	}
+
+	private removePasswordToggle(): void {
+		if (!this.passwordToggleEl) return;
+		this.passwordToggleEl.removeEventListener('mousedown', this.onPasswordToggleMouseDown);
+		this.passwordToggleEl.removeEventListener('click', this.onPasswordToggleClick);
+		this.passwordToggleEl.removeEventListener('keydown', this.onPasswordToggleKeyDown);
+		this.passwordToggleEl.remove();
+		this.passwordToggleEl = null;
+	}
+
 	private bindEvents(): void {
 		this.inputEl?.addEventListener('input', this.onInput);
 		this.inputEl?.addEventListener('change', this.onInput);
@@ -187,6 +279,9 @@ export default class InputWrapper extends BaseComponent {
 			this.wrapperEl.dataset.enabled = this.enabled ? 'true' : 'false';
 			if (this.clearEl) {
 				this.clearEl.disabled = !this.enabled;
+			}
+			if (this.passwordToggleEl) {
+				this.passwordToggleEl.disabled = !this.enabled;
 			}
 		}
 
@@ -216,7 +311,12 @@ export default class InputWrapper extends BaseComponent {
 		super.destroy();
 		this.unbindEvents();
 		this.unwatchInputValue();
+		if (this.passwordVisible && this.inputEl) {
+			this.inputEl.type = 'password';
+			this.passwordVisible = false;
+		}
 		this.removeIcon();
 		this.removeClearButton();
+		this.removePasswordToggle();
 	}
 }

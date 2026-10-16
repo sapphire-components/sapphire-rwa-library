@@ -12,11 +12,12 @@ div[data-block$='PhoneInput'] {
 		align-items: stretch;
 		background-color: var(--color-neutral-0);
 		border: 1px solid var(--color-border);
-		border-radius: 6px;
+		border-radius: var(--border-radius-soft);
 		display: flex;
 		min-height: 40px;
 		min-width: 0;
 		overflow: hidden;
+		transition: all 180ms linear;
 		width: 100%;
 
 		&:hover {
@@ -96,9 +97,9 @@ div[data-block$='PhoneInput'] {
 		@include focus-visible();
 		background: transparent;
 		border: none;
-		border-end-end-radius: 6px;
+		border-end-end-radius: var(--border-radius-soft);
 		border-end-start-radius: 0;
-		border-start-end-radius: 6px;
+		border-start-end-radius: var(--border-radius-soft);
 		border-start-start-radius: 0;
 		color: var(--color-neutral-9);
 		flex: 1 1 auto;
@@ -139,7 +140,7 @@ div[data-block$='PhoneInput'] {
 .tippy-box:has(.phoneinput-panel) {
 	background: var(--color-neutral-0);
 	border: 1px solid var(--color-neutral-4);
-	border-radius: 8px;
+	border-radius: var(--border-radius-soft);
 	color: var(--color-neutral-9);
 
 	.tippy-content {
@@ -174,7 +175,7 @@ div[data-block$='PhoneInput'] {
 		@include focus-visible();
 		background: transparent;
 		border: none;
-		border-radius: 4px;
+		border-radius: var(--border-radius-soft);
 		color: var(--color-neutral-9);
 		flex: 1 1 auto;
 		font: inherit;
@@ -192,7 +193,7 @@ div[data-block$='PhoneInput'] {
 		align-items: center;
 		background: transparent;
 		border: none;
-		border-radius: 4px;
+		border-radius: var(--border-radius-soft);
 		color: var(--color-neutral-6);
 		cursor: pointer;
 		display: inline-flex;
@@ -231,7 +232,7 @@ div[data-block$='PhoneInput'] {
 
 .phoneinput-option {
 	align-items: center;
-	border-radius: 4px;
+	border-radius: var(--border-radius-soft);
 	color: var(--color-neutral-9);
 	cursor: pointer;
 	display: flex;

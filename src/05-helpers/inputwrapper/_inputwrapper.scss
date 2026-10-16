@@ -13,7 +13,8 @@ div[data-block$='InputWrapper'] {
 	> div {
 		display: contents;
 		span.input-text,
-		span.input-search {
+		span.input-search,
+		span.input-password {
 			display: inline-flex;
 			width: 100%;
 		}
@@ -37,7 +38,8 @@ div[data-block$='InputWrapper'] {
 		transform: translateY(-50%);
 	}
 
-	&-clear {
+	&-clear,
+	&-password {
 		@include focus-visible();
 		align-items: center;
 		background: transparent;
@@ -45,7 +47,7 @@ div[data-block$='InputWrapper'] {
 		border-radius: 4px;
 		color: var(--color-neutral-6);
 		cursor: pointer;
-		display: none;
+		display: inline-flex;
 		flex: 0 0 auto;
 		inset-inline-end: 16px;
 		justify-content: center;
@@ -63,6 +65,19 @@ div[data-block$='InputWrapper'] {
 			cursor: not-allowed;
 		}
 	}
+
+	&-clear {
+		display: none;
+	}
+
+	&-password[data-visible='true'] {
+		color: var(--color-neutral-9);
+	}
+
+	input[type='password']::-ms-reveal,
+	input[type='password']::-ms-clear {
+		display: none;
+	}
 }
 
 .inputwrapper[data-hasicon='true'] {
@@ -71,9 +86,20 @@ div[data-block$='InputWrapper'] {
 	}
 }
 
-.inputwrapper[data-hasclear='true'] {
+.inputwrapper[data-hasclear='true'],
+.inputwrapper[data-haspassword='true'] {
 	.form-control[data-input] {
 		padding-inline-end: 36px;
+	}
+}
+
+.inputwrapper[data-haspassword='true'][data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 56px;
+	}
+
+	.inputwrapper-clear {
+		inset-inline-end: 36px;
 	}
 }
 

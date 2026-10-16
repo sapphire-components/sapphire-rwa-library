@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.95 2026-10-15T17:34:03.967Z */
+/*!  SapphireRWALibrary PROD v0.6.96 2026-10-16T08:43:27.380Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -2580,7 +2580,8 @@ body:has(.layoutwrapper[data-theme=login]) {
   border-radius: 8px;
   box-shadow: var(--box-shadow-md);
   left: unset;
-  max-width: 400px;
+  max-width: 450px;
+  min-width: 350px;
   padding: 24px;
   position: fixed;
   right: 10%;
@@ -2770,6 +2771,10 @@ i.fa {
 .form-control[data-input],
 .form-control[data-textarea] {
   border-color: var(--color-border);
+}
+.form-control[data-input]:hover,
+.form-control[data-textarea]:hover {
+  border-color: var(--color-neutral-6);
 }
 
 .form-control.input-xsmall[data-input] {
@@ -4133,12 +4138,21 @@ div[data-block$=FilterBar] {
 .inputwrapper[data-size=xs] .inputwrapper-icon {
   inset-inline-start: 8px;
 }
-.inputwrapper[data-size=xs] .inputwrapper-clear {
+.inputwrapper[data-size=xs] .inputwrapper-clear,
+.inputwrapper[data-size=xs] .inputwrapper-password {
   inset-inline-end: 8px;
 }
 
-.inputwrapper[data-size=xs][data-hasclear=true] .form-control[data-input] {
+.inputwrapper[data-size=xs][data-hasclear=true] .form-control[data-input],
+.inputwrapper[data-size=xs][data-haspassword=true] .form-control[data-input] {
   padding-inline-end: 24px;
+}
+
+.inputwrapper[data-size=xs][data-haspassword=true][data-hasclear=true] .form-control[data-input] {
+  padding-inline-end: 44px;
+}
+.inputwrapper[data-size=xs][data-haspassword=true][data-hasclear=true] .inputwrapper-clear {
+  inset-inline-end: 28px;
 }
 
 .inputwrapper[data-size=xs][data-hasicon=true] .form-control[data-input] {
@@ -4152,12 +4166,21 @@ div[data-block$=FilterBar] {
 .inputwrapper[data-size=s] .inputwrapper-icon {
   inset-inline-start: 12px;
 }
-.inputwrapper[data-size=s] .inputwrapper-clear {
+.inputwrapper[data-size=s] .inputwrapper-clear,
+.inputwrapper[data-size=s] .inputwrapper-password {
   inset-inline-end: 12px;
 }
 
-.inputwrapper[data-size=s][data-hasclear=true] .form-control[data-input] {
+.inputwrapper[data-size=s][data-hasclear=true] .form-control[data-input],
+.inputwrapper[data-size=s][data-haspassword=true] .form-control[data-input] {
   padding-inline-end: 32px;
+}
+
+.inputwrapper[data-size=s][data-haspassword=true][data-hasclear=true] .form-control[data-input] {
+  padding-inline-end: 52px;
+}
+.inputwrapper[data-size=s][data-haspassword=true][data-hasclear=true] .inputwrapper-clear {
+  inset-inline-end: 32px;
 }
 
 .inputwrapper[data-size=s][data-hasicon=true] .form-control[data-input] {
@@ -4190,7 +4213,8 @@ div[data-block$=InputWrapper] {
   display: contents;
 }
 .inputwrapper > div span.input-text,
-.inputwrapper > div span.input-search {
+.inputwrapper > div span.input-search,
+.inputwrapper > div span.input-password {
   display: inline-flex;
   width: 100%;
 }
@@ -4210,24 +4234,24 @@ div[data-block$=InputWrapper] {
   top: 50%;
   transform: translateY(-50%);
 }
-.inputwrapper-clear:focus-visible {
+.inputwrapper-clear:focus-visible, .inputwrapper-password:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
 }
 @media (forced-colors: active) {
-  .inputwrapper-clear:focus-visible {
+  .inputwrapper-clear:focus-visible, .inputwrapper-password:focus-visible {
     outline: 2px solid CanvasText;
     outline-offset: -2px;
   }
 }
-.inputwrapper-clear {
+.inputwrapper-clear, .inputwrapper-password {
   align-items: center;
   background: transparent;
   border: none;
   border-radius: 4px;
   color: var(--color-neutral-6);
   cursor: pointer;
-  display: none;
+  display: inline-flex;
   flex: 0 0 auto;
   inset-inline-end: 16px;
   justify-content: center;
@@ -4236,20 +4260,38 @@ div[data-block$=InputWrapper] {
   top: 50%;
   transform: translateY(-50%);
 }
-.inputwrapper-clear:hover:not(:disabled) {
+.inputwrapper-clear:hover:not(:disabled), .inputwrapper-password:hover:not(:disabled) {
   color: var(--color-neutral-9);
 }
-.inputwrapper-clear:disabled {
+.inputwrapper-clear:disabled, .inputwrapper-password:disabled {
   color: var(--color-neutral-5);
   cursor: not-allowed;
+}
+.inputwrapper-clear {
+  display: none;
+}
+.inputwrapper-password[data-visible=true] {
+  color: var(--color-neutral-9);
+}
+.inputwrapper input[type=password]::-ms-reveal,
+.inputwrapper input[type=password]::-ms-clear {
+  display: none;
 }
 
 .inputwrapper[data-hasicon=true] .form-control[data-input] {
   padding-inline-start: 36px;
 }
 
-.inputwrapper[data-hasclear=true] .form-control[data-input] {
+.inputwrapper[data-hasclear=true] .form-control[data-input],
+.inputwrapper[data-haspassword=true] .form-control[data-input] {
   padding-inline-end: 36px;
+}
+
+.inputwrapper[data-haspassword=true][data-hasclear=true] .form-control[data-input] {
+  padding-inline-end: 56px;
+}
+.inputwrapper[data-haspassword=true][data-hasclear=true] .inputwrapper-clear {
+  inset-inline-end: 36px;
 }
 
 .inputwrapper[data-hascontent=true][data-hasclear=true] .inputwrapper-clear {
@@ -6292,7 +6334,7 @@ div[data-block$=HourPicker] {
   appearance: auto;
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-radius-soft);
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
   height: 40px;
@@ -7003,7 +7045,7 @@ div[data-block$=Autocomplete] {
 .autocomplete-chips {
   background-color: var(--color-neutral-2);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--border-radius-soft);
   display: none;
   flex-wrap: wrap;
   gap: 4px;
@@ -7038,12 +7080,13 @@ div[data-block$=Autocomplete] {
 .autocomplete-input {
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-radius-soft);
   color: var(--color-neutral-9);
   font: inherit;
   min-height: 40px;
   padding-block: 6px;
   padding-inline: 12px 36px;
+  transition: all 180ms linear;
   width: 100%;
 }
 .autocomplete-input:hover {
@@ -7155,9 +7198,9 @@ div[data-block$=Autocomplete] {
 }
 
 .autocomplete-skeleton {
+  align-items: center;
   box-sizing: border-box;
   display: flex;
-  align-items: center;
   padding-block: 8px;
   padding-inline: 8px;
 }
@@ -7171,7 +7214,7 @@ div[data-block$=Autocomplete] {
 }
 
 .autocomplete-option {
-  border-radius: 4px;
+  border-radius: var(--border-radius-soft);
   color: var(--color-neutral-9);
   cursor: pointer;
   display: flex;
@@ -7259,11 +7302,12 @@ div[data-block$=PhoneInput] {
   align-items: stretch;
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--border-radius-soft);
   display: flex;
   min-height: 40px;
   min-width: 0;
   overflow: hidden;
+  transition: all 180ms linear;
   width: 100%;
 }
 .phoneinput-field:hover {
@@ -7348,9 +7392,9 @@ div[data-block$=PhoneInput] {
 .phoneinput-input {
   background: transparent;
   border: none;
-  border-end-end-radius: 6px;
+  border-end-end-radius: var(--border-radius-soft);
   border-end-start-radius: 0;
-  border-start-end-radius: 6px;
+  border-start-end-radius: var(--border-radius-soft);
   border-start-start-radius: 0;
   color: var(--color-neutral-9);
   flex: 1 1 auto;
@@ -7384,7 +7428,7 @@ div[data-block$=PhoneInput] {
 .tippy-box:has(.phoneinput-panel) {
   background: var(--color-neutral-0);
   border: 1px solid var(--color-neutral-4);
-  border-radius: 8px;
+  border-radius: var(--border-radius-soft);
   color: var(--color-neutral-9);
 }
 .tippy-box:has(.phoneinput-panel) .tippy-content {
@@ -7426,7 +7470,7 @@ div[data-block$=PhoneInput] {
 .phoneinput-search-input {
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-soft);
   color: var(--color-neutral-9);
   flex: 1 1 auto;
   font: inherit;
@@ -7451,7 +7495,7 @@ div[data-block$=PhoneInput] {
   align-items: center;
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-soft);
   color: var(--color-neutral-6);
   cursor: pointer;
   display: inline-flex;
@@ -7486,7 +7530,7 @@ div[data-block$=PhoneInput] {
 
 .phoneinput-option {
   align-items: center;
-  border-radius: 4px;
+  border-radius: var(--border-radius-soft);
   color: var(--color-neutral-9);
   cursor: pointer;
   display: flex;
@@ -7590,6 +7634,7 @@ div[data-block$=SapphireDropdown] {
   min-height: 40px;
   padding-block: 6px;
   padding-inline: 12px;
+  transition: all 180ms linear;
   user-select: none;
   width: 100%;
 }
@@ -8474,6 +8519,9 @@ div[data-block$=SapphireInput] {
   padding-inline-start: 36px;
   text-align: end;
   width: 100%;
+}
+.sapphireinput .form-control[data-input]:hover {
+  border-color: var(--color-neutral-6);
 }
 .sapphireinput .form-control[data-input]::placeholder {
   color: var(--color-text-disabled);

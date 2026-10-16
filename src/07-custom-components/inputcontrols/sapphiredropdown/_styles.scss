@@ -21,6 +21,7 @@ div[data-block$='SapphireDropdown'] {
 		min-height: 40px;
 		padding-block: 6px;
 		padding-inline: 12px;
+		transition: all 180ms linear;
 		user-select: none;
 		width: 100%;
 		&:hover {

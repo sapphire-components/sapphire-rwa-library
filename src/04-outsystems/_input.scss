@@ -1,6 +1,9 @@
 .form-control[data-input],
 .form-control[data-textarea] {
 	border-color: var(--color-border);
+	&:hover {
+		border-color: var(--color-neutral-6);
+	}
 }
 
 .form-control.input-xsmall[data-input] {

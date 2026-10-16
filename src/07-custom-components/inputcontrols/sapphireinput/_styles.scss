@@ -56,6 +56,9 @@ div[data-block$='SapphireInput'] {
 		padding-inline-start: 36px;
 		text-align: end;
 		width: 100%;
+		&:hover {
+			border-color: var(--color-neutral-6);
+		}
 		&::placeholder {
 			color: var(--color-text-disabled);
 		}

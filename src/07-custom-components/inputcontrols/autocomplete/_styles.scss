@@ -13,7 +13,7 @@ div[data-block$='Autocomplete'] {
 	&-chips {
 		background-color: var(--color-neutral-2);
 		border: 1px solid var(--color-border);
-		border-radius: 4px;
+		border-radius: var(--border-radius-soft);
 		display: none;
 		flex-wrap: wrap;
 		gap: 4px;
@@ -43,12 +43,13 @@ div[data-block$='Autocomplete'] {
 		@include focus-visible();
 		background-color: var(--color-neutral-0);
 		border: 1px solid var(--color-border);
-		border-radius: 6px;
+		border-radius: var(--border-radius-soft);
 		color: var(--color-neutral-9);
 		font: inherit;
 		min-height: 40px;
 		padding-block: 6px;
 		padding-inline: 12px 36px;
+		transition: all 180ms linear;
 		width: 100%;
 
 		&:hover {
@@ -167,9 +168,9 @@ div[data-block$='Autocomplete'] {
 }
 
 .autocomplete-skeleton {
+	align-items: center;
 	box-sizing: border-box;
 	display: flex;
-	align-items: center;
 	padding-block: 8px;
 	padding-inline: 8px;
 
@@ -184,7 +185,7 @@ div[data-block$='Autocomplete'] {
 }
 
 .autocomplete-option {
-	border-radius: 4px;
+	border-radius: var(--border-radius-soft);
 	color: var(--color-neutral-9);
 	cursor: pointer;
 	display: flex;
