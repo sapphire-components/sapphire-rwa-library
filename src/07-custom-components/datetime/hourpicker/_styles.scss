@@ -28,6 +28,11 @@ div[data-block$='HourPicker'] {
 		height: 40px;
 		min-height: 40px;
 		text-align: center;
+		transition: all 180ms linear;
+
+		&:hover {
+			border-color: var(--color-neutral-6);
+		}
 
 		&::placeholder {
 			color: var(--color-text-disabled);

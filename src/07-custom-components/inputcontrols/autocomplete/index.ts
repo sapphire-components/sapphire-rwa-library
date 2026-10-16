@@ -2,14 +2,19 @@ import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
 import { createSpinner } from '@utils/loader';
 
+interface IAutocompleteOption {
+	Label: string;
+	Value: string;
+}
+
 interface IAutocomplete extends BaseComponentInit {
 	actions: {
 		OnAdd: (value: string) => void;
 		OnClear: () => void;
-		OnEmit: (value: string) => void;
+		OnEmit: (emitted: string) => void;
 		OnScroll: (startIndex: number) => void;
 		OnSearch: (keyword: string) => void;
-		OnSelect: (value: string) => void;
+		OnSelect: (selected: string) => void;
 	};
 	allowAdd: boolean;
 	enabled: boolean;
@@ -17,13 +22,13 @@ interface IAutocomplete extends BaseComponentInit {
 	hasEmitButton: boolean;
 	isLoading: boolean;
 	keyword: string;
-	optionValues: string;
+	optionValues: IAutocompleteOption[];
 	searchDebounce: number;
 	searchPageSize: number;
 	searchServerSide: boolean;
 	searchStartIndex: number;
 	searchTotalCount: number;
-	selectedValues: string;
+	selectedValues: IAutocompleteOption[];
 	textAdd: string;
 	textEmit: string;
 	textNoRecords: string;
@@ -38,7 +43,7 @@ export default class Autocomplete extends BaseComponent {
 	private hasChips = false;
 	private hasEmitButton = false;
 	private isLoading = false;
-	private optionValues: string[] = [];
+	private optionValues: IAutocompleteOption[] = [];
 	private searchDebounce = 0;
 	private searchPageSize = 0;
 	private searchServerSide = false;
@@ -47,7 +52,7 @@ export default class Autocomplete extends BaseComponent {
 	// Start index the rows currently on screen belong to. searchStartIndex can
 	// move first; the rows stay put until optionValues for that index arrive.
 	private pageStartIndex = 0;
-	private selectedValues: string[] = [];
+	private selectedValues: IAutocompleteOption[] = [];
 	private textAdd = '';
 	private textEmit = '';
 	private textNoRecords = '';
@@ -172,7 +177,7 @@ export default class Autocomplete extends BaseComponent {
 		const next = this.inputEl.value;
 		// Committed single-select text is shown in the field but is not `keyword`,
 		// so wiping it drops any applied keyword and, in server-side mode, emits OnSearch('').
-		const previousText = this.isEditing || this.hasChips ? this.keyword : (this.selectedValues[0] ?? '');
+		const previousText = this.isEditing || this.hasChips ? this.keyword : (this.selectedValues[0]?.Label ?? '');
 		const becameEmpty = previousText.trim() !== '' && next.trim() === '';
 
 		this.isEditing = true;
@@ -269,7 +274,10 @@ export default class Autocomplete extends BaseComponent {
 	private readonly onEmitClick = (event: MouseEvent): void => {
 		event.preventDefault();
 		if (!this.canEmit()) return;
-		this.actions.OnEmit(JSON.stringify(this.selectedValues));
+
+		console.log('onEmitClick', this.selectedJson());
+
+		this.actions.OnEmit(this.selectedJson());
 	};
 
 	private readonly onAddKeyDown = (event: KeyboardEvent): void => {
@@ -316,7 +324,7 @@ export default class Autocomplete extends BaseComponent {
 		this.hasChips = init.hasChips;
 		this.hasEmitButton = init.hasEmitButton;
 		this.isLoading = init.isLoading;
-		this.optionValues = this.parseStringList(init.optionValues);
+		this.optionValues = this.readOptions(init.optionValues);
 		this.searchDebounce = this.readDelay(init.searchDebounce);
 		this.searchPageSize = this.readCount(init.searchPageSize);
 		this.searchServerSide = init.searchServerSide;
@@ -324,7 +332,7 @@ export default class Autocomplete extends BaseComponent {
 		this.searchTotalCount = this.readCount(init.searchTotalCount);
 		this.pageStartIndex = this.searchStartIndex;
 		this.appliedKeyword = init.keyword ?? '';
-		this.selectedValues = this.parseStringList(init.selectedValues);
+		this.selectedValues = this.readOptions(init.selectedValues);
 		this.textAdd = init.textAdd ?? '';
 		this.textEmit = init.textEmit ?? '';
 		this.textNoRecords = init.textNoRecords ?? '';
@@ -377,7 +385,7 @@ export default class Autocomplete extends BaseComponent {
 		this.inputEl.setAttribute('aria-expanded', 'false');
 		this.inputEl.setAttribute('aria-controls', this.listId);
 		this.inputEl.placeholder = this.textPrompt;
-		if (!this.hasChips && this.selectedValues[0]) this.inputEl.value = this.selectedValues[0];
+		if (!this.hasChips && this.selectedValues[0]) this.inputEl.value = this.selectedValues[0].Label;
 
 		this.clearEl = document.createElement('button');
 		this.clearEl.type = 'button';
@@ -580,12 +588,13 @@ export default class Autocomplete extends BaseComponent {
 
 		this.keyword = '';
 		this.isEditing = false;
-		this.inputEl.value = this.selectedValues[0] ?? '';
+		this.inputEl.value = this.selectedValues[0]?.Label ?? '';
 		this.updateInputChrome();
 	}
 
 	private shouldSelectCommitted(): boolean {
-		return !this.hasChips && !this.isEditing && this.keyword === '' && !!this.selectedValues[0] && this.inputEl.value === this.selectedValues[0];
+		const label = this.selectedValues[0]?.Label ?? '';
+		return !this.hasChips && !this.isEditing && this.keyword === '' && label !== '' && this.inputEl.value === label;
 	}
 
 	private clearTypedText(): void {
@@ -606,13 +615,16 @@ export default class Autocomplete extends BaseComponent {
 	}
 
 	private selectValue(value: string): void {
+		const option = this.optionByValue(value);
+		if (!option) return;
+
 		const hadKeyword = this.keyword.trim() !== '';
 
 		if (this.hasChips) {
-			if (!this.selectedValues.includes(value)) {
-				this.selectedValues = [...this.selectedValues, value];
+			if (!this.isSelected(value)) {
+				this.selectedValues = [...this.selectedValues, option];
 			}
-			this.actions.OnSelect(JSON.stringify(this.selectedValues));
+			this.emitSelected();
 			this.keyword = '';
 			this.appliedKeyword = '';
 			this.isEditing = true;
@@ -626,23 +638,40 @@ export default class Autocomplete extends BaseComponent {
 		}
 
 		this.keepInputEmpty = false;
-		this.selectedValues = [value];
-		this.actions.OnSelect(JSON.stringify(this.selectedValues));
+		this.selectedValues = [option];
+		this.emitSelected();
 		this.keyword = '';
 		this.appliedKeyword = '';
 		this.isEditing = false;
-		this.inputEl.value = value;
+		this.inputEl.value = option.Label;
 		this.updateInputChrome();
 		if (hadKeyword) this.emitKeywordNow('');
 		this.close();
 	}
 
 	private removeChip(value: string): void {
-		if (!this.selectedValues.includes(value)) return;
-		this.selectedValues = this.selectedValues.filter((item) => item !== value);
-		this.actions.OnSelect(JSON.stringify(this.selectedValues));
+		if (!this.isSelected(value)) return;
+		this.selectedValues = this.selectedValues.filter((option) => option.Value !== value);
+		this.emitSelected();
 		this.renderChips();
 		this.renderOptions();
+	}
+
+	private isSelected(value: string): boolean {
+		return this.selectedValues.some((option) => option.Value === value);
+	}
+
+	private optionByValue(value: string): IAutocompleteOption | undefined {
+		return this.optionValues.find((option) => option.Value === value) ?? this.selectedValues.find((option) => option.Value === value);
+	}
+
+	// Selected list leaves as JSON so the caller can deserialize it back into the option structure.
+	private selectedJson(): string {
+		return JSON.stringify(this.selectedValues);
+	}
+
+	private emitSelected(): void {
+		this.actions.OnSelect(this.selectedJson());
 	}
 
 	private addCurrent(): void {
@@ -676,13 +705,13 @@ export default class Autocomplete extends BaseComponent {
 		return this.enabled && this.hasEmitButton && this.writtenValueInList() !== null;
 	}
 
-	// Typed text that is not a list entry is dirty and must not be emitted.
-	private writtenValueInList(): string | null {
+	// Typed text that is not a list label is dirty and must not be emitted.
+	private writtenValueInList(): IAutocompleteOption | null {
 		const written = this.inputEl?.value.trim().toLowerCase() ?? '';
 		if (!written) return null;
 
 		const entries = this.hasChips ? this.optionValues : [...this.optionValues, ...this.selectedValues];
-		return entries.find((value) => value.trim().toLowerCase() === written) ?? null;
+		return entries.find((option) => option.Label.trim().toLowerCase() === written) ?? null;
 	}
 
 	private updateInputChrome(): void {
@@ -699,21 +728,21 @@ export default class Autocomplete extends BaseComponent {
 		this.chipsEl.replaceChildren();
 		if (!this.hasChips) return;
 
-		for (const value of this.selectedValues) {
-			this.chipsEl.appendChild(this.createChip(value));
+		for (const option of this.selectedValues) {
+			this.chipsEl.appendChild(this.createChip(option));
 		}
 	}
 
-	private createChip(value: string): HTMLElement {
+	private createChip(option: IAutocompleteOption): HTMLElement {
 		const chipEl = document.createElement('div');
 		chipEl.className = 'chip';
-		chipEl.dataset.value = value;
+		chipEl.dataset.value = option.Value;
 		chipEl.dataset.hasclear = 'true';
 		chipEl.dataset.enabled = this.enabled ? 'true' : 'false';
 
 		const contentEl = document.createElement('div');
 		contentEl.className = 'chip-content';
-		contentEl.textContent = value;
+		contentEl.textContent = option.Label;
 		chipEl.appendChild(contentEl);
 
 		const clearBtn = document.createElement('button');
@@ -741,17 +770,17 @@ export default class Autocomplete extends BaseComponent {
 		const options = (this.isLoading && !virtualized) || awaitingKeyword ? [] : this.optionsForList();
 		const highlight = this.searchServerSide ? this.appliedKeyword : this.keyword;
 
-		for (const [index, value] of options.entries()) {
+		for (const [index, option] of options.entries()) {
 			const optionEl = document.createElement('li');
 			optionEl.className = 'autocomplete-option';
 			optionEl.id = `${this.runtimeId}-opt-${this.pageStartIndex + index}`;
-			optionEl.dataset.value = value;
+			optionEl.dataset.value = option.Value;
 			optionEl.dataset.active = 'false';
 			optionEl.setAttribute('role', 'option');
 
 			const label = document.createElement('span');
 			label.className = 'autocomplete-option-label';
-			this.appendHighlightedLabel(label, value, highlight);
+			this.appendHighlightedLabel(label, option.Label, highlight);
 			optionEl.appendChild(label);
 			this.spacerBottomEl.before(optionEl);
 		}
@@ -819,17 +848,17 @@ export default class Autocomplete extends BaseComponent {
 		return this.appliedKeyword.trim() !== '';
 	}
 
-	private optionsForList(): string[] {
+	private optionsForList(): IAutocompleteOption[] {
 		// The server page is already the window for searchStartIndex. Filtering it
 		// would shift the scroll math, so selected values stay in the page.
 		if (this.isVirtualized()) return this.optionValues;
 
-		const selected = new Set(this.selectedValues);
-		let options = this.optionValues.filter((value) => !selected.has(value));
+		const selected = new Set(this.selectedValues.map((option) => option.Value));
+		let options = this.optionValues.filter((option) => !selected.has(option.Value));
 
 		if (!this.searchServerSide) {
 			const query = this.keyword.trim().toLowerCase();
-			if (query) options = options.filter((value) => value.toLowerCase().includes(query));
+			if (query) options = options.filter((option) => option.Label.toLowerCase().includes(query));
 		}
 
 		return options;
@@ -1106,22 +1135,23 @@ export default class Autocomplete extends BaseComponent {
 	}
 
 	private normalizeSelected(): void {
-		this.selectedValues = this.selectedValues.filter((value) => value !== '');
+		this.selectedValues = this.selectedValues.filter((option) => option.Value !== '');
 		if (!this.hasChips && this.selectedValues.length > 1) {
 			this.selectedValues = this.selectedValues.slice(0, 1);
 		}
 	}
 
-	private parseStringList(raw: string | null | undefined): string[] {
-		if (!raw) return [];
+	private readOptions(raw: IAutocompleteOption[] | null | undefined): IAutocompleteOption[] {
+		if (!Array.isArray(raw)) return [];
 
-		try {
-			const parsed: unknown = JSON.parse(raw);
-			if (!Array.isArray(parsed)) return [];
-			return parsed.filter((item): item is string => typeof item === 'string');
-		} catch {
-			return [];
+		const options: IAutocompleteOption[] = [];
+		for (const item of raw) {
+			if (!item || typeof item !== 'object') continue;
+			if (typeof item.Value !== 'string' || typeof item.Label !== 'string') continue;
+			if (item.Value === '') continue;
+			options.push({ Label: item.Label, Value: item.Value });
 		}
+		return options;
 	}
 
 	private readDelay(value: number): number {
@@ -1171,7 +1201,7 @@ export default class Autocomplete extends BaseComponent {
 				this.inputEl.value = this.keyword;
 				this.isEditing = this.keyword.trim() !== '';
 			} else if (!this.isEditing) {
-				this.inputEl.value = this.selectedValues[0] ?? '';
+				this.inputEl.value = this.selectedValues[0]?.Label ?? '';
 			}
 			needsRender = true;
 		}
@@ -1244,7 +1274,7 @@ export default class Autocomplete extends BaseComponent {
 		}
 
 		if (payload.optionValues !== undefined) {
-			const nextOptions = this.parseStringList(payload.optionValues);
+			const nextOptions = this.readOptions(payload.optionValues);
 			if (!Helpers.areTheyEqual(nextOptions, this.optionValues)) {
 				this.optionValues = nextOptions;
 				// Start index is already the requested page. Pin the new rows to it
@@ -1256,12 +1286,12 @@ export default class Autocomplete extends BaseComponent {
 		}
 
 		if (payload.selectedValues !== undefined) {
-			const nextSelected = this.parseStringList(payload.selectedValues);
+			const nextSelected = this.readOptions(payload.selectedValues);
 			if (!Helpers.areTheyEqual(nextSelected, this.selectedValues)) {
 				this.selectedValues = nextSelected;
 				this.normalizeSelected();
 				if (!this.hasChips && !this.isEditing) {
-					this.inputEl.value = this.selectedValues[0] ?? '';
+					this.inputEl.value = this.selectedValues[0]?.Label ?? '';
 				}
 				needsRender = true;
 			}

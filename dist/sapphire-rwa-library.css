@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.96 2026-10-16T08:43:27.380Z */
+/*!  SapphireRWALibrary PROD v0.6.97 2026-10-16T14:39:05.742Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -6340,6 +6340,10 @@ div[data-block$=HourPicker] {
   height: 40px;
   min-height: 40px;
   text-align: center;
+  transition: all 180ms linear;
+}
+.hourpicker-input:hover, .hourpicker-select:hover {
+  border-color: var(--color-neutral-6);
 }
 .hourpicker-input::placeholder, .hourpicker-select::placeholder {
   color: var(--color-text-disabled);
