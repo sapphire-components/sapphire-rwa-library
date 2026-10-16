@@ -26,3 +26,7 @@ Module `RW_DesignSystem`:
 | --------------------------------- | --------------------------- |
 | `sapphire-rwa-documentation.js`   | `SapphireRWADocumentation`  |
 | `sapphire-rwa-static-entities.js` | `SapphireRWAStaticEntities` |
+
+## Sync dist
+
+Ask to sync dist into OutSystems. The agent follows `.cursor/skills/sync-dist/SKILL.md` and runs `npm run sync:outsystems` with a Service Studio session token. Service Studio must already have `RW_Core_Th`, `RW_Core_Lib`, and `RW_DesignSystem` open. The command does not publish.
