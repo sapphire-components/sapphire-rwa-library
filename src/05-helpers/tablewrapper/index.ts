@@ -174,8 +174,6 @@ export default class TableWrapper extends BaseComponent {
 			return;
 		}
 
-		console.log('TableWrapper: constructor', configOptions);
-
 		this.configOptions = configOptions;
 
 		this.actions = this.configOptions.actions;

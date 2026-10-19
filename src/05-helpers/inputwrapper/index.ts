@@ -81,6 +81,12 @@ export default class InputWrapper extends BaseComponent {
 			? this.widgetEl
 			: (this.widgetEl.querySelector<HTMLElement>('.inputwrapper') ?? this.widgetEl);
 		this.inputEl = this.wrapperEl.querySelector('input');
+		if (this.inputEl) {
+			this.inputEl.autocapitalize = 'off';
+			this.inputEl.autocomplete = 'off';
+			this.inputEl.autocorrect = false;
+			this.inputEl.spellcheck = false;
+		}
 
 		this.reflectStateAttributes();
 		this.watchInputValue();
