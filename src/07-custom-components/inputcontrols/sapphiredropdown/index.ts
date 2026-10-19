@@ -104,6 +104,7 @@ export default class SapphireDropdown extends BaseComponent {
 	private scrollEndEmitted = false;
 	private avgLocked = false;
 	private avgRowHeight = 0;
+	private measureAttempts = 0;
 	private requestedStartIndex: number | null = null;
 	private skeletonKey = '';
 	private suppressScroll = false;
@@ -303,6 +304,7 @@ export default class SapphireDropdown extends BaseComponent {
 		}
 
 		if (!this.isVirtualized()) return;
+
 		this.syncSkeletons();
 		this.requestPageDebounced();
 	};
@@ -661,7 +663,9 @@ export default class SapphireDropdown extends BaseComponent {
 		} else {
 			this.listEl.hidden = false;
 			this.updateEmptyState();
-			if (virtualized) this.syncSkeletons();
+			// Rows rendered while the list was hidden report height 0. Measure
+			// again now that they are on screen.
+			if (virtualized) this.applyVirtualLayout();
 		}
 		if (this.overlayHeld) return;
 		this.tippyInstance?.popperInstance?.update?.();
@@ -1224,7 +1228,16 @@ export default class SapphireDropdown extends BaseComponent {
 	private captureAverage(rows: HTMLElement[]): void {
 		if (this.avgLocked || rows.length === 0) return;
 		const next = this.measureStride(rows);
-		if (next <= 0) return;
+		// A hidden list, or a panel Tippy has not shown yet, lays out at 0.
+		// Keep the average unlocked and try once the rows are visible.
+		if (next <= 0) {
+			if (this.isOpen && !this.listEl.hidden && this.listEl.offsetParent !== null && this.measureAttempts < 5) {
+				this.measureAttempts += 1;
+				this.scheduleVirtualLayout();
+			}
+			return;
+		}
+		this.measureAttempts = 0;
 		this.avgRowHeight = next;
 		this.avgLocked = true;
 	}
