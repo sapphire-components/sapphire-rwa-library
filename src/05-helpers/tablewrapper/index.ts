@@ -1,6 +1,7 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
 import { createLoadingOverlay } from '@utils/loader';
+import { clearStickyBand, pinTopFor, setStickyBand, subscribeStickyOffset } from '@utils/sticky-offset';
 
 interface TableWrapperConfigOptions extends BaseComponentInit {
 	actions: {
@@ -30,6 +31,7 @@ export default class TableWrapper extends BaseComponent {
 	private dragStartOrder: string[] = [];
 	private dragStartY = 0;
 	private hasMaxHeight = false;
+	private headerResizeObserver?: ResizeObserver;
 	private ignoreNextClick = false;
 	private isLoading = false;
 	private isPristine = true;
@@ -45,11 +47,13 @@ export default class TableWrapper extends BaseComponent {
 	private reorderValueOnFocus = new WeakMap<HTMLInputElement, string>();
 	private reorderPanelEl?: HTMLDivElement;
 	private reorderableRows;
-	private syncing = false;
+	private stickyFrame = 0;
+	private stickyListening = false;
+	private stickyShellEl?: HTMLDivElement;
 	private tableEl!: HTMLTableElement;
-	private tableHeaderCloneEl!: HTMLDivElement;
-	private tableHeaderEl!: HTMLDivElement;
-	private theadEl!: HTMLTableSectionElement;
+	private tableHeaderCloneEl?: HTMLElement;
+	private tableHeaderEl?: HTMLElement;
+	private unsubscribeStickyOffset?: () => void;
 
 	private static readonly DRAG_THRESHOLD_PX = 2;
 	private static readonly INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, label, [role="button"], [role="link"], [contenteditable="true"]';
@@ -185,33 +189,19 @@ export default class TableWrapper extends BaseComponent {
 		this.reorderableRows = this.configOptions.reorderableRows;
 
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
-		this.tableHeaderEl = this.widgetEl.querySelector<HTMLDivElement>('.table-header')!;
-		this.theadEl = this.tableEl.querySelector<HTMLTableSectionElement>('thead')!;
+		this.bindTableElements();
 
 		this.reflectStateAttributes();
 		this.reflectPageCount();
 		this.updateLoadingState();
 
-		this.setupDOM();
-
 		this.setWidgetRect();
 
-		this.tableHeaderCloneEl?.addEventListener('scroll', () => {
-			console.log('table header clone scroll', this.syncing);
-			if (this.syncing) return;
-			this.syncing = true;
-			this.widgetEl.scrollLeft = this.tableHeaderCloneEl.scrollLeft;
-			this.syncing = false;
-		});
-
-		this.widgetEl.addEventListener('scroll', () => {
-			if (this.syncing) return;
-			this.syncing = true;
-			this.tableHeaderCloneEl.scrollLeft = this.widgetEl.scrollLeft;
-			this.syncing = false;
-		});
-
 		this.observeLayoutResize(this.handleLayoutResize);
+
+		if (this.isStickyHeader) {
+			this.enableStickyHeader();
+		}
 
 		this.augmentRows();
 
@@ -241,6 +231,7 @@ export default class TableWrapper extends BaseComponent {
 				}
 			});
 			this.syncReorderUi();
+			this.scheduleStickyUpdate();
 		}, 0);
 	}
 
@@ -266,17 +257,200 @@ export default class TableWrapper extends BaseComponent {
 		this.syncReorderUi();
 	}
 
-	setupDOM(): void {
-		if (!this.tableHeaderEl) return;
-
-		const clone = this.tableHeaderEl.cloneNode(true) as HTMLDivElement;
-		clone.classList.add('table-header-clone');
-		clone.querySelectorAll('.sortable-icon').forEach((child) => {
-			(child as HTMLElement).style.opacity = '0';
-		});
-		this.tableHeaderCloneEl = clone as HTMLDivElement;
-		this.theadEl.appendChild(this.tableHeaderCloneEl);
+	private bindTableElements(): void {
+		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table') ?? this.tableEl;
+		const thead = this.tableEl?.querySelector<HTMLTableSectionElement>('thead');
+		this.tableHeaderEl = thead?.querySelector<HTMLElement>('.table-header:not(.table-header-clone)') ?? undefined;
 	}
+
+	private enableStickyHeader(): void {
+		this.bindStickyListeners();
+		this.refreshStickyHeader();
+	}
+
+	private disableStickyHeader(): void {
+		this.stickyListening = false;
+		document.removeEventListener('scroll', this.scheduleStickyUpdate, true);
+		window.removeEventListener('resize', this.scheduleStickyUpdate);
+		this.widgetEl?.removeEventListener('scroll', this.onWrapperScroll);
+		this.unsubscribeStickyOffset?.();
+		this.unsubscribeStickyOffset = undefined;
+		this.headerResizeObserver?.disconnect();
+		this.headerResizeObserver = undefined;
+		cancelAnimationFrame(this.stickyFrame);
+		this.stickyFrame = 0;
+		this.releaseStickyHeader();
+		this.stickyShellEl?.remove();
+		this.stickyShellEl = undefined;
+		this.tableHeaderCloneEl = undefined;
+	}
+
+	private bindStickyListeners(): void {
+		if (this.stickyListening) {
+			return;
+		}
+
+		this.stickyListening = true;
+		document.addEventListener('scroll', this.scheduleStickyUpdate, { capture: true, passive: true });
+		window.addEventListener('resize', this.scheduleStickyUpdate, { passive: true });
+		this.widgetEl.addEventListener('scroll', this.onWrapperScroll, { passive: true });
+		this.unsubscribeStickyOffset = subscribeStickyOffset(this.scheduleStickyUpdate);
+		this.headerResizeObserver = new ResizeObserver(() => this.scheduleStickyUpdate());
+		this.headerResizeObserver.observe(this.widgetEl);
+	}
+
+	private refreshStickyHeader(): void {
+		if (!this.isStickyHeader) {
+			return;
+		}
+
+		this.bindTableElements();
+		this.rebuildHeaderClone();
+		if (this.tableHeaderEl) {
+			this.headerResizeObserver?.observe(this.tableHeaderEl);
+		}
+		this.scheduleStickyUpdate();
+	}
+
+	private rebuildHeaderClone(): void {
+		const wasFixed = this.stickyShellEl?.dataset.isfixed === 'true';
+		const top = this.stickyShellEl?.style.top ?? '';
+		const left = this.stickyShellEl?.style.left ?? '';
+		const width = this.stickyShellEl?.style.width ?? '';
+		const height = this.stickyShellEl?.style.height ?? '';
+
+		this.stickyShellEl?.remove();
+		this.stickyShellEl = undefined;
+		this.tableHeaderCloneEl = undefined;
+
+		if (!this.tableHeaderEl || !this.tableEl) {
+			return;
+		}
+
+		const shell = document.createElement('div');
+		shell.className = 'tablewrapper-sticky-header';
+		shell.setAttribute('aria-hidden', 'true');
+		if (this.widgetEl.dataset.density) {
+			shell.dataset.density = this.widgetEl.dataset.density;
+		}
+
+		const table = document.createElement('table');
+		table.className = this.tableEl.className;
+		const thead = document.createElement('thead');
+		const clone = this.tableHeaderEl.cloneNode(true) as HTMLElement;
+		clone.classList.add('table-header-clone');
+		clone.querySelectorAll<HTMLElement>('.sortable-icon').forEach((icon) => {
+			icon.style.opacity = '0';
+		});
+		thead.appendChild(clone);
+		table.appendChild(thead);
+		shell.appendChild(table);
+
+		if (wasFixed) {
+			shell.dataset.isfixed = 'true';
+			shell.style.top = top;
+			shell.style.left = left;
+			shell.style.width = width;
+			shell.style.height = height;
+		}
+
+		document.body.appendChild(shell);
+		this.stickyShellEl = shell;
+		this.tableHeaderCloneEl = clone;
+	}
+
+	private scheduleStickyUpdate = (): void => {
+		if (!this.isStickyHeader || !this.stickyListening || this.stickyFrame) {
+			return;
+		}
+
+		this.stickyFrame = requestAnimationFrame(() => {
+			this.stickyFrame = 0;
+			this.updateStickyHeader();
+		});
+	};
+
+	private updateStickyHeader = (): void => {
+		if (!this.isStickyHeader || !this.tableEl || !this.tableHeaderEl || !this.stickyShellEl || !this.tableHeaderCloneEl) {
+			return;
+		}
+
+		const pinTop = pinTopFor(this.widgetEl);
+		const tableRect = this.tableEl.getBoundingClientRect();
+		const headerHeight = this.tableHeaderEl.getBoundingClientRect().height;
+		const shouldPin = headerHeight > 0 && tableRect.top < pinTop && tableRect.bottom > pinTop + headerHeight;
+
+		this.stickyShellEl.dataset.isfixed = shouldPin ? 'true' : 'false';
+
+		if (!shouldPin) {
+			this.clearCloneWidths();
+			clearStickyBand(this.runtimeId);
+			return;
+		}
+
+		const rect = this.widgetEl.getBoundingClientRect();
+		const scrollbar = rect.width - this.widgetEl.clientWidth;
+		const left = getComputedStyle(this.widgetEl).direction === 'rtl' ? rect.left + scrollbar : rect.left;
+		const innerTable = this.stickyShellEl.querySelector<HTMLTableElement>('table');
+
+		this.stickyShellEl.style.top = `${pinTop}px`;
+		this.stickyShellEl.style.left = `${left}px`;
+		this.stickyShellEl.style.width = `${this.widgetEl.clientWidth}px`;
+		this.stickyShellEl.style.height = `${headerHeight}px`;
+		if (innerTable) {
+			innerTable.style.width = `${this.tableEl.scrollWidth}px`;
+		}
+		this.copyHeaderWidths();
+		this.onWrapperScroll();
+		setStickyBand(this.runtimeId, this.widgetEl, Math.round(headerHeight));
+	};
+
+	private releaseStickyHeader(): void {
+		clearStickyBand(this.runtimeId);
+		this.clearCloneWidths();
+		if (!this.stickyShellEl) {
+			return;
+		}
+
+		this.stickyShellEl.dataset.isfixed = 'false';
+		this.stickyShellEl.style.top = '';
+		this.stickyShellEl.style.left = '';
+		this.stickyShellEl.style.width = '';
+		this.stickyShellEl.style.height = '';
+	}
+
+	private copyHeaderWidths(): void {
+		if (!this.tableHeaderEl || !this.tableHeaderCloneEl) {
+			return;
+		}
+
+		const source = this.tableHeaderEl.querySelectorAll<HTMLTableCellElement>('th');
+		const target = this.tableHeaderCloneEl.querySelectorAll<HTMLTableCellElement>('th');
+		const count = Math.min(source.length, target.length);
+
+		for (let i = 0; i < count; i++) {
+			const width = source[i].getBoundingClientRect().width;
+			target[i].style.width = `${width}px`;
+			target[i].style.minWidth = `${width}px`;
+			target[i].style.maxWidth = `${width}px`;
+		}
+	}
+
+	private clearCloneWidths(): void {
+		this.tableHeaderCloneEl?.querySelectorAll<HTMLTableCellElement>('th').forEach((cell) => {
+			cell.style.width = '';
+			cell.style.minWidth = '';
+			cell.style.maxWidth = '';
+		});
+	}
+
+	private onWrapperScroll = (): void => {
+		if (!this.stickyShellEl) {
+			return;
+		}
+
+		this.stickyShellEl.scrollLeft = this.widgetEl.scrollLeft;
+	};
 
 	setWidgetRect(): void {
 		if (this.configOptions.height) {
@@ -304,12 +478,38 @@ export default class TableWrapper extends BaseComponent {
 
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
 		this.setWidgetRect();
+		this.scheduleStickyUpdate();
 	};
 
 	parametersChanged(payload: TableWrapperConfigOptions): void {
 		if (!this.widgetEl) return;
 
+		if (payload.height !== undefined) {
+			this.configOptions.height = payload.height;
+		}
+		if (payload.maxHeight !== undefined) {
+			this.configOptions.maxHeight = payload.maxHeight;
+		}
+		if (payload.isStickyHeader !== undefined) {
+			this.configOptions.isStickyHeader = payload.isStickyHeader;
+		}
+		if (payload.height !== undefined || payload.maxHeight !== undefined) {
+			this.setWidgetRect();
+		}
+
+		const nextSticky = Boolean(this.configOptions.isStickyHeader) && !this.configOptions.maxHeight;
+		if (nextSticky !== this.isStickyHeader) {
+			this.isStickyHeader = nextSticky;
+			this.reflectStateAttributes();
+			if (nextSticky) {
+				this.enableStickyHeader();
+			} else {
+				this.disableStickyHeader();
+			}
+		}
+
 		this.augmentRows();
+		this.refreshStickyHeader();
 
 		if (payload.clickableRows !== undefined && payload.clickableRows !== this.clickableRows) {
 			this.clickableRows = payload.clickableRows;
@@ -387,6 +587,7 @@ export default class TableWrapper extends BaseComponent {
 	destroy() {
 		this.finishPointerDrag();
 		this.removeReorderUi();
+		this.disableStickyHeader();
 		this.tableEl?.removeEventListener('pointerdown', this.handlePointerDown);
 		this.tableEl?.removeEventListener('click', this.handleCaptureClick, true);
 		this.loadingEl?.remove();

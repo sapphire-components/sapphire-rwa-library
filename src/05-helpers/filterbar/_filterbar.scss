@@ -14,9 +14,7 @@ div[data-block$='FilterBar'] {
 		border-radius: var(--border-radius-soft);
 		display: flex;
 		gap: 12px;
-		margin-top: calc(-1 * var(--filterbar-height));
 		padding: 24px;
-		position: relative;
 		width: 100%;
 	}
 
@@ -32,23 +30,21 @@ div[data-block$='FilterBar'] {
 		white-space: nowrap;
 	}
 	&-placeholder {
-		height: var(--filterbar-height);
 		pointer-events: none;
 		width: 100%;
 	}
 	&-sentinel {
-		height: 0;
+		height: 1px;
+		margin-bottom: -1px;
 		pointer-events: none;
-		width: 0;
+		visibility: hidden;
+		width: 100%;
 	}
 }
 
-.filterbar[data-isfixed='true'] {
-	.filterbar-wrapper {
-		border-radius: 0;
-		margin-top: 0;
-		position: fixed;
-		width: calc(var(--filterbar-width) + 1px);
-		z-index: 1;
-	}
+.filterbar[data-isstuck='true'] .filterbar-wrapper {
+	border-radius: 0;
+	box-sizing: border-box;
+	position: fixed;
+	z-index: 3;
 }

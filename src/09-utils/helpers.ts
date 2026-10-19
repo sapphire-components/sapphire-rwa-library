@@ -27,12 +27,6 @@ export default class Helpers {
 		}
 	}
 
-	static getFixedElementsCombinedHeight(root = document) {
-		const fixedFilterBarHeight = root.querySelector<HTMLDivElement>('.filterbar[data-isfixed="true"]')?.getBoundingClientRect().height || 0;
-		const fixedTableHeaderHeight = root.querySelector<HTMLDivElement>('.table[data-isfixed="true"] .table-header')?.getBoundingClientRect().height || 0;
-		return fixedFilterBarHeight + fixedTableHeaderHeight;
-	}
-
 	static isRTL(): boolean {
 		console.log(document.body.classList.contains('is-rtl'));
 		return document.body.classList.contains('is-rtl');

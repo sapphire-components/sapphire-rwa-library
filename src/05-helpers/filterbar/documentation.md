@@ -1,10 +1,9 @@
 ###### Overview
 
-A layout helper that wraps filter UI content into a horizontal bar. When `IsSticky` is enabled, the helper measures its own dimensions and uses a placeholder to prevent layout jump while the bar is fixed.
+A layout helper that wraps filter UI content into a horizontal bar. When `IsSticky` is enabled, the bar pins to the top of the scrolling page and holds its place with a placeholder so the content underneath does not jump.
 
 - Places the provided `Content` and `Actions` inside the bar wrapper.
-- When `IsSticky` is `True`, the bar becomes fixed (`position: fixed`) and keeps its original width while the page scrolls.
-- The helper sets CSS variables (`--filterbar-top`, `--filterbar-width`, `--filterbar-height`) to support fixed positioning and the spacing placeholder.
+- When `IsSticky` is `True`, the bar stays pinned for the page. A sticky table header on the same screen sits directly below it.
 
 <hr>
 
@@ -12,7 +11,7 @@ A layout helper that wraps filter UI content into a horizontal bar. When `IsStic
 
 | Name       | Type      | Description |
 | ---------- | --------- | ----------- |
-| `IsSticky` | `Boolean` | When `True`, sets `data-isfixed="true"` so the bar is fixed and the layout placeholder reserves space during scroll. |
+| `IsSticky` | `Boolean` | When `True`, pins the bar to the top of the page while content scrolls. |
 
 <hr>
 
