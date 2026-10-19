@@ -2,11 +2,12 @@
 
 A combobox-style dropdown for selecting one or many options from a list. It supports search (client- or server-side), select-all, chips for selected values, clear, keyboard navigation / typeahead, and a validation message.
 
-- The trigger is a focusable combobox; activating it (click or keyboard) opens a Tippy panel with the options listbox. Selected options that are not in the current `OptionsList` are prepended in that list (so a paged or filtered payload still shows the current selection).
+- The trigger is a focusable combobox; activating it (click or keyboard) opens a Tippy panel with the options listbox. Selected options that are not in the current `OptionsList` are prepended in that list, except while the list is virtualized. A virtual page is rendered as supplied so the scroll window stays aligned with `SearchStartIndex`. The current selection still shows on the trigger and chips.
 - Single select closes the panel after a choice. Multiple select keeps the panel open and toggles options; overflowing labels collapse to a count summary using `SelectedOptionsText`.
 - When `Config.Search` is `True`, a search field filters options. Client-side search matches `Label` / `Description`; with `SearchServerSide`, typing emits `Search` (debounced 300ms) so the parent can refresh `OptionsList`.
-- While `IsSearching` is `True`, the list is hidden and a loading spinner is shown (typical for server-side search).
-- Scrolling the list near the bottom fires `ScrollEnded` once per reach (useful for paging more options).
+- With server-side search, `SearchMaxRecords`, `SearchStartIndex`, and `SearchTotalCount` size a virtual list. `OptionsList` is one page. Scrolling to a page that is not loaded fires `Scroll` with that start index. Skeletons fill the gap above and below the loaded page.
+- While `IsSearching` is `True`, a non-virtual list is hidden and a loading spinner is shown. A virtual list keeps its rows and shows skeletons.
+- Scrolling the list near the bottom fires `ScrollEnded` once per reach.
 - When `IsValid` is `False`, the trigger is marked invalid and `ValidationMessage` is shown below it.
 
 <hr>
@@ -48,9 +49,12 @@ A combobox-style dropdown for selecting one or many options from a list. It supp
 | `Multiple`            | `Boolean` | When `True`, allows multiple selections; when `False`, selecting an option replaces the selection and closes the panel. |
 | `Placeholder`         | `Text`    | Trigger text when nothing is selected.                                                                                  |
 | `Search`              | `Boolean` | When `True`, shows the search field in the panel.                                                                       |
-| `SearchServerSide`    | `Boolean` | When `True`, search emits `Search` for the parent to filter; when `False`, options are filtered locally.                |
-| `SearchKeyword`       | `Text`    | Current search keyword (kept in sync with the search input).                                                            |
+| `SearchServerSide`    | `Boolean` | When `True`, the parent filters and pages through `Search` and `Scroll`. When `False`, options are filtered locally.    |
+| `SearchKeyword`       | `Text`    | Search the current `OptionsList` belongs to. A change resets the virtual scroll.                                        |
+| `SearchMaxRecords`    | `Integer` | Page size for the virtual server-side list. `0` disables virtualization.                                                |
 | `SearchPlaceholder`   | `Text`    | Placeholder for the search input.                                                                                       |
+| `SearchStartIndex`    | `Integer` | Start index of the `OptionsList` page currently supplied. The new page is pinned to this index when the rows arrive.   |
+| `SearchTotalCount`    | `Integer` | Total number of server matches. Sizes the virtual scroll. `0` disables virtualization.                                  |
 | `ShowDescription`     | `Boolean` | When `True`, renders each option's `Description` when present.                                                          |
 | `ShowIcon`            | `Boolean` | When `True`, renders each option's `Icon` when present (list, chips).                                                   |
 | `NoOptionsText`       | `Text`    | Empty-state message when there are no options.                                                                          |
@@ -67,6 +71,7 @@ A combobox-style dropdown for selecting one or many options from a list. It supp
 | `Change`      | Fired when the selection changes.                                                                             | `Identifier` (`Text`), `EmittedList` (`SapphireDropdownOption List`) |
 | `ChipClick`   | Fired when a chip is activated and `Config.ChipClick` is `True` (click, or `Enter` / `Space` on the chip).    | `Identifier` (`Text`), `Value` (`Text`)                              |
 | `Clear`       | Fired when the trigger clear control clears the entire selection (also followed by `Change`).                 | `Identifier` (`Text`)                                                |
+| `Scroll`      | Fired when a virtual server-side list is scrolled to a page that is not loaded.                                  | `Identifier` (`Text`), `StartIndex` (`Integer`)                      |
 | `ScrollEnded` | Fired when the options list is scrolled to (near) the bottom; resets when the user scrolls away from the end. | `Identifier` (`Text`)                                                |
 | `SearchClear` | Fired when the search field is cleared.                                                                       | `Identifier` (`Text`)                                                |
 | `Search`      | Fired (debounced) with the current keyword while searching; primarily used with `SearchServerSide`.           | `Identifier` (`Text`), `EmittedKeyword` (`Text`)                     |

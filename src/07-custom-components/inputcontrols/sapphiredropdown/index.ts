@@ -37,6 +37,7 @@ interface ISapphireDropdownActions {
 	OnChange: (selected: string) => void;
 	OnChipClick: (value: string) => void;
 	OnClear: () => void;
+	OnScroll: (startIndex: number) => void;
 	OnScrollEnded: () => void;
 	OnSearch: (keyword: string) => void;
 	OnSearchClear: () => void;
@@ -69,7 +70,14 @@ export default class SapphireDropdown extends BaseComponent {
 	private optionsList: ISapphireDropdownOption[] = [];
 	private placeholder = '';
 	private searchKeyword = '';
+	private searchMaxRecords = 0;
 	private searchPlaceholder = '';
+	private searchStartIndex = 0;
+	private searchTotalCount = 0;
+	// Start index the rows currently on screen belong to. SearchStartIndex can
+	// move first; the rows stay put until optionsList for that index arrives.
+	private pageStartIndex = 0;
+	private appliedSearchKeyword = '';
 	private selectAllText = '';
 	private selectedList: ISapphireDropdownOption[] = [];
 	private selectedOptionsText = '';
@@ -83,6 +91,10 @@ export default class SapphireDropdown extends BaseComponent {
 	private searchEl: HTMLInputElement | null = null;
 	private searchClearEl: HTMLElement | null = null;
 	private listEl!: HTMLUListElement;
+	private spacerTopEl!: HTMLLIElement;
+	private spacerBottomEl!: HTMLLIElement;
+	private skeletonBeforeEl!: HTMLLIElement;
+	private skeletonAfterEl!: HTMLLIElement;
 	private selectAllEl: HTMLElement | null = null;
 	private emptyEl!: HTMLElement;
 	private loadingEl!: HTMLElement;
@@ -90,6 +102,13 @@ export default class SapphireDropdown extends BaseComponent {
 	private validationMessageCtrl!: ValidationMessage;
 
 	private scrollEndEmitted = false;
+	private avgLocked = false;
+	private avgRowHeight = 0;
+	private requestedStartIndex: number | null = null;
+	private skeletonKey = '';
+	private suppressScroll = false;
+	private virtualLayoutQueued = false;
+	private alignToRowsOnOpen = false;
 	private tippyInstance: TippyInstance | null = null;
 	private triggerResizeObserver?: ResizeObserver;
 	private isOpen = false;
@@ -236,7 +255,10 @@ export default class SapphireDropdown extends BaseComponent {
 		this.searchKeyword = this.searchEl?.value ?? '';
 		this.updateSearchClearVisibility();
 		// Capture side and height before the parent clears optionsList.
-		if (this.config.SearchServerSide) this.holdOverlayPlacement();
+		if (this.config.SearchServerSide) {
+			this.holdOverlayPlacement();
+			this.resetVirtualScroll();
+		}
 		this.applySearch();
 		// Emit regardless of mode; the implementation decides whether to use it.
 		this.emitSearchDebounced(this.searchKeyword);
@@ -264,7 +286,13 @@ export default class SapphireDropdown extends BaseComponent {
 		event.preventDefault();
 	};
 
+	private readonly requestPageDebounced = Helpers.debounce((): void => {
+		this.requestPageForScroll();
+	}, 200);
+
 	private readonly onListScroll = (): void => {
+		if (this.suppressScroll) return;
+
 		const el = this.listEl;
 		const reachedEnd = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
 		if (reachedEnd && !this.scrollEndEmitted) {
@@ -273,6 +301,10 @@ export default class SapphireDropdown extends BaseComponent {
 		} else if (!reachedEnd && this.scrollEndEmitted) {
 			this.scrollEndEmitted = false;
 		}
+
+		if (!this.isVirtualized()) return;
+		this.syncSkeletons();
+		this.requestPageDebounced();
 	};
 
 	private readonly onListClick = (event: MouseEvent): void => {
@@ -370,6 +402,11 @@ export default class SapphireDropdown extends BaseComponent {
 		this.placeholder = this.config.Placeholder ?? '';
 		this.searchPlaceholder = this.config.SearchPlaceholder ?? '';
 		this.searchKeyword = this.config.SearchKeyword ?? '';
+		this.appliedSearchKeyword = this.searchKeyword;
+		this.searchMaxRecords = this.readCount(this.config.SearchMaxRecords);
+		this.searchStartIndex = this.readCount(this.config.SearchStartIndex);
+		this.searchTotalCount = this.readCount(this.config.SearchTotalCount);
+		this.pageStartIndex = this.searchStartIndex;
 		this.theme = init.theme ?? '';
 		this.noOptionsText = this.config.NoOptionsText ?? '';
 		this.noSearchResultsText = this.config.NoSearchResultsText ?? '';
@@ -483,6 +520,11 @@ export default class SapphireDropdown extends BaseComponent {
 
 		this.listEl = this.panelEl.querySelector('.sapphiredropdown-list') as HTMLUListElement;
 		this.listEl.id = this.listId;
+		this.spacerTopEl = this.createSpacer();
+		this.spacerBottomEl = this.createSpacer();
+		this.skeletonBeforeEl = this.createSkeletonGroup();
+		this.skeletonAfterEl = this.createSkeletonGroup();
+		this.listEl.append(this.spacerTopEl, this.spacerBottomEl, this.skeletonBeforeEl, this.skeletonAfterEl);
 
 		this.emptyEl = this.panelEl.querySelector('.sapphiredropdown-empty') as HTMLElement;
 		this.loadingEl = this.panelEl.querySelector('.sapphiredropdown-loading') as HTMLElement;
@@ -490,14 +532,18 @@ export default class SapphireDropdown extends BaseComponent {
 	}
 
 	private renderOptions(): void {
-		this.listEl.replaceChildren();
+		for (const child of [...this.listEl.children]) {
+			if (this.isVirtualChrome(child)) continue;
+			child.remove();
+		}
 		this.selectAllEl = null;
 
-		if (this.config.Multiple && this.config.HasSelectAll && this.optionsForList().length > 0) {
+		const options = this.optionsForList();
+		if (this.config.Multiple && this.config.HasSelectAll && options.length > 0) {
 			this.renderSelectAllRow();
 		}
 
-		for (const option of this.optionsForList()) {
+		for (const option of options) {
 			const optionFragment = tmplOption.content.cloneNode(true);
 			const optionEl = (optionFragment as DocumentFragment).querySelector('.sapphiredropdown-option') as HTMLLIElement;
 
@@ -529,7 +575,7 @@ export default class SapphireDropdown extends BaseComponent {
 				description.remove();
 			}
 
-			this.listEl.appendChild(optionEl);
+			this.spacerBottomEl.before(optionEl);
 		}
 
 		this.activeValue = null;
@@ -541,8 +587,11 @@ export default class SapphireDropdown extends BaseComponent {
 			this.filterOptions(this.searchKeyword);
 		} else {
 			this.updateEmptyState();
-			if (this.isOpen && !this.overlayHeld) this.tippyInstance?.popperInstance?.update?.();
 		}
+		// Place the new page and its spacer in the same frame. A deferred layout
+		// let the previous rows sit in the new window for one paint.
+		this.applyVirtualLayout();
+		if (this.isOpen && !this.overlayHeld) this.tippyInstance?.popperInstance?.update?.();
 	}
 
 	// Pinned row at the top of the list (Multiple + HasSelectAll) that toggles
@@ -565,14 +614,24 @@ export default class SapphireDropdown extends BaseComponent {
 		label.textContent = this.selectAllText;
 		rowEl.appendChild(label);
 
-		this.listEl.appendChild(rowEl);
+		this.spacerTopEl.before(rowEl);
 		this.selectAllEl = rowEl;
 	}
 
 	private toggleSelectAll(): void {
 		const list = this.optionsForList();
 		const allSelected = list.length > 0 && list.every((option) => this.isSelected(option.Value));
-		this.selectedList = allSelected ? [] : [...list];
+		if (this.isVirtualized()) {
+			const pageValues = new Set(list.map((option) => option.Value));
+			if (allSelected) {
+				this.selectedList = this.selectedList.filter((option) => !pageValues.has(option.Value));
+			} else {
+				const existing = new Set(this.selectedList.map((option) => option.Value));
+				this.selectedList = [...this.selectedList, ...list.filter((option) => !existing.has(option.Value))];
+			}
+		} else {
+			this.selectedList = allSelected ? [] : [...list];
+		}
 		this.syncOverlayWithSelection();
 		this.updateTriggerLabel();
 		this.emitChange();
@@ -594,13 +653,15 @@ export default class SapphireDropdown extends BaseComponent {
 	// parametersChanged flips isSearching back off to reveal the options.
 	// A held overlay keeps its side until results arrive, so skip re-placement.
 	private updateLoadingState(): void {
-		this.loadingEl.hidden = !this.isSearching;
-		if (this.isSearching) {
+		const virtualized = this.isVirtualized();
+		this.loadingEl.hidden = !this.isSearching || virtualized;
+		if (this.isSearching && !virtualized) {
 			this.listEl.hidden = true;
 			this.emptyEl.hidden = true;
 		} else {
 			this.listEl.hidden = false;
 			this.updateEmptyState();
+			if (virtualized) this.syncSkeletons();
 		}
 		if (this.overlayHeld) return;
 		this.tippyInstance?.popperInstance?.update?.();
@@ -643,6 +704,11 @@ export default class SapphireDropdown extends BaseComponent {
 	// options, server-side counts the incoming list. NoSearchResultsText shows
 	// while a keyword is active, NoOptionsText otherwise.
 	private updateEmptyState(): void {
+		if (this.isVirtualized()) {
+			this.emptyEl.hidden = true;
+			return;
+		}
+
 		const hasVisible = this.config.SearchServerSide ? this.optionsForList().length > 0 : this.optionEls().some((optionEl) => !optionEl.hidden);
 
 		if (hasVisible) {
@@ -682,6 +748,8 @@ export default class SapphireDropdown extends BaseComponent {
 				}
 
 				this.syncPanelWidth();
+				this.alignToRowsOnOpen = true;
+				this.scheduleVirtualLayout();
 			},
 			onClickOutside: () => {
 				this.close();
@@ -694,7 +762,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.triggerEl.addEventListener('keydown', this.onTriggerKeyDown);
 		this.listEl.addEventListener('mousedown', this.onListMouseDown);
 		this.listEl.addEventListener('click', this.onListClick);
-		this.listEl.addEventListener('scroll', this.onListScroll);
+		this.listEl.addEventListener('scroll', this.onListScroll, { passive: true });
 		this.searchEl?.addEventListener('input', this.onSearchInput);
 		this.searchEl?.addEventListener('keydown', this.onSearchKeyDown);
 		this.searchClearEl?.addEventListener('click', this.onSearchClearClick);
@@ -832,6 +900,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.searchKeyword = '';
 		if (this.searchEl) this.searchEl.value = '';
 		this.updateSearchClearVisibility();
+		this.resetVirtualScroll();
 		this.releaseOverlayPlacement();
 		this.applySearch();
 		this.actions.OnSearchClear();
@@ -1076,6 +1145,296 @@ export default class SapphireDropdown extends BaseComponent {
 		return this.optionsForList().find((option) => option.Value === value);
 	}
 
+	// Server-side results are one page. SearchTotalCount sizes the scroll;
+	// scrolling asks for the page that covers the viewport.
+	private isVirtualized(): boolean {
+		return this.config.SearchServerSide && this.searchTotalCount > 0 && this.searchMaxRecords > 0;
+	}
+
+	private isVirtualChrome(el: Element): boolean {
+		return el === this.spacerTopEl || el === this.spacerBottomEl || el === this.skeletonBeforeEl || el === this.skeletonAfterEl;
+	}
+
+	private createSpacer(): HTMLLIElement {
+		const spacer = document.createElement('li');
+		spacer.className = 'sapphiredropdown-spacer';
+		spacer.setAttribute('role', 'presentation');
+		spacer.setAttribute('aria-hidden', 'true');
+		return spacer;
+	}
+
+	private createSkeletonGroup(): HTMLLIElement {
+		const group = document.createElement('li');
+		group.className = 'sapphiredropdown-skeletons';
+		group.setAttribute('role', 'presentation');
+		group.setAttribute('aria-hidden', 'true');
+		group.hidden = true;
+		return group;
+	}
+
+	private createSkeletonRow(): HTMLDivElement {
+		const row = document.createElement('div');
+		row.className = 'sapphiredropdown-skeleton';
+		row.appendChild(document.createElement('span'));
+		return row;
+	}
+
+	private scheduleVirtualLayout(): void {
+		if (this.virtualLayoutQueued) return;
+		this.virtualLayoutQueued = true;
+		requestAnimationFrame(() => {
+			this.virtualLayoutQueued = false;
+			if (!this.listEl) return;
+			this.applyVirtualLayout();
+			if (this.isOpen && this.isVirtualized() && !this.isSearching) this.requestPageDebounced();
+		});
+	}
+
+	private applyVirtualLayout(): void {
+		if (!this.spacerTopEl || !this.spacerBottomEl) return;
+
+		if (!this.isVirtualized()) {
+			this.spacerTopEl.style.height = '0px';
+			this.spacerBottomEl.style.height = '0px';
+			this.clearSkeletons();
+			this.alignToRowsOnOpen = false;
+			return;
+		}
+
+		this.captureAverage(this.optionEls());
+		const avg = this.rowHeight();
+		const total = this.searchTotalCount;
+		const start = Math.min(this.pageStartIndex, total);
+		const rendered = Math.min(this.optionEls().length, Math.max(0, total - start));
+		const below = Math.max(0, total - start - rendered);
+		const scrollTop = this.listEl.scrollTop;
+
+		this.suppressScroll = true;
+		this.spacerTopEl.style.height = `${start * avg}px`;
+		this.spacerBottomEl.style.height = `${below * avg}px`;
+		if (this.listEl.scrollTop !== scrollTop) this.listEl.scrollTop = scrollTop;
+		this.suppressScroll = false;
+
+		this.syncSkeletons();
+		if (!this.alignToRowsOnOpen) return;
+		this.alignToRowsOnOpen = false;
+		this.scrollToLoadedRows();
+	}
+
+	private captureAverage(rows: HTMLElement[]): void {
+		if (this.avgLocked || rows.length === 0) return;
+		const next = this.measureStride(rows);
+		if (next <= 0) return;
+		this.avgRowHeight = next;
+		this.avgLocked = true;
+	}
+
+	private measureStride(rows: HTMLElement[]): number {
+		const first = rows[0].getBoundingClientRect();
+		if (first.height <= 0) return 0;
+		if (rows.length === 1) return first.height;
+
+		const last = rows[rows.length - 1].getBoundingClientRect();
+		const span = last.top - first.top;
+		if (span <= 0) return first.height;
+		return span / (rows.length - 1);
+	}
+
+	private rowHeight(): number {
+		return this.avgRowHeight > 0 ? this.avgRowHeight : 36;
+	}
+
+	private scrollToLoadedRows(): void {
+		const rows = this.optionEls();
+		if (!this.isVirtualized() || rows.length === 0) return;
+
+		const anchor = this.pageStartIndex > 0 ? rows[0] : (this.selectAllEl ?? this.spacerTopEl);
+		const target = Math.max(0, this.contentTop(anchor));
+		this.suppressScroll = true;
+		this.listEl.scrollTop = target;
+		this.suppressScroll = false;
+		this.skeletonKey = '';
+		this.syncSkeletons();
+	}
+
+	private resetVirtualScroll(): void {
+		this.requestedStartIndex = null;
+		this.skeletonKey = '';
+		this.requestPageDebounced.cancel();
+		if (!this.listEl) return;
+		this.suppressScroll = true;
+		this.listEl.scrollTop = 0;
+		this.suppressScroll = false;
+		if (this.isVirtualized()) this.syncSkeletons();
+	}
+
+	private requestPageForScroll(): void {
+		if (!this.enabled || this.isSearching || !this.isVirtualized() || this.avgRowHeight <= 0) return;
+		if (this.listEl.clientHeight <= 0) return;
+
+		const avg = this.avgRowHeight;
+		const total = this.searchTotalCount;
+		const pageSize = this.searchMaxRecords;
+		const loadedStart = this.pageStartIndex;
+		const loadedEnd = loadedStart + this.optionEls().length;
+		const virtualTop = this.virtualScrollTop();
+		const firstVisible = Math.max(0, Math.floor(virtualTop / avg));
+		const lastVisible = Math.ceil((virtualTop + this.listEl.clientHeight) / avg);
+
+		if (loadedEnd > loadedStart && firstVisible >= loadedStart && lastVisible <= loadedEnd) return;
+
+		const maxStart = Math.max(0, total - pageSize);
+		const desired = Math.min(maxStart, firstVisible);
+		if (desired === loadedStart || desired === this.requestedStartIndex) return;
+
+		this.requestedStartIndex = desired;
+		this.actions.OnScroll?.(desired);
+	}
+
+	private virtualScrollTop(): number {
+		if (!this.spacerTopEl) return this.listEl.scrollTop;
+		return Math.max(0, this.listEl.scrollTop - this.contentTop(this.spacerTopEl));
+	}
+
+	private syncSkeletons(): void {
+		if (!this.skeletonBeforeEl || !this.skeletonAfterEl) return;
+		if (!this.isVirtualized()) {
+			this.clearSkeletons();
+			return;
+		}
+
+		const avg = this.rowHeight();
+		const total = this.searchTotalCount;
+		const rows = this.optionEls();
+		const loadedStart = Math.min(this.pageStartIndex, total);
+		const loadedEnd = Math.min(total, loadedStart + rows.length);
+		const viewHeight = this.listEl.clientHeight || avg;
+		const overscan = Math.max(1, Math.ceil(viewHeight / avg));
+		const origin = this.spacerTopEl ? this.contentTop(this.spacerTopEl) : 0;
+		const virtualTop = Math.max(0, this.listEl.scrollTop - origin);
+		const viewStart = Math.max(0, Math.floor(virtualTop / avg) - overscan);
+		const viewEnd = Math.min(total, Math.ceil((virtualTop + viewHeight) / avg) + overscan);
+
+		let beforeCount = Math.max(0, Math.min(viewEnd, loadedStart) - viewStart);
+		const afterFrom = Math.max(viewStart, loadedEnd);
+		let afterCount = Math.max(0, viewEnd - afterFrom);
+		const edges = this.renderedEdges(rows);
+		const gap = this.visibleGap(edges);
+
+		if (gap.below > 8 && loadedEnd < total) {
+			afterCount = Math.max(afterCount, Math.min(Math.ceil(gap.below / avg), total - loadedEnd));
+		}
+		if (gap.above > 8 && loadedStart > 0) {
+			beforeCount = Math.max(beforeCount, Math.min(Math.ceil(gap.above / avg), loadedStart));
+		}
+
+		const beforeTop = edges && beforeCount > 0 ? edges.top - beforeCount * avg : origin + viewStart * avg;
+		const afterTop = edges && afterCount > 0 ? edges.bottom : origin + afterFrom * avg;
+		const key = `${Math.round(beforeTop)}:${beforeCount}:${Math.round(afterTop)}:${afterCount}:${Math.round(avg)}`;
+		if (key === this.skeletonKey) return;
+		this.skeletonKey = key;
+
+		this.renderSkeletonGroup(this.skeletonBeforeEl, beforeTop, beforeCount, avg);
+		this.renderSkeletonGroup(this.skeletonAfterEl, afterTop, afterCount, avg);
+	}
+
+	private visibleGap(edges: { top: number; bottom: number } | null): { above: number; below: number } {
+		const viewTop = this.listEl.scrollTop;
+		const viewBottom = this.listEl.scrollTop + this.listEl.clientHeight;
+		if (!edges) return { above: 0, below: Math.max(0, viewBottom - viewTop) };
+		return {
+			above: Math.max(0, edges.top - viewTop),
+			below: Math.max(0, viewBottom - edges.bottom),
+		};
+	}
+
+	private renderedEdges(rows: HTMLElement[]): { top: number; bottom: number } | null {
+		if (rows.length === 0) return null;
+		const firstTop = this.contentTop(rows[0]);
+		const last = rows[rows.length - 1];
+		return { top: firstTop, bottom: this.contentTop(last) + last.getBoundingClientRect().height };
+	}
+
+	private contentTop(el: HTMLElement): number {
+		const scroller = this.listEl.getBoundingClientRect();
+		return el.getBoundingClientRect().top - scroller.top + this.listEl.scrollTop;
+	}
+
+	private renderSkeletonGroup(group: HTMLLIElement, top: number, count: number, avg: number): void {
+		if (count <= 0 || avg <= 0) {
+			group.replaceChildren();
+			group.hidden = true;
+			return;
+		}
+
+		group.hidden = false;
+		group.style.top = `${top}px`;
+
+		while (group.childElementCount < count) group.appendChild(this.createSkeletonRow());
+		while (group.childElementCount > count) group.lastElementChild?.remove();
+
+		const height = `${avg}px`;
+		for (const child of group.children) {
+			const row = child as HTMLElement;
+			if (row.style.height !== height) row.style.height = height;
+		}
+	}
+
+	private clearSkeletons(): void {
+		this.skeletonKey = '';
+		this.renderSkeletonGroup(this.skeletonBeforeEl, 0, 0, 0);
+		this.renderSkeletonGroup(this.skeletonAfterEl, 0, 0, 0);
+	}
+
+	private readCount(value: number | undefined): number {
+		const parsed = Helpers.toNumber(value);
+		if (parsed == null || !Number.isFinite(parsed) || parsed < 0) return 0;
+		return Math.floor(parsed);
+	}
+
+	private applySearchConfig(config: Partial<ISapphireDropdownConfig>): boolean {
+		let layoutChanged = false;
+
+		if (config.SearchServerSide !== undefined && config.SearchServerSide !== this.config.SearchServerSide) {
+			this.config.SearchServerSide = config.SearchServerSide;
+			layoutChanged = true;
+		}
+
+		if (config.SearchMaxRecords !== undefined) {
+			const next = this.readCount(config.SearchMaxRecords);
+			if (next !== this.searchMaxRecords) {
+				this.searchMaxRecords = next;
+				this.config.SearchMaxRecords = next;
+				layoutChanged = true;
+			}
+		}
+
+		if (config.SearchStartIndex !== undefined) {
+			const next = this.readCount(config.SearchStartIndex);
+			if (next !== this.searchStartIndex) {
+				this.searchStartIndex = next;
+				this.config.SearchStartIndex = next;
+			}
+		}
+
+		if (config.SearchTotalCount !== undefined) {
+			const next = this.readCount(config.SearchTotalCount);
+			if (next !== this.searchTotalCount) {
+				this.searchTotalCount = next;
+				this.config.SearchTotalCount = next;
+				layoutChanged = true;
+			}
+		}
+
+		if (config.SearchKeyword !== undefined && config.SearchKeyword !== this.appliedSearchKeyword) {
+			this.appliedSearchKeyword = config.SearchKeyword;
+			this.resetVirtualScroll();
+			layoutChanged = true;
+		}
+
+		return layoutChanged;
+	}
+
 	// Overlay list is the incoming options, plus any current selection whose
 	// Value is not in that list (e.g. a paged/filtered payload). Incoming
 	// optionsList is left untouched so parent equality checks stay stable.
@@ -1085,6 +1444,10 @@ export default class SapphireDropdown extends BaseComponent {
 	}
 
 	private optionsForList(): ISapphireDropdownOption[] {
+		// The server page is already the window for SearchStartIndex. Prepending
+		// selected values would shift the scroll math.
+		if (this.isVirtualized()) return this.optionsList;
+
 		const missing = this.missingSelected();
 		return missing.length === 0 ? this.optionsList : [...missing, ...this.optionsList];
 	}
@@ -1093,6 +1456,11 @@ export default class SapphireDropdown extends BaseComponent {
 	// changed; otherwise just refresh aria-selected. Avoids scroll jumps when
 	// the parent echoes the same selection back.
 	private syncOverlayWithSelection(): void {
+		if (this.isVirtualized()) {
+			this.refreshSelectedState();
+			return;
+		}
+
 		const incomingValues = new Set(this.optionsList.map((option) => option.Value));
 		const renderedPrepended = this.optionEls().filter((optionEl) => !incomingValues.has(optionEl.dataset.value ?? ''));
 		const missing = this.missingSelected();
@@ -1141,6 +1509,7 @@ export default class SapphireDropdown extends BaseComponent {
 		let needsHydrate = false;
 		let optionsChanged = false;
 		let selectedChanged = false;
+		const searchLayoutChanged = payload.config ? this.applySearchConfig(payload.config) : false;
 		if (payload.enabled !== undefined && payload.enabled !== this.enabled) {
 			this.enabled = payload.enabled;
 			this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
@@ -1172,18 +1541,28 @@ export default class SapphireDropdown extends BaseComponent {
 			this.hydrateSelectedList();
 		}
 
-		if (optionsChanged) {
+		if (optionsChanged && this.config.SearchServerSide) {
+			// Start index is already the requested page. Pin the new rows to it
+			// only once they arrive, so the previous page never jumps into view.
+			this.pageStartIndex = this.searchStartIndex;
+			if (this.requestedStartIndex === this.pageStartIndex) this.requestedStartIndex = null;
+		}
+
+		const searchingChanged = payload.isSearching !== undefined && payload.isSearching !== this.isSearching;
+		if (searchingChanged) this.isSearching = payload.isSearching;
+
+		if (optionsChanged || searchLayoutChanged) {
 			this.renderOptions();
 		} else if (selectedChanged) {
 			this.syncOverlayWithSelection();
 		}
 
-		if (payload.isSearching !== undefined && payload.isSearching !== this.isSearching) {
-			this.isSearching = payload.isSearching;
-			this.updateLoadingState();
-		}
+		// Re-evaluate after the page lands. A virtual list stays visible while
+		// IsSearching is still true; a non-virtual list stays on the spinner.
+		if (searchingChanged || optionsChanged || searchLayoutChanged) this.updateLoadingState();
 
 		if (this.config.SearchServerSide) this.settleSearchOverlay(optionsChanged, payload);
+		if (this.isVirtualized() && !this.isSearching) this.requestPageDebounced();
 
 		let needsValidationRefresh = false;
 		if (payload.isValid !== undefined && payload.isValid !== this.isValid) {
@@ -1210,6 +1589,7 @@ export default class SapphireDropdown extends BaseComponent {
 		super.destroy();
 
 		clearTimeout(this.typeaheadTimer);
+		this.requestPageDebounced.cancel();
 		this.stopPositionWatch();
 		this.triggerResizeObserver?.disconnect();
 		this.triggerEl?.removeEventListener('click', this.onTriggerClick);
