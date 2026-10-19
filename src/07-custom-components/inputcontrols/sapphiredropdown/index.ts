@@ -15,8 +15,11 @@ interface ISapphireDropdownConfig {
 	Placeholder: string;
 	Search: boolean;
 	SearchKeyword: string;
+	SearchMaxRecords: number;
 	SearchPlaceholder: string;
 	SearchServerSide: boolean;
+	SearchStartIndex: number;
+	SearchTotalCount: number;
 	SelectAllText: string;
 	SelectedOptionsText: string;
 	ShowDescription: boolean;
@@ -98,6 +101,10 @@ export default class SapphireDropdown extends BaseComponent {
 	private positionRafId: number | null = null;
 	private lastTriggerTop = 0;
 	private lastTriggerLeft = 0;
+	// Server-side search clears the list before results arrive. Hold the open
+	// panel's size and side so that empty gap cannot flip the overlay.
+	private overlayHeld = false;
+	private restoreFlipOnShow = false;
 
 	private readonly syncPanelWidth = (): void => {
 		const popper = this.tippyInstance?.popper;
@@ -140,6 +147,58 @@ export default class SapphireDropdown extends BaseComponent {
 		this.positionRafId = null;
 	}
 
+	private preferredPlacement(): string {
+		return window.SapphireRWALibrary?.State?.isRTL ? 'bottom-end' : 'bottom-start';
+	}
+
+	private applyOverlayFlip(enabled: boolean, placement: string): void {
+		const popper = this.tippyInstance?.popperInstance;
+		if (!popper?.setOptions) return;
+		// Update the live popper so offset / preventOverflow stay intact.
+		popper.setOptions((options: { modifiers?: { name?: string }[] }) => ({
+			...options,
+			placement,
+			modifiers: [...(options.modifiers ?? []).filter((modifier) => modifier.name !== 'flip'), { name: 'flip', enabled }],
+		}));
+	}
+
+	// Pin the current side and footprint. Later popper updates (loading spinner,
+	// empty list, trigger tracking) keep that side until results land.
+	private holdOverlayPlacement(): void {
+		if (this.overlayHeld || !this.isOpen || !this.tippyInstance) return;
+
+		const placement = this.tippyInstance.popperInstance?.state?.placement ?? this.preferredPlacement();
+		const height = this.panelEl.getBoundingClientRect().height;
+		this.overlayHeld = true;
+		if (height > 0) this.panelEl.style.minHeight = `${height}px`;
+		this.applyOverlayFlip(false, placement);
+	}
+
+	private releaseOverlayPlacement(): void {
+		if (!this.overlayHeld) return;
+		this.overlayHeld = false;
+		this.panelEl.style.minHeight = '';
+		this.applyOverlayFlip(true, this.preferredPlacement());
+		this.tippyInstance?.popperInstance?.update?.();
+	}
+
+	// Clear the footprint hold without moving the panel. Flip is restored the
+	// next time the overlay opens.
+	private clearOverlayHold(): void {
+		if (!this.overlayHeld) return;
+		this.overlayHeld = false;
+		this.restoreFlipOnShow = true;
+		if (this.panelEl) this.panelEl.style.minHeight = '';
+	}
+
+	// An empty list while a server search is still outstanding is the gap before
+	// results, not a final layout. Keep the hold through that payload.
+	private settleSearchOverlay(optionsChanged: boolean, payload: ISapphireDropdown): void {
+		if (!this.overlayHeld || this.isSearching) return;
+		if (this.optionsList.length === 0 && !(optionsChanged && payload.isSearching === false)) return;
+		if (optionsChanged || payload.isSearching === false) this.releaseOverlayPlacement();
+	}
+
 	private listId = '';
 	private optionId(value: string): string {
 		return `${this.runtimeId}-opt-${value}`;
@@ -176,6 +235,8 @@ export default class SapphireDropdown extends BaseComponent {
 		this.clearActive();
 		this.searchKeyword = this.searchEl?.value ?? '';
 		this.updateSearchClearVisibility();
+		// Capture side and height before the parent clears optionsList.
+		if (this.config.SearchServerSide) this.holdOverlayPlacement();
 		this.applySearch();
 		// Emit regardless of mode; the implementation decides whether to use it.
 		this.emitSearchDebounced(this.searchKeyword);
@@ -432,7 +493,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.listEl.replaceChildren();
 		this.selectAllEl = null;
 
-		if (this.config.Multiple && this.config.HasSelectAll) {
+		if (this.config.Multiple && this.config.HasSelectAll && this.optionsForList().length > 0) {
 			this.renderSelectAllRow();
 		}
 
@@ -480,6 +541,7 @@ export default class SapphireDropdown extends BaseComponent {
 			this.filterOptions(this.searchKeyword);
 		} else {
 			this.updateEmptyState();
+			if (this.isOpen && !this.overlayHeld) this.tippyInstance?.popperInstance?.update?.();
 		}
 	}
 
@@ -530,6 +592,7 @@ export default class SapphireDropdown extends BaseComponent {
 
 	// While searching, hide the list/empty message and show the loading spinner;
 	// parametersChanged flips isSearching back off to reveal the options.
+	// A held overlay keeps its side until results arrive, so skip re-placement.
 	private updateLoadingState(): void {
 		this.loadingEl.hidden = !this.isSearching;
 		if (this.isSearching) {
@@ -539,6 +602,7 @@ export default class SapphireDropdown extends BaseComponent {
 			this.listEl.hidden = false;
 			this.updateEmptyState();
 		}
+		if (this.overlayHeld) return;
 		this.tippyInstance?.popperInstance?.update?.();
 	}
 
@@ -612,6 +676,10 @@ export default class SapphireDropdown extends BaseComponent {
 					placement = 'bottom-end';
 				}
 				instance.setProps({ placement });
+				if (this.restoreFlipOnShow) {
+					this.restoreFlipOnShow = false;
+					this.applyOverlayFlip(true, placement);
+				}
 
 				this.syncPanelWidth();
 			},
@@ -674,6 +742,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.triggerEl.setAttribute('aria-expanded', 'false');
 		this.stopPositionWatch();
 		this.tippyInstance?.hide();
+		this.clearOverlayHold();
 		this.clearActive();
 	}
 
@@ -763,6 +832,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.searchKeyword = '';
 		if (this.searchEl) this.searchEl.value = '';
 		this.updateSearchClearVisibility();
+		this.releaseOverlayPlacement();
 		this.applySearch();
 		this.actions.OnSearchClear();
 		this.searchEl?.focus();
@@ -1061,6 +1131,12 @@ export default class SapphireDropdown extends BaseComponent {
 	parametersChanged(payload: ISapphireDropdown): void {
 		if (!this.widgetEl) return;
 
+		// Lock before options render so a cleared list cannot shrink the panel
+		// and flip it before the next results arrive.
+		if (this.config.SearchServerSide && this.isOpen && (payload.isSearching === true || (this.overlayHeld && payload.isSearching !== false))) {
+			this.holdOverlayPlacement();
+		}
+
 		let needsLabelRefresh = false;
 		let needsHydrate = false;
 		let optionsChanged = false;
@@ -1107,6 +1183,8 @@ export default class SapphireDropdown extends BaseComponent {
 			this.updateLoadingState();
 		}
 
+		if (this.config.SearchServerSide) this.settleSearchOverlay(optionsChanged, payload);
+
 		let needsValidationRefresh = false;
 		if (payload.isValid !== undefined && payload.isValid !== this.isValid) {
 			this.isValid = payload.isValid;
@@ -1151,6 +1229,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.chipsContainerEl?.removeEventListener('click', this.onChipClick);
 		this.chipsContainerEl?.removeEventListener('keydown', this.onChipKeyDown);
 
+		this.clearOverlayHold();
 		this.tippyInstance?.destroy();
 		this.tippyInstance = null;
 		this.validationMessageCtrl.destroy();

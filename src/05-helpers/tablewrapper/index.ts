@@ -4,8 +4,9 @@ import { createLoadingOverlay } from '@utils/loader';
 
 interface TableWrapperConfigOptions extends BaseComponentInit {
 	actions: {
-		OnRowClick: (rowId: string) => void;
 		OnReorder: (rowIds: string) => void;
+		OnReorderInput: (rowIds: string, newOrders: string) => void;
+		OnRowClick: (rowId: string) => void;
 	};
 	clickableRows: boolean;
 	height: number;
@@ -559,8 +560,13 @@ export default class TableWrapper extends BaseComponent {
 		}
 		if (!this.isStagedDirty()) return;
 
+		const inputCommits = this.pendingInputCommits();
 		this.applyPendingTargetPositions();
-		this.actions.OnReorder?.(JSON.stringify(this.getRowIds()));
+		if (inputCommits.length > 0) {
+			this.emitReorderInput(inputCommits);
+		} else {
+			this.actions.OnReorder?.(JSON.stringify(this.getRowIds()));
+		}
 		this.captureReorderOrigins();
 		this.clearPendingTargets();
 		this.updateReorderPositions();
@@ -709,14 +715,14 @@ export default class TableWrapper extends BaseComponent {
 		const rows = this.getBodyRows();
 		if (rows.some((row, index) => this.getRowOrigin(row, index) !== index + 1)) return true;
 
-		return rows.some((row, index) => this.stagedTargetPosition(row, index, rows.length) !== null);
+		return rows.some((row, index) => this.stagedTargetPosition(row, index) !== null);
 	}
 
-	private stagedTargetPosition(row: HTMLTableRowElement, index: number, rowCount: number): number | null {
+	private stagedTargetPosition(row: HTMLTableRowElement, index: number): number | null {
 		const targetEl = row.querySelector<HTMLInputElement>('.tablewrapper-reorder-target');
 		if (!targetEl) return null;
 
-		const position = this.parseTargetPosition(targetEl.value, rowCount);
+		const position = this.parseTargetPosition(targetEl.value);
 		if (position === null || position === index + 1) return null;
 
 		if (document.activeElement === targetEl) {
@@ -759,10 +765,10 @@ export default class TableWrapper extends BaseComponent {
 
 		const rows = this.getBodyRows();
 		const index = rows.indexOf(row);
-		let position = this.parseTargetPosition(targetEl.value, rows.length);
+		let position = this.parseTargetPosition(targetEl.value);
 		if (position === null) {
 			this.revertTargetPosition(targetEl);
-			position = this.parseTargetPosition(targetEl.value, rows.length);
+			position = this.parseTargetPosition(targetEl.value);
 		}
 
 		const snapshot = this.reorderValueOnFocus.get(targetEl);
@@ -775,6 +781,18 @@ export default class TableWrapper extends BaseComponent {
 
 		this.updateReorderPositions();
 		this.updateCommitButton();
+	}
+
+	private pendingInputCommits(): { rowId: string; order: number }[] {
+		return this.pendingEditOrder.flatMap((row) => {
+			const order = this.pendingTargetByRow.get(row);
+			return order === undefined ? [] : [{ rowId: this.getRowId(row), order }];
+		});
+	}
+
+	private emitReorderInput(commits: { rowId: string; order: number }[]): void {
+		if (commits.length === 0) return;
+		this.actions.OnReorderInput?.(JSON.stringify(commits.map((commit) => commit.rowId)), JSON.stringify(commits.map((commit) => commit.order)));
 	}
 
 	private applyPendingTargetPositions(): void {
@@ -790,12 +808,12 @@ export default class TableWrapper extends BaseComponent {
 		if (moved) this.syncExplicitOrdersToVisual();
 	}
 
-	private parseTargetPosition(raw: string, rowCount: number): number | null {
+	private parseTargetPosition(raw: string): number | null {
 		const trimmed = raw.trim();
 		if (!/^\d+$/.test(trimmed)) return null;
 
 		const position = Number(trimmed);
-		if (position < 1 || position > rowCount) return null;
+		if (!Number.isSafeInteger(position) || position < 1) return null;
 		return position;
 	}
 
@@ -842,18 +860,25 @@ export default class TableWrapper extends BaseComponent {
 		if (explicitOrder !== null && targetEl.value.trim() === explicitOrder) return;
 
 		const rows = this.getBodyRows();
-		const position = this.parseTargetPosition(targetEl.value, rows.length);
+		const position = this.parseTargetPosition(targetEl.value);
 		if (position === null) {
 			this.revertTargetPosition(targetEl);
 			return;
 		}
 
-		const moved = this.moveRowToPosition(tableRow, position);
+		// A position past this page cannot be applied in the DOM. Still commit it
+		// so the parent can reorder the row outside the current page.
+		const withinPage = position <= rows.length;
+		const moved = withinPage && this.moveRowToPosition(tableRow, position);
 		if (moved) this.syncExplicitOrdersToVisual();
-		this.updateReorderPositions();
-		if (!moved) return;
+		if (withinPage) {
+			this.updateReorderPositions();
+			if (!moved) return;
+		} else {
+			targetEl.value = String(position);
+		}
 
-		this.actions.OnReorder?.(JSON.stringify(this.getRowIds()));
+		this.emitReorderInput([{ rowId: this.getRowId(tableRow), order: position }]);
 	}
 
 	private updateReorderPositions(): void {
