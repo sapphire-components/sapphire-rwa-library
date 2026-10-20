@@ -7,7 +7,7 @@ argument-hint: <ModuleName>
 
 # Normalize flows
 
-Normalize the client action handlers in module `$ARGUMENTS`.
+Normalize the client action handlers in one module. The module name is the skill argument (`$ARGUMENTS` in Claude Code) or the module the user named in the request. Below, "the module" means that name.
 
 If no module name was given, ask for one and stop.
 
@@ -37,8 +37,8 @@ The reference is the OnReady handler on screen Locale in module `RW_DesignSystem
 
 ## Steps
 
-1. Call `createSessionToken` once with clientName `Claude Code`, unless this session already holds a token. Pass the token to every other sapphire-dev call.
-2. Call `listApps`. If `$ARGUMENTS` is missing or `isOpen` is false, tell the user to open it in Service Studio and stop.
+1. Call `createSessionToken` once with `clientName` set to the tool you are running in (`Claude Code` or `Cursor`), unless this session already holds a token. Pass the token to every other sapphire-dev call.
+2. Call `listApps`. If the module is missing or `isOpen` is false, tell the user to open it in Service Studio and stop.
 3. Call `startOmlEditSession` on the module. If a session is already open, call `endOmlEditSession` first.
 4. Call `applyModelApiCode` with the script below. Use these imports exactly:
    `["OutSystems.Model", "OutSystems.Model.Logic", "OutSystems.Model.UI.Mobile"]`
