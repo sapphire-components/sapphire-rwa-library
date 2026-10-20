@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.105 2026-10-20T10:38:02.721Z */
+/*!  SapphireRWALibrary PROD v0.6.106 2026-10-20T14:50:53.656Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -2580,7 +2580,7 @@ body:has(.layoutwrapper[data-theme=login]) {
   border-radius: 8px;
   box-shadow: var(--box-shadow-md);
   left: unset;
-  max-width: 450px;
+  max-width: 420px;
   min-width: 350px;
   padding: 24px;
   position: fixed;

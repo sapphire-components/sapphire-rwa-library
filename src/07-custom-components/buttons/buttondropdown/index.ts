@@ -78,6 +78,18 @@ export default class ButtonDropdown extends BaseComponent {
 		this.widgetEl.dataset.isvalid = this.#isValid ? 'true' : 'false';
 	}
 
+	// The disabled styling only blocks the pointer, so also take the label and the
+	// chevron out of the tab order (the chevron is a real <button>, so disable it).
+	#syncInteractivity(): void {
+		this.#labelEl.tabIndex = this.#enabled ? 0 : -1;
+		if (this.#enabled) {
+			this.#labelEl.removeAttribute('aria-disabled');
+		} else {
+			this.#labelEl.setAttribute('aria-disabled', 'true');
+		}
+		if (this.#arrowEl) this.#arrowEl.disabled = !this.#enabled;
+	}
+
 	// The trigger differs by mode: in split-button mode a dedicated chevron opens
 	// the overlay (the label runs its own OnClick action); otherwise the label
 	// itself is the trigger.
@@ -90,12 +102,12 @@ export default class ButtonDropdown extends BaseComponent {
 		if (this.#isSplitButton) {
 			this.#arrowEl = this.#createArrow();
 			this.#labelEl.after(this.#arrowEl);
-			this.#labelEl.tabIndex = 0;
 			this.#triggerEl = this.#arrowEl;
 		} else {
 			this.#triggerEl = this.#labelEl;
-			if (this.#triggerEl.tabIndex < 0) this.#triggerEl.tabIndex = 0;
 		}
+
+		this.#syncInteractivity();
 
 		this.#triggerEl.setAttribute('aria-haspopup', 'true');
 		this.#triggerEl.setAttribute('aria-expanded', 'false');
@@ -197,6 +209,10 @@ export default class ButtonDropdown extends BaseComponent {
 	}
 
 	readonly #onLabelClick = (event: MouseEvent): void => {
+		if (!this.#enabled) {
+			event.preventDefault();
+			return;
+		}
 		if (this.#isSplitButton) {
 			this.#actions.OnClick();
 			return;
@@ -206,6 +222,8 @@ export default class ButtonDropdown extends BaseComponent {
 	};
 
 	readonly #onLabelKeyDown = (event: KeyboardEvent): void => {
+		if (!this.#enabled) return;
+
 		if (this.#isSplitButton) {
 			if (!this.#isActivationKey(event)) return;
 			event.preventDefault();
@@ -213,35 +231,41 @@ export default class ButtonDropdown extends BaseComponent {
 			return;
 		}
 
-		if (this.#isActivationKey(event)) {
-			event.preventDefault();
-			this.#toggle(true);
-		} else if (event.key === 'ArrowDown') {
-			event.preventDefault();
-			this.#open(true);
-		}
+		this.#onTriggerKeyDown(event);
 	};
 
 	readonly #onArrowClick = (): void => {
+		if (!this.#enabled) return;
 		this.#toggle(false);
 	};
 
 	readonly #onArrowKeyDown = (event: KeyboardEvent): void => {
+		if (!this.#enabled) return;
+		this.#onTriggerKeyDown(event);
+	};
+
+	// Shared by the label (regular mode) and the chevron (split mode). Escape is
+	// handled here too because a pointer-opened panel leaves focus on the trigger.
+	#onTriggerKeyDown(event: KeyboardEvent): void {
 		if (this.#isActivationKey(event)) {
 			event.preventDefault();
 			this.#toggle(true);
 		} else if (event.key === 'ArrowDown') {
 			event.preventDefault();
 			this.#open(true);
+		} else if ((event.key === 'Escape' || event.key === 'Esc') && this.#isOpen) {
+			event.preventDefault();
+			this.#close(true);
 		}
-	};
+	}
 
 	// Close only when a genuine menu action is activated (link/button). Form
 	// controls like <select>/<input> manage their own open/close state and must
-	// not tear down the overlay when interacted with.
+	// not tear down the overlay when interacted with. A keyboard activation
+	// (click with detail 0) returns focus to the trigger instead of dropping it.
 	readonly #onPanelClick = (event: MouseEvent): void => {
 		const item = (event.target as HTMLElement).closest('a[href], button');
-		if (item && this.#actionsEl.contains(item)) this.#close(false);
+		if (item && this.#actionsEl.contains(item)) this.#close(event.detail === 0);
 	};
 
 	readonly #onPanelKeyDown = (event: KeyboardEvent): void => {
@@ -348,6 +372,7 @@ export default class ButtonDropdown extends BaseComponent {
 			this.#enabled = payload.enabled;
 			this.widgetEl.dataset.enabled = this.#enabled ? 'true' : 'false';
 			if (!this.#enabled) this.#close(false);
+			this.#syncInteractivity();
 		}
 
 		let needsValidationRefresh = false;

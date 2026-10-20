@@ -5,7 +5,8 @@ A button that reveals a dropdown panel of actions. It supports two modes: a regu
 - In regular mode the label is the trigger: activating it (click or `Enter`/`Space`, `ArrowDown` to open) toggles the panel.
 - In split-button mode a chevron is appended after the label and becomes the trigger; the label instead fires the `Click` event. Tab reaches the label and the chevron separately.
 - Keyboard focus (`:focus-visible`) uses the same inset stroke as `.btn`, on whichever of those controls is focused.
-- The panel closes when a menu action (link or button) is activated, on `Escape`, or on click outside. Form controls inside the panel do not close it.
+- The panel closes when a menu action (link or button) is activated, on `Escape` (from the trigger or from inside the panel), or on click outside. Form controls inside the panel do not close it.
+- Closing with `Escape` or by activating a menu action with the keyboard returns focus to the trigger.
 
 <hr>
 
@@ -14,7 +15,7 @@ A button that reveals a dropdown panel of actions. It supports two modes: a regu
 | Name                | Type            | Description                                                                                     |
 | ------------------- | --------------- | ----------------------------------------------------------------------------------------------- |
 | `ButtonClass`       | `Text`        | Allows to style the button to the existing semantic versions.                                   |
-| `Enabled`           | `Boolean`       | Enables or disables all interaction. Disabled dropdowns close any open panel.                   |
+| `Enabled`           | `Boolean`       | Enables or disables all interaction, pointer and keyboard. Disabled dropdowns close any open panel and leave the tab order. |
 | `IsSplitButton`     | `Boolean`       | When `True`, renders a separate chevron trigger and the label fires `Click` instead of opening. |
 | `IsValid`           | `Boolean`       | When `False`, marks the component invalid and shows `ValidationMessage` below it.               |
 | `Placement`         | `Text`        | Preferred placement of the actions panel relative to the trigger. Defaults to `bottom-start`.   |

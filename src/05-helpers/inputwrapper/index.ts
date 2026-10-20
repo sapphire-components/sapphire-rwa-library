@@ -18,6 +18,8 @@ export default class InputWrapper extends BaseComponent {
 	private iconEl: HTMLElement | null = null;
 	private iconName!: string;
 	private inputEl: HTMLInputElement | null = null;
+	// Original input state, kept while the wrapper locks the input; null when not locked.
+	private inputLock: { readOnly: boolean; tabIndex: string | null } | null = null;
 	private passwordToggleEl: HTMLButtonElement | null = null;
 	private passwordVisible = false;
 	private valueAttrObserver?: MutationObserver;
@@ -27,20 +29,14 @@ export default class InputWrapper extends BaseComponent {
 	private readonly onClearClick = (event: MouseEvent): void => {
 		event.preventDefault();
 		event.stopPropagation();
-		if (!this.enabled) return;
-		this.actions.OnClear();
-		this.wrapperEl.dataset.hascontent = 'false';
-		queueMicrotask(() => this.updateHasContent());
+		this.clearValue();
 	};
 
 	private readonly onClearKeyDown = (event: KeyboardEvent): void => {
 		if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
 		event.preventDefault();
 		event.stopPropagation();
-		if (!this.enabled) return;
-		this.actions.OnClear();
-		this.wrapperEl.dataset.hascontent = 'false';
-		queueMicrotask(() => this.updateHasContent());
+		this.clearValue();
 	};
 
 	private readonly onInput = (): void => {
@@ -89,6 +85,7 @@ export default class InputWrapper extends BaseComponent {
 		}
 
 		this.reflectStateAttributes();
+		this.syncInputLock();
 		this.watchInputValue();
 		this.updateHasContent();
 		this.buildIcon();
@@ -102,6 +99,50 @@ export default class InputWrapper extends BaseComponent {
 		this.wrapperEl.dataset.hasclear = this.hasClear ? 'true' : 'false';
 		this.wrapperEl.dataset.hasicon = this.iconName ? 'true' : 'false';
 		this.wrapperEl.dataset.iconname = this.iconName;
+	}
+
+	private clearValue(): void {
+		if (!this.enabled) return;
+		this.actions.OnClear();
+		this.wrapperEl.dataset.hascontent = 'false';
+		// The clear control hides once the field is empty; keep focus in the field.
+		this.inputEl?.focus();
+		queueMicrotask(() => this.updateHasContent());
+	}
+
+	// The platform owns the input's `disabled` state, so lock it with
+	// `readonly` and remove it from the tab order instead, restoring both on unlock.
+	private syncInputLock(): void {
+		const input = this.inputEl;
+		if (!input) return;
+
+		if (!this.enabled && !this.inputLock) {
+			this.inputLock = { readOnly: input.readOnly, tabIndex: input.getAttribute('tabindex') };
+			input.readOnly = true;
+			input.tabIndex = -1;
+			input.setAttribute('aria-disabled', 'true');
+			if (document.activeElement === input) input.blur();
+			return;
+		}
+
+		if (this.enabled && this.inputLock) {
+			this.releaseInputLock();
+		}
+	}
+
+	private releaseInputLock(): void {
+		const input = this.inputEl;
+		const lock = this.inputLock;
+		if (!input || !lock) return;
+
+		input.readOnly = lock.readOnly;
+		if (lock.tabIndex === null) {
+			input.removeAttribute('tabindex');
+		} else {
+			input.setAttribute('tabindex', lock.tabIndex);
+		}
+		input.removeAttribute('aria-disabled');
+		this.inputLock = null;
 	}
 
 	private updateHasContent(): void {
@@ -283,6 +324,7 @@ export default class InputWrapper extends BaseComponent {
 		if (payload.enabled !== undefined && payload.enabled !== this.enabled) {
 			this.enabled = payload.enabled;
 			this.wrapperEl.dataset.enabled = this.enabled ? 'true' : 'false';
+			this.syncInputLock();
 			if (this.clearEl) {
 				this.clearEl.disabled = !this.enabled;
 			}
@@ -317,6 +359,7 @@ export default class InputWrapper extends BaseComponent {
 		super.destroy();
 		this.unbindEvents();
 		this.unwatchInputValue();
+		this.releaseInputLock();
 		if (this.passwordVisible && this.inputEl) {
 			this.inputEl.type = 'password';
 			this.passwordVisible = false;

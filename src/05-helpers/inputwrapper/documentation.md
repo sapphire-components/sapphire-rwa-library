@@ -8,7 +8,8 @@ A layout helper that wraps a platform `Input` placed in a placeholder. The input
 - When the wrapped input is a password field, an eye control is rendered at the end. It shows `eye-closed` while the value is masked and `eye-fill` while the value is visible. Activating it toggles between the two. The control stays at the end when a clear control is also shown.
 - `AlignToEnd` flips the input text alignment to the end edge (logical; respects RTL).
 - `Size` and `Width` control the field’s height / padding presets and container width.
-- While `Enabled` is `False`, the input looks and behaves disabled and the clear control does not fire `Clear`.
+- While `Enabled` is `False`, the input looks and behaves disabled: it is read-only, skipped by `Tab`, marked `aria-disabled`, and the clear control does not fire `Clear`. Its original `readonly` and `tabindex` are restored when `Enabled` returns to `True`.
+- After the clear control fires `Clear`, focus moves back to the input.
 
 <hr>
 
