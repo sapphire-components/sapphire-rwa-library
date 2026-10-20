@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.103 2026-10-19T16:33:53.015Z */
+/*!  SapphireRWALibrary PROD v0.6.105 2026-10-20T10:38:02.721Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -3561,6 +3561,26 @@ input.not-valid + span.validation-message {
 .backofficeheader-head-actions > div,
 .backofficeheader-head-actions button {
   vertical-align: middle;
+}
+
+.backofficeheader-placeholder {
+  pointer-events: none;
+  width: 100%;
+}
+
+.backofficeheader-sentinel {
+  height: 1px;
+  margin-bottom: -1px;
+  pointer-events: none;
+  visibility: hidden;
+  width: 100%;
+}
+
+.backofficeheader[data-isstuck=true] .backofficeheader-head {
+  background-color: var(--color-background);
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 4;
 }
 div[data-block$=CheckboxLabel] {
   display: contents;

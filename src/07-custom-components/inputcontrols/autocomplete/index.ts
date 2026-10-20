@@ -85,7 +85,6 @@ export default class Autocomplete extends BaseComponent {
 	private spacerBottomEl!: HTMLLIElement;
 	private skeletonBeforeEl!: HTMLLIElement;
 	private skeletonAfterEl!: HTMLLIElement;
-	private emptyEl!: HTMLDivElement;
 	private loadingEl!: HTMLDivElement;
 	private addEl!: HTMLButtonElement;
 
@@ -95,7 +94,6 @@ export default class Autocomplete extends BaseComponent {
 	private lastFieldTop = 0;
 	private lastFieldLeft = 0;
 	private emitKeywordDebounced!: ((keyword: string) => void) & { cancel: () => void };
-	private avgLocked = false;
 	private avgRowHeight = 0;
 	private requestedStartIndex: number | null = null;
 	private skeletonKey = '';
@@ -137,7 +135,7 @@ export default class Autocomplete extends BaseComponent {
 		this.positionRafId = window.requestAnimationFrame(this.watchFieldPosition);
 	};
 
-	private readonly onInputPointerDown = (): void => {
+	private readonly onInputOpen = (): void => {
 		if (!this.enabled) return;
 		this.open();
 	};
@@ -154,11 +152,6 @@ export default class Autocomplete extends BaseComponent {
 			this.selectFrame = null;
 			if (this.shouldSelectCommitted()) this.inputEl.select();
 		});
-	};
-
-	private readonly onInputClick = (): void => {
-		if (!this.enabled) return;
-		this.open();
 	};
 
 	private readonly onInputBlur = (event: FocusEvent): void => {
@@ -245,17 +238,14 @@ export default class Autocomplete extends BaseComponent {
 		}
 	};
 
-	private readonly onClearMouseDown = (event: MouseEvent): void => {
+	// Keeps focus in the input when pressing the clear control or an option.
+	private readonly preventMouseDown = (event: MouseEvent): void => {
 		event.preventDefault();
 	};
 
 	private readonly onClearClick = (event: MouseEvent): void => {
 		event.preventDefault();
 		this.clearTypedText();
-	};
-
-	private readonly onListMouseDown = (event: MouseEvent): void => {
-		event.preventDefault();
 	};
 
 	private readonly onListClick = (event: MouseEvent): void => {
@@ -274,9 +264,6 @@ export default class Autocomplete extends BaseComponent {
 	private readonly onEmitClick = (event: MouseEvent): void => {
 		event.preventDefault();
 		if (!this.canEmit()) return;
-
-		console.log('onEmitClick', this.selectedJson());
-
 		this.actions.OnEmit(this.selectedJson());
 	};
 
@@ -422,10 +409,6 @@ export default class Autocomplete extends BaseComponent {
 		this.skeletonAfterEl = this.createSkeletonGroup();
 		this.listEl.append(this.spacerTopEl, this.spacerBottomEl, this.skeletonBeforeEl, this.skeletonAfterEl);
 
-		this.emptyEl = document.createElement('div');
-		this.emptyEl.className = 'autocomplete-empty';
-		this.emptyEl.hidden = true;
-
 		this.loadingEl = document.createElement('div');
 		this.loadingEl.className = 'autocomplete-loading';
 		this.loadingEl.hidden = true;
@@ -437,20 +420,20 @@ export default class Autocomplete extends BaseComponent {
 		this.addEl.textContent = this.textAdd;
 		this.addEl.hidden = !this.allowAdd;
 
-		this.panelEl.append(this.listEl, this.emptyEl, this.loadingEl, this.addEl);
+		this.panelEl.append(this.listEl, this.loadingEl, this.addEl);
 	}
 
 	private bindEvents(): void {
-		this.inputEl.addEventListener('pointerdown', this.onInputPointerDown);
+		this.inputEl.addEventListener('pointerdown', this.onInputOpen);
 		this.inputEl.addEventListener('focus', this.onInputFocus);
-		this.inputEl.addEventListener('click', this.onInputClick);
+		this.inputEl.addEventListener('click', this.onInputOpen);
 		this.inputEl.addEventListener('blur', this.onInputBlur);
 		this.inputEl.addEventListener('input', this.onInput);
 		this.inputEl.addEventListener('keydown', this.onInputKeyDown);
-		this.clearEl.addEventListener('pointerdown', this.onClearMouseDown);
-		this.clearEl.addEventListener('mousedown', this.onClearMouseDown);
+		this.clearEl.addEventListener('pointerdown', this.preventMouseDown);
+		this.clearEl.addEventListener('mousedown', this.preventMouseDown);
 		this.clearEl.addEventListener('click', this.onClearClick);
-		this.listEl.addEventListener('mousedown', this.onListMouseDown);
+		this.listEl.addEventListener('mousedown', this.preventMouseDown);
 		this.listEl.addEventListener('click', this.onListClick);
 		this.listEl.addEventListener('scroll', this.handleListScroll, { passive: true });
 		this.addEl.addEventListener('click', this.onAddClick);
@@ -497,10 +480,9 @@ export default class Autocomplete extends BaseComponent {
 				if (this.closing) return;
 				if (this.focusInside()) return false;
 			},
-			onClickOutside: (instance: TippyInstance, event: Event) => {
-				void instance;
+			onClickOutside: (_instance: TippyInstance, event: Event) => {
 				const target = event.target as Node | null;
-				if (target && (this.fieldEl.contains(target) || this.widgetEl.contains(target))) return;
+				if (target && this.widgetEl.contains(target)) return;
 				this.close();
 			},
 		});
@@ -528,7 +510,7 @@ export default class Autocomplete extends BaseComponent {
 	private focusInside(): boolean {
 		const active = document.activeElement;
 		if (!active) return false;
-		return active === this.inputEl || active === this.clearEl || active === this.emitEl || this.fieldEl.contains(active) || this.panelEl.contains(active);
+		return active === this.emitEl || this.fieldEl.contains(active) || this.panelEl.contains(active);
 	}
 
 	private cancelScheduledClose(): void {
@@ -796,7 +778,6 @@ export default class Autocomplete extends BaseComponent {
 
 		if (this.isLoading && !this.isVirtualized()) {
 			this.listEl.toggleAttribute('hidden', true);
-			this.emptyEl.toggleAttribute('hidden', true);
 			this.tippyInstance?.popperInstance?.update?.();
 			return;
 		}
@@ -812,7 +793,6 @@ export default class Autocomplete extends BaseComponent {
 		}
 
 		this.listEl.toggleAttribute('hidden', false);
-		this.emptyEl.toggleAttribute('hidden', true);
 		this.tippyInstance?.popperInstance?.update?.();
 	}
 
@@ -939,11 +919,9 @@ export default class Autocomplete extends BaseComponent {
 	}
 
 	private captureAverage(rows: HTMLElement[]): void {
-		if (this.avgLocked || rows.length === 0) return;
+		if (this.avgRowHeight > 0 || rows.length === 0) return;
 		const next = this.measureStride(rows);
-		if (next <= 0) return;
-		this.avgRowHeight = next;
-		this.avgLocked = true;
+		if (next > 0) this.avgRowHeight = next;
 	}
 
 	private measureStride(rows: HTMLElement[]): number {
@@ -1229,10 +1207,7 @@ export default class Autocomplete extends BaseComponent {
 			}
 		}
 
-		if (payload.searchStartIndex !== undefined) {
-			const nextStartIndex = this.readCount(payload.searchStartIndex);
-			if (nextStartIndex !== this.searchStartIndex) this.searchStartIndex = nextStartIndex;
-		}
+		if (payload.searchStartIndex !== undefined) this.searchStartIndex = this.readCount(payload.searchStartIndex);
 
 		if (payload.searchTotalCount !== undefined) {
 			const nextTotalCount = this.readCount(payload.searchTotalCount);
@@ -1315,16 +1290,16 @@ export default class Autocomplete extends BaseComponent {
 		this.stopPositionWatch();
 		this.fieldResizeObserver?.disconnect();
 
-		this.inputEl?.removeEventListener('pointerdown', this.onInputPointerDown);
+		this.inputEl?.removeEventListener('pointerdown', this.onInputOpen);
 		this.inputEl?.removeEventListener('focus', this.onInputFocus);
-		this.inputEl?.removeEventListener('click', this.onInputClick);
+		this.inputEl?.removeEventListener('click', this.onInputOpen);
 		this.inputEl?.removeEventListener('blur', this.onInputBlur);
 		this.inputEl?.removeEventListener('input', this.onInput);
 		this.inputEl?.removeEventListener('keydown', this.onInputKeyDown);
-		this.clearEl?.removeEventListener('pointerdown', this.onClearMouseDown);
-		this.clearEl?.removeEventListener('mousedown', this.onClearMouseDown);
+		this.clearEl?.removeEventListener('pointerdown', this.preventMouseDown);
+		this.clearEl?.removeEventListener('mousedown', this.preventMouseDown);
 		this.clearEl?.removeEventListener('click', this.onClearClick);
-		this.listEl?.removeEventListener('mousedown', this.onListMouseDown);
+		this.listEl?.removeEventListener('mousedown', this.preventMouseDown);
 		this.listEl?.removeEventListener('click', this.onListClick);
 		this.listEl?.removeEventListener('scroll', this.handleListScroll);
 		this.addEl?.removeEventListener('click', this.onAddClick);

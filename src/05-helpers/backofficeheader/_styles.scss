@@ -28,3 +28,23 @@
 		}
 	}
 }
+
+.backofficeheader-placeholder {
+	pointer-events: none;
+	width: 100%;
+}
+
+.backofficeheader-sentinel {
+	height: 1px;
+	margin-bottom: -1px;
+	pointer-events: none;
+	visibility: hidden;
+	width: 100%;
+}
+
+.backofficeheader[data-isstuck='true'] .backofficeheader-head {
+	background-color: var(--color-background);
+	box-sizing: border-box;
+	position: fixed;
+	z-index: 4;
+}

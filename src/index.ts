@@ -10,6 +10,7 @@ import DesignSystemMenu from '@/02-designsystem/design-system-menu';
 import LayoutWrapper from '@/03-core/layout';
 import Locale from '@/03-core/locale';
 
+import BackofficeHeader from '@helpers/backofficeheader';
 import FilterBar from '@helpers/filterbar';
 import InputWrapper from '@helpers/inputwrapper';
 import LabelValue from '@helpers/labelvalue';
@@ -68,6 +69,8 @@ function init(): void {
 const SapphireRWALibrary = {
 	ActionPopup,
 	AlertBar,
+	Autocomplete,
+	BackofficeHeader,
 	ButtonChoice,
 	ButtonDropdown,
 	Chip,
@@ -82,13 +85,13 @@ const SapphireRWALibrary = {
 	InputWrapper,
 	LabelValue,
 	LayoutWrapper,
+	LazyList,
 	Locale,
 	MasterDetail,
 	MultiLevel,
 	Overlay,
 	PhoneInput,
 	PopupContent,
-	LazyList,
 	PrintDocument,
 	ResponsiveContainers,
 	SapphireDropdown,
@@ -97,7 +100,6 @@ const SapphireRWALibrary = {
 	SidePanel,
 	Skeleton,
 	Status,
-	Autocomplete,
 	TabContent,
 	TabHeader,
 	TableWrapper,

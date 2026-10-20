@@ -42,8 +42,7 @@ function inlineCssIntoJs() {
 			if (!cssChunks.length) return;
 
 			const css = cssChunks.map(([, chunk]) => String(chunk.source)).join('\n');
-			const inject =
-				`(function(){if(document.getElementById('sapphire-rwa-texteditor-extra-css'))return;var s=document.createElement('style');s.id='sapphire-rwa-texteditor-extra-css';s.textContent=${JSON.stringify(css)};document.head.appendChild(s);})();\n`;
+			const inject = `(function(){if(document.getElementById('sapphire-rwa-texteditor-extra-css'))return;var s=document.createElement('style');s.id='sapphire-rwa-texteditor-extra-css';s.textContent=${JSON.stringify(css)};document.head.appendChild(s);})();\n`;
 
 			for (const chunk of Object.values(bundle)) {
 				if (chunk.type === 'chunk' && chunk.isEntry && chunk.fileName.endsWith('.js')) {

@@ -14,8 +14,8 @@ export default class TabContent extends BaseComponent {
 		}
 	}
 
-	parametersChanged(payload: TabContentConfigOptions): void {
-		console.log(payload);
+	parametersChanged(_payload: TabContentConfigOptions): void {
+		// console.log(payload);
 	}
 
 	destroy() {}
