@@ -4,7 +4,9 @@ div[data-block$='InputWrapper'] {
 	display: contents;
 }
 
-.inputwrapper {
+button.inputwrapper,
+span.inputwrapper,
+div.inputwrapper {
 	align-items: center;
 	display: inline-flex;
 	gap: var(--space-xs);

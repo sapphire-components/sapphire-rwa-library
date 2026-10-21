@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.106 2026-10-20T14:50:53.656Z */
+/*!  SapphireRWALibrary PROD v0.6.107 2026-10-21T08:07:08.990Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -4221,26 +4221,40 @@ div[data-block$=InputWrapper] {
   display: contents;
 }
 
-.inputwrapper {
+button.inputwrapper,
+span.inputwrapper,
+div.inputwrapper {
   align-items: center;
   display: inline-flex;
   gap: var(--space-xs);
   position: relative;
 }
-.inputwrapper > div {
+button.inputwrapper > div,
+span.inputwrapper > div,
+div.inputwrapper > div {
   display: contents;
 }
-.inputwrapper > div span.input-text,
-.inputwrapper > div span.input-search,
-.inputwrapper > div span.input-password {
+button.inputwrapper > div span.input-text,
+button.inputwrapper > div span.input-search,
+button.inputwrapper > div span.input-password,
+span.inputwrapper > div span.input-text,
+span.inputwrapper > div span.input-search,
+span.inputwrapper > div span.input-password,
+div.inputwrapper > div span.input-text,
+div.inputwrapper > div span.input-search,
+div.inputwrapper > div span.input-password {
   display: inline-flex;
   width: 100%;
 }
-.inputwrapper .form-control[data-input] {
+button.inputwrapper .form-control[data-input],
+span.inputwrapper .form-control[data-input],
+div.inputwrapper .form-control[data-input] {
   text-align: start;
   width: 100%;
 }
-.inputwrapper-icon {
+button.inputwrapper-icon,
+span.inputwrapper-icon,
+div.inputwrapper-icon {
   align-items: center;
   color: var(--color-neutral-6);
   display: inline-flex;
@@ -4252,17 +4266,29 @@ div[data-block$=InputWrapper] {
   top: 50%;
   transform: translateY(-50%);
 }
-.inputwrapper-clear:focus-visible, .inputwrapper-password:focus-visible {
+button.inputwrapper-clear:focus-visible, button.inputwrapper-password:focus-visible,
+span.inputwrapper-clear:focus-visible,
+span.inputwrapper-password:focus-visible,
+div.inputwrapper-clear:focus-visible,
+div.inputwrapper-password:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);
   outline: none;
 }
 @media (forced-colors: active) {
-  .inputwrapper-clear:focus-visible, .inputwrapper-password:focus-visible {
+  button.inputwrapper-clear:focus-visible, button.inputwrapper-password:focus-visible,
+  span.inputwrapper-clear:focus-visible,
+  span.inputwrapper-password:focus-visible,
+  div.inputwrapper-clear:focus-visible,
+  div.inputwrapper-password:focus-visible {
     outline: 2px solid CanvasText;
     outline-offset: -2px;
   }
 }
-.inputwrapper-clear, .inputwrapper-password {
+button.inputwrapper-clear, button.inputwrapper-password,
+span.inputwrapper-clear,
+span.inputwrapper-password,
+div.inputwrapper-clear,
+div.inputwrapper-password {
   align-items: center;
   background: transparent;
   border: none;
@@ -4278,21 +4304,37 @@ div[data-block$=InputWrapper] {
   top: 50%;
   transform: translateY(-50%);
 }
-.inputwrapper-clear:hover:not(:disabled), .inputwrapper-password:hover:not(:disabled) {
+button.inputwrapper-clear:hover:not(:disabled), button.inputwrapper-password:hover:not(:disabled),
+span.inputwrapper-clear:hover:not(:disabled),
+span.inputwrapper-password:hover:not(:disabled),
+div.inputwrapper-clear:hover:not(:disabled),
+div.inputwrapper-password:hover:not(:disabled) {
   color: var(--color-neutral-9);
 }
-.inputwrapper-clear:disabled, .inputwrapper-password:disabled {
+button.inputwrapper-clear:disabled, button.inputwrapper-password:disabled,
+span.inputwrapper-clear:disabled,
+span.inputwrapper-password:disabled,
+div.inputwrapper-clear:disabled,
+div.inputwrapper-password:disabled {
   color: var(--color-neutral-5);
   cursor: not-allowed;
 }
-.inputwrapper-clear {
+button.inputwrapper-clear,
+span.inputwrapper-clear,
+div.inputwrapper-clear {
   display: none;
 }
-.inputwrapper-password[data-visible=true] {
+button.inputwrapper-password[data-visible=true],
+span.inputwrapper-password[data-visible=true],
+div.inputwrapper-password[data-visible=true] {
   color: var(--color-neutral-9);
 }
-.inputwrapper input[type=password]::-ms-reveal,
-.inputwrapper input[type=password]::-ms-clear {
+button.inputwrapper input[type=password]::-ms-reveal,
+button.inputwrapper input[type=password]::-ms-clear,
+span.inputwrapper input[type=password]::-ms-reveal,
+span.inputwrapper input[type=password]::-ms-clear,
+div.inputwrapper input[type=password]::-ms-reveal,
+div.inputwrapper input[type=password]::-ms-clear {
   display: none;
 }
 
