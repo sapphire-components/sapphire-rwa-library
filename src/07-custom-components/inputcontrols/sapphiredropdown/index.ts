@@ -77,6 +77,9 @@ export default class SapphireDropdown extends BaseComponent {
 	// Start index the rows currently on screen belong to. SearchStartIndex can
 	// move first; the rows stay put until optionsList for that index arrives.
 	private pageStartIndex = 0;
+	// A search refresh rebuilds the list from the top. The next options payload
+	// is that fresh list, not a page pinned to the previous SearchStartIndex.
+	private freshList = false;
 	private appliedSearchKeyword = '';
 	private selectAllText = '';
 	private selectedList: ISapphireDropdownOption[] = [];
@@ -109,6 +112,7 @@ export default class SapphireDropdown extends BaseComponent {
 	private skeletonKey = '';
 	private suppressScroll = false;
 	private virtualLayoutQueued = false;
+	private optionTitlesFrame: number | null = null;
 	private alignToRowsOnOpen = false;
 	private tippyInstance: TippyInstance | null = null;
 	private triggerResizeObserver?: ResizeObserver;
@@ -287,6 +291,16 @@ export default class SapphireDropdown extends BaseComponent {
 		event.preventDefault();
 	};
 
+	// Title is read when the native tooltip opens, after this event. Measuring
+	// here covers rows that were laid out at width 0 (closed panel, hidden list).
+	private readonly onListMouseOver = (event: MouseEvent): void => {
+		const target = event.target;
+		if (!(target instanceof Element)) return;
+		const label = target.closest('.sapphiredropdown-option-label');
+		if (!(label instanceof HTMLElement) || !this.listEl.contains(label)) return;
+		this.syncTruncatedTitle(label);
+	};
+
 	private readonly requestPageDebounced = Helpers.debounce((): void => {
 		this.requestPageForScroll();
 	}, 200);
@@ -434,7 +448,10 @@ export default class SapphireDropdown extends BaseComponent {
 		// Keep the panel width matched to the trigger when it resizes while open,
 		// and re-evaluate the multiple-select summary against the new width.
 		this.triggerResizeObserver = new ResizeObserver(() => {
-			if (this.isOpen) this.syncPanelWidth();
+			if (this.isOpen) {
+				this.syncPanelWidth();
+				this.scheduleOptionTitles();
+			}
 			if (this.config.Multiple && this.selectedList.length > 0) this.renderTriggerValue();
 		});
 		this.triggerResizeObserver.observe(this.triggerEl);
@@ -569,6 +586,7 @@ export default class SapphireDropdown extends BaseComponent {
 
 			const label = optionEl.querySelector('.sapphiredropdown-option-label') as HTMLElement;
 			label.textContent = option.Label;
+			label.removeAttribute('title');
 
 			const description = optionEl.querySelector('.sapphiredropdown-option-description') as HTMLElement;
 			if (this.config.ShowDescription && option.Description) {
@@ -593,6 +611,7 @@ export default class SapphireDropdown extends BaseComponent {
 		// Place the new page and its spacer in the same frame. A deferred layout
 		// let the previous rows sit in the new window for one paint.
 		this.applyVirtualLayout();
+		this.scheduleOptionTitles();
 		if (this.isOpen && !this.overlayHeld) this.tippyInstance?.popperInstance?.update?.();
 	}
 
@@ -651,13 +670,12 @@ export default class SapphireDropdown extends BaseComponent {
 		this.selectAllEl.dataset.indeterminate = selectedCount > 0 && !allSelected ? 'true' : 'false';
 	}
 
-	// While searching, hide the list/empty message and show the loading spinner;
-	// parametersChanged flips isSearching back off to reveal the options.
-	// A held overlay keeps its side until results arrive, so skip re-placement.
+	// While searching, hide the list/empty message and show the loading spinner.
+	// This includes later server fetches, once the list is virtualized. A held
+	// overlay keeps its side until results arrive, so skip re-placement.
 	private updateLoadingState(): void {
-		const virtualized = this.isVirtualized();
-		this.loadingEl.hidden = !this.isSearching || virtualized;
-		if (this.isSearching && !virtualized) {
+		this.loadingEl.hidden = !this.isSearching;
+		if (this.isSearching) {
 			this.listEl.hidden = true;
 			this.emptyEl.hidden = true;
 		} else {
@@ -665,7 +683,8 @@ export default class SapphireDropdown extends BaseComponent {
 			this.updateEmptyState();
 			// Rows rendered while the list was hidden report height 0. Measure
 			// again now that they are on screen.
-			if (virtualized) this.applyVirtualLayout();
+			if (this.isVirtualized()) this.applyVirtualLayout();
+			this.scheduleOptionTitles();
 		}
 		if (this.overlayHeld) return;
 		this.tippyInstance?.popperInstance?.update?.();
@@ -754,6 +773,7 @@ export default class SapphireDropdown extends BaseComponent {
 				this.syncPanelWidth();
 				this.alignToRowsOnOpen = true;
 				this.scheduleVirtualLayout();
+				this.scheduleOptionTitles();
 			},
 			onClickOutside: () => {
 				this.close();
@@ -765,6 +785,7 @@ export default class SapphireDropdown extends BaseComponent {
 		this.triggerEl.addEventListener('click', this.onTriggerClick);
 		this.triggerEl.addEventListener('keydown', this.onTriggerKeyDown);
 		this.listEl.addEventListener('mousedown', this.onListMouseDown);
+		this.listEl.addEventListener('mouseover', this.onListMouseOver);
 		this.listEl.addEventListener('click', this.onListClick);
 		this.listEl.addEventListener('scroll', this.onListScroll, { passive: true });
 		this.searchEl?.addEventListener('input', this.onSearchInput);
@@ -1100,6 +1121,33 @@ export default class SapphireDropdown extends BaseComponent {
 		return this.valueEl.scrollWidth > this.valueEl.clientWidth;
 	}
 
+	// Option labels ellipsize. Expose the full text only when the label is
+	// actually clipped, and only once it has a laid-out width.
+	private scheduleOptionTitles(): void {
+		if (this.optionTitlesFrame !== null) return;
+		this.optionTitlesFrame = window.requestAnimationFrame(() => {
+			this.optionTitlesFrame = null;
+			this.syncOptionTitles();
+		});
+	}
+
+	private syncOptionTitles(): void {
+		if (!this.listEl || this.listEl.hidden) return;
+		for (const label of this.listEl.querySelectorAll<HTMLElement>('.sapphiredropdown-option-label')) {
+			this.syncTruncatedTitle(label);
+		}
+	}
+
+	private syncTruncatedTitle(label: HTMLElement): void {
+		const text = label.textContent ?? '';
+		if (label.clientWidth <= 0) return;
+		if (text.length > 0 && label.scrollWidth > label.clientWidth) {
+			if (label.title !== text) label.title = text;
+			return;
+		}
+		label.removeAttribute('title');
+	}
+
 	private isSelected(value: string): boolean {
 		return this.selectedList.some((option) => option.Value === value);
 	}
@@ -1209,12 +1257,15 @@ export default class SapphireDropdown extends BaseComponent {
 		const avg = this.rowHeight();
 		const total = this.searchTotalCount;
 		const start = Math.min(this.pageStartIndex, total);
-		const rendered = Math.min(this.optionEls().length, Math.max(0, total - start));
-		const below = Math.max(0, total - start - rendered);
+		const serverRendered = Math.min(this.serverOptionEls().length, Math.max(0, total - start));
+		// Pinned rows sit above the server page. On the first page they are in
+		// the DOM; on a later page their height stays in the top spacer.
+		const pinnedAbove = start > 0 ? this.pinnedCount() : 0;
+		const below = Math.max(0, total - start - serverRendered);
 		const scrollTop = this.listEl.scrollTop;
 
 		this.suppressScroll = true;
-		this.spacerTopEl.style.height = `${start * avg}px`;
+		this.spacerTopEl.style.height = `${(pinnedAbove + start) * avg}px`;
 		this.spacerBottomEl.style.height = `${below * avg}px`;
 		if (this.listEl.scrollTop !== scrollTop) this.listEl.scrollTop = scrollTop;
 		this.suppressScroll = false;
@@ -1274,6 +1325,8 @@ export default class SapphireDropdown extends BaseComponent {
 		this.requestedStartIndex = null;
 		this.skeletonKey = '';
 		this.requestPageDebounced.cancel();
+		this.freshList = true;
+		this.pageStartIndex = 0;
 		if (!this.listEl) return;
 		this.suppressScroll = true;
 		this.listEl.scrollTop = 0;
@@ -1288,11 +1341,12 @@ export default class SapphireDropdown extends BaseComponent {
 		const avg = this.avgRowHeight;
 		const total = this.searchTotalCount;
 		const pageSize = this.searchMaxRecords;
+		const pinned = this.pinnedCount();
 		const loadedStart = this.pageStartIndex;
-		const loadedEnd = loadedStart + this.optionEls().length;
+		const loadedEnd = loadedStart + this.optionsList.length;
 		const virtualTop = this.virtualScrollTop();
-		const firstVisible = Math.max(0, Math.floor(virtualTop / avg));
-		const lastVisible = Math.ceil((virtualTop + this.listEl.clientHeight) / avg);
+		const firstVisible = Math.max(0, Math.floor(virtualTop / avg) - pinned);
+		const lastVisible = Math.max(0, Math.ceil((virtualTop + this.listEl.clientHeight) / avg) - pinned);
 
 		if (loadedEnd > loadedStart && firstVisible >= loadedStart && lastVisible <= loadedEnd) return;
 
@@ -1318,15 +1372,18 @@ export default class SapphireDropdown extends BaseComponent {
 
 		const avg = this.rowHeight();
 		const total = this.searchTotalCount;
-		const rows = this.optionEls();
+		const pinned = this.pinnedCount();
+		const rows = this.serverOptionEls();
 		const loadedStart = Math.min(this.pageStartIndex, total);
 		const loadedEnd = Math.min(total, loadedStart + rows.length);
 		const viewHeight = this.listEl.clientHeight || avg;
 		const overscan = Math.max(1, Math.ceil(viewHeight / avg));
 		const origin = this.spacerTopEl ? this.contentTop(this.spacerTopEl) : 0;
 		const virtualTop = Math.max(0, this.listEl.scrollTop - origin);
-		const viewStart = Math.max(0, Math.floor(virtualTop / avg) - overscan);
-		const viewEnd = Math.min(total, Math.ceil((virtualTop + viewHeight) / avg) + overscan);
+		const combinedStart = Math.floor(virtualTop / avg);
+		const combinedEnd = Math.ceil((virtualTop + viewHeight) / avg);
+		const viewStart = Math.max(0, combinedStart - pinned - overscan);
+		const viewEnd = Math.min(total, Math.max(0, combinedEnd - pinned) + overscan);
 
 		let beforeCount = Math.max(0, Math.min(viewEnd, loadedStart) - viewStart);
 		const afterFrom = Math.max(viewStart, loadedEnd);
@@ -1456,20 +1513,33 @@ export default class SapphireDropdown extends BaseComponent {
 		return this.selectedList.filter((selected) => !incomingValues.has(selected.Value));
 	}
 
-	private optionsForList(): ISapphireDropdownOption[] {
-		// The server page is already the window for SearchStartIndex. Prepending
-		// selected values would shift the scroll math.
-		if (this.isVirtualized()) return this.optionsList;
+	private pinnedCount(): number {
+		return this.missingSelected().length;
+	}
 
+	// Server rows only. On the first page the pinned selection is rendered in
+	// front of them, so those nodes are not part of the virtual index.
+	private serverOptionEls(): HTMLElement[] {
+		const rows = this.optionEls();
+		if (!this.isVirtualized() || this.pageStartIndex > 0) return rows;
+		const pinned = this.pinnedCount();
+		return pinned > 0 ? rows.slice(pinned) : rows;
+	}
+
+	private optionsForList(): ISapphireDropdownOption[] {
 		const missing = this.missingSelected();
-		return missing.length === 0 ? this.optionsList : [...missing, ...this.optionsList];
+		if (missing.length === 0) return this.optionsList;
+		// A later server page starts below the pinned rows. Their height is in
+		// the top spacer, so they are not rendered again in the middle.
+		if (this.isVirtualized() && this.pageStartIndex > 0) return this.optionsList;
+		return [...missing, ...this.optionsList];
 	}
 
 	// Rebuild the overlay only when prepended (missing-from-incoming) items
 	// changed; otherwise just refresh aria-selected. Avoids scroll jumps when
 	// the parent echoes the same selection back.
 	private syncOverlayWithSelection(): void {
-		if (this.isVirtualized()) {
+		if (this.isVirtualized() && this.pageStartIndex > 0) {
 			this.refreshSelectedState();
 			return;
 		}
@@ -1554,11 +1624,21 @@ export default class SapphireDropdown extends BaseComponent {
 			this.hydrateSelectedList();
 		}
 
+		let scrollToTop = false;
 		if (optionsChanged && this.config.SearchServerSide) {
-			// Start index is already the requested page. Pin the new rows to it
-			// only once they arrive, so the previous page never jumps into view.
-			this.pageStartIndex = this.searchStartIndex;
-			if (this.requestedStartIndex === this.pageStartIndex) this.requestedStartIndex = null;
+			if (this.freshList) {
+				// Search results replace the list. Show them from the top, with
+				// any missing selection in front, instead of the previous page.
+				this.freshList = false;
+				this.pageStartIndex = 0;
+				this.requestedStartIndex = null;
+				scrollToTop = true;
+			} else {
+				// Start index is already the requested page. Pin the new rows to it
+				// only once they arrive, so the previous page never jumps into view.
+				this.pageStartIndex = this.searchStartIndex;
+				if (this.requestedStartIndex === this.pageStartIndex) this.requestedStartIndex = null;
+			}
 		}
 
 		const searchingChanged = payload.isSearching !== undefined && payload.isSearching !== this.isSearching;
@@ -1570,9 +1650,15 @@ export default class SapphireDropdown extends BaseComponent {
 			this.syncOverlayWithSelection();
 		}
 
-		// Re-evaluate after the page lands. A virtual list stays visible while
-		// IsSearching is still true; a non-virtual list stays on the spinner.
+		// Re-evaluate after the page lands. IsSearching hides the list and shows
+		// the spinner, including when the list is already virtualized.
 		if (searchingChanged || optionsChanged || searchLayoutChanged) this.updateLoadingState();
+
+		if (scrollToTop && this.listEl) {
+			this.suppressScroll = true;
+			this.listEl.scrollTop = 0;
+			this.suppressScroll = false;
+		}
 
 		if (this.config.SearchServerSide) this.settleSearchOverlay(optionsChanged, payload);
 		if (this.isVirtualized() && !this.isSearching) this.requestPageDebounced();
@@ -1602,12 +1688,17 @@ export default class SapphireDropdown extends BaseComponent {
 		super.destroy();
 
 		clearTimeout(this.typeaheadTimer);
+		if (this.optionTitlesFrame !== null) {
+			window.cancelAnimationFrame(this.optionTitlesFrame);
+			this.optionTitlesFrame = null;
+		}
 		this.requestPageDebounced.cancel();
 		this.stopPositionWatch();
 		this.triggerResizeObserver?.disconnect();
 		this.triggerEl?.removeEventListener('click', this.onTriggerClick);
 		this.triggerEl?.removeEventListener('keydown', this.onTriggerKeyDown);
 		this.listEl?.removeEventListener('mousedown', this.onListMouseDown);
+		this.listEl?.removeEventListener('mouseover', this.onListMouseOver);
 		this.listEl?.removeEventListener('click', this.onListClick);
 		this.listEl?.removeEventListener('scroll', this.onListScroll);
 		this.emitSearchDebounced?.cancel();

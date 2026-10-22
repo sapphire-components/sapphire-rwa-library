@@ -231,6 +231,7 @@ div[data-block$='SapphireDropdown'] {
 		min-width: 0;
 	}
 	&-label {
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -300,6 +301,7 @@ div[data-block$='SapphireDropdown'] {
 	z-index: 1;
 	.sapphiredropdown-option-label {
 		flex: 1 1 auto;
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
