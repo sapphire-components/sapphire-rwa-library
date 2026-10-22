@@ -18,6 +18,7 @@ div.inputwrapper {
 		span.input-search,
 		span.input-password {
 			display: inline-flex;
+			flex-direction: column;
 			width: 100%;
 		}
 	}
@@ -108,5 +109,11 @@ div.inputwrapper {
 .inputwrapper[data-hascontent='true'][data-hasclear='true'] {
 	.inputwrapper-clear {
 		display: inline-flex;
+	}
+}
+
+.inputwrapper {
+	.validation-message {
+		display: block;
 	}
 }

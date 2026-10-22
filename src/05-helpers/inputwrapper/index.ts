@@ -5,14 +5,17 @@ interface IInputWrapper extends BaseComponentInit {
 	actions: {
 		OnClear: () => void;
 	};
+	enableTextAssistance: boolean;
 	enabled: boolean;
 	hasClear: boolean;
 	iconName: string;
+	theme: string;
 }
 
 export default class InputWrapper extends BaseComponent {
 	private actions!: IInputWrapper['actions'];
 	private clearEl: HTMLButtonElement | null = null;
+	private enableTextAssistance!: boolean;
 	private enabled!: boolean;
 	private hasClear!: boolean;
 	private iconEl: HTMLElement | null = null;
@@ -20,6 +23,15 @@ export default class InputWrapper extends BaseComponent {
 	private inputEl: HTMLInputElement | null = null;
 	// Original input state, kept while the wrapper locks the input; null when not locked.
 	private inputLock: { readOnly: boolean; tabIndex: string | null } | null = null;
+	// Attributes the screen author set, kept while text assistance is forced off.
+	private textAssistanceSnapshot: {
+		autocapitalize: string | null;
+		autocomplete: string | null;
+		autocorrect: string | null;
+		predictivetext: string | null;
+		spellcheck: string | null;
+		writingsuggestions: string | null;
+	} | null = null;
 	private passwordToggleEl: HTMLButtonElement | null = null;
 	private passwordVisible = false;
 	private valueAttrObserver?: MutationObserver;
@@ -70,19 +82,13 @@ export default class InputWrapper extends BaseComponent {
 		}
 
 		this.actions = init.actions;
+		this.enableTextAssistance = init.enableTextAssistance;
 		this.enabled = init.enabled;
 		this.hasClear = init.hasClear;
 		this.iconName = init.iconName ?? '';
-		this.wrapperEl = this.widgetEl.classList.contains('inputwrapper')
-			? this.widgetEl
-			: (this.widgetEl.querySelector<HTMLElement>('.inputwrapper') ?? this.widgetEl);
+		this.wrapperEl = this.widgetEl.classList.contains('inputwrapper') ? this.widgetEl : (this.widgetEl.querySelector<HTMLElement>('.inputwrapper') ?? this.widgetEl);
 		this.inputEl = this.wrapperEl.querySelector('input');
-		if (this.inputEl) {
-			this.inputEl.autocapitalize = 'off';
-			this.inputEl.autocomplete = 'off';
-			this.inputEl.autocorrect = false;
-			this.inputEl.spellcheck = false;
-		}
+		this.syncTextAssistance();
 
 		this.reflectStateAttributes();
 		this.syncInputLock();
@@ -108,6 +114,62 @@ export default class InputWrapper extends BaseComponent {
 		// The clear control hides once the field is empty; keep focus in the field.
 		this.inputEl?.focus();
 		queueMicrotask(() => this.updateHasContent());
+	}
+
+	// False turns assistive input features off. True leaves the author's attributes in place.
+	private syncTextAssistance(): void {
+		const input = this.inputEl;
+		if (!input) return;
+
+		if (this.enableTextAssistance === false) {
+			this.disableTextAssistance(input);
+			return;
+		}
+
+		this.restoreTextAssistance();
+	}
+
+	private disableTextAssistance(input: HTMLInputElement): void {
+		if (!this.textAssistanceSnapshot) {
+			this.textAssistanceSnapshot = {
+				autocapitalize: input.getAttribute('autocapitalize'),
+				autocomplete: input.getAttribute('autocomplete'),
+				autocorrect: input.getAttribute('autocorrect'),
+				predictivetext: input.getAttribute('predictivetext'),
+				spellcheck: input.getAttribute('spellcheck'),
+				writingsuggestions: input.getAttribute('writingsuggestions'),
+			};
+		}
+
+		input.autocapitalize = 'off';
+		input.autocomplete = 'off';
+		input.setAttribute('autocorrect', 'off');
+		input.spellcheck = false;
+		input.setAttribute('predictivetext', 'off');
+		// Browser writing suggestions are the predictive-text control.
+		input.setAttribute('writingsuggestions', 'false');
+	}
+
+	private restoreTextAssistance(): void {
+		const input = this.inputEl;
+		const snapshot = this.textAssistanceSnapshot;
+		if (!input || !snapshot) return;
+
+		this.restoreAttribute(input, 'autocapitalize', snapshot.autocapitalize);
+		this.restoreAttribute(input, 'autocomplete', snapshot.autocomplete);
+		this.restoreAttribute(input, 'autocorrect', snapshot.autocorrect);
+		this.restoreAttribute(input, 'spellcheck', snapshot.spellcheck);
+		this.restoreAttribute(input, 'predictivetext', snapshot.predictivetext);
+		this.restoreAttribute(input, 'writingsuggestions', snapshot.writingsuggestions);
+		this.textAssistanceSnapshot = null;
+	}
+
+	private restoreAttribute(input: HTMLInputElement, name: string, value: string | null): void {
+		if (value === null) {
+			input.removeAttribute(name);
+			return;
+		}
+		input.setAttribute(name, value);
 	}
 
 	// The platform owns the input's `disabled` state, so lock it with
@@ -321,6 +383,11 @@ export default class InputWrapper extends BaseComponent {
 
 		let needsClearRebuild = false;
 
+		if (payload.enableTextAssistance !== undefined && payload.enableTextAssistance !== this.enableTextAssistance) {
+			this.enableTextAssistance = payload.enableTextAssistance;
+			this.syncTextAssistance();
+		}
+
 		if (payload.enabled !== undefined && payload.enabled !== this.enabled) {
 			this.enabled = payload.enabled;
 			this.wrapperEl.dataset.enabled = this.enabled ? 'true' : 'false';
@@ -360,6 +427,7 @@ export default class InputWrapper extends BaseComponent {
 		this.unbindEvents();
 		this.unwatchInputValue();
 		this.releaseInputLock();
+		this.restoreTextAssistance();
 		if (this.passwordVisible && this.inputEl) {
 			this.inputEl.type = 'password';
 			this.passwordVisible = false;

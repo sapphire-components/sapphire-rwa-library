@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.108 2026-10-22T10:16:48.169Z */
+/*!  SapphireRWALibrary PROD v0.6.109 2026-10-22T14:05:52.759Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -4244,6 +4244,7 @@ div.inputwrapper > div span.input-text,
 div.inputwrapper > div span.input-search,
 div.inputwrapper > div span.input-password {
   display: inline-flex;
+  flex-direction: column;
   width: 100%;
 }
 button.inputwrapper .form-control[data-input],
@@ -4356,6 +4357,10 @@ div.inputwrapper input[type=password]::-ms-clear {
 
 .inputwrapper[data-hascontent=true][data-hasclear=true] .inputwrapper-clear {
   display: inline-flex;
+}
+
+.inputwrapper .validation-message {
+  display: block;
 }
 .font-heavy {
   font-weight: 900;
@@ -12018,6 +12023,25 @@ div[data-block$=PrintDocument] {
 }
 .validation-message-icon .svg-icon {
   margin: 0;
+}
+.width-unset {
+  width: unset;
+}
+
+.width-auto {
+  width: auto;
+}
+
+.width-fit-content {
+  width: fit-content;
+}
+
+.width-100 {
+  width: 100%;
+}
+
+.width-50 {
+  width: 50%;
 }
 div[data-widthcomponent=auto] {
   width: fit-content;

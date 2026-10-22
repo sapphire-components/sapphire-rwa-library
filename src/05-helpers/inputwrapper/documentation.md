@@ -9,6 +9,7 @@ A layout helper that wraps a platform `Input` placed in a placeholder. The input
 - `AlignToEnd` flips the input text alignment to the end edge (logical; respects RTL).
 - `Size` and `Width` control the field’s height / padding presets and container width.
 - While `Enabled` is `False`, the input looks and behaves disabled: it is read-only, skipped by `Tab`, marked `aria-disabled`, and the clear control does not fire `Clear`. Its original `readonly` and `tabindex` are restored when `Enabled` returns to `True`.
+- When `EnableTextAssistance` is `True`, capitalization, completion, correction, spellcheck, and predictive text stay as the screen author set them on the input. When `False`, the helper turns those off on the wrapped input, and restores the author's attributes if it returns to `True`.
 - After the clear control fires `Clear`, focus moves back to the input.
 
 <hr>
@@ -18,6 +19,7 @@ A layout helper that wraps a platform `Input` placed in a placeholder. The input
 | Name         | Type            | Description                                                                                                         |
 | ------------ | --------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `AlignToEnd` | `Boolean`       | When `True`, aligns the input text to the end edge (`text-align: end`). When `False`, text aligns to the start.     |
+| `EnableTextAssistance` | `Boolean` | When `True`, leaves assistive input behaviour to the screen author. When `False`, turns off `autocapitalize`, `autocomplete`, `autocorrect`, `spellcheck`, and predictive text on the wrapped input. |
 | `Enabled`    | `Boolean`       | Enables or disables the field. When `False`, applies disabled styling, blocks input interaction, and disables clear. |
 | `HasClear`   | `Boolean`       | When `True`, shows a clear control while the wrapped input has content.                                             |
 | `IconName`   | `Text`          | Optional leading icon name. Empty string hides the icon.                                                            |
