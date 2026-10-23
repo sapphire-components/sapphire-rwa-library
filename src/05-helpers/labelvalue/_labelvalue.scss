@@ -24,6 +24,9 @@ div[data-block$='LabelValue'] {
 	&-hint {
 		color: var(--color-neutral-7);
 		font-size: var(--font-size-xs);
+		&:empty {
+			display: none;
+		}
 	}
 	&-mandatory {
 		color: var(--color-error);

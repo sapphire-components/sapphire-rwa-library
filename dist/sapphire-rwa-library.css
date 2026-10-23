@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.109 2026-10-22T14:05:52.759Z */
+/*!  SapphireRWALibrary PROD v0.6.110 2026-10-23T13:48:30.591Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1097,7 +1097,8 @@ body.is-rtl .ThemeGrid_MarginGutter {
   overflow: unset;
 }
 
-.form input[data-input] {
+.form input[data-input],
+.form textarea[data-textarea] {
   margin-bottom: unset;
 }
 .service-studio-preview {
@@ -2860,6 +2861,9 @@ input[data-switch].small:empty:after {
 input[data-switch].small:checked:after {
   transform: translateX(18px) translateZ(0);
 }
+span:has(> textarea[data-textarea]) {
+  display: contents;
+}
 input.not-valid + span.validation-message {
   position: static;
 }
@@ -3579,6 +3583,7 @@ input.not-valid + span.validation-message {
 .backofficeheader[data-isstuck=true] .backofficeheader-head {
   background-color: var(--color-background);
   box-sizing: border-box;
+  padding-top: var(--space-s);
   position: fixed;
   z-index: 4;
 }
@@ -4779,6 +4784,9 @@ div[data-block$=LabelValue] {
 .labelvalue-hint {
   color: var(--color-neutral-7);
   font-size: var(--font-size-xs);
+}
+.labelvalue-hint:empty {
+  display: none;
 }
 .labelvalue-mandatory {
   color: var(--color-error);
@@ -6364,6 +6372,109 @@ div[data-block$=Chip2] {
 .chip[data-hasclear=true] .chip-clear {
   display: inline-flex;
 }
+div[data-block$=SapphireCard] {
+  display: contents;
+}
+
+div[data-block$=SapphireCard].sapphirecard,
+.sapphirecard {
+  background-color: var(--color-neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+}
+div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasmaxheight=true],
+.sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasmaxheight=true] {
+  max-height: var(--sapphirecard-max-height);
+}
+div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasspecificheight=true],
+.sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasspecificheight=true] {
+  height: var(--sapphirecard-height);
+}
+div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-constrained=true] > .sapphirecard-content,
+.sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-constrained=true] > .sapphirecard-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false]) > .sapphirecard-header .sapphirecard-header-actionswhenclosed,
+.sapphirecard:is([data-isopen=true], [data-isexpandable=false]) > .sapphirecard-header .sapphirecard-header-actionswhenclosed {
+  display: none;
+}
+div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header,
+div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header,
+.sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header,
+.sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header {
+  cursor: pointer;
+}
+div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenclosed,
+div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenopen,
+div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenclosed,
+div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen,
+.sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenclosed,
+.sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenopen,
+.sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenclosed,
+.sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen {
+  cursor: default;
+}
+div[data-block$=SapphireCard].sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-content,
+div[data-block$=SapphireCard].sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-footer,
+.sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-content,
+.sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-footer {
+  display: none;
+}
+div[data-block$=SapphireCard].sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen,
+.sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen {
+  display: none;
+}
+div[data-block$=SapphireCard].sapphirecard-header,
+.sapphirecard-header {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-s);
+  min-width: 0;
+}
+div[data-block$=SapphireCard].sapphirecard-header-content,
+.sapphirecard-header-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+div[data-block$=SapphireCard].sapphirecard-header-actionswhenclosed, div[data-block$=SapphireCard].sapphirecard-header-actionswhenopen,
+.sapphirecard-header-actionswhenclosed,
+.sapphirecard-header-actionswhenopen {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+div[data-block$=SapphireCard].sapphirecard-content, div[data-block$=SapphireCard].sapphirecard-footer,
+.sapphirecard-content,
+.sapphirecard-footer {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.is-rtl .sapphirecard-header-actionswhenclosed,
+.is-rtl .sapphirecard-header-actionswhenopen {
+  margin-inline-start: 0;
+  margin-left: 0;
+  margin-right: auto;
+  order: -1;
+}
+
+[dir=rtl] .sapphirecard-header-actionswhenclosed,
+[dir=rtl] .sapphirecard-header-actionswhenopen {
+  margin-inline-start: auto;
+  margin-left: unset;
+  margin-right: unset;
+  order: 0;
+}
 .hourpicker[data-size=xs] .hourpicker-component {
   gap: 4px;
 }
@@ -6740,18 +6851,6 @@ div[data-block$=AlertBar] {
   box-shadow: inset 0 0 0 1px currentColor;
   color: inherit;
 }
-.badge {
-  align-items: center;
-  border-radius: 999px;
-  display: inline-flex;
-  font-size: 12px;
-  gap: 4px;
-  height: 20px;
-  line-height: 20px;
-  min-width: 0;
-  padding-inline: 12px;
-}
-
 .badge[data-color=neutral] {
   background-color: var(--color-surface);
   color: var(--color-neutral-9);
@@ -6791,8 +6890,28 @@ div[data-block$=AlertBar] {
 .badge[data-color=error]:before {
   background-color: var(--color-error);
 }
+.badge[data-size=s] {
+  font-size: 12px;
+  gap: 4px;
+  height: 20px;
+  line-height: 20px;
+  padding-inline: 6px;
+}
 
-/** */
+.badge[data-size=m] {
+  font-size: 14px;
+  gap: 6px;
+  height: 30px;
+  line-height: 30px;
+  padding-inline: 12px;
+}
+.badge {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  min-width: 0;
+}
+
 .badge[data-hasdot=true] {
   padding-inline-start: 18px;
   position: relative;
@@ -6809,7 +6928,6 @@ div[data-block$=AlertBar] {
   width: 6px;
 }
 
-/** */
 .badge[data-shape=soft] {
   border-radius: 4px;
 }
@@ -11419,6 +11537,7 @@ div[data-block$=PrintDocument] {
   box-shadow: none;
   pointer-events: none;
 }
+
 .border-solid-1 {
   border-style: solid;
   border-width: 1px;

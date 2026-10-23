@@ -1,3 +1,7 @@
+import { translate, type MessageKey } from './messages';
+
+export type { MessageKey };
+
 export default class Locale {
 	static DateTimeFormat({
 		dateTime,
@@ -45,5 +49,9 @@ export default class Locale {
 		} catch (error) {
 			return 'ERROR: ' + (error as Error).message || 'Unknown error';
 		}
+	}
+
+	static translate(key: MessageKey, locale?: string | null): string {
+		return translate(key, locale);
 	}
 }

@@ -45,6 +45,7 @@ body.is-rtl .ThemeGrid_MarginGutter {
 	overflow: unset;
 }
 
-.form input[data-input] {
+.form input[data-input],
+.form textarea[data-textarea] {
 	margin-bottom: unset;
 }

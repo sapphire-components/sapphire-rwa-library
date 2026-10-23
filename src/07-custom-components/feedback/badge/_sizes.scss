@@ -1,0 +1,15 @@
+.badge[data-size='s'] {
+	font-size: 12px;
+	gap: 4px;
+	height: 20px;
+	line-height: 20px;
+	padding-inline: 6px;
+}
+
+.badge[data-size='m'] {
+	font-size: 14px;
+	gap: 6px;
+	height: 30px;
+	line-height: 30px;
+	padding-inline: 12px;
+}

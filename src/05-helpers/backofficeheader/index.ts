@@ -1,6 +1,8 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import { clearStickyBand, pinTopFor, setStickyBand } from '@utils/sticky-offset';
 
+const STICKY_TOP_INSET = 8;
+
 interface IBackofficeHeader extends BaseComponentInit {
 	actions: {};
 	enabled: boolean;
@@ -104,7 +106,7 @@ export default class BackofficeHeader extends BaseComponent {
 			return;
 		}
 
-		const pinLine = pinTopFor(this.headerEl);
+		const pinLine = pinTopFor(this.headerEl) + STICKY_TOP_INSET;
 		const sentinelTop = this.sentinelEl.getBoundingClientRect().top;
 
 		if (sentinelTop < pinLine) {
@@ -123,9 +125,11 @@ export default class BackofficeHeader extends BaseComponent {
 		}
 
 		const box = this.headEl.getBoundingClientRect();
-		const marginBottom = parseFloat(getComputedStyle(this.headEl).marginBottom) || 0;
-		const height = Math.round(box.height);
-		const reserved = Math.round(box.height + marginBottom);
+		const styles = getComputedStyle(this.headEl);
+		const marginBottom = parseFloat(styles.marginBottom) || 0;
+		const appliedPadding = this.stuck ? parseFloat(styles.paddingTop) || 0 : 0;
+		const contentHeight = Math.round(box.height - appliedPadding);
+		const reserved = Math.round(contentHeight + marginBottom);
 
 		if (!this.placeholderEl) {
 			this.placeholderEl = document.createElement('div');
@@ -142,7 +146,7 @@ export default class BackofficeHeader extends BaseComponent {
 		this.headEl.style.top = `${pinTopFor(this.headerEl)}px`;
 		this.headEl.style.left = `${anchor.left}px`;
 		this.headEl.style.width = `${anchor.width}px`;
-		setStickyBand(this.runtimeId, this.headerEl, height);
+		setStickyBand(this.runtimeId, this.headerEl, contentHeight + STICKY_TOP_INSET);
 	}
 
 	private unpin(): void {

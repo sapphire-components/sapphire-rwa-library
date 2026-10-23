@@ -1,0 +1,101 @@
+div[data-block$='SapphireCard'] {
+	display: contents;
+}
+
+div[data-block$='SapphireCard'].sapphirecard,
+.sapphirecard {
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	min-width: 0;
+	width: 100%;
+
+	&:is([data-isopen='true'], [data-isexpandable='false']) {
+		&[data-hasmaxheight='true'] {
+			max-height: var(--sapphirecard-max-height);
+		}
+
+		&[data-hasspecificheight='true'] {
+			height: var(--sapphirecard-height);
+		}
+
+		&[data-constrained='true'] > .sapphirecard-content {
+			flex: 1 1 auto;
+			min-height: 0;
+			overflow: auto;
+			scrollbar-gutter: stable;
+			scrollbar-width: thin;
+		}
+
+		> .sapphirecard-header .sapphirecard-header-actionswhenclosed {
+			display: none;
+		}
+	}
+
+	&[data-enabled='true'][data-isexpandable='true'] > &-header {
+		cursor: pointer;
+
+		.sapphirecard-header-actionswhenclosed,
+		.sapphirecard-header-actionswhenopen {
+			cursor: default;
+		}
+	}
+
+	&[data-isopen='false'][data-isexpandable='true'] {
+		> .sapphirecard-content,
+		> .sapphirecard-footer {
+			display: none;
+		}
+
+		> .sapphirecard-header .sapphirecard-header-actionswhenopen {
+			display: none;
+		}
+	}
+
+	&-header {
+		align-items: center;
+		display: flex;
+		flex: 0 0 auto;
+		gap: var(--space-s);
+		min-width: 0;
+
+		&-content {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+	}
+
+	&-header-actionswhenclosed,
+	&-header-actionswhenopen {
+		flex: 0 0 auto;
+		margin-inline-start: auto;
+	}
+
+	&-content,
+	&-footer {
+		flex: 0 0 auto;
+		min-width: 0;
+	}
+}
+
+// `.is-rtl` is a class flag and does not always set `direction: rtl`.
+// Pull the action slot to the physical left until a real direction is set.
+.is-rtl .sapphirecard-header-actionswhenclosed,
+.is-rtl .sapphirecard-header-actionswhenopen {
+	margin-inline-start: 0;
+	margin-left: 0;
+	margin-right: auto;
+	order: -1;
+}
+
+[dir='rtl'] .sapphirecard-header-actionswhenclosed,
+[dir='rtl'] .sapphirecard-header-actionswhenopen {
+	margin-inline-start: auto;
+	margin-left: unset;
+	margin-right: unset;
+	order: 0;
+}

@@ -18,6 +18,7 @@ import TableWrapper from '@helpers/tablewrapper';
 
 import ActionPopup from '@/07-custom-components/overlay/actionpopup';
 import AlertBar from '@/07-custom-components/feedback/alertbar';
+import Autocomplete from '@/07-custom-components/inputcontrols/autocomplete';
 import ButtonChoice from '@/07-custom-components/buttons/buttonchoice';
 import ButtonDropdown from '@/07-custom-components/buttons/buttondropdown';
 import Chip from '@/07-custom-components/buttons/chip';
@@ -30,6 +31,7 @@ import Overlay from '@/07-custom-components/overlay/overlay';
 import PhoneInput from '@/07-custom-components/inputcontrols/phoneinput';
 import PopupContent from '@/07-custom-components/overlay/popupcontent';
 import ResponsiveContainers from '@/07-custom-components/layout/responsive-containers';
+import SapphireCard from '@/07-custom-components/datadisplay/sapphirecard';
 import SapphireDropdown from '@/07-custom-components/inputcontrols/sapphiredropdown';
 import SapphireInput from '@/07-custom-components/inputcontrols/sapphireinput';
 import ScrollableContent from '@/07-custom-components/layout/scrollablecontent';
@@ -39,11 +41,11 @@ import Status from '@/07-custom-components/feedback/status';
 import Toast from '@/07-custom-components/feedback/toast';
 import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
-import Autocomplete from '@/07-custom-components/inputcontrols/autocomplete';
 
 import MultiLevel from '@/08-custom-patterns/multilevel';
 import LazyList from '@custom-patterns/lazylist';
 import PrintDocument from '@custom-patterns/printdocument';
+import WhoWhenWhereLog from '@/08-custom-patterns/whowhenwherelog';
 
 import Helpers from '@utils/helpers';
 import { LocalStorageKeys } from '@utils/local-storage-keys';
@@ -94,6 +96,7 @@ const SapphireRWALibrary = {
 	PopupContent,
 	PrintDocument,
 	ResponsiveContainers,
+	SapphireCard,
 	SapphireDropdown,
 	SapphireInput,
 	ScrollableContent,
@@ -106,6 +109,7 @@ const SapphireRWALibrary = {
 	Tabs,
 	Toast: new Toast(),
 	WeekDayPicker,
+	WhoWhenWhereLog,
 	init,
 };
 
