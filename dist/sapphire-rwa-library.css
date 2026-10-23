@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.110 2026-10-23T13:48:30.591Z */
+/*!  SapphireRWALibrary PROD v0.6.111 2026-10-23T17:52:11.368Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -6376,7 +6376,6 @@ div[data-block$=SapphireCard] {
   display: contents;
 }
 
-div[data-block$=SapphireCard].sapphirecard,
 .sapphirecard {
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
@@ -6388,15 +6387,24 @@ div[data-block$=SapphireCard].sapphirecard,
   min-width: 0;
   width: 100%;
 }
-div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasmaxheight=true],
+.sapphirecard[data-density=dense] {
+  --sapphirecard-padding: var(--space-xs);
+}
+.sapphirecard[data-density=compact] {
+  --sapphirecard-padding: var(--space-s);
+}
+.sapphirecard[data-density=default] {
+  --sapphirecard-padding: var(--space-base);
+}
+.sapphirecard[data-density=comfortable] {
+  --sapphirecard-padding: var(--space-m);
+}
 .sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasmaxheight=true] {
   max-height: var(--sapphirecard-max-height);
 }
-div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasspecificheight=true],
 .sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-hasspecificheight=true] {
   height: var(--sapphirecard-height);
 }
-div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-constrained=true] > .sapphirecard-content,
 .sapphirecard:is([data-isopen=true], [data-isexpandable=false])[data-constrained=true] > .sapphirecard-content {
   flex: 1 1 auto;
   min-height: 0;
@@ -6404,60 +6412,87 @@ div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpand
   scrollbar-gutter: stable;
   scrollbar-width: thin;
 }
-div[data-block$=SapphireCard].sapphirecard:is([data-isopen=true], [data-isexpandable=false]) > .sapphirecard-header .sapphirecard-header-actionswhenclosed,
 .sapphirecard:is([data-isopen=true], [data-isexpandable=false]) > .sapphirecard-header .sapphirecard-header-actionswhenclosed {
   display: none;
 }
-div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header,
-div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header,
-.sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header,
 .sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header {
   cursor: pointer;
 }
-div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenclosed,
-div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenopen,
-div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenclosed,
-div[data-block$=SapphireCard].sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen,
-.sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenclosed,
-.sapphirecard[data-enabled=true][data-isexpandable=true] > div[data-block$=SapphireCard].sapphirecard-header .sapphirecard-header-actionswhenopen,
+.sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-capabilities,
 .sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenclosed,
 .sapphirecard[data-enabled=true][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen {
   cursor: default;
 }
-div[data-block$=SapphireCard].sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-content,
-div[data-block$=SapphireCard].sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-footer,
 .sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-content,
 .sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-footer {
   display: none;
 }
-div[data-block$=SapphireCard].sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen,
 .sapphirecard[data-isopen=false][data-isexpandable=true] > .sapphirecard-header .sapphirecard-header-actionswhenopen {
   display: none;
 }
-div[data-block$=SapphireCard].sapphirecard-header,
+.sapphirecard-capabilities {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+.sapphirecard-capabilities-favorite, .sapphirecard-capabilities-selectable {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  padding: 0;
+}
+.sapphirecard-capabilities-favorite:disabled, .sapphirecard-capabilities-selectable:disabled {
+  cursor: not-allowed;
+}
 .sapphirecard-header {
   align-items: center;
   display: flex;
   flex: 0 0 auto;
   gap: var(--space-s);
   min-width: 0;
+  padding: var(--sapphirecard-padding, var(--space-base));
 }
-div[data-block$=SapphireCard].sapphirecard-header-content,
 .sapphirecard-header-content {
   flex: 1 1 auto;
   min-width: 0;
 }
-div[data-block$=SapphireCard].sapphirecard-header-actionswhenclosed, div[data-block$=SapphireCard].sapphirecard-header-actionswhenopen,
-.sapphirecard-header-actionswhenclosed,
-.sapphirecard-header-actionswhenopen {
+.sapphirecard-header-actionswhenclosed, .sapphirecard-header-actionswhenopen {
   flex: 0 0 auto;
   margin-inline-start: auto;
 }
-div[data-block$=SapphireCard].sapphirecard-content, div[data-block$=SapphireCard].sapphirecard-footer,
-.sapphirecard-content,
-.sapphirecard-footer {
+.sapphirecard-content, .sapphirecard-footer {
   flex: 0 0 auto;
   min-width: 0;
+  padding: var(--sapphirecard-padding, var(--space-base));
+}
+.sapphirecard-footer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+.sapphirecard-footer-left, .sapphirecard-footer-center, .sapphirecard-footer-right {
+  align-items: center;
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.sapphirecard-footer-left {
+  justify-content: flex-start;
+}
+.sapphirecard-footer-center {
+  justify-content: center;
+}
+.sapphirecard-footer-right {
+  justify-content: flex-end;
+}
+
+.is-rtl .sapphirecard-capabilities {
+  order: 1;
 }
 
 .is-rtl .sapphirecard-header-actionswhenclosed,
@@ -6468,12 +6503,19 @@ div[data-block$=SapphireCard].sapphirecard-content, div[data-block$=SapphireCard
   order: -1;
 }
 
+[dir=rtl] .sapphirecard-capabilities {
+  order: 0;
+}
+
 [dir=rtl] .sapphirecard-header-actionswhenclosed,
 [dir=rtl] .sapphirecard-header-actionswhenopen {
   margin-inline-start: auto;
   margin-left: unset;
   margin-right: unset;
   order: 0;
+}
+.sapphirecard[data-theme~=header-align-top] .sapphirecard-header {
+  align-items: flex-start;
 }
 .hourpicker[data-size=xs] .hourpicker-component {
   gap: 4px;

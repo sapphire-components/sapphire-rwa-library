@@ -2,7 +2,6 @@ div[data-block$='SapphireCard'] {
 	display: contents;
 }
 
-div[data-block$='SapphireCard'].sapphirecard,
 .sapphirecard {
 	background-color: var(--color-neutral-0);
 	border: 1px solid var(--color-border);
@@ -13,6 +12,22 @@ div[data-block$='SapphireCard'].sapphirecard,
 	min-height: 0;
 	min-width: 0;
 	width: 100%;
+
+	&[data-density='dense'] {
+		--sapphirecard-padding: var(--space-xs);
+	}
+
+	&[data-density='compact'] {
+		--sapphirecard-padding: var(--space-s);
+	}
+
+	&[data-density='default'] {
+		--sapphirecard-padding: var(--space-base);
+	}
+
+	&[data-density='comfortable'] {
+		--sapphirecard-padding: var(--space-m);
+	}
 
 	&:is([data-isopen='true'], [data-isexpandable='false']) {
 		&[data-hasmaxheight='true'] {
@@ -39,6 +54,7 @@ div[data-block$='SapphireCard'].sapphirecard,
 	&[data-enabled='true'][data-isexpandable='true'] > &-header {
 		cursor: pointer;
 
+		.sapphirecard-capabilities,
 		.sapphirecard-header-actionswhenclosed,
 		.sapphirecard-header-actionswhenopen {
 			cursor: default;
@@ -56,12 +72,36 @@ div[data-block$='SapphireCard'].sapphirecard,
 		}
 	}
 
+	&-capabilities {
+		align-items: center;
+		display: flex;
+		flex: 0 0 auto;
+		flex-direction: column;
+		gap: var(--space-s);
+
+		&-favorite,
+		&-selectable {
+			appearance: none;
+			background: transparent;
+			border: 0;
+			color: inherit;
+			cursor: pointer;
+			display: grid;
+			padding: 0;
+
+			&:disabled {
+				cursor: not-allowed;
+			}
+		}
+	}
+
 	&-header {
 		align-items: center;
 		display: flex;
 		flex: 0 0 auto;
 		gap: var(--space-s);
 		min-width: 0;
+		padding: var(--sapphirecard-padding, var(--space-base));
 
 		&-content {
 			flex: 1 1 auto;
@@ -79,17 +119,53 @@ div[data-block$='SapphireCard'].sapphirecard,
 	&-footer {
 		flex: 0 0 auto;
 		min-width: 0;
+		padding: var(--sapphirecard-padding, var(--space-base));
+	}
+
+	&-footer {
+		align-items: center;
+		display: flex;
+		justify-content: space-between;
+
+		&-left,
+		&-center,
+		&-right {
+			align-items: center;
+			display: flex;
+			flex: 0 1 auto;
+			min-width: 0;
+		}
+
+		&-left {
+			justify-content: flex-start;
+		}
+
+		&-center {
+			justify-content: center;
+		}
+
+		&-right {
+			justify-content: flex-end;
+		}
 	}
 }
 
 // `.is-rtl` is a class flag and does not always set `direction: rtl`.
 // Pull the action slot to the physical left until a real direction is set.
+.is-rtl .sapphirecard-capabilities {
+	order: 1;
+}
+
 .is-rtl .sapphirecard-header-actionswhenclosed,
 .is-rtl .sapphirecard-header-actionswhenopen {
 	margin-inline-start: 0;
 	margin-left: 0;
 	margin-right: auto;
 	order: -1;
+}
+
+[dir='rtl'] .sapphirecard-capabilities {
+	order: 0;
 }
 
 [dir='rtl'] .sapphirecard-header-actionswhenclosed,
