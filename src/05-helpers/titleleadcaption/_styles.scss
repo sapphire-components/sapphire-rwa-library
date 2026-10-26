@@ -1,0 +1,23 @@
+.titleleadcaption {
+	&-title,
+	&-lead,
+	&-caption {
+		&[data-clamped='true'] {
+			-webkit-box-orient: vertical;
+			display: -webkit-box;
+			-webkit-line-clamp: var(--titleleadcaption-clamp);
+			line-clamp: var(--titleleadcaption-clamp);
+			overflow: hidden;
+			overflow-wrap: break-word;
+			text-overflow: ellipsis;
+		}
+	}
+	&-title {
+		font-weight: var(--font-bold);
+	}
+	&-lead {
+	}
+	&-caption {
+		color: var(--color-text-disabled);
+	}
+}

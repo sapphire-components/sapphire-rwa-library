@@ -15,6 +15,7 @@ import FilterBar from '@helpers/filterbar';
 import InputWrapper from '@helpers/inputwrapper';
 import LabelValue from '@helpers/labelvalue';
 import TableWrapper from '@helpers/tablewrapper';
+import TitleLeadCaption from '@helpers/titleleadcaption';
 
 import ActionPopup from '@/07-custom-components/overlay/actionpopup';
 import AlertBar from '@/07-custom-components/feedback/alertbar';
@@ -105,6 +106,7 @@ const SapphireRWALibrary = {
 	Status,
 	TabContent,
 	TabHeader,
+	TitleLeadCaption,
 	TableWrapper,
 	Tabs,
 	Toast: new Toast(),

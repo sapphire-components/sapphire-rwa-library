@@ -75,6 +75,15 @@ export default class SapphireCard extends BaseComponent {
 		this.setOpen(!this.isOpen);
 	};
 
+	private readonly onHeaderKeyDown = (event: KeyboardEvent): void => {
+		if (!this.canToggle()) return;
+		if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+		if (event.target !== this.cardHeaderEl) return;
+
+		event.preventDefault();
+		this.setOpen(!this.isOpen);
+	};
+
 	constructor(init: ISapphireCard) {
 		super(init);
 
@@ -82,8 +91,6 @@ export default class SapphireCard extends BaseComponent {
 			console.warn('SapphireCard: root element not found for runtimeId', init.runtimeId);
 			return;
 		}
-
-		console.log('SapphireCard: constructor', init);
 
 		this.actions = init.actions;
 		this.applyConfig(init);
@@ -172,10 +179,12 @@ export default class SapphireCard extends BaseComponent {
 
 	private bind(): void {
 		this.cardHeaderEl?.addEventListener('click', this.onHeaderClick);
+		this.cardHeaderEl?.addEventListener('keydown', this.onHeaderKeyDown);
 	}
 
 	private unbind(): void {
 		this.cardHeaderEl?.removeEventListener('click', this.onHeaderClick);
+		this.cardHeaderEl?.removeEventListener('keydown', this.onHeaderKeyDown);
 	}
 
 	private canToggle(): boolean {
@@ -264,8 +273,10 @@ export default class SapphireCard extends BaseComponent {
 		if (!this.cardHeaderEl) return;
 
 		if (this.canToggle()) {
+			this.cardHeaderEl.tabIndex = 0;
 			this.cardHeaderEl.setAttribute('aria-expanded', this.isOpen ? 'true' : 'false');
 		} else {
+			this.cardHeaderEl.removeAttribute('tabindex');
 			this.cardHeaderEl.removeAttribute('aria-expanded');
 		}
 	}
@@ -287,15 +298,34 @@ export default class SapphireCard extends BaseComponent {
 			header.prepend(this.capabilitiesEl);
 		}
 
-		const favoriteIcon = this.isFavorite ? 'star-full' : 'star';
-		const selectableIcon = this.isSelected ? 'check-square' : 'square';
-		this.capabilitiesEl.replaceChildren();
-		if (this.hasFavorite) {
-			this.capabilitiesEl.append(this.createCapabilityIcon('favorite', favoriteIcon, this.isFavorite));
+		this.syncCapabilityIcon('favorite', this.hasFavorite, this.isFavorite ? 'star-full' : 'star', this.isFavorite);
+		this.syncCapabilityIcon('selectable', this.hasSelectable, this.isSelected ? 'check-square' : 'square', this.isSelected);
+	}
+
+	private syncCapabilityIcon(name: 'favorite' | 'selectable', visible: boolean, icon: string, pressed: boolean): void {
+		const host = this.capabilitiesEl;
+		if (!host) return;
+
+		const existing = host.querySelector<HTMLButtonElement>(`:scope > .sapphirecard-capabilities-${name}`);
+		if (!visible) {
+			existing?.remove();
+			return;
 		}
-		if (this.hasSelectable) {
-			this.capabilitiesEl.append(this.createCapabilityIcon('selectable', selectableIcon, this.isSelected));
+
+		if (!existing) {
+			const created = this.createCapabilityIcon(name, icon, pressed);
+			if (name === 'favorite') host.prepend(created);
+			else host.append(created);
+			return;
 		}
+
+		existing.disabled = !this.enabled;
+		existing.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+		if (existing.dataset.icon === icon) return;
+
+		existing.dataset.icon = icon;
+		existing.innerHTML = Helpers.placeIcon(icon, 'm');
+		existing.querySelector('.svg-icon')?.setAttribute('aria-hidden', 'true');
 	}
 
 	private removeCapabilities(): void {
