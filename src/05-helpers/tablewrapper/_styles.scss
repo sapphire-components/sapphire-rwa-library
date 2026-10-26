@@ -25,6 +25,11 @@
 			}
 		}
 	}
+	.table-row {
+		td {
+			padding: var(--space-s) var(--space-m);
+		}
+	}
 	.pagination {
 		left: 0;
 		margin-left: auto;

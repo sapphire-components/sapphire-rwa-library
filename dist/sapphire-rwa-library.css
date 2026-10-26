@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.112 2026-10-26T09:53:49.102Z */
+/*!  SapphireRWALibrary PROD v0.6.113 2026-10-26T12:29:00.655Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5030,7 +5030,7 @@ div[data-block=SectionSeparator] {
   position: sticky;
   top: 0;
 }
-@container (max-width: 900px) {
+@container (max-width: 800px) {
   .tablewrapper[data-columnfixedwidths] tr {
     border-bottom: solid 1px var(--color-border);
     display: flex;
@@ -5039,12 +5039,14 @@ div[data-block=SectionSeparator] {
   .tablewrapper[data-columnfixedwidths] thead {
     display: none;
   }
-  .tablewrapper[data-columnfixedwidths] td {
+  .tablewrapper[data-columnfixedwidths] .table-row td {
     border: none !important;
     display: block;
     height: unset !important;
     max-width: unset !important;
     min-width: unset !important;
+    padding: var(--space-base);
+    text-align: left !important;
     width: 100% !important;
   }
 }
@@ -5837,6 +5839,9 @@ div[data-widthcomponent=auto] {
 .tablewrapper table thead th > .sortable-icon {
   display: inline-block;
   vertical-align: middle;
+}
+.tablewrapper .table-row td {
+  padding: var(--space-s) var(--space-m);
 }
 .tablewrapper .pagination {
   left: 0;

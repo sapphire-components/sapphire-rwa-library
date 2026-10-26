@@ -1,4 +1,4 @@
-@container (max-width: 900px) {
+@container (max-width: 800px) {
 	.tablewrapper[data-columnfixedwidths] {
 		tr {
 			border-bottom: solid 1px var(--color-border);
@@ -10,13 +10,17 @@
 			display: none;
 		}
 
-		td {
-			border: none !important;
-			display: block;
-			height: unset !important;
-			max-width: unset !important;
-			min-width: unset !important;
-			width: 100% !important;
+		.table-row {
+			td {
+				border: none !important;
+				display: block;
+				height: unset !important;
+				max-width: unset !important;
+				min-width: unset !important;
+				padding: var(--space-base);
+				text-align: left !important;
+				width: 100% !important;
+			}
 		}
 	}
 }
