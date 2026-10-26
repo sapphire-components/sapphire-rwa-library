@@ -20,6 +20,11 @@
 				padding: var(--space-base);
 				text-align: left !important;
 				width: 100% !important;
+
+				div.text-align-right,
+				div.text-align-center {
+					text-align: left !important;
+				}
 			}
 		}
 	}

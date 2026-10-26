@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.114 2026-10-26T14:07:21.126Z */
+/*!  SapphireRWALibrary PROD v0.6.115 2026-10-26T17:32:15.336Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -2770,11 +2770,13 @@ i.fa {
   color: inherit;
 }
 .form-control[data-input],
-.form-control[data-textarea] {
+.form-control[data-textarea],
+.vscomp-toggle-button {
   border-color: var(--color-border);
 }
 .form-control[data-input]:hover,
-.form-control[data-textarea]:hover {
+.form-control[data-textarea]:hover,
+.vscomp-toggle-button:hover {
   border-color: var(--color-neutral-6);
 }
 
@@ -5090,6 +5092,10 @@ div[data-block=SectionSeparator] {
     text-align: left !important;
     width: 100% !important;
   }
+  .tablewrapper[data-columnfixedwidths] .table-row td div.text-align-right,
+  .tablewrapper[data-columnfixedwidths] .table-row td div.text-align-center {
+    text-align: left !important;
+  }
 }
 div[data-widthcomponent=auto] {
   width: fit-content;
@@ -7401,15 +7407,9 @@ div[data-block$=Autocomplete] {
 .autocomplete-chips:empty {
   display: none;
 }
-.autocomplete-controls {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
 .autocomplete-field {
-  flex: 1 1 auto;
-  min-width: 0;
   position: relative;
+  width: 100%;
 }
 .autocomplete-input:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);

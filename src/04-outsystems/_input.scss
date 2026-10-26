@@ -1,5 +1,6 @@
 .form-control[data-input],
-.form-control[data-textarea] {
+.form-control[data-textarea],
+.vscomp-toggle-button {
 	border-color: var(--color-border);
 	&:hover {
 		border-color: var(--color-neutral-6);

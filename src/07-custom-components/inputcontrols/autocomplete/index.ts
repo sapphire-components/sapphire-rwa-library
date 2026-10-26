@@ -11,7 +11,6 @@ interface IAutocomplete extends BaseComponentInit {
 	actions: {
 		OnAdd: (value: string) => void;
 		OnClear: () => void;
-		OnEmit: (emitted: string) => void;
 		OnScroll: (startIndex: number) => void;
 		OnSearch: (keyword: string) => void;
 		OnSelect: (selected: string) => void;
@@ -19,7 +18,6 @@ interface IAutocomplete extends BaseComponentInit {
 	allowAdd: boolean;
 	enabled: boolean;
 	hasChips: boolean;
-	hasEmitButton: boolean;
 	isLoading: boolean;
 	keyword: string;
 	optionValues: IAutocompleteOption[];
@@ -30,7 +28,6 @@ interface IAutocomplete extends BaseComponentInit {
 	searchTotalCount: number;
 	selectedValues: IAutocompleteOption[];
 	textAdd: string;
-	textEmit: string;
 	textNoRecords: string;
 	textPrompt: string;
 	theme: string;
@@ -41,7 +38,6 @@ export default class Autocomplete extends BaseComponent {
 	private allowAdd = false;
 	private enabled = true;
 	private hasChips = false;
-	private hasEmitButton = false;
 	private isLoading = false;
 	private optionValues: IAutocompleteOption[] = [];
 	private searchDebounce = 0;
@@ -54,7 +50,6 @@ export default class Autocomplete extends BaseComponent {
 	private pageStartIndex = 0;
 	private selectedValues: IAutocompleteOption[] = [];
 	private textAdd = '';
-	private textEmit = '';
 	private textNoRecords = '';
 	private textPrompt = '';
 	private theme = '';
@@ -73,10 +68,8 @@ export default class Autocomplete extends BaseComponent {
 	private selectFrame: number | null = null;
 	private blurCloseTimer: number | null = null;
 
-	private controlsEl!: HTMLDivElement;
 	private fieldEl!: HTMLDivElement;
 	private inputEl!: HTMLInputElement;
-	private emitEl!: HTMLButtonElement;
 	private clearEl!: HTMLButtonElement;
 	private chipsEl!: HTMLDivElement;
 	private panelEl!: HTMLDivElement;
@@ -261,12 +254,6 @@ export default class Autocomplete extends BaseComponent {
 		this.addCurrent();
 	};
 
-	private readonly onEmitClick = (event: MouseEvent): void => {
-		event.preventDefault();
-		if (!this.canEmit()) return;
-		this.actions.OnEmit(this.selectedJson());
-	};
-
 	private readonly onAddKeyDown = (event: KeyboardEvent): void => {
 		if (event.key === 'Escape' || event.key === 'Esc') {
 			event.preventDefault();
@@ -309,7 +296,6 @@ export default class Autocomplete extends BaseComponent {
 		this.allowAdd = init.allowAdd;
 		this.enabled = init.enabled;
 		this.hasChips = init.hasChips;
-		this.hasEmitButton = init.hasEmitButton;
 		this.isLoading = init.isLoading;
 		this.optionValues = this.readOptions(init.optionValues);
 		this.searchDebounce = this.readDelay(init.searchDebounce);
@@ -321,7 +307,6 @@ export default class Autocomplete extends BaseComponent {
 		this.appliedKeyword = init.keyword ?? '';
 		this.selectedValues = this.readOptions(init.selectedValues);
 		this.textAdd = init.textAdd ?? '';
-		this.textEmit = init.textEmit ?? '';
 		this.textNoRecords = init.textNoRecords ?? '';
 		this.textPrompt = init.textPrompt ?? '';
 		this.theme = init.theme ?? '';
@@ -346,7 +331,6 @@ export default class Autocomplete extends BaseComponent {
 	private reflectStateAttributes(): void {
 		this.widgetEl.dataset.allowadd = this.allowAdd ? 'true' : 'false';
 		this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
-		this.widgetEl.dataset.hasemitbutton = this.hasEmitButton ? 'true' : 'false';
 		this.widgetEl.dataset.haschips = this.hasChips ? 'true' : 'false';
 		if (this.theme) this.widgetEl.dataset.theme = this.theme;
 	}
@@ -382,18 +366,7 @@ export default class Autocomplete extends BaseComponent {
 		this.clearEl.innerHTML = Helpers.placeIcon('x', 's');
 
 		this.fieldEl.append(this.inputEl, this.clearEl);
-
-		this.emitEl = document.createElement('button');
-		this.emitEl.type = 'button';
-		this.emitEl.className = 'btn btn-primary autocomplete-emit';
-		this.emitEl.hidden = !this.hasEmitButton;
-		this.emitEl.disabled = !this.canEmit();
-		this.emitEl.textContent = this.textEmit;
-
-		this.controlsEl = document.createElement('div');
-		this.controlsEl.className = 'autocomplete-controls';
-		this.controlsEl.append(this.fieldEl, this.emitEl);
-		this.widgetEl.append(this.chipsEl, this.controlsEl);
+		this.widgetEl.append(this.chipsEl, this.fieldEl);
 
 		this.panelEl = document.createElement('div');
 		this.panelEl.className = 'autocomplete-panel';
@@ -438,7 +411,6 @@ export default class Autocomplete extends BaseComponent {
 		this.listEl.addEventListener('scroll', this.handleListScroll, { passive: true });
 		this.addEl.addEventListener('click', this.onAddClick);
 		this.addEl.addEventListener('keydown', this.onAddKeyDown);
-		this.emitEl.addEventListener('click', this.onEmitClick);
 		this.panelEl.addEventListener('focusout', this.onPanelFocusOut);
 		this.chipsEl.addEventListener('click', this.onChipsClick);
 	}
@@ -510,7 +482,7 @@ export default class Autocomplete extends BaseComponent {
 	private focusInside(): boolean {
 		const active = document.activeElement;
 		if (!active) return false;
-		return active === this.emitEl || this.fieldEl.contains(active) || this.panelEl.contains(active);
+		return this.fieldEl.contains(active) || this.panelEl.contains(active);
 	}
 
 	private cancelScheduledClose(): void {
@@ -683,27 +655,11 @@ export default class Autocomplete extends BaseComponent {
 		this.actions.OnSearch(keyword);
 	}
 
-	private canEmit(): boolean {
-		return this.enabled && this.hasEmitButton && this.writtenValueInList() !== null;
-	}
-
-	// Typed text that is not a list label is dirty and must not be emitted.
-	private writtenValueInList(): IAutocompleteOption | null {
-		const written = this.inputEl?.value.trim().toLowerCase() ?? '';
-		if (!written) return null;
-
-		const entries = this.hasChips ? this.optionValues : [...this.optionValues, ...this.selectedValues];
-		return entries.find((option) => option.Label.trim().toLowerCase() === written) ?? null;
-	}
-
 	private updateInputChrome(): void {
 		const typed = this.keyword.trim();
 		this.clearEl.hidden = this.inputEl.value.length === 0;
 		this.addEl.textContent = typed ? `${this.textAdd} ${typed}` : this.textAdd;
 		this.addEl.disabled = !this.enabled || typed.length === 0;
-		this.emitEl.hidden = !this.hasEmitButton;
-		this.emitEl.textContent = this.textEmit;
-		this.emitEl.disabled = !this.canEmit();
 	}
 
 	private renderChips(): void {
@@ -1162,15 +1118,6 @@ export default class Autocomplete extends BaseComponent {
 			this.addEl.hidden = !this.allowAdd;
 		}
 
-		if (payload.hasEmitButton !== undefined && payload.hasEmitButton !== this.hasEmitButton) {
-			this.hasEmitButton = payload.hasEmitButton;
-			this.widgetEl.dataset.hasemitbutton = this.hasEmitButton ? 'true' : 'false';
-		}
-
-		if (payload.textEmit !== undefined && payload.textEmit !== this.textEmit) {
-			this.textEmit = payload.textEmit;
-		}
-
 		if (payload.hasChips !== undefined && payload.hasChips !== this.hasChips) {
 			this.hasChips = payload.hasChips;
 			this.widgetEl.dataset.haschips = this.hasChips ? 'true' : 'false';
@@ -1304,7 +1251,6 @@ export default class Autocomplete extends BaseComponent {
 		this.listEl?.removeEventListener('scroll', this.handleListScroll);
 		this.addEl?.removeEventListener('click', this.onAddClick);
 		this.addEl?.removeEventListener('keydown', this.onAddKeyDown);
-		this.emitEl?.removeEventListener('click', this.onEmitClick);
 		this.panelEl?.removeEventListener('focusout', this.onPanelFocusOut);
 		this.chipsEl?.removeEventListener('click', this.onChipsClick);
 

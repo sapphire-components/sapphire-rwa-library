@@ -1592,11 +1592,6 @@ export default class SapphireDropdown extends BaseComponent {
 		let needsHydrate = false;
 		let optionsChanged = false;
 		let selectedChanged = false;
-		// Read before applySearchConfig stores the keyword. An empty list that
-		// arrives with a new keyword is that search's result. An empty list that
-		// arrives later, while the virtual total is still set, is a stale clear:
-		// rendering it deletes the rows and leaves the spacers and skeletons.
-		const searchKeywordChanged = payload.config?.SearchKeyword !== undefined && payload.config.SearchKeyword !== this.appliedSearchKeyword;
 		const searchLayoutChanged = payload.config ? this.applySearchConfig(payload.config) : false;
 		if (payload.enabled !== undefined && payload.enabled !== this.enabled) {
 			this.enabled = payload.enabled;
@@ -1608,10 +1603,8 @@ export default class SapphireDropdown extends BaseComponent {
 			needsLabelRefresh = true;
 		}
 
-		const incomingOptions = payload.optionsList;
-		const staleEmptyOptions = Array.isArray(incomingOptions) && incomingOptions.length === 0 && this.optionsList.length > 0 && this.isVirtualized() && !searchKeywordChanged;
-		if (incomingOptions && !staleEmptyOptions && !Helpers.areTheyEqual(incomingOptions, this.optionsList)) {
-			this.optionsList = incomingOptions;
+		if (payload.optionsList && !Helpers.areTheyEqual(payload.optionsList, this.optionsList)) {
+			this.optionsList = payload.optionsList;
 			optionsChanged = true;
 			needsLabelRefresh = true;
 			needsHydrate = true;
@@ -1651,10 +1644,7 @@ export default class SapphireDropdown extends BaseComponent {
 		const searchingChanged = payload.isSearching !== undefined && payload.isSearching !== this.isSearching;
 		if (searchingChanged) this.isSearching = payload.isSearching;
 
-		// Same guard for a list that was emptied in place: a layout pass would
-		// still call renderOptions and strip the rows that just landed.
-		const keepPaintedRows = this.isVirtualized() && this.optionsList.length === 0 && this.optionEls().length > 0 && !searchKeywordChanged;
-		if (!keepPaintedRows && (optionsChanged || searchLayoutChanged)) {
+		if (optionsChanged || searchLayoutChanged) {
 			this.renderOptions();
 		} else if (selectedChanged) {
 			this.syncOverlayWithSelection();
