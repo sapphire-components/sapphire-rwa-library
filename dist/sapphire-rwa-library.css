@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.113 2026-10-26T12:29:00.655Z */
+/*!  SapphireRWALibrary PROD v0.6.114 2026-10-26T14:07:21.126Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -4240,12 +4240,15 @@ div.inputwrapper > div {
   display: contents;
 }
 button.inputwrapper > div span.input-text,
+button.inputwrapper > div span.input-number,
 button.inputwrapper > div span.input-search,
 button.inputwrapper > div span.input-password,
 span.inputwrapper > div span.input-text,
+span.inputwrapper > div span.input-number,
 span.inputwrapper > div span.input-search,
 span.inputwrapper > div span.input-password,
 div.inputwrapper > div span.input-text,
+div.inputwrapper > div span.input-number,
 div.inputwrapper > div span.input-search,
 div.inputwrapper > div span.input-password {
   display: inline-flex;
@@ -4887,20 +4890,58 @@ div[data-block=SectionSeparator] {
 }
 
 .sectionseparator {
-  margin-bottom: var(--space-l);
+  width: 100%;
+}
+.sectionseparator-container {
+  display: flex;
+}
+.sectionseparator-placeholders {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+.sectionseparator-lead {
+  font-weight: var(--font-bold);
+}
+.sectionseparator-caption {
+  font-weight: var(--font-light);
 }
 .sectionseparator hr {
   border: 0;
   border-top: solid 1px var(--color-border);
   display: block;
-  margin-block: var(--space-m);
+  margin-block: var(--space-m) var(--space-base);
   width: 100%;
 }
-.sectionseparator-title {
+
+.sectionseparator[data-bottommargin=none] {
+  margin-bottom: 0;
+}
+
+.sectionseparator[data-bottommargin=xs] {
+  margin-bottom: var(--space-xs);
+}
+
+.sectionseparator[data-bottommargin=s] {
   margin-bottom: var(--space-s);
 }
-.sectionseparator-lead {
-  font-weight: var(--font-light);
+
+.sectionseparator[data-bottommargin=base] {
+  margin-bottom: var(--space-base);
+}
+
+.sectionseparator[data-bottommargin=m] {
+  margin-bottom: var(--space-m);
+}
+
+.sectionseparator[data-bottommargin=l] {
+  margin-bottom: var(--space-l);
+}
+
+.sectionseparator[data-bottommargin=xl] {
+  margin-bottom: var(--space-xl);
 }
 .tablewrapper[data-density=compact] table thead {
   height: unset;
