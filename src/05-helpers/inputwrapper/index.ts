@@ -1,13 +1,47 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
 
+type PasswordStrengthLevel = 'empty' | 'weak' | 'medium' | 'strong';
+
+const PASSWORD_STRENGTH_LABEL: Record<PasswordStrengthLevel, string> = {
+	empty: '',
+	medium: 'Medium',
+	strong: 'Strong',
+	weak: 'Weak',
+};
+
+const PASSWORD_STRENGTH_VALUE: Record<PasswordStrengthLevel, string> = {
+	empty: '0',
+	medium: '2',
+	strong: '3',
+	weak: '1',
+};
+
+// Length opens the higher bands. Variety (case, digit, symbol) decides whether a long value earns them.
+function measurePasswordStrength(value: string): PasswordStrengthLevel {
+	if (value.length === 0) return 'empty';
+
+	let score = 0;
+	if (value.length >= 8) score += 1;
+	if (value.length >= 12) score += 1;
+	if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score += 1;
+	if (/\d/.test(value)) score += 1;
+	if (/[^A-Za-z0-9]/.test(value)) score += 1;
+
+	if (score >= 4 && value.length >= 12) return 'strong';
+	if (score >= 3 && value.length >= 8) return 'medium';
+	return 'weak';
+}
+
 interface IInputWrapper extends BaseComponentInit {
 	actions: {
 		OnClear: () => void;
+		OnStrength: (level: PasswordStrengthLevel) => void;
 	};
 	enableTextAssistance: boolean;
 	enabled: boolean;
 	hasClear: boolean;
+	hasPasswordStrength: boolean;
 	iconName: string;
 	theme: string;
 }
@@ -18,6 +52,7 @@ export default class InputWrapper extends BaseComponent {
 	private enableTextAssistance!: boolean;
 	private enabled!: boolean;
 	private hasClear!: boolean;
+	private hasPasswordStrength!: boolean;
 	private iconEl: HTMLElement | null = null;
 	private iconName!: string;
 	private inputEl: HTMLInputElement | null = null;
@@ -32,8 +67,13 @@ export default class InputWrapper extends BaseComponent {
 		spellcheck: string | null;
 		writingsuggestions: string | null;
 	} | null = null;
+	private passwordStrength: PasswordStrengthLevel | null = null;
 	private passwordToggleEl: HTMLButtonElement | null = null;
 	private passwordVisible = false;
+	private strengthEl: HTMLElement | null = null;
+	private strengthHost: HTMLElement | null = null;
+	private strengthLabelEl: HTMLElement | null = null;
+	private controlHeightObserver?: ResizeObserver;
 	private valueAttrObserver?: MutationObserver;
 	private valuePatched = false;
 	private wrapperEl!: HTMLElement;
@@ -85,6 +125,7 @@ export default class InputWrapper extends BaseComponent {
 		this.enableTextAssistance = init.enableTextAssistance;
 		this.enabled = init.enabled;
 		this.hasClear = init.hasClear;
+		this.hasPasswordStrength = init.hasPasswordStrength;
 		this.iconName = init.iconName ?? '';
 		this.wrapperEl = this.widgetEl.classList.contains('inputwrapper') ? this.widgetEl : (this.widgetEl.querySelector<HTMLElement>('.inputwrapper') ?? this.widgetEl);
 		this.inputEl = this.wrapperEl.querySelector('input');
@@ -97,12 +138,14 @@ export default class InputWrapper extends BaseComponent {
 		this.buildIcon();
 		this.buildClearButton();
 		this.syncPasswordAffordance();
+		this.syncPasswordStrength();
 		this.bindEvents();
 	}
 
 	private reflectStateAttributes(): void {
 		this.wrapperEl.dataset.enabled = this.enabled ? 'true' : 'false';
 		this.wrapperEl.dataset.hasclear = this.hasClear ? 'true' : 'false';
+		this.wrapperEl.dataset.haspasswordstrength = this.hasPasswordStrength ? 'true' : 'false';
 		this.wrapperEl.dataset.hasicon = this.iconName ? 'true' : 'false';
 		this.wrapperEl.dataset.iconname = this.iconName;
 	}
@@ -210,6 +253,7 @@ export default class InputWrapper extends BaseComponent {
 	private updateHasContent(): void {
 		const hasContent = (this.inputEl?.value.trim().length ?? 0) > 0;
 		this.wrapperEl.dataset.hascontent = hasContent ? 'true' : 'false';
+		this.updatePasswordStrength();
 	}
 
 	// Platform bindings set `input.value` without firing `input`/`change`.
@@ -364,6 +408,107 @@ export default class InputWrapper extends BaseComponent {
 		this.passwordToggleEl = null;
 	}
 
+	// The meter follows the wrapped value for every input type. It is not limited to password fields.
+	private syncPasswordStrength(): void {
+		if (!this.hasPasswordStrength || !this.inputEl) {
+			this.removePasswordStrength();
+			return;
+		}
+
+		if (!this.strengthEl) {
+			this.buildPasswordStrength();
+			return;
+		}
+
+		this.updatePasswordStrength();
+	}
+
+	private buildPasswordStrength(): void {
+		this.removePasswordStrength();
+		const input = this.inputEl;
+		if (!input) return;
+
+		const host = input.parentElement ?? this.wrapperEl;
+		if (host !== this.wrapperEl) {
+			host.classList.add('inputwrapper-field');
+			this.strengthHost = host;
+		}
+
+		const bars = document.createElement('span');
+		bars.className = 'inputwrapper-strength-bars';
+		bars.setAttribute('aria-hidden', 'true');
+		bars.append(document.createElement('span'), document.createElement('span'), document.createElement('span'));
+
+		const label = document.createElement('span');
+		label.className = 'inputwrapper-strength-label';
+		label.setAttribute('aria-hidden', 'true');
+
+		const strength = document.createElement('div');
+		strength.className = 'inputwrapper-strength';
+		strength.setAttribute('role', 'meter');
+		strength.setAttribute('aria-label', 'Password strength');
+		strength.setAttribute('aria-valuemin', '0');
+		strength.setAttribute('aria-valuemax', '3');
+		strength.append(bars, label);
+
+		host.append(strength);
+		this.strengthEl = strength;
+		this.strengthLabelEl = label;
+		this.watchControlHeight();
+		this.updatePasswordStrength();
+	}
+
+	private updatePasswordStrength(): void {
+		const strength = this.strengthEl;
+		if (!this.hasPasswordStrength || !strength) return;
+
+		const level = measurePasswordStrength(this.inputEl?.value ?? '');
+		if (level === this.passwordStrength) return;
+
+		const label = PASSWORD_STRENGTH_LABEL[level];
+		this.wrapperEl.dataset.passwordstrength = level;
+		strength.dataset.strength = level;
+		strength.setAttribute('aria-valuenow', PASSWORD_STRENGTH_VALUE[level]);
+		strength.setAttribute('aria-valuetext', label || 'Empty');
+		if (this.strengthLabelEl) this.strengthLabelEl.textContent = label;
+
+		const previous = this.passwordStrength;
+		this.passwordStrength = level;
+		// The first reading sets the baseline. Later readings emit only when the level changes.
+		if (previous !== null) this.actions.OnStrength(level);
+	}
+
+	// Adornments are centered on the wrapper. The meter makes that box taller than the field, so track the field height.
+	private watchControlHeight(): void {
+		if (!this.inputEl || this.controlHeightObserver) return;
+		this.controlHeightObserver = new ResizeObserver(() => this.syncControlHeight());
+		this.controlHeightObserver.observe(this.inputEl);
+		this.syncControlHeight();
+	}
+
+	private syncControlHeight(): void {
+		const height = this.inputEl?.offsetHeight ?? 0;
+		if (height <= 0) return;
+		this.wrapperEl.style.setProperty('--inputwrapper-control-height', `${height}px`);
+	}
+
+	private unwatchControlHeight(): void {
+		this.controlHeightObserver?.disconnect();
+		this.controlHeightObserver = undefined;
+		this.wrapperEl?.style.removeProperty('--inputwrapper-control-height');
+	}
+
+	private removePasswordStrength(): void {
+		this.unwatchControlHeight();
+		this.strengthHost?.classList.remove('inputwrapper-field');
+		this.strengthHost = null;
+		this.strengthEl?.remove();
+		this.strengthEl = null;
+		this.strengthLabelEl = null;
+		this.passwordStrength = null;
+		delete this.wrapperEl?.dataset.passwordstrength;
+	}
+
 	private bindEvents(): void {
 		this.inputEl?.addEventListener('input', this.onInput);
 		this.inputEl?.addEventListener('change', this.onInput);
@@ -406,6 +551,12 @@ export default class InputWrapper extends BaseComponent {
 			needsClearRebuild = true;
 		}
 
+		if (payload.hasPasswordStrength !== undefined && payload.hasPasswordStrength !== this.hasPasswordStrength) {
+			this.hasPasswordStrength = payload.hasPasswordStrength;
+			this.wrapperEl.dataset.haspasswordstrength = this.hasPasswordStrength ? 'true' : 'false';
+			this.syncPasswordStrength();
+		}
+
 		if (payload.iconName !== undefined && payload.iconName !== this.iconName) {
 			this.iconName = payload.iconName;
 			this.wrapperEl.dataset.hasicon = this.iconName ? 'true' : 'false';
@@ -435,5 +586,6 @@ export default class InputWrapper extends BaseComponent {
 		this.removeIcon();
 		this.removeClearButton();
 		this.removePasswordToggle();
+		this.removePasswordStrength();
 	}
 }

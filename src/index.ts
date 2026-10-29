@@ -41,6 +41,7 @@ import Skeleton from '@/07-custom-components/feedback/skeleton';
 import Status from '@/07-custom-components/feedback/status';
 import Toast from '@/07-custom-components/feedback/toast';
 import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
+import Iframe from '@/07-custom-components/datadisplay/iframe';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
 
 import MultiLevel from '@/08-custom-patterns/multilevel';
@@ -93,6 +94,7 @@ const SapphireRWALibrary = {
 	MasterDetail,
 	MultiLevel,
 	Overlay,
+	Iframe,
 	PhoneInput,
 	PopupContent,
 	PrintDocument,

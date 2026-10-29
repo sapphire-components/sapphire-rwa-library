@@ -1,7 +1,10 @@
+import type SapphireEventBus from '@/03-core/sapphireeventbus';
+
 declare global {
 	const __APP_VERSION__: string;
 
 	interface Window {
+		SapphireEventBus: SapphireEventBus;
 		SapphireRWALibrary: SapphireRWALibrary;
 		SapphireRWAIcons: SapphireRWAIcons;
 		SapphireRWAFlags: SapphireRWAFlags;

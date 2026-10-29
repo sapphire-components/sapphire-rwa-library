@@ -7,6 +7,7 @@ div[data-block$='InputWrapper'] {
 button.inputwrapper,
 span.inputwrapper,
 div.inputwrapper {
+	--inputwrapper-control-height: 40px;
 	align-items: center;
 	display: inline-flex;
 	gap: var(--space-xs);
@@ -78,6 +79,40 @@ div.inputwrapper {
 		color: var(--color-neutral-9);
 	}
 
+	&-strength {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xxs);
+		margin-top: var(--space-xs);
+		order: 1;
+		pointer-events: none;
+		width: 100%;
+	}
+
+	&-strength-bars {
+		display: flex;
+		gap: var(--space-xs);
+		width: 100%;
+
+		> span {
+			background-color: var(--color-neutral-4);
+			border-radius: var(--space-xxs);
+			flex: 1;
+			height: var(--space-xs);
+			transition: background-color var(--transition-duration-fast) var(--transition-easing);
+		}
+	}
+
+	&-strength-label {
+		color: var(--color-text);
+		font-size: var(--font-size-xs);
+		line-height: 1.4;
+
+		&:empty {
+			display: none;
+		}
+	}
+
 	input[type='password']::-ms-reveal,
 	input[type='password']::-ms-clear {
 		display: none;
@@ -110,6 +145,56 @@ div.inputwrapper {
 .inputwrapper[data-hascontent='true'][data-hasclear='true'] {
 	.inputwrapper-clear {
 		display: inline-flex;
+	}
+}
+
+.inputwrapper[data-haspasswordstrength='true'] {
+	.form-control[data-input] {
+		order: 0;
+	}
+
+	.inputwrapper-strength {
+		order: 1;
+	}
+
+	.validation-message {
+		order: 2;
+	}
+
+	.inputwrapper-icon,
+	.inputwrapper-clear,
+	.inputwrapper-password {
+		top: calc(var(--inputwrapper-control-height) / 2);
+	}
+
+	.inputwrapper-field {
+		align-items: stretch;
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+}
+
+.inputwrapper[data-haspasswordstrength='true']:has(> .inputwrapper-strength) {
+	align-items: stretch;
+	flex-direction: column;
+}
+
+.inputwrapper[data-passwordstrength='weak'] {
+	.inputwrapper-strength-bars > span:nth-child(-n + 1) {
+		background-color: var(--color-error);
+	}
+}
+
+.inputwrapper[data-passwordstrength='medium'] {
+	.inputwrapper-strength-bars > span:nth-child(-n + 2) {
+		background-color: var(--color-warning);
+	}
+}
+
+.inputwrapper[data-passwordstrength='strong'] {
+	.inputwrapper-strength-bars > span {
+		background-color: var(--color-success);
 	}
 }
 

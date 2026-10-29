@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.115 2026-10-26T17:32:15.336Z */
+/*!  SapphireRWALibrary PROD v0.6.116 2026-10-29T09:34:09.939Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -4155,6 +4155,9 @@ div[data-block$=FilterBar] {
   position: fixed;
   z-index: 3;
 }
+.inputwrapper[data-size=xs] {
+  --inputwrapper-control-height: 22px;
+}
 .inputwrapper[data-size=xs] .form-control[data-input] {
   font-size: 12px;
   height: 22px;
@@ -4184,6 +4187,9 @@ div[data-block$=FilterBar] {
   padding-inline-start: 28px;
 }
 
+.inputwrapper[data-size=s] {
+  --inputwrapper-control-height: 32px;
+}
 .inputwrapper[data-size=s] .form-control[data-input] {
   height: 32px;
   padding-inline: 12px;
@@ -4231,6 +4237,7 @@ div[data-block$=InputWrapper] {
 button.inputwrapper,
 span.inputwrapper,
 div.inputwrapper {
+  --inputwrapper-control-height: 40px;
   align-items: center;
   display: inline-flex;
   gap: var(--space-xs);
@@ -4340,6 +4347,45 @@ span.inputwrapper-password[data-visible=true],
 div.inputwrapper-password[data-visible=true] {
   color: var(--color-neutral-9);
 }
+button.inputwrapper-strength,
+span.inputwrapper-strength,
+div.inputwrapper-strength {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  margin-top: var(--space-xs);
+  order: 1;
+  pointer-events: none;
+  width: 100%;
+}
+button.inputwrapper-strength-bars,
+span.inputwrapper-strength-bars,
+div.inputwrapper-strength-bars {
+  display: flex;
+  gap: var(--space-xs);
+  width: 100%;
+}
+button.inputwrapper-strength-bars > span,
+span.inputwrapper-strength-bars > span,
+div.inputwrapper-strength-bars > span {
+  background-color: var(--color-neutral-4);
+  border-radius: var(--space-xxs);
+  flex: 1;
+  height: var(--space-xs);
+  transition: background-color var(--transition-duration-fast) var(--transition-easing);
+}
+button.inputwrapper-strength-label,
+span.inputwrapper-strength-label,
+div.inputwrapper-strength-label {
+  color: var(--color-text);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
+button.inputwrapper-strength-label:empty,
+span.inputwrapper-strength-label:empty,
+div.inputwrapper-strength-label:empty {
+  display: none;
+}
 button.inputwrapper input[type=password]::-ms-reveal,
 button.inputwrapper input[type=password]::-ms-clear,
 span.inputwrapper input[type=password]::-ms-reveal,
@@ -4367,6 +4413,44 @@ div.inputwrapper input[type=password]::-ms-clear {
 
 .inputwrapper[data-hascontent=true][data-hasclear=true] .inputwrapper-clear {
   display: inline-flex;
+}
+
+.inputwrapper[data-haspasswordstrength=true] .form-control[data-input] {
+  order: 0;
+}
+.inputwrapper[data-haspasswordstrength=true] .inputwrapper-strength {
+  order: 1;
+}
+.inputwrapper[data-haspasswordstrength=true] .validation-message {
+  order: 2;
+}
+.inputwrapper[data-haspasswordstrength=true] .inputwrapper-icon,
+.inputwrapper[data-haspasswordstrength=true] .inputwrapper-clear,
+.inputwrapper[data-haspasswordstrength=true] .inputwrapper-password {
+  top: calc(var(--inputwrapper-control-height) / 2);
+}
+.inputwrapper[data-haspasswordstrength=true] .inputwrapper-field {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.inputwrapper[data-haspasswordstrength=true]:has(> .inputwrapper-strength) {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.inputwrapper[data-passwordstrength=weak] .inputwrapper-strength-bars > span:nth-child(-n+1) {
+  background-color: var(--color-error);
+}
+
+.inputwrapper[data-passwordstrength=medium] .inputwrapper-strength-bars > span:nth-child(-n+2) {
+  background-color: var(--color-warning);
+}
+
+.inputwrapper[data-passwordstrength=strong] .inputwrapper-strength-bars > span {
+  background-color: var(--color-success);
 }
 
 .inputwrapper .validation-message {
@@ -6438,6 +6522,20 @@ div[data-block$=Chip2] {
 
 .chip[data-hasclear=true] .chip-clear {
   display: inline-flex;
+}
+div[data-block$=Iframe] {
+  display: contents;
+}
+
+.iframe {
+  display: block;
+  min-width: 0;
+  width: 100%;
+}
+.iframe > iframe {
+  border: 0;
+  display: block;
+  width: 100%;
 }
 div[data-block$=SapphireCard] {
   display: contents;

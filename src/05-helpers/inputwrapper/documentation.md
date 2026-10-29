@@ -6,6 +6,7 @@ A layout helper that wraps a platform `Input` placed in a placeholder. The input
 - When `HasClear` is `True` and the field has content, a clear control is shown beside the input; activating it (click or `Enter` / `Space`) fires `Clear`. The consumer is responsible for clearing the input value.
 - When `IconName` is set, a leading icon is rendered at the start of the input.
 - When the wrapped input is a password field, an eye control is rendered at the end. It shows `eye-closed` while the value is masked and `eye-fill` while the value is visible. Activating it toggles between the two. The control stays at the end when a clear control is also shown.
+- When `HasPasswordStrength` is `True`, a three-step meter is shown under the wrapped input, whatever input type sits in the placeholder. An empty value leaves the steps neutral. A weak value fills one red step, a medium value fills two yellow steps, and a strong value fills three green steps. The caption reads Weak, Medium, or Strong.
 - `AlignToEnd` flips the input text alignment to the end edge (logical; respects RTL).
 - `Size` and `Width` control the field’s height / padding presets and container width.
 - While `Enabled` is `False`, the input looks and behaves disabled: it is read-only, skipped by `Tab`, marked `aria-disabled`, and the clear control does not fire `Clear`. Its original `readonly` and `tabindex` are restored when `Enabled` returns to `True`.
@@ -22,6 +23,7 @@ A layout helper that wraps a platform `Input` placed in a placeholder. The input
 | `EnableTextAssistance` | `Boolean` | When `True`, leaves assistive input behaviour to the screen author. When `False`, turns off `autocapitalize`, `autocomplete`, `autocorrect`, `spellcheck`, and predictive text on the wrapped input. |
 | `Enabled`    | `Boolean`       | Enables or disables the field. When `False`, applies disabled styling, blocks input interaction, and disables clear. |
 | `HasClear`   | `Boolean`       | When `True`, shows a clear control while the wrapped input has content.                                             |
+| `HasPasswordStrength` | `Boolean` | When `True`, shows a password strength meter under the input for any input type in the placeholder.               |
 | `IconName`   | `Text`          | Optional leading icon name. Empty string hides the icon.                                                            |
 | `Size`       | `SapphireSize`  | Height / padding preset for the input. Supported overrides: `xs`, `s`. Other values keep the platform default size. |
 | `Width`      | `SapphireScale` | Width preset for the wrapper (`auto`, `xs`–`xl7`, `full`, etc.).                                                    |
@@ -38,6 +40,7 @@ A layout helper that wraps a platform `Input` placed in a placeholder. The input
 
 ###### Events
 
-| Name    | Description                                                                                                   | Arguments             |
-| ------- | ------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `Clear` | Fired when the clear control is activated (click or `Enter` / `Space`). Clear the input value in the handler. | `Identifier` (`Text`) |
+| Name       | Description                                                                                                   | Arguments                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `Clear`    | Fired when the clear control is activated (click or `Enter` / `Space`). Clear the input value in the handler. | `Identifier` (`Text`)                                                     |
+| `Strength` | Fired when the measured password strength changes. The first reading does not fire.                          | `Level` (`Text`): `empty`, `weak`, `medium`, or `strong`                 |

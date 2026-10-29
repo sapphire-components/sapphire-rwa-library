@@ -1,4 +1,6 @@
 .inputwrapper[data-size='xs'] {
+	--inputwrapper-control-height: 22px;
+
 	.form-control[data-input] {
 		font-size: 12px;
 		height: 22px;
@@ -37,6 +39,8 @@
 }
 
 .inputwrapper[data-size='s'] {
+	--inputwrapper-control-height: 32px;
+
 	.form-control[data-input] {
 		height: 32px;
 		padding-inline: 12px;
