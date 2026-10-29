@@ -1,0 +1,139 @@
+div[data-block$='Filters'] {
+	display: contents;
+}
+
+// The panel lives in <body>, so it carries a copy of the row's data-density
+// and shares its padding, keeping filters in place when it opens over the row.
+.filters,
+.filters-panel {
+	--filters-padding: 24px;
+
+	&[data-density='compact'] {
+		--filters-padding: 16px;
+	}
+
+	&[data-density='dense'] {
+		--filters-padding: 8px;
+	}
+}
+
+.filters {
+	align-items: center;
+	display: flex;
+	// Maybe filters only show when they fit on the first line, so wrapping only
+	// happens when the Always filters alone do not fit.
+	flex-wrap: wrap;
+	gap: 12px;
+	min-width: 0;
+	position: relative;
+	background-color: var(--color-background);
+	padding: var(--filters-padding);
+	border-radius: var(--border-radius-soft);
+	border: solid 1px var(--color-border);
+
+	// Placeholders do not add a box: their filters are laid out directly in the row or panel.
+	> .filters-always,
+	> .filters-maybe {
+		display: contents;
+	}
+
+	> .filters-never {
+		display: none;
+	}
+
+	// Filters keep their natural width; shrinking them would hide the overflow from the measurement.
+	> .filters-always > *,
+	> .filters-maybe > * {
+		flex: 0 0 auto;
+		max-width: 100%;
+	}
+
+	[data-filtersoverflow='true'] {
+		display: none;
+	}
+
+	// Permanent buttons, always on the row, at the end.
+	> .filters-actions {
+		align-items: center;
+		display: flex;
+		flex: 0 0 auto;
+		gap: 8px;
+
+		&:empty {
+			display: none;
+		}
+	}
+
+	// See more and Actions sit together at the end of the row, whichever comes first takes the free space.
+	> .filters-more,
+	> .filters-more[hidden] + .filters-actions {
+		margin-inline-start: auto;
+	}
+}
+
+.filters-more {
+	flex: 0 0 auto;
+	gap: 4px;
+	min-height: 32px;
+	white-space: nowrap;
+}
+
+// `.btn` sets `display: inline-flex`, which outranks the UA `[hidden]` rule.
+.filters-more[hidden] {
+	display: none;
+}
+
+.filters-more-count {
+	font-weight: 600;
+}
+
+.filters[data-enabled='false'] .filters-more {
+	cursor: not-allowed;
+	opacity: 0.45;
+}
+
+.filters-panel {
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-soft);
+	box-shadow: var(--box-shadow-md);
+	box-sizing: border-box;
+	color: var(--color-text);
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	z-index: 402;
+}
+
+.filters-panel-content {
+	align-items: center;
+	display: flex;
+	flex: 1 1 auto;
+	flex-wrap: wrap;
+	gap: 12px;
+	min-height: 0;
+	overflow: auto;
+	padding: var(--filters-padding);
+
+	> .filters-always,
+	> .filters-maybe,
+	> .filters-never {
+		display: contents;
+	}
+}
+
+.filters-panel-footer {
+	border-top: 1px solid var(--color-border);
+	display: flex;
+	flex: 0 0 auto;
+	justify-content: flex-end;
+	padding: 8px 12px;
+}
+
+.filters-panel-footer[hidden] {
+	display: none;
+}
+
+.filters-apply {
+	min-height: 32px;
+}

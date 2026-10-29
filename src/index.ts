@@ -44,6 +44,7 @@ import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
 import Iframe from '@/07-custom-components/datadisplay/iframe';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
 
+import Filters from '@custom-patterns/filters';
 import MultiLevel from '@/08-custom-patterns/multilevel';
 import LazyList from '@custom-patterns/lazylist';
 import PrintDocument from '@custom-patterns/printdocument';
@@ -83,6 +84,7 @@ const SapphireRWALibrary = {
 	DesignSystemColors,
 	DesignSystemMenu,
 	DropdownMenu,
+	Filters,
 	FilterBar,
 	Helpers,
 	HourPicker,
