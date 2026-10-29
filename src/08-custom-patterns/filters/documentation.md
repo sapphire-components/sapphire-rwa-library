@@ -20,6 +20,7 @@ A single row of filters that hides what does not fit behind a **+N See more** bu
 | `Density`       | `SapphireDensity` | Padding of the row and the panel: `Default` 24px, `Compact` 16px, `Dense` 8px. |
 | `Enabled`       | `Boolean`       | Enables or disables the See more and Apply buttons.                        |
 | `ExtendedClass` | `Text`          | Extra classes added to the component root.                                  |
+| `IsSticky`      | `Boolean`       | When `True`, the row stays pinned at the top of the scroll area once it scrolls past it, below any other sticky components above it (BackofficeHeader, FilterBar...). |
 | `HasApplyButton` | `Boolean`      | When `True`, the panel shows the Apply button at the bottom. Defaults to `True`. |
 | `Identifier`    | `Text`          | Optional identifier passed on the emitted events.                           |
 | `TextApply`     | `Text`          | Label of the Apply button in the panel. Defaults to `Apply`.                |

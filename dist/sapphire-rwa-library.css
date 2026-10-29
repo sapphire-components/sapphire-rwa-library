@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.117 2026-10-29T17:30:56.650Z */
+/*!  SapphireRWALibrary PROD v0.6.118 2026-10-29T18:13:16.872Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -11443,6 +11443,26 @@ div[data-block$=Filters] {
   margin-inline-start: auto;
 }
 
+.filters[data-isstuck=true] {
+  border-radius: 0;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 3;
+}
+
+.filters-placeholder {
+  pointer-events: none;
+  width: 100%;
+}
+
+.filters-sentinel {
+  height: 1px;
+  margin-bottom: -1px;
+  pointer-events: none;
+  visibility: hidden;
+  width: 100%;
+}
+
 .filters-more {
   flex: 0 0 auto;
   gap: 4px;
@@ -11474,6 +11494,11 @@ div[data-block$=Filters] {
   flex-direction: column;
   position: fixed;
   z-index: 402;
+}
+
+body:has(> .filters-panel) .flatpickr-calendar.open,
+body:has(> .filters-panel) .vscomp-dropbox-container {
+  z-index: 403;
 }
 
 .filters-panel-content {

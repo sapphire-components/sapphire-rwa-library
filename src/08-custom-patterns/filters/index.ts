@@ -1,4 +1,5 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
+import { clearStickyBand, pinTopFor, scrollportOf, setStickyBand, subscribeStickyOffset } from '@utils/sticky-offset';
 
 interface IFilters extends BaseComponentInit {
 	actions: {
@@ -7,6 +8,7 @@ interface IFilters extends BaseComponentInit {
 	};
 	enabled: boolean;
 	hasApplyButton: boolean;
+	isSticky: boolean;
 	textApply: string;
 	textSeeMore: string;
 	theme: string;
@@ -69,6 +71,14 @@ export default class Filters extends BaseComponent {
 	private mutationObserver?: MutationObserver;
 	private panelResizeObserver?: ResizeObserver;
 
+	private isSticky = false;
+	private stuck = false;
+	private stickyFrame = 0;
+	private sentinelEl?: HTMLDivElement;
+	private stickyPlaceholderEl?: HTMLDivElement;
+	private stickyResizeObserver?: ResizeObserver;
+	private unsubscribeStickyOffset?: () => void;
+
 	constructor(init: IFilters) {
 		super(init);
 
@@ -82,11 +92,14 @@ export default class Filters extends BaseComponent {
 		this.observe();
 		this.render();
 		this.evaluate();
+		this.setSticky(Boolean(init.isSticky));
 	}
 
 	parametersChanged(payload: IFilters): void {
 		const liveEl = document.getElementById(this.runtimeId);
 		if (!liveEl) return;
+
+		const wasSticky = this.isSticky;
 
 		if (this.widgetEl !== liveEl) {
 			this.teardown();
@@ -101,6 +114,9 @@ export default class Filters extends BaseComponent {
 
 		this.render();
 		this.scheduleEvaluate();
+
+		const isSticky = payload.isSticky === undefined ? wasSticky : Boolean(payload.isSticky);
+		if (isSticky !== this.isSticky || (isSticky && !this.sentinelEl)) this.setSticky(isSticky);
 	}
 
 	destroy(): void {
@@ -190,6 +206,7 @@ export default class Filters extends BaseComponent {
 
 	private teardown(): void {
 		this.close(false, false);
+		this.disableSticky();
 		cancelAnimationFrame(this.frame);
 		this.frame = 0;
 
@@ -419,6 +436,115 @@ export default class Filters extends BaseComponent {
 			this.panelEl.style.top = '';
 			this.panelEl.style.bottom = `${window.innerHeight - rowRect.bottom}px`;
 		}
+	}
+
+	// Sticky: same approach as FilterBar. A sentinel before the row tells when the row has
+	// scrolled past the top of its scrollport; the row is then pinned with `position: fixed`
+	// below any sticky bands above it (BackofficeHeader, FilterBar...), and a placeholder
+	// keeps its space so the content below does not jump.
+	private setSticky(isSticky: boolean): void {
+		this.isSticky = isSticky;
+		this.widgetEl.dataset.issticky = isSticky ? 'true' : 'false';
+
+		if (isSticky) {
+			this.enableSticky();
+			return;
+		}
+
+		this.disableSticky();
+	}
+
+	private enableSticky(): void {
+		if (!this.sentinelEl) {
+			const sentinel = document.createElement('div');
+			sentinel.className = 'filters-sentinel';
+			sentinel.setAttribute('aria-hidden', 'true');
+			this.widgetEl.before(sentinel);
+			this.sentinelEl = sentinel;
+		}
+
+		if (!this.stickyResizeObserver) {
+			this.stickyResizeObserver = new ResizeObserver(this.scheduleSticky);
+			this.stickyResizeObserver.observe(this.widgetEl);
+		}
+
+		this.unsubscribeStickyOffset ??= subscribeStickyOffset(this.scheduleSticky);
+		document.addEventListener('scroll', this.scheduleSticky, { capture: true, passive: true });
+		window.addEventListener('resize', this.scheduleSticky, { passive: true });
+		this.scheduleSticky();
+	}
+
+	private disableSticky(): void {
+		document.removeEventListener('scroll', this.scheduleSticky, { capture: true });
+		window.removeEventListener('resize', this.scheduleSticky);
+		this.unsubscribeStickyOffset?.();
+		this.unsubscribeStickyOffset = undefined;
+		this.stickyResizeObserver?.disconnect();
+		this.stickyResizeObserver = undefined;
+		cancelAnimationFrame(this.stickyFrame);
+		this.stickyFrame = 0;
+		this.unpin();
+		this.sentinelEl?.remove();
+		this.sentinelEl = undefined;
+	}
+
+	private readonly scheduleSticky = (): void => {
+		if (this.stickyFrame) return;
+
+		this.stickyFrame = requestAnimationFrame(() => {
+			this.stickyFrame = 0;
+			this.updateSticky();
+		});
+	};
+
+	private updateSticky(): void {
+		if (!this.isSticky || !this.sentinelEl) return;
+
+		const scrollport = scrollportOf(this.widgetEl);
+		const rootTop = scrollport ? scrollport.getBoundingClientRect().top : 0;
+		const sentinelTop = this.sentinelEl.getBoundingClientRect().top;
+
+		if (sentinelTop < rootTop) {
+			this.pin();
+		} else if (this.stuck) {
+			this.unpin();
+		}
+
+		if (this.isOpen) this.position();
+	}
+
+	private pin(): void {
+		const height = Math.round(this.widgetEl.getBoundingClientRect().height);
+
+		if (!this.stickyPlaceholderEl) {
+			this.stickyPlaceholderEl = document.createElement('div');
+			this.stickyPlaceholderEl.className = 'filters-placeholder';
+			this.stickyPlaceholderEl.setAttribute('aria-hidden', 'true');
+			this.widgetEl.before(this.stickyPlaceholderEl);
+		}
+
+		this.stickyPlaceholderEl.style.height = `${height}px`;
+		this.widgetEl.dataset.isstuck = 'true';
+		this.stuck = true;
+
+		const anchor = this.stickyPlaceholderEl.getBoundingClientRect();
+		this.widgetEl.style.top = `${pinTopFor(this.widgetEl)}px`;
+		this.widgetEl.style.left = `${anchor.left}px`;
+		this.widgetEl.style.width = `${anchor.width}px`;
+		setStickyBand(this.runtimeId, this.widgetEl, height);
+	}
+
+	private unpin(): void {
+		if (!this.stuck && !this.stickyPlaceholderEl) return;
+
+		this.stuck = false;
+		delete this.widgetEl.dataset.isstuck;
+		this.widgetEl.style.top = '';
+		this.widgetEl.style.left = '';
+		this.widgetEl.style.width = '';
+		this.stickyPlaceholderEl?.remove();
+		this.stickyPlaceholderEl = undefined;
+		clearStickyBand(this.runtimeId);
 	}
 
 	private focusables(): HTMLElement[] {

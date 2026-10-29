@@ -1,3 +1,6 @@
+// Above SidePanel (401), so the panel also works inside one.
+$filters-panel-layer: 402;
+
 div[data-block$='Filters'] {
 	display: contents;
 }
@@ -71,6 +74,26 @@ div[data-block$='Filters'] {
 	}
 }
 
+.filters[data-isstuck='true'] {
+	border-radius: 0;
+	box-sizing: border-box;
+	position: fixed;
+	z-index: 3;
+}
+
+.filters-placeholder {
+	pointer-events: none;
+	width: 100%;
+}
+
+.filters-sentinel {
+	height: 1px;
+	margin-bottom: -1px;
+	pointer-events: none;
+	visibility: hidden;
+	width: 100%;
+}
+
 .filters-more {
 	flex: 0 0 auto;
 	gap: 4px;
@@ -102,7 +125,17 @@ div[data-block$='Filters'] {
 	display: flex;
 	flex-direction: column;
 	position: fixed;
-	z-index: 402;
+	z-index: $filters-panel-layer;
+}
+
+// OutSystems UI floating layers (date picker calendar, DropdownSearch list) are appended
+// to <body> with low z-indexes (OSUI layers stay below ~20). While a panel is open,
+// lift them above it so a filter opened from inside the panel is not covered by it.
+body:has(> .filters-panel) {
+	.flatpickr-calendar.open,
+	.vscomp-dropbox-container {
+		z-index: $filters-panel-layer + 1;
+	}
 }
 
 .filters-panel-content {
