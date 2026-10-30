@@ -1,6 +1,10 @@
+// Config colors arrive as inline custom properties; unset ones fall back to the Color theme.
 .badge {
+	--iconcolor: var(--badge-icon-color);
 	align-items: center;
+	background-color: var(--badge-bg-color, var(--badge-theme-bg));
 	border-radius: 999px;
+	color: var(--badge-label-color, var(--badge-theme-label));
 	display: inline-flex;
 	min-width: 0;
 }
@@ -9,6 +13,7 @@
 	padding-inline-start: 18px;
 	position: relative;
 	&::before {
+		background-color: var(--badge-icon-color, var(--badge-theme-dot));
 		border-radius: 50%;
 		content: '';
 		display: flex;
@@ -19,6 +24,11 @@
 		transform: translateY(-50%);
 		width: 6px;
 	}
+}
+
+// Config.LabelText replaces the Content placeholder. The placeholder stays in the block so screens keep their content bound.
+.badge[data-haslabeltext='true'] > .badge-content {
+	display: none;
 }
 
 .badge[data-shape='soft'] {

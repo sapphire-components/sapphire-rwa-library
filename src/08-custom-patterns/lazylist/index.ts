@@ -606,13 +606,16 @@ export default class LazyList extends BaseComponent {
 
 	private requestPageForScroll(): void {
 		if (!this.enabled || !this.actions || this.avgRowHeight <= 0 || this.pageSize <= 0 || this.itemsTotal <= 0) return;
-		if (this.getRows().length === 0) return;
+		const rows = this.getRows();
+		if (rows.length === 0) return;
+		// Rows already on screen cover the scrollport, so a small scroll needs no refetch.
+		if (this.rowsCoverView(rows)) return;
 
 		const firstVisible = Math.max(0, Math.floor(this.widgetEl.scrollTop / this.avgRowHeight));
 		const maxStart = Math.max(0, this.itemsTotal - this.pageSize);
 		const desired = Math.min(maxStart, firstVisible);
 		const needed = Math.min(this.pageSize, this.itemsTotal - desired);
-		const rendered = Math.min(this.getRows().length, this.itemsTotal - this.startIndex);
+		const rendered = Math.min(rows.length, this.itemsTotal - this.startIndex);
 		const sameRequest = desired === this.requestedStartIndex && this.pageSize === this.requestedPageSize;
 		if (sameRequest) return;
 		if (desired === this.startIndex && rendered === needed) return;
@@ -620,6 +623,17 @@ export default class LazyList extends BaseComponent {
 		this.requestedStartIndex = desired;
 		this.requestedPageSize = this.pageSize;
 		this.actions.OnScroll(desired, this.pageSize);
+	}
+
+	private rowsCoverView(rows: HTMLElement[]): boolean {
+		const edges = this.renderedEdges(rows);
+		if (!edges) return false;
+
+		const gap = this.visibleGap(edges);
+		const loadedStart = Math.min(this.startIndex, this.itemsTotal);
+		const atStart = loadedStart === 0;
+		const atEnd = loadedStart + rows.length >= this.itemsTotal;
+		return (atStart || gap.above <= 1) && (atEnd || gap.below <= 1);
 	}
 
 	private syncSkeletons(): void {

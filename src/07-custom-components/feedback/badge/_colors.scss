@@ -1,39 +1,29 @@
 .badge[data-color='neutral'] {
-	background-color: var(--color-surface);
-	color: var(--color-neutral-9);
-	&:before {
-		background-color: var(--color-neutral-9);
-	}
+	--badge-theme-bg: var(--color-surface);
+	--badge-theme-label: var(--color-neutral-9);
+	--badge-theme-dot: var(--color-neutral-9);
 }
 
 .badge[data-color='info'] {
-	background-color: var(--color-info-light);
-	color: var(--color-info-dark);
-	&:before {
-		background-color: var(--color-info);
-	}
+	--badge-theme-bg: var(--color-info-light);
+	--badge-theme-label: var(--color-info-dark);
+	--badge-theme-dot: var(--color-info);
 }
 
 .badge[data-color='success'] {
-	background-color: var(--color-success-light);
-	color: var(--color-success-dark);
-	&:before {
-		background-color: var(--color-success);
-	}
+	--badge-theme-bg: var(--color-success-light);
+	--badge-theme-label: var(--color-success-dark);
+	--badge-theme-dot: var(--color-success);
 }
 
 .badge[data-color='warning'] {
-	background-color: var(--color-warning-light);
-	color: var(--color-warning-dark);
-	&:before {
-		background-color: var(--color-warning);
-	}
+	--badge-theme-bg: var(--color-warning-light);
+	--badge-theme-label: var(--color-warning-dark);
+	--badge-theme-dot: var(--color-warning);
 }
 
 .badge[data-color='error'] {
-	background-color: var(--color-error-light);
-	color: var(--color-error-dark);
-	&:before {
-		background-color: var(--color-error);
-	}
+	--badge-theme-bg: var(--color-error-light);
+	--badge-theme-label: var(--color-error-dark);
+	--badge-theme-dot: var(--color-error);
 }
