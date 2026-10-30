@@ -5,12 +5,13 @@ div[data-block$='LabelValue'] {
 	display: contents;
 }
 
-.labelvalue {
+body .labelvalue {
 	display: inline-flex;
 	gap: 8px;
 	&-label {
-		color: var(--color-neutral-8);
+		color: var(--color-neutral-10);
 		font-size: var(--font-size-s);
+		font-weight: 600;
 		&:has(label:empty) {
 			display: none !important;
 		}

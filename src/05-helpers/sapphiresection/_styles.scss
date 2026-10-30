@@ -1,0 +1,83 @@
+@use '../../01-foundations/typography' as *;
+
+.sapphiresection {
+	background-color: var(--color-neutral-0);
+	border: solid 1px var(--color-border);
+	border-radius: var(--border-radius-soft);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-base);
+	padding: var(--space-base);
+	width: 100%;
+
+	&-header {
+		align-items: center;
+		display: flex;
+		gap: var(--space-s);
+
+		&-title {
+			@extend .heading3;
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		&-actions {
+			align-items: center;
+			display: flex;
+			flex: 0 0 auto;
+			gap: var(--space-s);
+			width: auto;
+		}
+
+		&-title:empty,
+		&-actions:empty {
+			display: none;
+		}
+
+		&:has(> .sapphiresection-header-title:empty):has(> .sapphiresection-header-actions:empty) {
+			display: none;
+		}
+	}
+
+	&-content {
+		min-width: 0;
+	}
+
+	&-footer {
+		align-items: center;
+		border-top: solid 1px var(--color-border);
+		display: flex;
+		gap: var(--space-s);
+		padding-top: var(--space-base);
+
+		&-left,
+		&-center,
+		&-right {
+			align-items: center;
+			display: flex;
+			flex: 1 1 0;
+			gap: var(--space-s);
+			min-width: 0;
+
+			&:empty {
+				display: none;
+			}
+		}
+
+		&-left {
+			justify-content: flex-start;
+		}
+
+		&-center {
+			justify-content: center;
+		}
+
+		&-right {
+			justify-content: flex-end;
+		}
+
+		&:not(:has(> :not(:empty))) {
+			display: none;
+		}
+	}
+}

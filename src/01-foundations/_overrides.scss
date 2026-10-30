@@ -49,3 +49,7 @@ body.is-rtl .ThemeGrid_MarginGutter {
 .form textarea[data-textarea] {
 	margin-bottom: unset;
 }
+
+label {
+	color: var(--color-neutral-10);
+}
