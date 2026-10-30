@@ -49,6 +49,9 @@
 
 .tablewrapper-sticky-header {
 	background-color: var(--color-neutral-0);
+	// Subtle lift so the pinned header reads apart from the white rows below.
+	border-bottom: 1px solid var(--color-border);
+	box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.16);
 	display: none;
 	overflow: hidden;
 	pointer-events: auto;

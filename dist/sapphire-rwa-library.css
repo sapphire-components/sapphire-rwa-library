@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.119 2026-10-30T08:46:32.734Z */
+/*!  SapphireRWALibrary PROD v0.6.120 2026-10-30T09:56:08.933Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5996,6 +5996,8 @@ div[data-widthcomponent=auto] {
 
 .tablewrapper-sticky-header {
   background-color: var(--color-neutral-0);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.16);
   display: none;
   overflow: hidden;
   pointer-events: auto;
@@ -11413,7 +11415,7 @@ div[data-block$=Filters] {
   gap: 12px;
   min-width: 0;
   position: relative;
-  background-color: var(--color-background);
+  background-color: var(--color-surface);
   padding: var(--filters-padding);
   border-radius: var(--border-radius-soft);
   border: solid 1px var(--color-border);
