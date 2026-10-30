@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.118 2026-10-29T18:13:16.872Z */
+/*!  SapphireRWALibrary PROD v0.6.119 2026-10-30T08:46:32.734Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -4868,7 +4868,11 @@ div[data-block$=LabelValue] {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
   width: 100%;
+}
+.labelvalue-value {
+  min-width: 0;
 }
 .labelvalue-hint {
   color: var(--color-neutral-7);

@@ -19,7 +19,11 @@ div[data-block$='LabelValue'] {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
+		min-width: 0;
 		width: 100%;
+	}
+	&-value {
+		min-width: 0;
 	}
 	&-hint {
 		color: var(--color-neutral-7);
