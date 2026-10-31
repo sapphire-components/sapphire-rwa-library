@@ -67,10 +67,38 @@ div[data-block$='Filters'] {
 		}
 	}
 
-	// See more and Actions sit together at the end of the row, whichever comes first takes the free space.
+	// See more, Clear and Actions sit together at the end of the row, whichever comes first takes the free space.
 	> .filters-more,
-	> .filters-more[hidden] + .filters-actions {
+	> .filters-more[hidden] + .filters-clear,
+	> .filters-more[hidden] + .filters-clear[hidden] + .filters-actions {
 		margin-inline-start: auto;
+	}
+}
+
+// Active filters: a filter with a value is highlighted, on the row and in the panel.
+// Disabled and invalid states keep their own styling.
+.filters,
+.filters-panel {
+	.sapphiredropdown[data-hasvalue='true']:not([data-enabled='false'], [data-isvalid='false']) .sapphiredropdown-trigger {
+		background-color: var(--color-primary-lighter);
+		border-color: var(--color-primary-light);
+
+		&:hover,
+		&:focus,
+		&[aria-expanded='true'] {
+			border-color: var(--color-primary);
+		}
+	}
+
+	.sapphireinput[data-hascontent='true']:not([data-enabled='false'], [data-isvalid='false'], [data-isoutofbounds='true']) .form-control[data-input],
+	:is(input, select)[data-filtersactive='true']:not(:disabled, .not-valid) {
+		background-color: var(--color-primary-lighter);
+		border-color: var(--color-primary-light);
+
+		&:hover,
+		&:focus {
+			border-color: var(--color-primary);
+		}
 	}
 }
 
@@ -108,6 +136,27 @@ div[data-block$='Filters'] {
 
 .filters-more-count {
 	font-weight: 600;
+}
+
+// Number of active filters hidden behind See more.
+.filters-more-active {
+	align-items: center;
+	background-color: var(--color-error);
+	border-radius: 999px;
+	box-sizing: border-box;
+	color: var(--color-neutral-0);
+	display: inline-flex;
+	font-size: 11px;
+	font-weight: 600;
+	height: 18px;
+	justify-content: center;
+	line-height: 1;
+	min-width: 18px;
+	padding-inline: 5px;
+
+	&[hidden] {
+		display: none;
+	}
 }
 
 .filters[data-enabled='false'] .filters-more {
@@ -169,4 +218,21 @@ body:has(> .filters-panel) {
 
 .filters-apply {
 	min-height: 32px;
+}
+
+.filters-clear {
+	flex: 0 0 auto;
+	min-height: 32px;
+	white-space: nowrap;
+}
+
+// Clear on the left of the panel footer, Apply on the right.
+.filters-panel-footer > .filters-clear {
+	margin-inline-end: auto;
+}
+
+// `.btn` sets `display: inline-flex`, which outranks the UA `[hidden]` rule.
+.filters-clear[hidden],
+.filters-apply[hidden] {
+	display: none;
 }

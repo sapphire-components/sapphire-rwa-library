@@ -53,3 +53,8 @@ body.is-rtl .ThemeGrid_MarginGutter {
 label {
 	color: var(--color-neutral-10);
 }
+
+.dropdown-container:after {
+	border-width: 1.4px;
+	color: var(--color-neutral-6);
+}

@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.122 2026-10-30T18:10:06.556Z */
+/*!  SapphireRWALibrary PROD v0.6.123 2026-10-31T12:27:31.786Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1104,6 +1104,11 @@ body.is-rtl .ThemeGrid_MarginGutter {
 
 label {
   color: var(--color-neutral-10);
+}
+
+.dropdown-container:after {
+  border-width: 1.4px;
+  color: var(--color-neutral-6);
 }
 .service-studio-preview {
   background-color: var(--color-primary);
@@ -11535,8 +11540,37 @@ div[data-block$=Filters] {
   display: none;
 }
 .filters > .filters-more,
-.filters > .filters-more[hidden] + .filters-actions {
+.filters > .filters-more[hidden] + .filters-clear,
+.filters > .filters-more[hidden] + .filters-clear[hidden] + .filters-actions {
   margin-inline-start: auto;
+}
+
+.filters .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger,
+.filters-panel .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger {
+  background-color: var(--color-primary-lighter);
+  border-color: var(--color-primary-light);
+}
+.filters .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger:hover, .filters .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger:focus, .filters .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger[aria-expanded=true],
+.filters-panel .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger:hover,
+.filters-panel .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger:focus,
+.filters-panel .sapphiredropdown[data-hasvalue=true]:not([data-enabled=false], [data-isvalid=false]) .sapphiredropdown-trigger[aria-expanded=true] {
+  border-color: var(--color-primary);
+}
+.filters .sapphireinput[data-hascontent=true]:not([data-enabled=false], [data-isvalid=false], [data-isoutofbounds=true]) .form-control[data-input],
+.filters :is(input, select)[data-filtersactive=true]:not(:disabled, .not-valid),
+.filters-panel .sapphireinput[data-hascontent=true]:not([data-enabled=false], [data-isvalid=false], [data-isoutofbounds=true]) .form-control[data-input],
+.filters-panel :is(input, select)[data-filtersactive=true]:not(:disabled, .not-valid) {
+  background-color: var(--color-primary-lighter);
+  border-color: var(--color-primary-light);
+}
+.filters .sapphireinput[data-hascontent=true]:not([data-enabled=false], [data-isvalid=false], [data-isoutofbounds=true]) .form-control[data-input]:hover, .filters .sapphireinput[data-hascontent=true]:not([data-enabled=false], [data-isvalid=false], [data-isoutofbounds=true]) .form-control[data-input]:focus,
+.filters :is(input, select)[data-filtersactive=true]:not(:disabled, .not-valid):hover,
+.filters :is(input, select)[data-filtersactive=true]:not(:disabled, .not-valid):focus,
+.filters-panel .sapphireinput[data-hascontent=true]:not([data-enabled=false], [data-isvalid=false], [data-isoutofbounds=true]) .form-control[data-input]:hover,
+.filters-panel .sapphireinput[data-hascontent=true]:not([data-enabled=false], [data-isvalid=false], [data-isoutofbounds=true]) .form-control[data-input]:focus,
+.filters-panel :is(input, select)[data-filtersactive=true]:not(:disabled, .not-valid):hover,
+.filters-panel :is(input, select)[data-filtersactive=true]:not(:disabled, .not-valid):focus {
+  border-color: var(--color-primary);
 }
 
 .filters[data-isstuck=true] {
@@ -11572,6 +11606,25 @@ div[data-block$=Filters] {
 
 .filters-more-count {
   font-weight: 600;
+}
+
+.filters-more-active {
+  align-items: center;
+  background-color: var(--color-error);
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: var(--color-neutral-0);
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 600;
+  height: 18px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 18px;
+  padding-inline: 5px;
+}
+.filters-more-active[hidden] {
+  display: none;
 }
 
 .filters[data-enabled=false] .filters-more {
@@ -11627,6 +11680,21 @@ body:has(> .filters-panel) .vscomp-dropbox-container {
 
 .filters-apply {
   min-height: 32px;
+}
+
+.filters-clear {
+  flex: 0 0 auto;
+  min-height: 32px;
+  white-space: nowrap;
+}
+
+.filters-panel-footer > .filters-clear {
+  margin-inline-end: auto;
+}
+
+.filters-clear[hidden],
+.filters-apply[hidden] {
+  display: none;
 }
 div[data-block$=LazyListRow] {
   display: contents;

@@ -4,12 +4,15 @@ import { clearStickyBand, pinTopFor, scrollportOf, setStickyBand, subscribeStick
 interface IFilters extends BaseComponentInit {
 	actions: {
 		OnApply: () => void;
+		OnClear: () => void;
 		OnToggle: (isOpen: boolean) => void;
 	};
 	enabled: boolean;
 	hasApplyButton: boolean;
+	hasClear: boolean;
 	isSticky: boolean;
 	textApply: string;
+	textClear: string;
 	textSeeMore: string;
 	theme: string;
 }
@@ -22,9 +25,33 @@ const PLACEHOLDER_CLASSES = ['filters-always', 'filters-maybe', 'filters-never']
 // DropdownSearch) land outside the panel, but must not close it.
 const FLOATING_LAYERS_SELECTOR = '[data-tippy-root], .flatpickr-calendar, .vscomp-dropbox-container';
 
+// Plain platform inputs (text, number, email, date...) and Dropdowns (select). Their value is a property, so Filters
+// reflects it on the field as data-filtersactive for counting and styling.
+// SapphireInput wraps one of these but reports its own state.
+const PLAIN_FIELD_SELECTOR =
+	"select, input:not([type='checkbox'], [type='radio'], [type='hidden'], [type='button'], [type='submit'], [type='reset'], [type='file'], [type='range'], [type='color'], [type='image'])";
+
+// Platform Dropdowns use list positions (0, 1, 2...) as option values; the Empty Text option is -1.
+const SELECT_EMPTY_VALUE = '-1';
+
+// A filter is active when it holds a value. Add a component's selector here to count it,
+// plus the attribute it toggles when that happens. Checkboxes change a property rather
+// than an attribute, so they are picked up through `change` events instead.
+const ACTIVE_SELECTOR = [
+	".sapphiredropdown[data-hasvalue='true']",
+	".sapphireinput[data-hascontent='true']",
+	".checkboxlabel input[type='checkbox']:checked",
+	"[data-filtersactive='true']",
+].join(', ');
+// The platform keeps an input's `value` attribute in sync with its value, including values set by screen logic.
+const ACTIVE_ATTRIBUTES = ['data-hasvalue', 'data-hascontent', 'checked', 'value'];
+
 const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 const VIEWPORT_MARGIN = 8;
+
+// How long fields are re-checked after a click or key press, in ms (see onDocumentInteraction).
+const SETTLE_WINDOW = 1500;
 
 // Elements that render a box. Block wrappers such as div[data-block] use `display: contents`
 // and have no box of their own, so they are replaced by the boxes inside them.
@@ -46,7 +73,9 @@ export default class Filters extends BaseComponent {
 	private actions!: IFilters['actions'];
 	private enabled = true;
 	private hasApplyButton = true;
+	private hasClear = false;
 	private textApply = 'Apply';
+	private textClear = 'Clear';
 	private textSeeMore = 'See more';
 	private theme = '';
 
@@ -62,13 +91,20 @@ export default class Filters extends BaseComponent {
 	private moreEl!: HTMLButtonElement;
 	private moreCountEl!: HTMLSpanElement;
 	private moreLabelEl!: HTMLSpanElement;
+	private moreActiveEl!: HTMLSpanElement;
 	private panelEl!: HTMLDivElement;
 	private panelContentEl!: HTMLDivElement;
 	private panelFooterEl!: HTMLDivElement;
 	private applyEl!: HTMLButtonElement;
+	private clearEl!: HTMLButtonElement;
+	private panelClearEl!: HTMLButtonElement;
 
 	private resizeObserver?: ResizeObserver;
 	private mutationObserver?: MutationObserver;
+	private activeObserver?: MutationObserver;
+	private activeSignature = '';
+	private settleFrame = 0;
+	private settleUntil = 0;
 	private panelResizeObserver?: ResizeObserver;
 
 	private isSticky = false;
@@ -128,7 +164,9 @@ export default class Filters extends BaseComponent {
 		if (payload.actions) this.actions = payload.actions;
 		if (payload.enabled !== undefined) this.enabled = payload.enabled !== false;
 		if (payload.hasApplyButton !== undefined) this.hasApplyButton = payload.hasApplyButton !== false;
+		if (payload.hasClear !== undefined) this.hasClear = payload.hasClear === true;
 		if (payload.textApply !== undefined) this.textApply = payload.textApply || 'Apply';
+		if (payload.textClear !== undefined) this.textClear = payload.textClear || 'Clear';
 		if (payload.textSeeMore !== undefined) this.textSeeMore = payload.textSeeMore || 'See more';
 		if (payload.theme !== undefined) this.theme = payload.theme ?? '';
 	}
@@ -150,9 +188,15 @@ export default class Filters extends BaseComponent {
 		this.moreLabelEl = document.createElement('span');
 		this.moreLabelEl.className = 'filters-more-label';
 
-		this.moreEl.append(this.moreCountEl, this.moreLabelEl);
-		// Sits right before the permanent Actions, or at the end of the row when there are none.
+		this.moreActiveEl = document.createElement('span');
+		this.moreActiveEl.className = 'filters-more-active';
+		this.moreActiveEl.hidden = true;
+
+		this.moreEl.append(this.moreCountEl, this.moreLabelEl, this.moreActiveEl);
+		// See more, then Clear, sit right before the permanent Actions, or at the end of the row when there are none.
+		this.clearEl = this.createClearButton();
 		this.widgetEl.insertBefore(this.moreEl, this.actionsEl);
+		this.widgetEl.insertBefore(this.clearEl, this.actionsEl);
 
 		this.panelEl = document.createElement('div');
 		this.panelEl.className = 'filters-panel';
@@ -164,16 +208,43 @@ export default class Filters extends BaseComponent {
 		this.panelFooterEl = document.createElement('div');
 		this.panelFooterEl.className = 'filters-panel-footer';
 
-		this.applyEl = document.createElement('button');
-		this.applyEl.type = 'button';
-		this.applyEl.className = 'btn btn-primary btn-small filters-apply';
+		this.applyEl = this.createLabelledButton('btn btn-primary btn-small filters-apply');
 
-		this.panelFooterEl.append(this.applyEl);
+		// Clear on the left of the footer, Apply on the right.
+		this.panelClearEl = this.createClearButton();
+		this.panelFooterEl.append(this.panelClearEl, this.applyEl);
 		this.panelEl.append(this.panelContentEl, this.panelFooterEl);
 
 		this.moreEl.addEventListener('click', this.onMoreClick);
 		this.applyEl.addEventListener('click', this.onApplyClick);
 		this.panelEl.addEventListener('keydown', this.onPanelKeyDown);
+	}
+
+	private createClearButton(): HTMLButtonElement {
+		const button = this.createLabelledButton('btn btn-small filters-clear');
+		button.hidden = true;
+		button.addEventListener('click', this.onClearClick);
+		return button;
+	}
+
+	// The label lives in its own span so it can change without replacing the button's children:
+	// OutSystems UI appends a ripple span to any clicked `.btn` and removes it with removeChild
+	// 1.8s later, which throws if the span is gone by then.
+	private createLabelledButton(className: string): HTMLButtonElement {
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = className;
+
+		const label = document.createElement('span');
+		label.className = 'filters-button-label';
+		button.append(label);
+
+		return button;
+	}
+
+	private setLabel(button: HTMLButtonElement, text: string): void {
+		const label = button.querySelector<HTMLSpanElement>(':scope > .filters-button-label');
+		if (label && label.textContent !== text) label.textContent = text;
 	}
 
 	private observe(): void {
@@ -188,6 +259,19 @@ export default class Filters extends BaseComponent {
 		for (const el of [this.alwaysEl, this.maybeEl, this.neverEl, this.actionsEl]) {
 			if (el) this.mutationObserver.observe(el, { childList: true });
 		}
+
+		// A filter gaining or losing a value changes its styling and the active count on See more.
+		// Placeholders are observed directly, so this keeps working while they sit in the panel.
+		this.activeObserver = new MutationObserver(this.onActiveChange);
+		for (const el of [this.alwaysEl, this.maybeEl, this.neverEl]) {
+			if (!el) continue;
+			this.activeObserver.observe(el, { attributeFilter: ACTIVE_ATTRIBUTES, subtree: true });
+			el.addEventListener('input', this.onActiveChange);
+			el.addEventListener('change', this.onActiveChange);
+		}
+
+		document.addEventListener('click', this.onDocumentInteraction, true);
+		document.addEventListener('keyup', this.onDocumentInteraction, true);
 
 		this.panelResizeObserver = new ResizeObserver(this.schedulePosition);
 	}
@@ -214,13 +298,26 @@ export default class Filters extends BaseComponent {
 		this.resizeObserver = undefined;
 		this.mutationObserver?.disconnect();
 		this.mutationObserver = undefined;
+		this.activeObserver?.disconnect();
+		this.activeObserver = undefined;
+		for (const el of [this.alwaysEl, this.maybeEl, this.neverEl]) {
+			el?.removeEventListener('input', this.onActiveChange);
+			el?.removeEventListener('change', this.onActiveChange);
+		}
 		this.panelResizeObserver?.disconnect();
 		this.panelResizeObserver = undefined;
+		document.removeEventListener('click', this.onDocumentInteraction, true);
+		document.removeEventListener('keyup', this.onDocumentInteraction, true);
+		cancelAnimationFrame(this.settleFrame);
+		this.settleFrame = 0;
 
 		this.moreEl?.removeEventListener('click', this.onMoreClick);
 		this.applyEl?.removeEventListener('click', this.onApplyClick);
+		this.clearEl?.removeEventListener('click', this.onClearClick);
+		this.panelClearEl?.removeEventListener('click', this.onClearClick);
 		this.panelEl?.removeEventListener('keydown', this.onPanelKeyDown);
 		this.moreEl?.remove();
+		this.clearEl?.remove();
 		this.panelEl?.remove();
 
 		for (const item of this.items(this.maybeEl)) delete item.dataset.filtersoverflow;
@@ -230,9 +327,14 @@ export default class Filters extends BaseComponent {
 		this.widgetEl.dataset.open = this.isOpen ? 'true' : 'false';
 		this.moreEl.disabled = !this.enabled;
 		this.moreLabelEl.textContent = this.textSeeMore;
-		this.applyEl.textContent = this.textApply;
+		this.setLabel(this.applyEl, this.textApply);
 		this.applyEl.disabled = !this.enabled;
-		this.panelFooterEl.hidden = !this.hasApplyButton;
+		this.applyEl.hidden = !this.hasApplyButton;
+		for (const button of [this.clearEl, this.panelClearEl]) {
+			this.setLabel(button, this.textClear);
+			button.disabled = !this.enabled;
+		}
+		this.updateClear();
 		this.panelEl.dataset.theme = this.theme;
 		this.panelEl.dataset.density = this.widgetEl.dataset.density ?? '';
 		this.panelEl.setAttribute('aria-label', this.textSeeMore);
@@ -240,6 +342,67 @@ export default class Filters extends BaseComponent {
 
 	private items(placeholder: HTMLElement | null): HTMLElement[] {
 		return placeholder ? (Array.from(placeholder.children) as HTMLElement[]) : [];
+	}
+
+	// Runs right away, not on the next evaluate, so the styling also follows while the panel is open.
+	private readonly onActiveChange = (): void => {
+		this.markPlainFields();
+		this.activeSignature = this.readActiveSignature();
+		this.updateClear();
+		this.scheduleEvaluate();
+	};
+
+	// Screen logic can change a select's option or a checkbox without any event or attribute
+	// change (e.g. a Clear handler resetting variables). Those changes nearly always follow a
+	// click or key press, so after one, fields are re-checked each frame for a short while.
+	private readonly onDocumentInteraction = (): void => {
+		this.settleUntil = performance.now() + SETTLE_WINDOW;
+		if (this.settleFrame) return;
+
+		const tick = (): void => {
+			this.markPlainFields();
+			if (this.readActiveSignature() !== this.activeSignature) this.onActiveChange();
+
+			this.settleFrame = performance.now() < this.settleUntil ? requestAnimationFrame(tick) : 0;
+		};
+		this.settleFrame = requestAnimationFrame(tick);
+	};
+
+	// Which filters are active, in order. Cheap to compare, so only real changes trigger a re-render.
+	private readActiveSignature(): string {
+		const all = [...this.items(this.alwaysEl), ...this.items(this.maybeEl), ...this.items(this.neverEl)];
+		return all.map((item) => (this.countActive([item]) > 0 ? '1' : '0')).join('');
+	}
+
+	// Clear shows while any filter, on the row or hidden, is active. The panel footer
+	// shows when it has something to hold.
+	private updateClear(): void {
+		const all = [...this.items(this.alwaysEl), ...this.items(this.maybeEl), ...this.items(this.neverEl)];
+		const visible = this.hasClear && this.countActive(all) > 0;
+
+		// Clearing hides the button under the user's focus; keep focus inside the panel.
+		const refocus = !visible && this.isOpen && document.activeElement === this.panelClearEl;
+
+		this.clearEl.hidden = !visible;
+		this.panelClearEl.hidden = !visible;
+		this.panelFooterEl.hidden = !this.hasApplyButton && !visible;
+
+		if (refocus) this.focusables()[0]?.focus();
+	}
+
+	private markPlainFields(): void {
+		for (const placeholder of [this.alwaysEl, this.maybeEl, this.neverEl]) {
+			if (!placeholder) continue;
+
+			for (const field of placeholder.querySelectorAll<HTMLInputElement | HTMLSelectElement>(PLAIN_FIELD_SELECTOR)) {
+				if (field.closest('.sapphireinput')) continue;
+
+				const value = field.value.trim();
+				const isEmpty = value === '' || (field instanceof HTMLSelectElement && value === SELECT_EMPTY_VALUE);
+				const active = isEmpty ? 'false' : 'true';
+				if (field.dataset.filtersactive !== active) field.dataset.filtersactive = active;
+			}
+		}
 	}
 
 	private readonly scheduleEvaluate = (): void => {
@@ -256,17 +419,25 @@ export default class Filters extends BaseComponent {
 	private evaluate(): void {
 		if (this.isOpen || !this.widgetEl.isConnected) return;
 
+		// Covers inputs added since the last change, and the initial values.
+		this.markPlainFields();
+		this.updateClear();
+
 		const alwaysItems = this.items(this.alwaysEl);
 		const maybeItems = this.items(this.maybeEl);
-		const neverCount = this.items(this.neverEl).length;
+		const neverItems = this.items(this.neverEl);
+		const neverCount = neverItems.length;
 
 		for (const item of maybeItems) delete item.dataset.filtersoverflow;
 
 		const style = getComputedStyle(this.widgetEl);
 		const gap = parseFloat(style.columnGap) || 0;
-		const actionsWidth = this.actionsEl?.getBoundingClientRect().width ?? 0;
-		const available =
-			this.widgetEl.clientWidth - (parseFloat(style.paddingInlineStart) || 0) - (parseFloat(style.paddingInlineEnd) || 0) - (actionsWidth > 0 ? actionsWidth + gap : 0);
+		// Clear and Actions always stay on the row, so their space is reserved first.
+		const endWidth = [this.clearEl, this.actionsEl]
+			.map((el) => el?.getBoundingClientRect().width ?? 0)
+			.filter((width) => width > 0)
+			.reduce((sum, width) => sum + width + gap, 0);
+		const available = this.widgetEl.clientWidth - (parseFloat(style.paddingInlineStart) || 0) - (parseFloat(style.paddingInlineEnd) || 0) - endWidth;
 
 		const alwaysWidths = alwaysItems.map(widthOf);
 		const maybeWidths = maybeItems.map(widthOf);
@@ -289,7 +460,8 @@ export default class Filters extends BaseComponent {
 		let hiddenCount = maybeItems.length - visibleCount + neverCount;
 
 		if (hiddenCount > 0) {
-			this.updateMoreLabel(hiddenCount);
+			// Measure with the largest count the badge can show, so the button never outgrows the space reserved for it.
+			this.updateMoreLabel(hiddenCount, this.countActive([...maybeItems, ...neverItems]));
 			this.moreEl.hidden = false;
 			visibleCount = fitting(this.moreEl.getBoundingClientRect().width + gap);
 			hiddenCount = maybeItems.length - visibleCount + neverCount;
@@ -299,12 +471,18 @@ export default class Filters extends BaseComponent {
 			item.dataset.filtersoverflow = 'true';
 		});
 
-		this.updateMoreLabel(hiddenCount);
+		this.updateMoreLabel(hiddenCount, this.countActive([...maybeItems.slice(visibleCount), ...neverItems]));
 		this.moreEl.hidden = hiddenCount === 0;
 	}
 
-	private updateMoreLabel(count: number): void {
+	private countActive(items: HTMLElement[]): number {
+		return items.filter((item) => item.matches(ACTIVE_SELECTOR) || item.querySelector(ACTIVE_SELECTOR) !== null).length;
+	}
+
+	private updateMoreLabel(count: number, activeCount: number): void {
 		this.moreCountEl.textContent = `+${count}`;
+		this.moreActiveEl.textContent = String(activeCount);
+		this.moreActiveEl.hidden = activeCount === 0;
 	}
 
 	private readonly onMoreClick = (): void => {
@@ -319,6 +497,13 @@ export default class Filters extends BaseComponent {
 		if (!this.enabled) return;
 		this.actions?.OnApply();
 		this.close(true);
+	};
+
+	// Only notifies: the screen resets its own filter variables, and the active
+	// styling, count and this button follow from the new values. The panel stays open.
+	private readonly onClearClick = (): void => {
+		if (!this.enabled) return;
+		this.actions?.OnClear();
 	};
 
 	private readonly onPanelKeyDown = (event: KeyboardEvent): void => {

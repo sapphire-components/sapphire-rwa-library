@@ -9,7 +9,10 @@ A single row of filters that hides what does not fit behind a **+N See more** bu
 - The panel covers the row and holds all filters in their original order (`Always`, `Maybe`, `Never`), with an **Apply** button at the bottom when `HasApplyButton` is `True`. It opens downwards and flips upwards when there is not enough room below. The row keeps its height while the panel is open, so the rest of the screen does not move.
 - The panel closes on Apply, on a click outside it, or on Esc. Clicks inside dropdowns and date pickers opened from a filter do not close it.
 - The row is recalculated when the component is resized and when filters are added or removed.
-- When `Enabled` is `False`, the button and the Apply button do not accept input.
+- When `Enabled` is `False`, the See more, Clear and Apply buttons do not accept input.
+- When `HasClear` is `True`, a **Clear** button shows while any filter is active: on the row between See more and `Actions`, and at the bottom left of the panel. It fires `Clear` and does not change any value itself, so reset the filter variables in the handler. The panel stays open.
+- A filter with a value is shown as active, with a primary lighter background, on the row and in the panel. Supported: `SapphireDropdown`, `SapphireInput`, plain platform `Input` widgets (text, number, email, date...) and `Dropdown` widgets (active unless the Empty Text option is selected, so set an Empty Text).
+- When hidden filters are active, the See more button shows their count in a red badge, e.g. **+2 See more (1)**. A `CheckboxLabel` with its checkbox ticked also counts as active.
 
 <hr>
 
@@ -18,12 +21,14 @@ A single row of filters that hides what does not fit behind a **+N See more** bu
 | Name            | Type            | Description                                                                 |
 | --------------- | --------------- | --------------------------------------------------------------------------- |
 | `Density`       | `SapphireDensity` | Padding of the row and the panel: `Default` 24px, `Compact` 16px, `Dense` 8px. |
-| `Enabled`       | `Boolean`       | Enables or disables the See more and Apply buttons.                        |
+| `Enabled`       | `Boolean`       | Enables or disables the See more, Clear and Apply buttons.                 |
 | `ExtendedClass` | `Text`          | Extra classes added to the component root.                                  |
 | `IsSticky`      | `Boolean`       | When `True`, the row stays pinned at the top of the scroll area once it scrolls past it, below any other sticky components above it (BackofficeHeader, FilterBar...). |
 | `HasApplyButton` | `Boolean`      | When `True`, the panel shows the Apply button at the bottom. Defaults to `True`. |
+| `HasClear`      | `Boolean`       | When `True`, shows the Clear button while any filter is active. Defaults to `False`. |
 | `Identifier`    | `Text`          | Optional identifier passed on the emitted events.                           |
 | `TextApply`     | `Text`          | Label of the Apply button in the panel. Defaults to `Apply`.                |
+| `TextClear`     | `Text`          | Label of the Clear button. Defaults to `Clear`.                             |
 | `TextSeeMore`   | `Text`          | Label of the button that opens the panel, shown after `+N`. Defaults to `See more`. |
 | `Theme`         | `Text`          | Theme applied to the component and the panel.                               |
 | `Width`         | `SapphireScale` | Component width.                                                            |
@@ -46,4 +51,5 @@ A single row of filters that hides what does not fit behind a **+N See more** bu
 | Name     | Description                                              | Arguments                                   |
 | -------- | -------------------------------------------------------- | ------------------------------------------- |
 | `Apply`  | Fired when Apply is clicked, before the panel closes.    | `Identifier` (`Text`)                       |
+| `Clear`  | Fired when Clear is clicked. Reset the filter variables here. | `Identifier` (`Text`)              |
 | `Toggle` | Fired when the panel opens or closes.                    | `Identifier` (`Text`), `IsOpen` (`Boolean`) |
