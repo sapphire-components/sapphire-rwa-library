@@ -60,8 +60,16 @@ function boxesOf(el: Element): Element[] {
 	return Array.from(el.children).flatMap(boxesOf);
 }
 
+// Absolute and fixed boxes take no space on the row, such as the visually hidden text
+// OutSystems UI adds next to a Date Picker, which can sit anywhere and would stretch the width.
+function isInFlow(box: Element): boolean {
+	const { position } = getComputedStyle(box);
+	return position !== 'absolute' && position !== 'fixed';
+}
+
 function widthOf(item: HTMLElement): number {
 	const rects = boxesOf(item)
+		.filter(isInFlow)
 		.map((box) => box.getBoundingClientRect())
 		.filter((rect) => rect.width > 0);
 	if (rects.length === 0) return 0;
@@ -426,10 +434,20 @@ export default class Filters extends BaseComponent {
 		const alwaysItems = this.items(this.alwaysEl);
 		const maybeItems = this.items(this.maybeEl);
 		const neverItems = this.items(this.neverEl);
-		const neverCount = neverItems.length;
 
 		for (const item of maybeItems) delete item.dataset.filtersoverflow;
 
+		// Full-width filters stop growing while measuring, so they count at their minimum width.
+		this.widgetEl.dataset.filtersmeasuring = 'true';
+		try {
+			this.measure(alwaysItems, maybeItems, neverItems);
+		} finally {
+			delete this.widgetEl.dataset.filtersmeasuring;
+		}
+	}
+
+	private measure(alwaysItems: HTMLElement[], maybeItems: HTMLElement[], neverItems: HTMLElement[]): void {
+		const neverCount = neverItems.length;
 		const style = getComputedStyle(this.widgetEl);
 		const gap = parseFloat(style.columnGap) || 0;
 		// Clear and Actions always stay on the row, so their space is reserved first.

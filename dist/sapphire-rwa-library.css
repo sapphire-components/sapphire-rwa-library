@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.126 2026-11-02T13:33:51.149Z */
+/*!  SapphireRWALibrary PROD v0.6.127 2026-11-02T18:14:46.814Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -11568,6 +11568,7 @@ div[data-block$=Filters] {
 }
 
 .filters {
+  --filters-fill-min-width: 240px;
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -11590,6 +11591,14 @@ div[data-block$=Filters] {
 .filters > .filters-maybe > * {
   flex: 0 0 auto;
   max-width: 100%;
+}
+.filters > :is(.filters-always, .filters-maybe) > [data-widthcomponent=full],
+.filters > :is(.filters-always, .filters-maybe) > [data-block] > [data-widthcomponent=full] {
+  flex: 1 0 var(--filters-fill-min-width);
+  min-width: min(var(--filters-fill-min-width), 100%);
+}
+.filters[data-filtersmeasuring=true] > :is(.filters-always, .filters-maybe) > [data-widthcomponent=full], .filters[data-filtersmeasuring=true] > :is(.filters-always, .filters-maybe) > [data-block] > [data-widthcomponent=full] {
+  flex-grow: 0;
 }
 .filters [data-filtersoverflow=true] {
   display: none;

@@ -347,9 +347,7 @@ export default class Overlay extends BaseComponent {
 		this.tippyInstance = window.tippy(this.triggerElement, this.bootstrapOptions);
 	}
 
-	parametersChanged(payload: IOverlayConfigOptions): void {
-		console.log(payload);
-	}
+	parametersChanged(_payload: IOverlayConfigOptions): void {}
 
 	destroy() {
 		if (this.isClickTrigger) {

@@ -21,6 +21,8 @@ div[data-block$='Filters'] {
 }
 
 .filters {
+	--filters-fill-min-width: 240px;
+
 	align-items: center;
 	display: flex;
 	// Maybe filters only show when they fit on the first line, so wrapping only
@@ -49,6 +51,19 @@ div[data-block$='Filters'] {
 	> .filters-maybe > * {
 		flex: 0 0 auto;
 		max-width: 100%;
+	}
+
+	// A full-width filter fills the space left on the row instead of taking a line of its own,
+	// so See more, Clear and Actions stay next to it. It is measured at its minimum width.
+	> :is(.filters-always, .filters-maybe) > [data-widthcomponent='full'],
+	> :is(.filters-always, .filters-maybe) > [data-block] > [data-widthcomponent='full'] {
+		flex: 1 0 var(--filters-fill-min-width);
+		min-width: min(var(--filters-fill-min-width), 100%);
+	}
+
+	&[data-filtersmeasuring='true'] > :is(.filters-always, .filters-maybe) > [data-widthcomponent='full'],
+	&[data-filtersmeasuring='true'] > :is(.filters-always, .filters-maybe) > [data-block] > [data-widthcomponent='full'] {
+		flex-grow: 0;
 	}
 
 	[data-filtersoverflow='true'] {
