@@ -1,6 +1,8 @@
 # Upstream
 
-Copied unchanged from the OutSystems repository, MIT license.
+Copied from the OutSystems repository, MIT license.
+
+Local change: frontmatter runs the skill as a forked Sonnet subagent (`context: fork`, `agent: general-purpose`, `model: sonnet`), and the "Read this file fully" line was softened. Re-apply both after copying a new upstream version.
 
 - Repository: https://github.com/OutSystems/outsystems11-mcp
 - Folder: servicestudio-mcp-oml

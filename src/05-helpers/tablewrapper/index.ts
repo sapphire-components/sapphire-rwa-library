@@ -10,6 +10,7 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 		OnRowClick: (rowId: string) => void;
 	};
 	clickableRows: boolean;
+	columnFixedWidths: boolean;
 	height: number;
 	isLoading: boolean;
 	isPristine: boolean;
@@ -24,6 +25,7 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 export default class TableWrapper extends BaseComponent {
 	private actions!: TableWrapperConfigOptions['actions'];
 	private clickableRows = false;
+	private columnFixedWidths = false;
 	private configOptions!: TableWrapperConfigOptions;
 	private dragActive = false;
 	private dragPointerId: number | null = null;
@@ -55,7 +57,12 @@ export default class TableWrapper extends BaseComponent {
 	private tableHeaderEl?: HTMLElement;
 	private unsubscribeStickyOffset?: () => void;
 
+	private static readonly CONTENT_SELECTOR = 'img, svg, picture, video, audio, canvas, iframe, object, embed, input, select, textarea, button, progress, meter, [data-iconname], [role="img"]';
 	private static readonly DRAG_THRESHOLD_PX = 2;
+	private static readonly EMPTY_COLUMN_CLASS = 'tablewrapper-empty-column';
+	private static readonly INHERITED_WIDTH_ATTR = 'inheritedwidth';
+	private static readonly OWN_WIDTH_ATTR = 'ownwidth';
+	private static readonly WIDTH_CLASS_PATTERN = /^(?:min-|max-)?width-/;
 	private static readonly INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, label, [role="button"], [role="link"], [contenteditable="true"]';
 	private static readonly GRIP_CLASS = 'dots-six-vertical';
 	private static readonly POSITION_CLASS = 'tablewrapper-reorder-position';
@@ -178,6 +185,7 @@ export default class TableWrapper extends BaseComponent {
 
 		this.actions = this.configOptions.actions;
 		this.clickableRows = this.configOptions.clickableRows;
+		this.columnFixedWidths = Boolean(this.configOptions.columnFixedWidths);
 		this.isLoading = this.configOptions.isLoading;
 		this.isPristine = this.configOptions.isPristine;
 		this.isStickyHeader = this.configOptions.isStickyHeader && !this.configOptions.maxHeight;
@@ -228,7 +236,9 @@ export default class TableWrapper extends BaseComponent {
 					row.dataset.roworder = explicitOrder;
 				}
 			});
+			this.applyColumnWidths();
 			this.syncReorderUi();
+			this.hideEmptyColumns();
 			this.scheduleStickyUpdate();
 		}, 0);
 	}
@@ -472,6 +482,113 @@ export default class TableWrapper extends BaseComponent {
 		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
 		this.widgetEl.dataset.ispristine = this.isPristine ? 'true' : 'false';
 		this.widgetEl.dataset.isstickyheader = this.isStickyHeader ? 'true' : 'false';
+		this.widgetEl.dataset.columnfixedwidths = this.columnFixedWidths ? 'true' : 'false';
+	}
+
+	// The header sets the rule: each body cell gets the width-* classes of the
+	// header cell in its column, replacing its own. Where there is no header, or
+	// the header cell has no width class, the cell's own width classes apply.
+	// Changes are recorded on the cell so they can be undone when the rule changes.
+	private applyColumnWidths(): void {
+		const headerCells = this.tableHeaderEl
+			? Array.from(this.tableHeaderEl.querySelectorAll<HTMLTableCellElement>(':scope > th, :scope > td'))
+			: [];
+		const columnClasses: string[][] = [];
+		headerCells.forEach((cell) => {
+			const classes = this.columnFixedWidths ? this.getOwnWidthClasses(cell) : [];
+			for (let span = 0; span < Math.max(cell.colSpan, 1); span++) {
+				columnClasses.push(classes);
+			}
+		});
+
+		this.getBodyRows().forEach((row) => {
+			let column = 0;
+			Array.from(row.cells).forEach((cell) => {
+				// A cell spanning several columns only inherits when every spanned column agrees.
+				const span = Math.max(cell.colSpan, 1);
+				const first = columnClasses[column] ?? [];
+				const agrees = columnClasses.slice(column, column + span).every((classes) => classes.join(' ') === first.join(' '));
+				column += span;
+				this.setInheritedWidthClasses(cell, agrees ? first : []);
+			});
+		});
+	}
+
+	// Hides a column when every body cell in it is empty. The header cell is not
+	// checked, so a column with a title but no data is still hidden. With no body
+	// rows nothing is hidden, so the header stays visible next to the empty state.
+	private hideEmptyColumns(): void {
+		const rows = this.getBodyRows();
+		const filled: boolean[] = [];
+		const layout = rows.map((row) => this.getCellColumns(row));
+		layout.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => {
+				if (this.cellHasContent(cell)) columns.forEach((column) => (filled[column] = true));
+			}),
+		);
+
+		const isEmpty = (columns: number[]) => rows.length > 0 && columns.every((column) => !filled[column]);
+		layout.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.EMPTY_COLUMN_CLASS, isEmpty(columns))),
+		);
+
+		[this.tableHeaderEl, this.tableHeaderCloneEl].forEach((header) => {
+			if (!header) return;
+			this.getCellColumns(header).forEach(({ cell, columns }) =>
+				cell.classList.toggle(TableWrapper.EMPTY_COLUMN_CLASS, isEmpty(columns)),
+			);
+		});
+	}
+
+	// Maps each cell of a row to the column indexes it covers, following colspan.
+	private getCellColumns(row: HTMLElement): { cell: HTMLTableCellElement; columns: number[] }[] {
+		let column = 0;
+		return Array.from(row.children)
+			.filter((cell): cell is HTMLTableCellElement => cell instanceof HTMLTableCellElement)
+			.map((cell) => {
+				const span = Math.max(cell.colSpan, 1);
+				const columns = Array.from({ length: span }, (_, i) => column + i);
+				column += span;
+				return { cell, columns };
+			});
+	}
+
+	// A cell has content when it shows text or holds a media, icon or form element.
+	// Empty wrappers left by the platform (spans, containers, &nbsp;) do not count.
+	private cellHasContent(cell: HTMLTableCellElement): boolean {
+		if (cell.classList.contains(TableWrapper.REORDER_CELL_CLASS)) return true;
+		if (cell.textContent?.trim()) return true;
+		return cell.querySelector(TableWrapper.CONTENT_SELECTOR) !== null;
+	}
+
+	private getOwnWidthClasses(cell: HTMLElement): string[] {
+		return Array.from(cell.classList).filter((name) => TableWrapper.WIDTH_CLASS_PATTERN.test(name));
+	}
+
+	// Puts the header's width classes on the cell and takes off any width class
+	// of the cell's own that the header does not have. With no header rule
+	// (empty `classes`), the cell keeps its own width classes.
+	private setInheritedWidthClasses(cell: HTMLTableCellElement, classes: string[]): void {
+		this.restoreOwnWidthClasses(cell);
+		if (!classes.length) return;
+
+		const removed = this.getOwnWidthClasses(cell).filter((name) => !classes.includes(name));
+		const added = classes.filter((name) => !cell.classList.contains(name));
+		cell.classList.remove(...removed);
+		cell.classList.add(...added);
+
+		if (added.length) cell.dataset[TableWrapper.INHERITED_WIDTH_ATTR] = added.join(' ');
+		if (removed.length) cell.dataset[TableWrapper.OWN_WIDTH_ATTR] = removed.join(' ');
+	}
+
+	// Undoes what setInheritedWidthClasses did, so the cell is back to its own classes.
+	private restoreOwnWidthClasses(cell: HTMLTableCellElement): void {
+		const added = cell.dataset[TableWrapper.INHERITED_WIDTH_ATTR]?.split(' ').filter(Boolean) ?? [];
+		const removed = cell.dataset[TableWrapper.OWN_WIDTH_ATTR]?.split(' ').filter(Boolean) ?? [];
+		cell.classList.remove(...added);
+		cell.classList.add(...removed);
+		delete cell.dataset[TableWrapper.INHERITED_WIDTH_ATTR];
+		delete cell.dataset[TableWrapper.OWN_WIDTH_ATTR];
 	}
 
 	private handleLayoutResize = (_entries: ResizeObserverEntry[]): void => {
@@ -508,6 +625,11 @@ export default class TableWrapper extends BaseComponent {
 
 		this.augmentRows();
 		this.refreshStickyHeader();
+
+		if (payload.columnFixedWidths !== undefined && Boolean(payload.columnFixedWidths) !== this.columnFixedWidths) {
+			this.columnFixedWidths = Boolean(payload.columnFixedWidths);
+			this.reflectStateAttributes();
+		}
 
 		if (payload.clickableRows !== undefined && payload.clickableRows !== this.clickableRows) {
 			this.clickableRows = payload.clickableRows;

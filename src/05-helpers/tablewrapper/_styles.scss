@@ -14,7 +14,7 @@
 		// border-collapse: collapse; I removed this because the table header glitches when having a scroll on the table
 		width: 100%;
 		thead {
-			height: 48px;
+			height: 50px;
 			th {
 				background-color: var(--color-neutral-0);
 				> span,
@@ -27,6 +27,7 @@
 	}
 	.table-row {
 		td {
+			height: unset;
 			padding: var(--space-s) var(--space-m);
 		}
 	}
@@ -128,4 +129,10 @@
 			opacity: 0.3;
 		}
 	}
+}
+
+// Columns whose body cells are all empty (set by TableWrapper, incl. the sticky header clone).
+.tablewrapper .tablewrapper-empty-column,
+.tablewrapper-sticky-header .tablewrapper-empty-column {
+	display: none;
 }

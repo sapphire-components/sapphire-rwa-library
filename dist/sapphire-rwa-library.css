@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.124 2026-11-02T09:43:38.078Z */
+/*!  SapphireRWALibrary PROD v0.6.125 2026-11-02T11:46:44.684Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5680,6 +5680,50 @@ div[data-widthcomponent=auto] {
   height: 24px;
   min-width: 24px;
 }
+.tablewrapper[data-columnfixedwidths=true] tr {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 0;
+  width: 100%;
+}
+.tablewrapper[data-columnfixedwidths=true] th,
+.tablewrapper[data-columnfixedwidths=true] td {
+  flex: 1 1 0;
+  height: unset;
+  margin: unset;
+  max-width: unset;
+  min-width: 0;
+  width: unset;
+  word-break: break-all;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-025x,
+.tablewrapper[data-columnfixedwidths=true] td.width-025x {
+  flex: 0.25 1 0;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-05x,
+.tablewrapper[data-columnfixedwidths=true] td.width-05x {
+  flex: 0.5 1 0;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-2x,
+.tablewrapper[data-columnfixedwidths=true] td.width-2x {
+  flex: 2 1 0;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-3x,
+.tablewrapper[data-columnfixedwidths=true] td.width-3x {
+  flex: 3 1 0;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-4x,
+.tablewrapper[data-columnfixedwidths=true] td.width-4x {
+  flex: 4 1 0;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-5x,
+.tablewrapper[data-columnfixedwidths=true] td.width-5x {
+  flex: 5 1 0;
+}
+.tablewrapper[data-columnfixedwidths=true] th {
+  align-content: center;
+  height: 50px;
+}
 div[data-widthcomponent=auto] {
   width: fit-content;
 }
@@ -6065,7 +6109,7 @@ div[data-widthcomponent=auto] {
   width: 100%;
 }
 .tablewrapper table thead {
-  height: 48px;
+  height: 50px;
 }
 .tablewrapper table thead th {
   background-color: var(--color-neutral-0);
@@ -6076,6 +6120,7 @@ div[data-widthcomponent=auto] {
   vertical-align: middle;
 }
 .tablewrapper .table-row td {
+  height: unset;
   padding: var(--space-s) var(--space-m);
 }
 .tablewrapper .pagination {
@@ -6156,6 +6201,11 @@ div[data-widthcomponent=auto] {
 }
 .tablewrapper .sortable.sort-disabled .sortable-icon {
   opacity: 0.3;
+}
+
+.tablewrapper .tablewrapper-empty-column,
+.tablewrapper-sticky-header .tablewrapper-empty-column {
+  display: none;
 }
 .titleleadcaption-title[data-clamped=true], .titleleadcaption-lead[data-clamped=true], .titleleadcaption-caption[data-clamped=true] {
   -webkit-box-orient: vertical;

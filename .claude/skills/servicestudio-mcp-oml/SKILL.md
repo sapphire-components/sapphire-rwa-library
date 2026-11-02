@@ -1,5 +1,8 @@
 ---
 name: servicestudio-mcp-oml
+context: fork
+agent: general-purpose
+model: sonnet
 description: >-
   Provides the C# Model API contract for Service Studio's in-process MCP
   Server — full `eSpace => { ... }` lambdas (no `eSpace.Save(...)`) that mutate
@@ -22,7 +25,7 @@ description: >-
 This skill teaches you to write C# Model API **lambdas** for the
 `applyModelApiCode` MCP tool exposed by Service Studio's in-process MCP Server.
 It also points you at an example corpus, namespace doc files, and end-to-end
-integration walkthroughs. **Read this file fully** — the invocation contract
+integration walkthroughs. Read only the sections you need — the invocation contract
 differs from ODC's published examples in one important way (see § 1).
 
 > **Naming note.** This MCP server's tools use **camelCase, no `oml_` prefix**
