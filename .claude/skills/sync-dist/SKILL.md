@@ -2,15 +2,16 @@
 name: sync-dist
 description: >-
   Copy built dist CSS and JavaScript into the open OutSystems Service Studio
-  modules through the sapphire-dev MCP. Use only when the user explicitly asks
-  to sync, push, update, or replace dist files in OutSystems or Service Studio.
+  modules through the sapphire-dev MCP, then publish them. Use only when the
+  user explicitly asks to sync, push, update, or replace dist files in
+  OutSystems or Service Studio.
 ---
 
 # Sync dist to OutSystems
 
 Manual only. Run this when the user asks. Do not rebuild `dist/` unless they ask.
 
-The element map is in `AGENTS.md`. The script applies and checks the files. Merge each saved module with the sapphire-dev `omlMerge` tool. A direct HTTP merge is rejected.
+The element map is in `AGENTS.md`; the `targets` list in `scripts/sync-dist-to-outsystems.mjs` must match it. The script applies and checks the files. Merge each saved module with the sapphire-dev `omlMerge` tool, then publish with `omlPublish`. A direct HTTP merge is rejected.
 
 ## Steps
 
@@ -29,5 +30,10 @@ SAPPHIRE_MCP_TOKEN="<token>" node scripts/sync-dist-to-outsystems.mjs
 8. `merged: true` means that module is done. Do not call `omlMerge` again with the same path.
 9. `InvalidIconLibrary` on `RW_Core_Theme` is expected. Any other validation error blocks that module.
 10. Call `endOmlEditSession` on each module once its merge is done, or after a failure. Merged changes stay in the module.
-11. Do not publish unless the user asks. When they do, publish `RW_Core_Th`, then `RW_Core_Lib`, then refresh references on `RW_DesignSystem` and publish it.
-12. Reply with the module, element, dist file, and character count from `applied`. Unless you published, say the modules are updated and still need a publish from Service Studio.
+11. Publish only when every module merged with `merged: true`. If any merge failed, publish nothing and report it. Publish one module at a time, in this order, and wait for each result:
+    1. `omlPublish` on `RW_Core_Th`.
+    2. `omlPublish` on `RW_Core_Lib`.
+    3. `omlRefreshReferences` on `RW_DesignSystem`, then `omlPublish` on it.
+
+    Pass `sessionToken` on every call, even though these schemas do not declare it. A publish succeeded when it returns `published: true` and `status: "success"`. On any other result, stop the chain and report `status` and `reason`. On `status: "blocked"`, tell the user to allow automatic merge and publish in the Service Studio MCP Server dialog, or to publish from Service Studio. Do not retry. If `omlRefreshReferences` returns `hasErrors: true`, do not publish `RW_DesignSystem`; report it.
+12. Reply with the module, element, dist file, and character count from `applied`, and the publish result for each module. If a module was not published, say which ones still need a publish from Service Studio.

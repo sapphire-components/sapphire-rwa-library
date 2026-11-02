@@ -26,13 +26,11 @@ body.is-rtl .ThemeGrid_MarginGutter {
 }
 
 .btn + .btn {
-	margin-inline-start: var(--space-s);
+	margin-left: unset;
 }
 
-.is-rtl {
-	.btn + .btn {
-		margin-left: unset;
-	}
+.btn + .btn {
+	margin-inline-start: var(--space-s);
 }
 
 .display-inline-flex {

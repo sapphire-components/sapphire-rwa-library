@@ -27,6 +27,9 @@
 			flex: 0 0 auto;
 			gap: var(--space-s);
 			width: auto;
+			> .btn + .btn {
+				margin-inline-start: 0;
+			}
 		}
 
 		&-title:empty,

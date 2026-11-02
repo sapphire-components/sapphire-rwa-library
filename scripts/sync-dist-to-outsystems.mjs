@@ -1,5 +1,5 @@
 // Copy dist CSS and scripts into the open Service Studio modules.
-// Apply and verify only. Merging is done by the agent through the sapphire-dev MCP tool.
+// Apply and verify only. Merging and publishing are done by the agent through the sapphire-dev MCP tools.
 //
 //   SAPPHIRE_MCP_TOKEN=<token> node scripts/sync-dist-to-outsystems.mjs
 //   node scripts/sync-dist-to-outsystems.mjs --self-test
@@ -20,6 +20,7 @@ const targets = [
 	{ module: "RW_Core_Lib", kind: "script", name: "SapphireRWAIcons", file: "dist/sapphire-rwa-icons.js" },
 	{ module: "RW_Core_Lib", kind: "script", name: "SapphireRWACKEditor", file: "dist/sapphire-rwa-ckeditor.js" },
 	{ module: "RW_Core_Lib", kind: "script", name: "SapphireRWAFlags", file: "dist/sapphire-rwa-flags.js" },
+	{ module: "RW_Core_Lib", kind: "script", name: "SapphireEventBus", file: "dist/sapphire-rwa-eventbus.js" },
 	{ module: "RW_DesignSystem", kind: "script", name: "SapphireRWADocumentation", file: "dist/sapphire-rwa-documentation.js" },
 	{ module: "RW_DesignSystem", kind: "script", name: "SapphireRWAStaticEntities", file: "dist/sapphire-rwa-static-entities.js" },
 ];

@@ -15,6 +15,7 @@ Module `RW_Core_Lib`:
 | `dist/` file                 | Script                  |
 | ---------------------------- | ----------------------- |
 | `sapphire-rwa-ckeditor.js`   | `SapphireRWACKEditor`   |
+| `sapphire-rwa-eventbus.js`   | `SapphireEventBus`      |
 | `sapphire-rwa-flags.js`      | `SapphireRWAFlags`      |
 | `sapphire-rwa-icons.js`      | `SapphireRWAIcons`      |
 | `sapphire-rwa-library.js`    | `SapphireRWALibrary`    |
@@ -29,7 +30,7 @@ Module `RW_DesignSystem`:
 
 ## Sync dist
 
-Ask to sync dist into OutSystems. The agent follows `.claude/skills/sync-dist/SKILL.md` and runs `npm run sync:outsystems` with a Service Studio session token. Service Studio must already have `RW_Core_Th`, `RW_Core_Lib`, and `RW_DesignSystem` open. The command does not publish.
+Ask to sync dist into OutSystems. The agent follows `.claude/skills/sync-dist/SKILL.md` and runs `npm run sync:outsystems` with a Service Studio session token. Service Studio must already have `RW_Core_Th`, `RW_Core_Lib`, and `RW_DesignSystem` open. The command only applies the files. The agent then merges each module and publishes `RW_Core_Th`, `RW_Core_Lib`, and `RW_DesignSystem` in that order, refreshing `RW_DesignSystem` references first. Publishing needs automatic merge and publish allowed in the Service Studio MCP Server dialog. When a script is added or renamed here, update `targets` in `scripts/sync-dist-to-outsystems.mjs` too.
 
 ## Skills
 
