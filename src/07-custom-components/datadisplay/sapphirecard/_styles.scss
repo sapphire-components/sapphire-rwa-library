@@ -145,6 +145,10 @@ div[data-block$='SapphireCard'] {
 		flex: 0 0 auto;
 		min-width: 0;
 		padding: var(--sapphirecard-padding, var(--space-base));
+
+		&:empty {
+			display: none;
+		}
 	}
 
 	&-footer {

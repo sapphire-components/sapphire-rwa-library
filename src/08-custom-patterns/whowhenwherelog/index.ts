@@ -58,8 +58,6 @@ export default class WhoWhenWhereLog extends BaseComponent {
 			return;
 		}
 
-		console.log(init);
-
 		this.applyConfig(init);
 		this.render();
 	}
@@ -104,7 +102,10 @@ export default class WhoWhenWhereLog extends BaseComponent {
 		const parts: string[] = [];
 
 		if (this.#action) parts.push(this.text(this.#action));
-		if (this.#date) parts.push(this.text('on'), this.#date);
+		if (this.#date) {
+			if (this.#action) parts.push(this.text('on'));
+			parts.push(this.#date);
+		}
 		if (this.#time) parts.push(this.text('at'), formatTime(this.#time, this.#hour12));
 		if (this.#who) parts.push(this.text('by'), this.#who);
 		if (this.#specialty) parts.push(this.text('from'), this.#specialty);

@@ -12,7 +12,7 @@ A bordered card with a header, a body, and a three-part footer. The header can e
 - `Height` and `MaxHeight` apply while the body is visible. Only **Content** scrolls. A closed expandable card stays the height of its header.
 - `Density` sets the padding on **Header**, **Content**, and **Footer**. All `SapphireDensity` values are supported. An unknown value falls back to `default`.
 - `Theme` is written to `data-theme` on the root and updated from `parametersChanged`. An empty theme removes the attribute. `header-align-top` aligns the header to the top.
-- **FooterLeft**, **FooterCenter**, and **FooterRight** size to their content. Left content stays on the left, center content stays centered, and right content stays on the right. A center-only footer stays centered because the empty side placeholders take no width.
+- **FooterLeft**, **FooterCenter**, and **FooterRight** size to their content. Left content stays on the left, center content stays centered, and right content stays on the right. A center-only footer stays centered because the empty side placeholders take no width. A **Content** or **Footer** with no children takes no space.
 
 <hr>
 
@@ -42,7 +42,7 @@ A bordered card with a header, a body, and a three-part footer. The header can e
 | `HeaderContent`      | Main header content. Grows to fill the space before the action placeholders.                                    |
 | `ActionsWhenClosed`  | End-aligned header actions shown while an expandable card is closed.                                            |
 | `ActionsWhenOpen`    | End-aligned header actions shown while the body is visible.                                                     |
-| `Content`            | Card body. Hidden while an expandable card is closed. The only region that scrolls when height is constrained.  |
+| `Content`            | Card body. Hidden while an expandable card is closed, and when it has no children. The only region that scrolls when height is constrained. |
 | `FooterLeft`         | Footer content aligned to the left. Sizes to its content.                                                       |
 | `FooterCenter`       | Footer content aligned to the center. Sizes to its content.                                                     |
 | `FooterRight`        | Footer content aligned to the right. Sizes to its content.                                                      |

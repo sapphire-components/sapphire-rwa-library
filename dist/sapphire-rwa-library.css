@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.125 2026-11-02T11:46:44.684Z */
+/*!  SapphireRWALibrary PROD v0.6.126 2026-11-02T13:33:51.149Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1109,6 +1109,10 @@ label {
 .dropdown-container:after {
   border-width: 1.4px;
   color: var(--color-neutral-6);
+}
+
+div[data-block] {
+  display: contents;
 }
 .service-studio-preview {
   background-color: var(--color-primary);
@@ -6828,6 +6832,9 @@ div[data-block$=SapphireCard] {
   min-width: 0;
   padding: var(--sapphirecard-padding, var(--space-base));
 }
+.sapphirecard-content:empty, .sapphirecard-footer:empty {
+  display: none;
+}
 .sapphirecard-footer {
   align-items: center;
   display: flex;
@@ -7298,6 +7305,10 @@ div[data-block$=AlertBar] {
   line-height: 30px;
   padding-inline: 12px;
 }
+div[data-block$=Badge] {
+  display: contents;
+}
+
 .badge {
   --iconcolor: var(--badge-icon-color);
   align-items: center;
@@ -11878,6 +11889,10 @@ div[data-block$=LazyList].lazylist .lazylist-header-placeholder,
   position: sticky;
   top: 0;
   z-index: 2;
+}
+div[data-block$=LazyList].lazylist .lazylist-header-placeholder:empty,
+.lazylist .lazylist-header-placeholder:empty {
+  display: none;
 }
 div[data-block$=LazyList].lazylist:not([data-simulatetable=true]) .lazylist-header-placeholder,
 .lazylist:not([data-simulatetable=true]) .lazylist-header-placeholder {

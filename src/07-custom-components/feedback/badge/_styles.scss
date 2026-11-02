@@ -1,4 +1,7 @@
-// Config colors arrive as inline custom properties; unset ones fall back to the Color theme.
+div[data-block$='Badge'] {
+	display: contents;
+}
+
 .badge {
 	--iconcolor: var(--badge-icon-color);
 	align-items: center;
@@ -26,7 +29,6 @@
 	}
 }
 
-// Config.LabelText replaces the Content placeholder. The placeholder stays in the block so screens keep their content bound.
 .badge[data-haslabeltext='true'] > .badge-content {
 	display: none;
 }

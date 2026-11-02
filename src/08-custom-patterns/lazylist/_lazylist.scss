@@ -36,6 +36,9 @@ div[data-block$='LazyList'].lazylist,
 		position: sticky;
 		top: 0;
 		z-index: 2;
+		&:empty {
+			display: none;
+		}
 	}
 
 	&:not([data-simulatetable='true']) .lazylist-header-placeholder {
