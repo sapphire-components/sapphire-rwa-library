@@ -314,7 +314,7 @@ export default class SapphireCard extends BaseComponent {
 
 		if (!existing) {
 			const created = this.createCapabilityIcon(name, icon, pressed);
-			if (name === 'favorite') host.prepend(created);
+			if (name === 'selectable') host.prepend(created);
 			else host.append(created);
 			return;
 		}

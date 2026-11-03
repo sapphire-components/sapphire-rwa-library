@@ -1,4 +1,4 @@
-@container (max-width: 800px) {
+@container (max-width: 600px) {
 	.tablewrapper[data-columnfixedwidths] {
 		tr {
 			border-bottom: solid 1px var(--color-border);
@@ -17,7 +17,7 @@
 				height: unset !important;
 				max-width: unset !important;
 				min-width: unset !important;
-				padding: var(--space-base);
+				padding: var(--space-s) var(--space-base);
 				text-align: left !important;
 				width: 100% !important;
 

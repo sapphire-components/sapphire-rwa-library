@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.129 2026-11-03T13:50:34.797Z */
+/*!  SapphireRWALibrary PROD v0.6.130 2026-11-03T15:25:13.765Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5417,7 +5417,7 @@ div[data-block=SectionSeparator] {
   position: sticky;
   top: 0;
 }
-@container (max-width: 800px) {
+@container (max-width: 600px) {
   .tablewrapper[data-columnfixedwidths] tr {
     border-bottom: solid 1px var(--color-border);
     display: flex;
@@ -5432,7 +5432,7 @@ div[data-block=SectionSeparator] {
     height: unset !important;
     max-width: unset !important;
     min-width: unset !important;
-    padding: var(--space-base);
+    padding: var(--space-s) var(--space-base);
     text-align: left !important;
     width: 100% !important;
   }
@@ -11967,12 +11967,8 @@ div[data-block$=LazyListRow]:first-child .lazylist-row {
 }
 
 .lazylist-row {
-  background-color: var(--color-neutral-0);
   border-top: 1px solid var(--color-border);
   padding: 12px;
-}
-.lazylist-row:hover {
-  background-color: var(--color-neutral-1);
 }
 .lazylist-row > div {
   display: contents;
@@ -11984,6 +11980,9 @@ div[data-block$=LazyListRow]:first-child .lazylist-row {
   flex-wrap: nowrap;
   padding: 0;
   width: 100%;
+}
+.lazylist[data-simulatetable=true] .lazylist-row:hover {
+  background-color: var(--color-neutral-1);
 }
 .lazylist[data-simulatetable=true] .lazylist-header-placeholder > div:not([data-container]) {
   display: contents;
@@ -12356,6 +12355,9 @@ div[data-block$=PrintDocument] {
   pointer-events: none;
 }
 
+.background-color-transparent {
+  background-color: transparent;
+}
 .border-solid-1 {
   border-style: solid;
   border-width: 1px;

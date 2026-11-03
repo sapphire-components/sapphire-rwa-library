@@ -9,12 +9,9 @@ div[data-block$='LazyListRow']:first-child {
 }
 
 .lazylist-row {
-	background-color: var(--color-neutral-0);
 	border-top: 1px solid var(--color-border);
 	padding: 12px;
-	&:hover {
-		background-color: var(--color-neutral-1);
-	}
+
 	> div {
 		display: contents;
 	}
@@ -53,6 +50,12 @@ div[data-block$='LazyListRow']:first-child {
 		flex-wrap: nowrap;
 		padding: 0;
 		width: 100%;
+	}
+
+	.lazylist-row {
+		&:hover {
+			background-color: var(--color-neutral-1);
+		}
 	}
 
 	.lazylist-header-placeholder {
