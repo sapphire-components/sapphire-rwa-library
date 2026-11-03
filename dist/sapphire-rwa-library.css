@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.127 2026-11-02T18:14:46.814Z */
+/*!  SapphireRWALibrary PROD v0.6.128 2026-11-03T09:04:43.575Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1125,8 +1125,45 @@ div[data-block] {
   font-weight: 900;
 }
 
+.font-bold {
+  font-weight: var(--font-bold);
+}
+
 .font-light {
   font-weight: var(--font-light);
+}
+
+.font-size-s {
+  font-size: var(--font-size-s);
+}
+
+.font-size-xs {
+  font-size: var(--font-size-xs);
+}
+
+sup,
+sub,
+.text-sup,
+.text-sub {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup,
+.text-sup {
+  top: -0.5em;
+}
+
+sub,
+.text-sub {
+  bottom: -0.25em;
+}
+
+.heading1 {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
 }
 
 .heading2 {
@@ -4473,8 +4510,45 @@ div.inputwrapper input[type=password]::-ms-clear {
   font-weight: 900;
 }
 
+.font-bold {
+  font-weight: var(--font-bold);
+}
+
 .font-light {
   font-weight: var(--font-light);
+}
+
+.font-size-s {
+  font-size: var(--font-size-s);
+}
+
+.font-size-xs {
+  font-size: var(--font-size-xs);
+}
+
+sup,
+sub,
+.text-sup,
+.text-sub {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup,
+.text-sup {
+  top: -0.5em;
+}
+
+sub,
+.text-sub {
+  bottom: -0.25em;
+}
+
+.heading1 {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
 }
 
 .heading2 {
@@ -4970,8 +5044,45 @@ body .labelvalue-mandatory {
   font-weight: 900;
 }
 
+.font-bold {
+  font-weight: var(--font-bold);
+}
+
 .font-light {
   font-weight: var(--font-light);
+}
+
+.font-size-s {
+  font-size: var(--font-size-s);
+}
+
+.font-size-xs {
+  font-size: var(--font-size-xs);
+}
+
+sup,
+sub,
+.text-sup,
+.text-sub {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup,
+.text-sup {
+  top: -0.5em;
+}
+
+sub,
+.text-sub {
+  bottom: -0.25em;
+}
+
+.heading1 {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
 }
 
 .heading2 {
@@ -5060,8 +5171,45 @@ body .labelvalue-mandatory {
   font-weight: 900;
 }
 
+.font-bold {
+  font-weight: var(--font-bold);
+}
+
 .font-light {
   font-weight: var(--font-light);
+}
+
+.font-size-s {
+  font-size: var(--font-size-s);
+}
+
+.font-size-xs {
+  font-size: var(--font-size-xs);
+}
+
+sup,
+sub,
+.text-sup,
+.text-sub {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup,
+.text-sup {
+  top: -0.5em;
+}
+
+sub,
+.text-sub {
+  bottom: -0.25em;
+}
+
+.heading1 {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
 }
 
 .heading2, .sectionseparator-title {
@@ -10077,8 +10225,45 @@ a.overlay-item .sapphire-tabheader-content {
   font-weight: 900;
 }
 
+.font-bold {
+  font-weight: var(--font-bold);
+}
+
 .font-light {
   font-weight: var(--font-light);
+}
+
+.font-size-s {
+  font-size: var(--font-size-s);
+}
+
+.font-size-xs {
+  font-size: var(--font-size-xs);
+}
+
+sup,
+sub,
+.text-sup,
+.text-sub {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup,
+.text-sup {
+  top: -0.5em;
+}
+
+sub,
+.text-sub {
+  bottom: -0.25em;
+}
+
+.heading1 {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
 }
 
 .heading2 {

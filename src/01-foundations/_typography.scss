@@ -2,8 +2,49 @@
 	font-weight: 900;
 }
 
+.font-bold {
+	font-weight: var(--font-bold);
+}
+
 .font-light {
 	font-weight: var(--font-light);
+}
+
+.font-size-s {
+	font-size: var(--font-size-s);
+}
+
+.font-size-xs {
+	font-size: var(--font-size-xs);
+}
+
+// Superscript / subscript for formulas, units and doses (m², SpO₂, HbA1c, 10⁹/L).
+// Native <sup>/<sub> (rich text, unescaped HTML) and utility classes for
+// OutSystems Text/Expression widgets, which render as inline spans.
+// line-height: 0 + relative offset keeps the line box from growing.
+sup,
+sub,
+.text-sup,
+.text-sub {
+	font-size: 0.75em;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+sup,
+.text-sup {
+	top: -0.5em;
+}
+
+sub,
+.text-sub {
+	bottom: -0.25em;
+}
+
+.heading1 {
+	font-size: var(--font-size-h1);
+	font-weight: 700;
 }
 
 .heading2 {
