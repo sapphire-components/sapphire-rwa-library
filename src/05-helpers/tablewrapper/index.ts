@@ -514,14 +514,15 @@ export default class TableWrapper extends BaseComponent {
 		});
 	}
 
-	// Hides a column when every body cell in it is empty. The header cell is not
-	// checked, so a column with a title but no data is still hidden. With no body
-	// rows nothing is hidden, so the header stays visible next to the empty state.
+	// Hides a column when its header cell and every body cell in it are empty.
+	// A column with a title stays visible even with no data. With no body rows
+	// nothing is hidden, so the header stays visible next to the empty state.
 	private hideEmptyColumns(): void {
 		const rows = this.getBodyRows();
 		const filled: boolean[] = [];
 		const layout = rows.map((row) => this.getCellColumns(row));
-		layout.forEach((cells) =>
+		const headerCells = this.tableHeaderEl ? this.getCellColumns(this.tableHeaderEl) : [];
+		[headerCells, ...layout].forEach((cells) =>
 			cells.forEach(({ cell, columns }) => {
 				if (this.cellHasContent(cell)) columns.forEach((column) => (filled[column] = true));
 			}),
