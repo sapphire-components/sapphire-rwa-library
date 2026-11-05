@@ -7,7 +7,7 @@ import { installClickCooldown } from '@core/clickCooldown';
 import DesignSystemColors from '@/02-designsystem/design-system-screen-colors';
 import DesignSystemMenu from '@/02-designsystem/design-system-menu';
 
-import { DateTimeFormat } from '@/03-core/datetime';
+import { DateTimeFormat } from '@/03-core/datetimeformat';
 import LayoutWrapper from '@/03-core/layout';
 import Locale from '@/03-core/locale';
 
