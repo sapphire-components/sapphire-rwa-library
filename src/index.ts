@@ -10,6 +10,7 @@ import DesignSystemMenu from '@/02-designsystem/design-system-menu';
 import { DateTimeFormat } from '@/03-core/datetimeformat';
 import LayoutWrapper from '@/03-core/layout';
 import Locale from '@/03-core/locale';
+import LayoutBlank from '@/03-core/layoutblank';
 
 import BackofficeHeader from '@helpers/backofficeheader';
 import FilterBar from '@helpers/filterbar';
@@ -103,6 +104,7 @@ const SapphireRWALibrary = {
 	PopupContent,
 	PrintDocument,
 	ResponsiveContainers,
+	LayoutBlank,
 	SapphireCard,
 	SapphireDropdown,
 	SapphireInput,

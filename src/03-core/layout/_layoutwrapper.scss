@@ -1,9 +1,5 @@
 @use '../../01-foundations/_colors.scss' as *;
 
-div[data-block$='LayoutBlank'] {
-	display: contents;
-}
-
 .layoutwrapper {
 	align-items: flex-start;
 	display: flex;

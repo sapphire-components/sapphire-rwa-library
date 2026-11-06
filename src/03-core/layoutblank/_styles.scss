@@ -1,0 +1,11 @@
+div[data-block$='LayoutBlank'] {
+	display: contents;
+}
+
+body:has(.layout.blank[data-backgroundcolor='transparent']) {
+	background: transparent !important;
+}
+
+body.layout.blank.layout-inside-iframe {
+	overscroll-behavior: contain;
+}

@@ -32,6 +32,14 @@ export default class Helpers {
 		return document.body.classList.contains('is-rtl');
 	}
 
+	static isInsideIframe(): boolean {
+		try {
+			return window.self !== window.top;
+		} catch {
+			return true;
+		}
+	}
+
 	static areTheyEqual(incoming: any, existing: any): boolean {
 		// Strict equality covers primitives and reference equality
 		if (incoming === existing) {

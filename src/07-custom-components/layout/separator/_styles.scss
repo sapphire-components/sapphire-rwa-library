@@ -1,0 +1,35 @@
+div[data-block$='Separator'] {
+	display: contents;
+}
+
+$separator-sizes: (
+	'none': 0,
+	'xs': var(--space-xs),
+	's': var(--space-s),
+	'base': var(--space-base),
+	'm': var(--space-m),
+	'l': var(--space-l),
+	'xl': var(--space-xl),
+);
+
+.separator {
+	align-self: flex-start;
+	background-color: var(--color-border);
+	border: 0;
+	display: block;
+	flex: 0 0 auto;
+	height: 1px;
+	height: attr(data-thickness px, 1px);
+	margin-block: var(--space-base);
+	width: 100%;
+}
+
+@each $name, $size in $separator-sizes {
+	.separator[data-margintop='#{$name}'] {
+		margin-top: $size;
+	}
+
+	.separator[data-marginbottom='#{$name}'] {
+		margin-bottom: $size;
+	}
+}

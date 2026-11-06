@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.133 2026-11-05T15:15:10.259Z */
+/*!  SapphireRWALibrary PROD v0.6.136 2026-11-06T11:51:34.748Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -2551,10 +2551,6 @@ body[data-background=warning-light]:has(.layoutwrapper) {
   border-color: transparent;
 }
 
-div[data-block$=LayoutBlank] {
-  display: contents;
-}
-
 .layoutwrapper {
   align-items: flex-start;
   display: flex;
@@ -2659,6 +2655,17 @@ body:has(.layoutwrapper[data-theme=login]) {
 
 .screen-container:has(.layoutwrapper.designsystem) {
   scrollbar-gutter: unset;
+}
+div[data-block$=LayoutBlank] {
+  display: contents;
+}
+
+body:has(.layout.blank[data-backgroundcolor=transparent]) {
+  background: transparent !important;
+}
+
+body.layout.blank.layout-inside-iframe {
+  overscroll-behavior: contain;
 }
 .alert-info a,
 .alert-info a:hover,
@@ -9495,6 +9502,77 @@ div[data-block$=ScrollableContent] {
 .scrollablecontent-footer-right {
   justify-self: end;
 }
+div[data-block$=Separator] {
+  display: contents;
+}
+
+.separator {
+  align-self: flex-start;
+  background-color: var(--color-border);
+  border: 0;
+  display: block;
+  flex: 0 0 auto;
+  height: 1px;
+  height: attr(data-thickness px, 1px);
+  margin-block: var(--space-base);
+  width: 100%;
+}
+
+.separator[data-margintop=none] {
+  margin-top: 0;
+}
+
+.separator[data-marginbottom=none] {
+  margin-bottom: 0;
+}
+
+.separator[data-margintop=xs] {
+  margin-top: var(--space-xs);
+}
+
+.separator[data-marginbottom=xs] {
+  margin-bottom: var(--space-xs);
+}
+
+.separator[data-margintop=s] {
+  margin-top: var(--space-s);
+}
+
+.separator[data-marginbottom=s] {
+  margin-bottom: var(--space-s);
+}
+
+.separator[data-margintop=base] {
+  margin-top: var(--space-base);
+}
+
+.separator[data-marginbottom=base] {
+  margin-bottom: var(--space-base);
+}
+
+.separator[data-margintop=m] {
+  margin-top: var(--space-m);
+}
+
+.separator[data-marginbottom=m] {
+  margin-bottom: var(--space-m);
+}
+
+.separator[data-margintop=l] {
+  margin-top: var(--space-l);
+}
+
+.separator[data-marginbottom=l] {
+  margin-bottom: var(--space-l);
+}
+
+.separator[data-margintop=xl] {
+  margin-top: var(--space-xl);
+}
+
+.separator[data-marginbottom=xl] {
+  margin-bottom: var(--space-xl);
+}
 div[data-block$=Sidebar] {
   display: contents;
 }
@@ -11962,16 +12040,15 @@ div[data-block$=LazyListRow] {
   display: contents;
 }
 
-div[data-block$=LazyListRow]:first-child .lazylist-row {
-  border-top: none;
-}
-
-.lazylist-row {
-  border-top: 1px solid var(--color-border);
-  padding: 12px;
-}
 .lazylist-row > div {
   display: contents;
+}
+
+.lazylist[data-hasseparator=true] .lazylist-row {
+  border-top: 1px solid var(--color-border);
+}
+.lazylist[data-hasseparator=true] div[data-block$=LazyListRow]:first-child .lazylist-row {
+  border-top: none;
 }
 
 .lazylist[data-simulatetable=true] .lazylist-header-placeholder,
@@ -12053,11 +12130,11 @@ div[data-block$=LazyList] {
 
 div[data-block$=LazyList].lazylist,
 .lazylist {
-  background-color: var(--color-neutral-0);
   display: block;
   overflow-anchor: none;
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   position: relative;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
@@ -12094,6 +12171,50 @@ div[data-block$=LazyList].lazylist .lazylist-header-placeholder:empty,
 div[data-block$=LazyList].lazylist:not([data-simulatetable=true]) .lazylist-header-placeholder,
 .lazylist:not([data-simulatetable=true]) .lazylist-header-placeholder {
   padding: 12px;
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=none] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=none] .lazylist-row {
+  padding-block: calc(0 / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=xxxs] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=xxxs] .lazylist-row {
+  padding-block: calc(var(--space-xxxs) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=xxs] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=xxs] .lazylist-row {
+  padding-block: calc(var(--space-xxs) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=xs] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=xs] .lazylist-row {
+  padding-block: calc(var(--space-xs) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=s] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=s] .lazylist-row {
+  padding-block: calc(var(--space-s) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=base] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=base] .lazylist-row {
+  padding-block: calc(var(--space-base) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=m] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=m] .lazylist-row {
+  padding-block: calc(var(--space-m) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=l] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=l] .lazylist-row {
+  padding-block: calc(var(--space-l) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=xl] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=xl] .lazylist-row {
+  padding-block: calc(var(--space-xl) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=xxl] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=xxl] .lazylist-row {
+  padding-block: calc(var(--space-xxl) / 2);
+}
+div[data-block$=LazyList].lazylist:not([data-simulatetable=true])[data-gap=xxxl] .lazylist-row,
+.lazylist:not([data-simulatetable=true])[data-gap=xxxl] .lazylist-row {
+  padding-block: calc(var(--space-xxxl) / 2);
 }
 div[data-block$=LazyList].lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i],
 .lazylist[data-simulatetable=true][data-enabled=true]:not([data-isloading=true]) .lazylist-header-placeholder [data-sort=true i] {

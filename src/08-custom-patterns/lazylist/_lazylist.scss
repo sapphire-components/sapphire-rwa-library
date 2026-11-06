@@ -1,14 +1,28 @@
+$lazylist-gaps: (
+	'none': 0,
+	'xxxs': var(--space-xxxs),
+	'xxs': var(--space-xxs),
+	'xs': var(--space-xs),
+	's': var(--space-s),
+	'base': var(--space-base),
+	'm': var(--space-m),
+	'l': var(--space-l),
+	'xl': var(--space-xl),
+	'xxl': var(--space-xxl),
+	'xxxl': var(--space-xxxl),
+);
+
 div[data-block$='LazyList'] {
 	display: contents;
 }
 
 div[data-block$='LazyList'].lazylist,
 .lazylist {
-	background-color: var(--color-neutral-0);
 	display: block;
 	overflow-anchor: none;
 	overflow-x: hidden;
 	overflow-y: auto;
+	overscroll-behavior: contain;
 	position: relative;
 	scrollbar-gutter: stable;
 	scrollbar-width: thin;
@@ -41,8 +55,16 @@ div[data-block$='LazyList'].lazylist,
 		}
 	}
 
-	&:not([data-simulatetable='true']) .lazylist-header-placeholder {
-		padding: 12px;
+	&:not([data-simulatetable='true']) {
+		.lazylist-header-placeholder {
+			padding: 12px;
+		}
+
+		@each $name, $size in $lazylist-gaps {
+			&[data-gap='#{$name}'] .lazylist-row {
+				padding-block: calc(#{$size} / 2);
+			}
+		}
 	}
 
 	&[data-simulatetable='true'][data-enabled='true']:not([data-isloading='true']) .lazylist-header-placeholder [data-sort='true' i] {

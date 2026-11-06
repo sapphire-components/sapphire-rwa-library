@@ -9,6 +9,8 @@ interface ILazyList extends BaseComponentInit {
 	};
 	bottomDistance: number;
 	enabled: boolean;
+	gap: string;
+	hasSeparator: boolean;
 	height: number;
 	isLoading: boolean;
 	isPristine: boolean;
@@ -22,6 +24,10 @@ interface ILazyList extends BaseComponentInit {
 	theme: string;
 }
 
+type LazyListGap = 'none' | 'xxxs' | 'xxs' | 'xs' | 's' | 'base' | 'm' | 'l' | 'xl' | 'xxl' | 'xxxl';
+
+const GAPS: readonly LazyListGap[] = ['none', 'xxxs', 'xxs', 'xs', 's', 'base', 'm', 'l', 'xl', 'xxl', 'xxxl'];
+
 export default class LazyList extends BaseComponent {
 	private actions!: ILazyList['actions'];
 	private avgLocked = false;
@@ -29,6 +35,8 @@ export default class LazyList extends BaseComponent {
 	private bottomDistance = 0;
 	private enabled = true;
 	private extraRows = 0;
+	private gap = '';
+	private hasSeparator = false;
 	private headerObserver?: MutationObserver;
 	private height = 0;
 	private initialStartIndex = 0;
@@ -126,6 +134,8 @@ export default class LazyList extends BaseComponent {
 		this.sortColumn = this.readText(init.sortColumn);
 		this.sortDirection = this.readText(init.sortDirection);
 		this.simulateTable = init.simulateTable === true;
+		this.gap = this.readGap(init.gap);
+		this.hasSeparator = init.hasSeparator === true;
 		if (init.isPristine !== undefined) this.isPristine = init.isPristine === true;
 
 		this.lazyListHeaderPlaceholderEl = this.widgetEl.querySelector<HTMLElement>(':scope > .lazylist-header-placeholder')!;
@@ -175,7 +185,27 @@ export default class LazyList extends BaseComponent {
 		const sortChanged = nextSortColumn !== this.sortColumn || nextSortDirection !== this.sortDirection;
 		if (payload.sortColumn !== undefined) this.sortColumn = nextSortColumn;
 		if (payload.sortDirection !== undefined) this.sortDirection = nextSortDirection;
-		if (payload.simulateTable !== undefined) this.simulateTable = payload.simulateTable === true;
+		if (payload.simulateTable !== undefined) {
+			const nextSimulateTable = payload.simulateTable === true;
+			if (nextSimulateTable !== this.simulateTable) {
+				this.simulateTable = nextSimulateTable;
+				this.resetStride();
+			}
+		}
+		if (payload.gap !== undefined) {
+			const nextGap = this.readGap(payload.gap);
+			if (nextGap !== this.gap) {
+				this.gap = nextGap;
+				this.resetStride();
+			}
+		}
+		if (payload.hasSeparator !== undefined) {
+			const nextHasSeparator = payload.hasSeparator === true;
+			if (nextHasSeparator !== this.hasSeparator) {
+				this.hasSeparator = nextHasSeparator;
+				this.resetStride();
+			}
+		}
 
 		if (payload.startIndex !== undefined) {
 			this.startIndex = this.readNumber(payload.startIndex);
@@ -405,6 +435,9 @@ export default class LazyList extends BaseComponent {
 	private reflectState(): void {
 		this.widgetEl.dataset.enabled = this.enabled ? 'true' : 'false';
 		this.widgetEl.dataset.isloading = this.isLoading ? 'true' : 'false';
+		if (this.gap) this.widgetEl.dataset.gap = this.gap;
+		else delete this.widgetEl.dataset.gap;
+		this.widgetEl.dataset.hasseparator = this.hasSeparator ? 'true' : 'false';
 		this.widgetEl.setAttribute('aria-busy', this.isLoading ? 'true' : 'false');
 		if (this.lazyListRowsPlaceholderEl) this.lazyListRowsPlaceholderEl.inert = this.isLoading;
 		this.updateLoadingState();
@@ -483,6 +516,11 @@ export default class LazyList extends BaseComponent {
 		const span = last.top - first.top;
 		if (span <= 0) return first.height;
 		return span / (rows.length - 1);
+	}
+
+	private resetStride(): void {
+		this.avgLocked = false;
+		this.avgRowHeight = 0;
 	}
 
 	private prepareList(list: HTMLElement): void {
@@ -734,6 +772,11 @@ export default class LazyList extends BaseComponent {
 		const list = this.getListEl();
 		if (!list) return [];
 		return Array.from(list.querySelectorAll<HTMLElement>('.lazylist-row'));
+	}
+
+	private readGap(value: string | undefined): string {
+		const gap = this.readText(value).toLowerCase();
+		return GAPS.includes(gap as LazyListGap) ? gap : '';
 	}
 
 	private readText(value: string | undefined): string {
