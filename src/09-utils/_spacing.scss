@@ -1,15 +1,16 @@
 $sapphire-spacing:
 	'none' 0,
-	'xxs' 2px,
+	'xs3' 1px,
+	'xs2' 2px,
 	'xs' 4px,
 	's' 8px,
 	'base' 16px,
 	'm' 24px,
 	'l' 32px,
 	'xl' 40px,
-	'xxl' 48px,
-	'xxxl' 64px,
-	'xxxxl' 100px;
+	'xl2' 48px,
+	'xl3' 64px,
+	'xl4' 100px;
 
 @each $key, $value in $sapphire-spacing {
 	.margin-#{$key} {

@@ -56,16 +56,18 @@
 		}
 	},
 	"space": {
-		"xxxs": "1px",
-		"xxs": "2px",
+		"none": "0",
+		"xs3": "1px",
+		"xs2": "2px",
 		"xs": "4px",
 		"s": "8px",
 		"base": "16px",
 		"m": "24px",
 		"l": "32px",
 		"xl": "40px",
-		"xxl": "48px",
-		"xxxl": "64px"
+		"xl2": "48px",
+		"xl3": "64px",
+		"xl4": "100px"
 	},
 	"transition": {
 		"duration-fast": "150ms",

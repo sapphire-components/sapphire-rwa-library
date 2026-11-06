@@ -20,7 +20,7 @@ export default class LayoutBlank extends BaseComponent {
 			return;
 		}
 
-		console.log('LayoutBlank: constructor', this.widgetEl);
+		// console.log('LayoutBlank: constructor', this.widgetEl);
 
 		if (Helpers.isInsideIframe()) {
 			this.widgetEl.classList.add('layout-inside-iframe');
