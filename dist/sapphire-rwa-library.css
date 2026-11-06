@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.137 2026-11-06T18:21:47.493Z */
+/*!  SapphireRWALibrary PROD v0.6.138 2026-11-06T18:34:36.686Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -12477,7 +12477,9 @@ div[data-block$=PrintDocument] {
   box-shadow: none;
   pointer-events: none;
 }
-
+.whowhewherelog {
+  display: inline-flex;
+}
 .background-color-transparent {
   background-color: transparent;
 }
