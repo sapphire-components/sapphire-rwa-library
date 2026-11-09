@@ -1,0 +1,29 @@
+{
+	"_help": "Each rule flags elements whose class matches. match: exact | prefix | regex. severity: error | warning | info. Replace the examples below with your own list.",
+	"rules": [
+		{
+			"match": "regex",
+			"value": "^ThemeGrid_Width([1-9]|1[0-2])$",
+			"severity": "warning",
+			"reason": "OutSystems ThemeGrid width class (ThemeGrid_Width1 to ThemeGrid_Width12)"
+		},
+		{
+			"match": "regex",
+			"value": "(^|[-_])x{2,6}l([-_]|$)",
+			"severity": "warning",
+			"reason": "Utility class with an xxl to xxxxxxl size (e.g. margin-top-xxl, font-size-xxxl)"
+		},
+		{
+			"match": "regex",
+			"value": "^fa([srlbdt]|-.+)?$",
+			"severity": "warning",
+			"reason": "Font Awesome icon class (fa, fas, far, fal, fab, fad, fat, fa-*)"
+		},
+		{
+			"match": "regex",
+			"value": "^margin-(left|right)-(xs|s|base|l)$",
+			"severity": "warning",
+			"reason": "Physical left/right margin does not flip in RTL direction; use a logical (start/end) spacing instead"
+		}
+	]
+}
