@@ -17,8 +17,9 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 	isStickyHeader: boolean;
 	maxHeight: number;
 	pageCount: number;
+	reorderColumn: number;
 	reorderImmediately: boolean;
-	reorderInputColumn: number;
+	reorderInputs: boolean;
 	reorderableRows: boolean;
 }
 
@@ -42,9 +43,10 @@ export default class TableWrapper extends BaseComponent {
 	private pageCount = 0;
 	private pendingEditOrder: HTMLTableRowElement[] = [];
 	private pendingTargetByRow = new WeakMap<HTMLTableRowElement, number>();
+	private reorderColumn = 1;
 	private reorderCommitEl?: HTMLButtonElement;
 	private reorderImmediately = true;
-	private reorderInputColumn = 1;
+	private reorderInputs = true;
 	private reorderOriginByRow = new WeakMap<HTMLTableRowElement, number>();
 	private reorderValueOnFocus = new WeakMap<HTMLInputElement, string>();
 	private reorderPanelEl?: HTMLDivElement;
@@ -190,8 +192,9 @@ export default class TableWrapper extends BaseComponent {
 		this.isPristine = this.configOptions.isPristine;
 		this.isStickyHeader = this.configOptions.isStickyHeader && !this.configOptions.maxHeight;
 		this.pageCount = this.configOptions.pageCount;
+		this.reorderColumn = this.resolveReorderColumn(this.configOptions.reorderColumn);
 		this.reorderImmediately = this.configOptions.reorderImmediately;
-		this.reorderInputColumn = this.resolveReorderInputColumn(this.configOptions.reorderInputColumn);
+		this.reorderInputs = this.resolveReorderInputs(this.configOptions.reorderInputs);
 		this.reorderableRows = this.configOptions.reorderableRows;
 
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
@@ -261,6 +264,7 @@ export default class TableWrapper extends BaseComponent {
 
 	handleReorderableRows(): void {
 		this.widgetEl.dataset.reorderablerows = this.reorderableRows ? 'true' : 'false';
+		this.widgetEl.dataset.reorderinputs = this.reorderInputs ? 'true' : 'false';
 		this.widgetEl.dataset.reorderondrop = this.reorderImmediately ? 'true' : 'false';
 		this.syncReorderUi();
 	}
@@ -490,9 +494,7 @@ export default class TableWrapper extends BaseComponent {
 	// the header cell has no width class, the cell's own width classes apply.
 	// Changes are recorded on the cell so they can be undone when the rule changes.
 	private applyColumnWidths(): void {
-		const headerCells = this.tableHeaderEl
-			? Array.from(this.tableHeaderEl.querySelectorAll<HTMLTableCellElement>(':scope > th, :scope > td'))
-			: [];
+		const headerCells = this.tableHeaderEl ? Array.from(this.tableHeaderEl.querySelectorAll<HTMLTableCellElement>(':scope > th, :scope > td')) : [];
 		const columnClasses: string[][] = [];
 		headerCells.forEach((cell) => {
 			const classes = this.columnFixedWidths ? this.getOwnWidthClasses(cell) : [];
@@ -529,15 +531,11 @@ export default class TableWrapper extends BaseComponent {
 		);
 
 		const isEmpty = (columns: number[]) => rows.length > 0 && columns.every((column) => !filled[column]);
-		layout.forEach((cells) =>
-			cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.EMPTY_COLUMN_CLASS, isEmpty(columns))),
-		);
+		layout.forEach((cells) => cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.EMPTY_COLUMN_CLASS, isEmpty(columns))));
 
 		[this.tableHeaderEl, this.tableHeaderCloneEl].forEach((header) => {
 			if (!header) return;
-			this.getCellColumns(header).forEach(({ cell, columns }) =>
-				cell.classList.toggle(TableWrapper.EMPTY_COLUMN_CLASS, isEmpty(columns)),
-			);
+			this.getCellColumns(header).forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.EMPTY_COLUMN_CLASS, isEmpty(columns)));
 		});
 	}
 
@@ -647,10 +645,16 @@ export default class TableWrapper extends BaseComponent {
 			this.handleReorderableRows();
 		}
 
-		if (payload.reorderInputColumn !== undefined) {
-			const nextColumn = this.resolveReorderInputColumn(payload.reorderInputColumn);
-			if (nextColumn !== this.reorderInputColumn) {
-				this.reorderInputColumn = nextColumn;
+		if (payload.reorderInputs !== undefined && payload.reorderInputs !== this.reorderInputs) {
+			this.reorderInputs = payload.reorderInputs;
+			if (!this.reorderInputs) this.clearPendingTargets();
+			this.handleReorderableRows();
+		}
+
+		if (payload.reorderColumn !== undefined) {
+			const nextColumn = this.resolveReorderColumn(payload.reorderColumn);
+			if (nextColumn !== this.reorderColumn) {
+				this.reorderColumn = nextColumn;
 				this.syncReorderUi();
 			}
 		}
@@ -877,7 +881,7 @@ export default class TableWrapper extends BaseComponent {
 		if (!this.isStagedReorder() || this.isLoading) return;
 
 		const active = document.activeElement;
-		if (active instanceof HTMLInputElement && active.classList.contains('tablewrapper-reorder-target') && this.tableEl.contains(active)) {
+		if (this.reorderInputs && active instanceof HTMLInputElement && active.classList.contains('tablewrapper-reorder-target') && this.tableEl.contains(active)) {
 			this.syncStagedTarget(active);
 		}
 		if (!this.isStagedDirty()) return;
@@ -913,14 +917,18 @@ export default class TableWrapper extends BaseComponent {
 		this.clearPendingTargets();
 	}
 
-	private resolveReorderInputColumn(value: number | undefined): number {
+	private resolveReorderColumn(value: number | undefined): number {
 		if (value === undefined || !Number.isInteger(value) || value < 1) return 1;
 		return value;
 	}
 
+	private resolveReorderInputs(value: boolean | undefined): boolean {
+		return value !== false;
+	}
+
 	private getReorderCell(row: HTMLTableRowElement): HTMLTableCellElement | null {
 		const cells = row.querySelectorAll<HTMLTableCellElement>(':scope > td');
-		return cells[this.reorderInputColumn - 1] ?? null;
+		return cells[this.reorderColumn - 1] ?? null;
 	}
 
 	private stashCell(cell: HTMLTableCellElement): void {
@@ -1041,6 +1049,8 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private stagedTargetPosition(row: HTMLTableRowElement, index: number): number | null {
+		if (!this.reorderInputs) return null;
+
 		const targetEl = row.querySelector<HTMLInputElement>('.tablewrapper-reorder-target');
 		if (!targetEl) return null;
 
@@ -1082,6 +1092,8 @@ export default class TableWrapper extends BaseComponent {
 
 	// Keeps a typed position on the input until Apply order. Does not move the row.
 	private syncStagedTarget(targetEl: HTMLInputElement): void {
+		if (!this.reorderInputs) return;
+
 		const row = this.rowFromTarget(targetEl);
 		if (!row || !this.isRowReorderable(row)) return;
 
@@ -1170,7 +1182,7 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	private applyTargetPosition(targetEl: HTMLInputElement): void {
-		if (this.isLoading || !this.reorderableRows || !this.reorderImmediately) return;
+		if (this.isLoading || !this.reorderableRows || !this.reorderImmediately || !this.reorderInputs) return;
 
 		const row = targetEl.closest('tr');
 		if (!row || row.parentElement?.tagName !== 'TBODY') return;
@@ -1232,8 +1244,8 @@ export default class TableWrapper extends BaseComponent {
 			if (document.activeElement !== targetEl) {
 				targetEl.value = pending !== undefined ? String(pending) : inputValue;
 			}
-			targetEl.disabled = this.isLoading || !reorderable;
-			if (reorderable) targetEl.removeAttribute('tabindex');
+			targetEl.disabled = this.isLoading || !reorderable || !this.reorderInputs;
+			if (reorderable && this.reorderInputs) targetEl.removeAttribute('tabindex');
 			else targetEl.tabIndex = -1;
 			position.dataset.hasTarget = dirty ? 'true' : 'false';
 		});

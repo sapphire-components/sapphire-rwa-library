@@ -107,6 +107,14 @@
 	}
 }
 
+.tablewrapper[data-reorderablerows='true'][data-reorderinputs='false'] {
+	.tablewrapper-reorder-origin,
+	.tablewrapper-reorder-arrow,
+	.tablewrapper-reorder-target {
+		display: none;
+	}
+}
+
 .tablewrapper[data-reorderablerows='true'][data-reorderondrop='false'] {
 	.tablewrapper-reorder-panel {
 		align-items: center;

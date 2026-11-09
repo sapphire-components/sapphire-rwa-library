@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.138 2026-11-06T18:34:36.686Z */
+/*!  SapphireRWALibrary PROD v0.6.139 2026-11-09T10:00:55.318Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5414,6 +5414,12 @@ div[data-block=SectionSeparator] {
 
 .tablewrapper[data-reorderablerows=true][data-reorderondrop=true] .tablewrapper-reorder-origin,
 .tablewrapper[data-reorderablerows=true][data-reorderondrop=true] .tablewrapper-reorder-arrow {
+  display: none;
+}
+
+.tablewrapper[data-reorderablerows=true][data-reorderinputs=false] .tablewrapper-reorder-origin,
+.tablewrapper[data-reorderablerows=true][data-reorderinputs=false] .tablewrapper-reorder-arrow,
+.tablewrapper[data-reorderablerows=true][data-reorderinputs=false] .tablewrapper-reorder-target {
   display: none;
 }
 
@@ -12478,7 +12484,7 @@ div[data-block$=PrintDocument] {
   pointer-events: none;
 }
 .whowhewherelog {
-  display: inline-flex;
+  display: inline;
 }
 .background-color-transparent {
   background-color: transparent;

@@ -19,5 +19,9 @@ Semantic and theme colour tokens shared by Badge, Alert, and other components.
 | `transparent` | `transparent` |
 | `neutral_0`   | `neutral_0`   |
 | `neutral_1`   | `neutral_1`   |
+| `neutral_2`   | `neutral_2`   |
+| `neutral_3`   | `neutral_3`   |
+| `neutral_4`   | `neutral_4`   |
+| `neutral_5`   | `neutral_5`   |
 
 </div>
