@@ -18,41 +18,41 @@ A scrollable list that keeps one page of rows in the DOM and asks for the next p
 
 ###### Input parameters
 
-| Name            | Type      | Description                                                                                                                                                          |
-| --------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BottomDistance` | `Integer` | Pixels reserved under the list when it fills the viewport (`Height` and `MaxHeight` are both `0`). `0` reserves nothing.                                             |
-| `Enabled`       | `Boolean` | Enables header sorting and further `Scroll` requests.                                                                                                               |
-| `Gap`           | `Text`    | Space between rows when `SimulateTable` is `False`: `none`, `xxxs`, `xxs`, `xs`, `s`, `base`, `m`, `l`, `xl`, `xxl`, `xxxl`. Half is padding above the row content and half below. Empty or `none` adds no space. |
-| `HasSeparator`  | `Boolean` | When `True`, each row has a top border and the first row has none. When `False`, rows have no border.                                                                |
-| `Height`        | `Integer` | Fixed height in pixels. `0` leaves the height unset.                                                                                                                 |
-| `IsLoading`     | `Boolean` | When `True`, covers the visible area with a loading overlay, blocks the rows, and blocks sorting.                                                                   |
-| `IsPristine`    | `Boolean` | While `True`, an empty list does not show **NoRecords**. Defaults to `True`. Set it to `False` after the first load.                                                 |
-| `ItemsTotal`    | `Integer` | Total number of records. Sizes the scrollbar. `0` means the list is empty and `Scroll` is not requested.                                                             |
-| `MaxHeight`     | `Integer` | Maximum height in pixels. `0` applies no cap. Above `0`, the list scrolls inside that cap.                                                                           |
-| `PageSize`      | `Integer` | Initial page size, read once at startup. After the rows are measured, the fitted size replaces it and later changes are ignored. Fetch the `PageSize` from `Scroll`. |
-| `SimulateTable` | `Boolean` | When `True`, lays the header and rows out as aligned columns and enables header sorting.                                                                            |
-| `SortColumn`    | `Text`    | `data-column` of the sorted header. Empty means no column is sorted.                                                                                                |
-| `SortDirection` | `Text`    | `ASC`, `DESC`, or empty. Empty clears the highlight.                                                                                                                 |
-| `StartIndex`    | `Integer` | Index of the first record in the current page. Set this to the `StartIndex` from `Scroll` when that page arrives.                                                    |
+| Name             | Type      | Description                                                                                                                                                                                                      |
+| ---------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BottomDistance` | `Integer` | Pixels reserved under the list when it fills the viewport (`Height` and `MaxHeight` are both `0`). `0` reserves nothing.                                                                                         |
+| `Enabled`        | `Boolean` | Enables header sorting and further `Scroll` requests.                                                                                                                                                            |
+| `Gap`            | `Text`    | Space between rows when `SimulateTable` is `False`: `none`, `xxxs`, `xxs`, `xs`, `s`, `base`, `m`, `l`, `xl`, `xl2`, `xl3`. Half is padding above the row content and half below. Empty or `none` adds no space. |
+| `HasSeparator`   | `Boolean` | When `True`, each row has a top border and the first row has none. When `False`, rows have no border.                                                                                                            |
+| `Height`         | `Integer` | Fixed height in pixels. `0` leaves the height unset.                                                                                                                                                             |
+| `IsLoading`      | `Boolean` | When `True`, covers the visible area with a loading overlay, blocks the rows, and blocks sorting.                                                                                                                |
+| `IsPristine`     | `Boolean` | While `True`, an empty list does not show **NoRecords**. Defaults to `True`. Set it to `False` after the first load.                                                                                             |
+| `ItemsTotal`     | `Integer` | Total number of records. Sizes the scrollbar. `0` means the list is empty and `Scroll` is not requested.                                                                                                         |
+| `MaxHeight`      | `Integer` | Maximum height in pixels. `0` applies no cap. Above `0`, the list scrolls inside that cap.                                                                                                                       |
+| `PageSize`       | `Integer` | Initial page size, read once at startup. After the rows are measured, the fitted size replaces it and later changes are ignored. Fetch the `PageSize` from `Scroll`.                                             |
+| `SimulateTable`  | `Boolean` | When `True`, lays the header and rows out as aligned columns and enables header sorting.                                                                                                                         |
+| `SortColumn`     | `Text`    | `data-column` of the sorted header. Empty means no column is sorted.                                                                                                                                             |
+| `SortDirection`  | `Text`    | `ASC`, `DESC`, or empty. Empty clears the highlight.                                                                                                                                                             |
+| `StartIndex`     | `Integer` | Index of the first record in the current page. Set this to the `StartIndex` from `Scroll` when that page arrives.                                                                                                |
 
 <hr>
 
 ###### Placeholders
 
-| Name        | Description                                                                                                      |
-| ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| Name        | Description                                                                                                       |
+| ----------- | ----------------------------------------------------------------------------------------------------------------- |
 | `Header`    | Column titles. Stays pinned to the top of the list. Hidden when empty. In table mode, each Container is a column. |
-| `Rows`      | The current page. Holds a platform List of `LazyListRow` items.                                                  |
-| `NoRecords` | Empty state shown when `IsPristine` is `False`, `ItemsTotal` is `0`, and the List has no rows.                   |
+| `Rows`      | The current page. Holds a platform List of `LazyListRow` items.                                                   |
+| `NoRecords` | Empty state shown when `IsPristine` is `False`, `ItemsTotal` is `0`, and the List has no rows.                    |
 
 <hr>
 
 ###### Events
 
-| Name    | Description                                                                                                                                              | Arguments                                      |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `Scroll` | Fired 200ms after scrolling settles on a gap, and when a resize leaves a gap. Load `PageSize` records from `StartIndex`, then pass that index back.     | `StartIndex` (`Integer`), `PageSize` (`Integer`) |
-| `Sort`  | Fired when a sortable header column is clicked. `Column` is that column's `data-column`. `Direction` is `ASC`, `DESC`, or empty when the sort is cleared. Load the first page for the new order. | `Column` (`Text`), `Direction` (`Text`)        |
+| Name     | Description                                                                                                                                                                                      | Arguments                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
+| `Scroll` | Fired 200ms after scrolling settles on a gap, and when a resize leaves a gap. Load `PageSize` records from `StartIndex`, then pass that index back.                                              | `StartIndex` (`Integer`), `PageSize` (`Integer`) |
+| `Sort`   | Fired when a sortable header column is clicked. `Column` is that column's `data-column`. `Direction` is `ASC`, `DESC`, or empty when the sort is cleared. Load the first page for the new order. | `Column` (`Text`), `Direction` (`Text`)          |
 
 <hr>
 
@@ -62,11 +62,11 @@ One row in the **Rows** list. The widget root is `.lazylist-row`. When `HasSepar
 
 When `SimulateTable` is `True`, each Container in the row is a column and lines up with the header Container in the same position. The row highlights on hover. Columns share the width equally. Add the same width class to the header Container and the matching row Container to change that column's share of the row.
 
-| Class        | Description                          |
-| ------------ | ------------------------------------ |
-| `width-025x` | Quarter of a default column.         |
-| `width-05x`  | Half of a default column.            |
-| `width-2x`   | Twice a default column.              |
-| `width-3x`   | Three times a default column.        |
-| `width-4x`   | Four times a default column.         |
-| `width-5x`   | Five times a default column.         |
+| Class        | Description                   |
+| ------------ | ----------------------------- |
+| `width-025x` | Quarter of a default column.  |
+| `width-05x`  | Half of a default column.     |
+| `width-2x`   | Twice a default column.       |
+| `width-3x`   | Three times a default column. |
+| `width-4x`   | Four times a default column.  |
+| `width-5x`   | Five times a default column.  |

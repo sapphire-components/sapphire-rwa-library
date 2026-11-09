@@ -1,20 +1,16 @@
 $lazylist-gaps: (
 	'none': 0,
-	'xxxs': var(--space-xxxs),
-	'xxs': var(--space-xxs),
+	'xs3': var(--space-xs3),
+	'xs2': var(--space-xs2),
 	'xs': var(--space-xs),
 	's': var(--space-s),
 	'base': var(--space-base),
 	'm': var(--space-m),
 	'l': var(--space-l),
 	'xl': var(--space-xl),
-	'xxl': var(--space-xxl),
-	'xxxl': var(--space-xxxl),
+	'xl2': var(--space-xl2),
+	'xl3': var(--space-xl3),
 );
-
-div[data-block$='LazyList'] {
-	display: contents;
-}
 
 div[data-block$='LazyList'].lazylist,
 .lazylist {

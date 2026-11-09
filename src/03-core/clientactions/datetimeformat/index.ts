@@ -8,7 +8,7 @@ export interface DateTimeFormatArgs {
 }
 
 export function DateTimeFormat(config: DateTimeFormatArgs): string {
-	const dateTime = config.dateTime || new Date();
+	const dateTime = resolveDateTime(config.dateTime);
 	const locale = config.locale || window.SapphireRWALibrary.State.locale;
 	const maskPattern = typeof config.maskPattern === 'string' ? config.maskPattern : '';
 
@@ -34,6 +34,26 @@ export function DateTimeFormat(config: DateTimeFormatArgs): string {
 	} catch (error) {
 		return 'ERROR: ' + (error as Error).message || 'Unknown error';
 	}
+}
+
+function resolveDateTime(value: Date | string | null | undefined): Date {
+	if (value == null || value === '') return new Date();
+
+	const date = value instanceof Date ? value : new Date(value);
+	if (!Number.isNaN(date.getTime()) && isOutSystemsNullDate(date)) return new Date();
+
+	return date;
+}
+
+function isOutSystemsNullDate(date: Date): boolean {
+	return (
+		isNullDateParts(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()) ||
+		isNullDateParts(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds())
+	);
+}
+
+function isNullDateParts(year: number, month: number, day: number, hour: number, minute: number, second: number): boolean {
+	return year === 1900 && month === 0 && day === 1 && hour === 0 && minute === 0 && second === 0;
 }
 
 interface CalendarParts {

@@ -1,10 +1,6 @@
 // Above SidePanel (401), so the panel also works inside one.
 $filters-panel-layer: 402;
 
-div[data-block$='Filters'] {
-	display: contents;
-}
-
 // The panel lives in <body>, so it carries a copy of the row's data-density
 // and shares its padding, keeping filters in place when it opens over the row.
 .filters,

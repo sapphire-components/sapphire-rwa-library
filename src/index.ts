@@ -7,10 +7,11 @@ import { installClickCooldown } from '@core/clickCooldown';
 import DesignSystemColors from '@/02-designsystem/design-system-screen-colors';
 import DesignSystemMenu from '@/02-designsystem/design-system-menu';
 
-import { DateTimeFormat } from '@/03-core/datetimeformat';
+import LayoutBlank from '@/03-core/layoutblank';
 import LayoutWrapper from '@/03-core/layout';
 import Locale from '@/03-core/locale';
-import LayoutBlank from '@/03-core/layoutblank';
+import { DateTimeFormat } from '@/03-core/clientactions/datetimeformat';
+import { SetApplicationLocale } from '@/03-core/clientactions/setapplicationlocale';
 
 import BackofficeHeader from '@helpers/backofficeheader';
 import FilterBar from '@helpers/filterbar';
@@ -53,7 +54,6 @@ import PrintDocument from '@custom-patterns/printdocument';
 import WhoWhenWhereLog from '@/08-custom-patterns/whowhenwherelog';
 
 import Helpers from '@utils/helpers';
-import { LocalStorageKeys } from '@utils/local-storage-keys';
 
 function init(): void {
 	const script = document.querySelector('script#sapphire-rwa-library');
@@ -63,10 +63,7 @@ function init(): void {
 	} else {
 		installBodyPlatformClassStripper();
 		installClickCooldown();
-
-		const storedLocale: any = Helpers.readFromLocalStorage<string>(LocalStorageKeys.locale);
-		window.SapphireRWALibrary.State.locale = storedLocale['localeCode'];
-		window.SapphireRWALibrary.State.isRTL = storedLocale['isRTL'];
+		SetApplicationLocale();
 
 		const style1 = 'color: #FFA500; font-weight: bold;';
 		console.log(`%cSapphireRWALibrary | ${__APP_VERSION__} | ${window.location.pathname}`, style1);
@@ -87,36 +84,37 @@ const SapphireRWALibrary = {
 	DesignSystemColors,
 	DesignSystemMenu,
 	DropdownMenu,
-	Filters,
 	FilterBar,
+	Filters,
 	Helpers,
 	HourPicker,
+	Iframe,
 	InputWrapper,
 	LabelValue,
+	LayoutBlank,
 	LayoutWrapper,
 	LazyList,
 	Locale,
 	MasterDetail,
 	MultiLevel,
 	Overlay,
-	Iframe,
 	PhoneInput,
 	PopupContent,
 	PrintDocument,
 	ResponsiveContainers,
-	LayoutBlank,
 	SapphireCard,
 	SapphireDropdown,
 	SapphireInput,
 	ScrollableContent,
+	SetApplicationLocale,
 	SidePanel,
 	Skeleton,
 	Status,
 	TabContent,
 	TabHeader,
-	TitleLeadCaption,
 	TableWrapper,
 	Tabs,
+	TitleLeadCaption,
 	Toast: new Toast(),
 	WeekDayPicker,
 	WhoWhenWhereLog,

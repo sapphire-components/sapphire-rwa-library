@@ -24,9 +24,9 @@ interface ILazyList extends BaseComponentInit {
 	theme: string;
 }
 
-type LazyListGap = 'none' | 'xxxs' | 'xxs' | 'xs' | 's' | 'base' | 'm' | 'l' | 'xl' | 'xxl' | 'xxxl';
+type LazyListGap = 'none' | 'xs3' | 'xs2' | 'xs' | 's' | 'base' | 'm' | 'l' | 'xl' | 'xl2' | 'xl3';
 
-const GAPS: readonly LazyListGap[] = ['none', 'xxxs', 'xxs', 'xs', 's', 'base', 'm', 'l', 'xl', 'xxl', 'xxxl'];
+const GAPS: readonly LazyListGap[] = ['none', 'xs3', 'xs2', 'xs', 's', 'base', 'm', 'l', 'xl', 'xl2', 'xl3'];
 
 export default class LazyList extends BaseComponent {
 	private actions!: ILazyList['actions'];

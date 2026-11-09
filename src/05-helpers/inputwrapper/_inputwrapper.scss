@@ -203,3 +203,13 @@ div.inputwrapper {
 		display: block;
 	}
 }
+
+// The validation message renders below the input and makes the wrapper taller,
+// so anchor the icons to the control's centre instead of the wrapper's.
+.inputwrapper:has(.validation-message) {
+	.inputwrapper-icon,
+	.inputwrapper-clear,
+	.inputwrapper-password {
+		top: calc(var(--inputwrapper-control-height) / 2);
+	}
+}

@@ -23,7 +23,7 @@ Use `SapphireRWALibrary.DateTimeFormat` when you need a locale-aware date and/or
 
 | Name        | Type                    | Description                                                                                                                                                          |
 | ----------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `DateTime`  | `Date`                  | The date/time to format. If empty, the current date/time (`new Date()`) is used.                                                                                     |
+| `DateTime`  | `Date`                  | The date/time to format. If empty, or the OutSystems null date (`1900-01-01 00:00:00`), the current date/time (`new Date()`) is used.                                |
 | `Locale`    | `Text`                  | BCP 47 locale code (for example `en-US`, `pt-PT`). If empty, falls back to `SapphireRWALibrary.State.locale`.                                                        |
 | `DateStyle`   | `Text`                  | Optional date preset passed to `Intl.DateTimeFormat`. Supported values: `full`, `long`, `medium`, `short`. Omit to leave the date part unset. Ignored when `MaskPattern` is set. |
 | `TimeStyle`   | `Text`                  | Optional time preset passed to `Intl.DateTimeFormat`. Supported values: `full`, `long`, `medium`, `short`. Omit to leave the time part unset. Ignored when `MaskPattern` is set. |

@@ -1,7 +1,3 @@
-div[data-block$='Separator'] {
-	display: contents;
-}
-
 $separator-sizes: (
 	'none': 0,
 	'xs': var(--space-xs),
