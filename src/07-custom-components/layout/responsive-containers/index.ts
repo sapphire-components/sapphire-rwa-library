@@ -2,9 +2,22 @@ import { BaseComponent, type BaseComponentInit } from '@core/base';
 
 type Layout = 'grid' | 'masonry';
 
+// SapphireSize ids that have a matching --space-* token.
+const GAP_SIZES = ['none', 'xs3', 'xs2', 'xs', 's', 'base', 'm', 'l', 'xl', 'xl2', 'xl3', 'xl4'] as const;
+type GapSize = (typeof GAP_SIZES)[number];
+// Matches the block's Gap default (Entities.SapphireSize.M).
+const DEFAULT_GAP: GapSize = 'm';
+
+function resolveGap(value: string | null | undefined): GapSize {
+	const normalized = String(value ?? '')
+		.trim()
+		.toLowerCase();
+	return (GAP_SIZES as readonly string[]).includes(normalized) ? (normalized as GapSize) : DEFAULT_GAP;
+}
+
 interface ResponsiveContainersInit extends BaseComponentInit {
 	columns: number;
-	gap: number;
+	gap: string;
 	layout: Layout;
 	minColWidth: number;
 }
@@ -12,7 +25,7 @@ interface ResponsiveContainersInit extends BaseComponentInit {
 export default class ResponsiveContainers extends BaseComponent {
 	private columns = 0;
 	private containersPlaceholder!: HTMLElement;
-	private gap = 0;
+	private gap: GapSize = DEFAULT_GAP;
 	private layout: Layout = 'grid';
 	private minColWidth = 0;
 
@@ -57,7 +70,7 @@ export default class ResponsiveContainers extends BaseComponent {
 			this.columns = init.columns;
 		}
 		if (init.gap !== undefined) {
-			this.gap = init.gap;
+			this.gap = resolveGap(init.gap);
 		}
 		if (init.layout !== undefined) {
 			this.layout = init.layout;
@@ -69,7 +82,7 @@ export default class ResponsiveContainers extends BaseComponent {
 		const columnCount = Math.floor(this.columns);
 		const fixedColumns = columnCount > 0;
 
-		this.widgetEl.style.setProperty('--responsive-containers-gap', `${this.gap}px`);
+		this.widgetEl.style.setProperty('--responsive-containers-gap', `var(--space-${this.gap})`);
 		this.widgetEl.style.setProperty('--responsive-containers-min-col-width', `${this.minColWidth}px`);
 
 		if (fixedColumns) {

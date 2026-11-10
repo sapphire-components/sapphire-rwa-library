@@ -1,5 +1,11 @@
 .dropdown-container {
+	> select option:hover {
+		background-color: #e5e5e5;
+		color: #222;
+	}
+
 	> select.dropdown-display {
+		font-size: var(--font-size-base);
 		padding-right: 28px;
 		&::-webkit-scrollbar {
 			width: 6px;

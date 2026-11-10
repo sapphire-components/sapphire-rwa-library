@@ -6,7 +6,7 @@ div[data-block$='ResponsiveContainers'] {
 	&--grid {
 		display: grid;
 		gap: var(--responsive-containers-gap);
-		grid-template-columns: repeat(auto-fit, minmax(var(--responsive-containers-min-col-width), 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(var(--responsive-containers-min-col-width), 100%), 1fr));
 
 		&.responsive-containers--fixed-columns {
 			grid-template-columns: repeat(var(--responsive-containers-columns), minmax(0, 1fr));

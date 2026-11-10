@@ -1,0 +1,82 @@
+// Density variations (SapphireDensity). `default` is the base look in _styles.scss.
+// The calendar panel is rendered in <body> when it pops up, so it carries its own
+// data-density copy and is targeted separately from the trigger.
+
+.datetimepicker[data-density='compact'] .datetimepicker-trigger {
+	font-size: var(--font-size-s);
+	gap: 6px;
+	height: 32px;
+	min-height: 32px;
+	padding-inline: 10px;
+}
+
+.datetimepicker-panel[data-density='compact'] {
+	--dtp-cell: 30px;
+	font-size: var(--font-size-s);
+	gap: 6px;
+	padding: 8px;
+	width: calc(var(--dtp-cell) * 7 + 16px);
+
+	.datetimepicker-nav {
+		height: 26px;
+		width: 26px;
+	}
+
+	.datetimepicker-title {
+		height: 26px;
+	}
+
+	.datetimepicker-weekday {
+		line-height: 22px;
+	}
+
+	.datetimepicker-day[data-today='true']::after {
+		bottom: 3px;
+		height: 3px;
+		width: 3px;
+	}
+
+	.datetimepicker-grid {
+		min-height: calc(var(--dtp-cell) * 6 + 22px);
+	}
+
+	.datetimepicker-cell {
+		min-height: 32px;
+	}
+
+	.datetimepicker-time {
+		gap: 4px;
+		padding-top: 8px;
+	}
+
+	.datetimepicker-select {
+		font-size: var(--font-size-s);
+		height: 26px;
+		min-height: 26px;
+		padding-inline: 4px;
+		width: 3.5rem;
+	}
+
+	.datetimepicker-footer {
+		padding-top: 8px;
+	}
+
+	.datetimepicker-apply {
+		min-height: 26px;
+		padding-inline: 12px;
+	}
+
+	.datetimepicker-footer-clear {
+		min-height: 26px;
+		padding-inline: 8px;
+	}
+
+	&[data-dual='true'] {
+		--dtp-gap: 16px;
+		width: calc(var(--dtp-cell) * 14 + var(--dtp-gap) + 16px);
+
+		&[data-view='days'] .datetimepicker-title {
+			margin-inline: 30px;
+		}
+	}
+}

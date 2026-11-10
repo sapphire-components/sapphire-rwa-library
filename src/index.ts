@@ -28,6 +28,7 @@ import ButtonDropdown from '@/07-custom-components/buttons/buttondropdown';
 import Chip from '@/07-custom-components/buttons/chip';
 import ColorPicker from '@/07-custom-components/utilities/colorpicker';
 import Country from '@/07-custom-components/utilities/country';
+import DateTimePicker from '@/07-custom-components/datetime/datetimepicker';
 import DropdownMenu from '@/07-custom-components/navigation/dropdownmenu';
 import HourPicker from '@/07-custom-components/datetime/hourpicker';
 import MasterDetail from '@custom-components/masterdetail';
@@ -81,6 +82,7 @@ const SapphireRWALibrary = {
 	ColorPicker,
 	Country,
 	DateTimeFormat,
+	DateTimePicker,
 	DesignSystemColors,
 	DesignSystemMenu,
 	DropdownMenu,

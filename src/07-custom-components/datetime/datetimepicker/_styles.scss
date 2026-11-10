@@ -1,0 +1,488 @@
+@use '../../../01-foundations/_mixins.scss' as *;
+
+div[data-block$='DateTimePicker'] {
+	display: contents;
+}
+
+.datetimepicker {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 4px;
+	position: relative;
+	width: 100%;
+
+	&-trigger {
+		@include focus-visible();
+		align-items: center;
+		background-color: var(--color-neutral-0);
+		border: 1px solid var(--color-border);
+		border-radius: var(--border-radius-soft);
+		cursor: pointer;
+		display: flex;
+		gap: 8px;
+		height: 40px;
+		min-height: 40px;
+		padding-block: 0;
+		padding-inline: 12px;
+		transition: all 180ms linear;
+		user-select: none;
+		width: 100%;
+
+		&:hover {
+			border-color: var(--color-neutral-6);
+		}
+
+		&[aria-expanded='true'] {
+			border-color: var(--color-primary);
+		}
+	}
+
+	&-icon {
+		align-items: center;
+		color: var(--color-neutral-6);
+		display: inline-flex;
+		flex: 0 0 auto;
+	}
+
+	&-value {
+		flex: 1 1 auto;
+		font-variant-numeric: tabular-nums;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		&[data-placeholder='true'] {
+			color: var(--color-text-disabled);
+		}
+	}
+
+	&-clear {
+		@include focus-visible();
+		align-items: center;
+		border-radius: 4px;
+		color: var(--color-neutral-6);
+		cursor: pointer;
+		display: none;
+		flex: 0 0 auto;
+		justify-content: center;
+
+		&:hover {
+			color: var(--color-neutral-9);
+		}
+	}
+}
+
+/* Hidden while disabled: clearing is not possible then. */
+.datetimepicker[data-enabled='true'][data-hasclear='true'][data-hasvalue='true'] .datetimepicker-clear {
+	display: inline-flex;
+}
+
+/* The global .tippy-box theme is dark; scope a light surface for the calendar panel. */
+.tippy-box:has(.datetimepicker-panel) {
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-4);
+	border-radius: 8px;
+	box-shadow: var(--box-shadow-md);
+	color: var(--color-neutral-9);
+
+	.tippy-content {
+		padding: 0;
+	}
+}
+
+.datetimepicker-panel {
+	--dtp-cell: 36px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px;
+	user-select: none;
+	width: calc(var(--dtp-cell) * 7 + 24px);
+}
+
+/* Range mode, two calendars side by side. The panel keeps the double width in the
+   month / year views too, so switching views does not resize it. */
+.datetimepicker-panel[data-dual='true'] {
+	--dtp-gap: 24px;
+	width: calc(var(--dtp-cell) * 14 + var(--dtp-gap) + 24px);
+
+	&[data-view='days'] {
+		.datetimepicker-header {
+			column-gap: var(--dtp-gap);
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			position: relative;
+		}
+
+		/* Arrows sit on the outer edges; each title is centred over its month. */
+		.datetimepicker-prev,
+		.datetimepicker-next {
+			position: absolute;
+			top: 0;
+			z-index: 1;
+		}
+
+		.datetimepicker-prev {
+			inset-inline-start: 0;
+		}
+
+		.datetimepicker-next {
+			inset-inline-end: 0;
+		}
+
+		.datetimepicker-title {
+			margin-inline: 36px;
+		}
+
+		.datetimepicker-body {
+			display: flex;
+			gap: var(--dtp-gap);
+		}
+	}
+}
+
+.datetimepicker-title[hidden] {
+	display: none;
+}
+
+.datetimepicker-blank {
+	height: var(--dtp-cell);
+	width: var(--dtp-cell);
+}
+
+.datetimepicker[data-inline='true'] .datetimepicker-panel {
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+}
+
+.datetimepicker-header {
+	align-items: center;
+	display: flex;
+	gap: 4px;
+	justify-content: space-between;
+}
+
+.datetimepicker-nav,
+.datetimepicker-title,
+.datetimepicker-day,
+.datetimepicker-cell {
+	@include focus-visible();
+	background: transparent;
+	border: none;
+	border-radius: 6px;
+	color: var(--color-neutral-9);
+	cursor: pointer;
+	font: inherit;
+	padding: 0;
+	transition: background-color 120ms linear;
+
+	&:hover:not(:disabled) {
+		background-color: var(--color-neutral-2);
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+	}
+}
+
+.datetimepicker-nav {
+	align-items: center;
+	color: var(--color-neutral-7);
+	display: inline-flex;
+	flex: 0 0 auto;
+	height: 32px;
+	justify-content: center;
+	width: 32px;
+
+	&:disabled {
+		color: var(--color-neutral-4);
+	}
+}
+
+[dir='rtl'] .datetimepicker-nav .svg-icon {
+	transform: scaleX(-1);
+}
+
+.datetimepicker-title {
+	flex: 1 1 auto;
+	font-weight: 600;
+	height: 32px;
+
+	&:disabled {
+		cursor: default;
+	}
+
+	&[data-clickable='false']:hover {
+		background-color: transparent;
+	}
+}
+
+.datetimepicker-days {
+	display: flex;
+	flex-direction: column;
+}
+
+.datetimepicker-weekdays,
+.datetimepicker-week {
+	display: grid;
+	grid-template-columns: repeat(7, var(--dtp-cell));
+}
+
+.datetimepicker-weekday {
+	color: var(--color-neutral-6);
+	font-size: var(--font-size-xs);
+	line-height: 28px;
+	text-align: center;
+	text-transform: capitalize;
+}
+
+.datetimepicker-day {
+	font-variant-numeric: tabular-nums;
+	height: var(--dtp-cell);
+	position: relative;
+	width: var(--dtp-cell);
+
+	&[data-outside='true'] {
+		color: var(--color-neutral-5);
+	}
+
+	&[data-today='true'] {
+		font-weight: 600;
+
+		&::after {
+			background-color: currentColor;
+			border-radius: 50%;
+			bottom: 5px;
+			content: '';
+			height: 4px;
+			inset-inline-start: 50%;
+			position: absolute;
+			transform: translateX(-50%);
+			width: 4px;
+		}
+	}
+
+	&:disabled {
+		color: var(--color-neutral-4);
+		text-decoration: line-through;
+	}
+}
+
+.datetimepicker-day[data-selected='true'],
+.datetimepicker-cell[data-selected='true'] {
+	background-color: var(--color-primary);
+	color: var(--color-neutral-0);
+
+	&:hover:not(:disabled) {
+		background-color: var(--color-primary-dark);
+	}
+}
+
+/* Range mode: a continuous band from start to end. Weeks have no column gap, so
+   squaring the inner corners joins the cells. While only the start is picked, the
+   band previews up to the hovered / focused day, whose end gets a dashed outline. */
+.datetimepicker-panel[data-mode='range'] .datetimepicker-day {
+	&[data-range='start'],
+	&[data-range='middle'],
+	&[data-range='end'] {
+		background-color: var(--color-primary-lighter);
+		border-radius: 0;
+
+		&:hover:not(:disabled) {
+			background-color: var(--color-primary-light);
+		}
+	}
+
+	&[data-range='start'] {
+		border-end-start-radius: 6px;
+		border-start-start-radius: 6px;
+	}
+
+	&[data-range='end'] {
+		border-end-end-radius: 6px;
+		border-start-end-radius: 6px;
+	}
+
+	&[data-selected='true'] {
+		background-color: var(--color-primary);
+		color: var(--color-neutral-0);
+
+		&:hover:not(:disabled) {
+			background-color: var(--color-primary-dark);
+		}
+	}
+
+	&[data-preview='true'][data-selected='false'][data-range='start'],
+	&[data-preview='true'][data-selected='false'][data-range='end'] {
+		outline: 1px dashed var(--color-primary);
+		outline-offset: -1px;
+	}
+}
+
+.datetimepicker-grid {
+	display: grid;
+	gap: 4px;
+	grid-template-columns: repeat(3, 1fr);
+	/* Same height as six weeks + weekday row so switching views does not resize the panel. */
+	min-height: calc(var(--dtp-cell) * 6 + 28px);
+}
+
+.datetimepicker-cell {
+	min-height: 40px;
+	text-transform: capitalize;
+
+	&[data-today='true'] {
+		font-weight: 600;
+	}
+
+	&:disabled {
+		color: var(--color-neutral-4);
+	}
+}
+
+.datetimepicker-time {
+	align-items: center;
+	border-top: 1px solid var(--color-neutral-3);
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+	padding-top: 10px;
+
+	&[hidden] {
+		display: none;
+	}
+
+	&-icon {
+		align-items: center;
+		color: var(--color-neutral-6);
+		display: inline-flex;
+		margin-inline-end: 4px;
+	}
+}
+
+.datetimepicker-select {
+	@include focus-visible();
+	appearance: auto;
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-soft);
+	color: var(--color-text);
+	font-variant-numeric: tabular-nums;
+	height: 32px;
+	min-height: 32px;
+	padding-block: 0;
+	padding-inline: 6px;
+	text-align: center;
+	width: 4rem;
+
+	&:hover {
+		border-color: var(--color-neutral-6);
+	}
+
+	&:disabled {
+		background-color: var(--color-background-disabled);
+		color: var(--color-text-disabled);
+	}
+}
+
+.datetimepicker-footer {
+	border-top: 1px solid var(--color-neutral-3);
+	display: flex;
+	justify-content: flex-end;
+	padding-top: 10px;
+}
+
+/* HasClear + HasApplyButton: text-style Clear at the start, Apply stays at the end. */
+.datetimepicker-footer-clear {
+	@include focus-visible();
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: var(--border-radius-soft);
+	color: var(--color-neutral-9);
+	cursor: pointer;
+	font: inherit;
+	font-weight: 600;
+	min-height: 32px;
+	padding-block: 0;
+	padding-inline: 12px;
+	text-decoration: underline;
+	transition: background-color 120ms linear;
+
+	&:hover:not(:disabled) {
+		background-color: var(--color-neutral-2);
+	}
+
+	&:disabled {
+		color: var(--color-text-disabled);
+		cursor: not-allowed;
+		text-decoration: none;
+	}
+}
+
+.datetimepicker-apply {
+	@include focus-visible($color: var(--color-neutral-0));
+	background-color: var(--color-primary);
+	border: 1px solid var(--color-primary);
+	border-radius: var(--border-radius-soft);
+	color: var(--color-neutral-0);
+	cursor: pointer;
+	font: inherit;
+	font-weight: 600;
+	margin-inline-start: auto;
+	min-height: 32px;
+	padding-block: 0;
+	padding-inline: 16px;
+	transition: background-color 120ms linear;
+
+	&:hover:not(:disabled) {
+		background-color: var(--color-primary-dark);
+		border-color: var(--color-primary-dark);
+	}
+
+	&:disabled {
+		background-color: var(--color-background-disabled);
+		border-color: var(--color-border);
+		color: var(--color-text-disabled);
+		cursor: not-allowed;
+	}
+}
+
+.datetimepicker-sep {
+	color: var(--color-neutral-7);
+	user-select: none;
+}
+
+/* Theme / state */
+
+.datetimepicker[data-theme='filter'] .datetimepicker-trigger {
+	background-color: var(--color-interactive);
+	border-radius: 100px;
+}
+
+.datetimepicker[data-enabled='false'] {
+	cursor: not-allowed;
+
+	.datetimepicker-trigger {
+		background-color: var(--color-background-disabled);
+		color: var(--color-text-disabled);
+		pointer-events: none;
+	}
+
+	.datetimepicker-panel {
+		opacity: 0.6;
+		pointer-events: none;
+	}
+}
+
+.datetimepicker[data-isvalid='false'] {
+	.datetimepicker-trigger {
+		background-color: var(--color-error-light);
+		border-color: var(--color-error);
+	}
+
+	&[data-inline='true'] .datetimepicker-panel {
+		border-color: var(--color-error);
+	}
+}

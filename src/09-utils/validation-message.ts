@@ -16,6 +16,11 @@ export class ValidationMessage {
 		this.#placement = placement;
 	}
 
+	/** The message element while it is shown, so a component can reference it (e.g. aria-describedby). */
+	get element(): HTMLElement | null {
+		return this.#el;
+	}
+
 	update(isValid: boolean, message: string): void {
 		if (isValid || !message) {
 			this.destroy();
