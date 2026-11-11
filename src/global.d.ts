@@ -42,9 +42,15 @@ declare global {
 
 	interface SapphireRWADocumentationConstructor extends SapphireRWALookupConstructor {}
 
-	interface SapphireRWAStaticEntitiesInstance extends SapphireRWALookupInstance {}
+	interface SapphireRWAStaticEntitiesInstance {
+		/** Every static-entity table, rendered as one HTML document. */
+		html: string;
+	}
 
-	interface SapphireRWAStaticEntitiesConstructor extends SapphireRWALookupConstructor {}
+	interface SapphireRWAStaticEntitiesConstructor {
+		new (): SapphireRWAStaticEntitiesInstance;
+		(): SapphireRWAStaticEntitiesInstance;
+	}
 
 	type TippyInstance = {
 		destroy: () => void;

@@ -120,6 +120,7 @@ export default defineConfig(({ command, mode }) => {
 				outFile: STATIC_ENTITIES_OUT_FILE,
 				globalName: 'SapphireRWAStaticEntities',
 				linkStaticEntities: true,
+				singlePage: true,
 			}),
 			bannerOnDisk(banner),
 			cssHotSwap({ outDir: 'dist', outFile: 'sapphire-rwa-library.css' }),
@@ -410,14 +411,17 @@ function walkScss(dir, cb) {
 // the library JS/CSS:
 //
 //   sapphire-rwa-documentation.js     -> SapphireRWADocumentation (components)
-//   sapphire-rwa-static-entities.js -> SapphireRWAStaticEntities (enumerables)
+//   sapphire-rwa-static-entities.js   -> SapphireRWAStaticEntities (enumerables)
 //
-//   new SapphireRWADocumentation('Overlay').html       // component docs HTML
-//   new SapphireRWAStaticEntities('SapphireScale').html // records table HTML
+//   new SapphireRWADocumentation('Overlay').html // one component's docs HTML
+//   new SapphireRWAStaticEntities().html         // every static entity, one page
 //
-// Lookup is case- and separator-insensitive ('SapphireScale', 'sapphire-scale'
-// -> sapphirescale). Missing docs -> ''.
-function lookupDocsBundle({ name, srcDir, scanDirs, docFileName, outFile, globalName, linkStaticEntities = false }) {
+// Documentation lookup is case- and separator-insensitive ('SapphireScale',
+// 'sapphire-scale' -> sapphirescale). Missing docs -> ''.
+// Static entities are one document: each folder's enumerables.md is a section
+// whose id is the folder name, so /RW_DesignSystem/StaticEntities#SapphireColor
+// still scrolls to that table.
+function lookupDocsBundle({ name, srcDir, scanDirs, docFileName, outFile, globalName, linkStaticEntities = false, singlePage = false }) {
 	const collect = (cwd) => {
 		const srcRoot = path.resolve(cwd, srcDir);
 		const files = [];
@@ -447,16 +451,23 @@ function lookupDocsBundle({ name, srcDir, scanDirs, docFileName, outFile, global
 			const files = collect(cwd);
 			const staticEntities = linkStaticEntities ? collectStaticEntityNames(cwd, srcDir) : [];
 
+			const sections = [];
 			const docs = {};
 			for (const filePath of files) {
-				const key = normalizeDocKey(path.basename(path.dirname(filePath)));
+				const entityName = path.basename(path.dirname(filePath));
+				const key = normalizeDocKey(entityName);
 				if (!key) continue;
 				let md = fs.readFileSync(filePath, 'utf8');
 				if (staticEntities.length) md = linkStaticEntitiesInMarkdown(md, staticEntities);
-				docs[key] = marked.parse(md, { async: false }).trim();
+				const html = marked.parse(md, { async: false }).trim();
+				if (singlePage) sections.push(stampStaticEntityId(html, entityName));
+				else docs[key] = html;
 			}
 
-			this.emitFile({ type: 'asset', fileName: outFile, source: buildLookupIife(globalName, docs) });
+			const source = singlePage
+				? buildPageIife(globalName, `<div class="static-entities">\n${sections.join('\n')}\n</div>`)
+				: buildLookupIife(globalName, docs);
+			this.emitFile({ type: 'asset', fileName: outFile, source });
 		},
 	};
 }
@@ -465,6 +476,86 @@ function normalizeDocKey(name) {
 	return String(name || '')
 		.toLowerCase()
 		.replace(/[^a-z0-9]/g, '');
+}
+
+function stampStaticEntityId(html, entityName) {
+	const id = String(entityName).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+	const stamped = `class="static-entity" id="${id}"`;
+	if (html.includes('class="static-entity"')) return html.replace('class="static-entity"', stamped);
+	return `<div ${stamped}>\n${html}\n</div>`;
+}
+
+// The page bundle also scrolls to and highlights the card named in the URL
+// hash (/RW_DesignSystem/StaticEntities#Shape). The HTML is rendered by the
+// OutSystems screen after the constructor runs, so the target is awaited with
+// a MutationObserver (given up after WAIT_MS). Hash changes while on the page
+// (in-page links) are handled too.
+function buildPageIife(globalName, html) {
+	return `(function () {
+	var HTML = ${JSON.stringify(html)};
+	var HIGHLIGHT_CLASS = 'static-entity--highlight';
+	var WAIT_MS = 10000;
+	var observer = null;
+	var timer = 0;
+
+	function targetId() {
+		var hash = window.location.hash.slice(1);
+		if (!hash) return '';
+		try { return decodeURIComponent(hash); } catch (e) { return hash; }
+	}
+
+	function findTarget(id) {
+		var el = document.getElementById(id);
+		return el && el.classList.contains('static-entity') ? el : null;
+	}
+
+	function stopWaiting() {
+		if (observer) observer.disconnect();
+		observer = null;
+		clearTimeout(timer);
+	}
+
+	function reveal(el) {
+		var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+		var current = document.querySelectorAll('.' + HIGHLIGHT_CLASS);
+		for (var i = 0; i < current.length; i++) current[i].classList.remove(HIGHLIGHT_CLASS);
+		void el.offsetWidth; // restart the animation when the same card is targeted again
+		el.classList.add(HIGHLIGHT_CLASS);
+		el.addEventListener('animationend', function done() {
+			el.classList.remove(HIGHLIGHT_CLASS);
+			el.removeEventListener('animationend', done);
+		});
+	}
+
+	function revealHashTarget() {
+		stopWaiting();
+		var id = targetId();
+		if (!id) return;
+		var el = findTarget(id);
+		if (el) return reveal(el);
+		if (!window.MutationObserver) return;
+		observer = new MutationObserver(function () {
+			var found = findTarget(id);
+			if (!found) return;
+			stopWaiting();
+			reveal(found);
+		});
+		observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+		timer = setTimeout(stopWaiting, WAIT_MS);
+	}
+
+	window.addEventListener('hashchange', revealHashTarget);
+
+	function ${globalName}() {
+		if (!(this instanceof ${globalName})) return new ${globalName}();
+		this.html = HTML;
+		revealHashTarget();
+	}
+	${globalName}.revealHashTarget = revealHashTarget;
+	window.${globalName} = ${globalName};
+})();
+`;
 }
 
 function buildLookupIife(globalName, docs) {

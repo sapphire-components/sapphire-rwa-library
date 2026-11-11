@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.142 2026-11-10T17:32:19.491Z */
+/*!  SapphireRWALibrary PROD v0.6.143 2026-11-11T09:03:28.128Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1184,6 +1184,26 @@ sub,
   font-size: var(--font-size-h4);
   font-weight: 700;
 }
+.static-entities {
+  column-gap: 16px;
+  columns: 380px;
+}
+.static-entities > .static-entity {
+  break-inside: avoid;
+  display: inline-block;
+  margin-bottom: 16px;
+  vertical-align: top;
+  width: 100%;
+}
+
+@keyframes static-entity-highlight {
+  0%, 60% {
+    box-shadow: 0 0 0 3px var(--color-primary), var(--box-shadow-md);
+  }
+  100% {
+    box-shadow: 0 0 0 3px transparent, var(--box-shadow-md);
+  }
+}
 .static-entity {
   background-color: var(--color-neutral-0);
   border: solid 1px var(--color-border);
@@ -1191,6 +1211,10 @@ sub,
   box-shadow: var(--box-shadow-md);
   font-size: 14px;
   padding: 16px;
+  scroll-margin-top: 16px;
+}
+.static-entity--highlight {
+  animation: static-entity-highlight 2.5s ease-out;
 }
 .static-entity h6 {
   margin-bottom: 8px;

@@ -1,3 +1,30 @@
+.static-entities {
+	column-gap: 16px;
+	columns: 380px;
+
+	> .static-entity {
+		break-inside: avoid;
+		display: inline-block;
+		margin-bottom: 16px;
+		vertical-align: top;
+		width: 100%;
+	}
+}
+
+@keyframes static-entity-highlight {
+	0%,
+	60% {
+		box-shadow:
+			0 0 0 3px var(--color-primary),
+			var(--box-shadow-md);
+	}
+	100% {
+		box-shadow:
+			0 0 0 3px transparent,
+			var(--box-shadow-md);
+	}
+}
+
 .static-entity {
 	background-color: var(--color-neutral-0);
 	border: solid 1px var(--color-border);
@@ -5,6 +32,10 @@
 	box-shadow: var(--box-shadow-md);
 	font-size: 14px;
 	padding: 16px;
+	scroll-margin-top: 16px;
+	&--highlight {
+		animation: static-entity-highlight 2.5s ease-out;
+	}
 	h6 {
 		margin-bottom: 8px;
 	}
