@@ -11,6 +11,7 @@ import LayoutBlank from '@/03-core/layoutblank';
 import LayoutWrapper from '@/03-core/layout';
 import Locale from '@/03-core/locale';
 import { DateTimeFormat } from '@/03-core/clientactions/datetimeformat';
+import { Interval, initSharedIntervals } from '@/03-core/clientactions/interval';
 import { SetApplicationLocale } from '@/03-core/clientactions/setapplicationlocale';
 
 import BackofficeHeader from '@helpers/backofficeheader';
@@ -46,6 +47,7 @@ import Status from '@/07-custom-components/feedback/status';
 import Toast from '@/07-custom-components/feedback/toast';
 import WeekDayPicker from '@/07-custom-components/datetime/weekdaypicker';
 import Iframe from '@/07-custom-components/datadisplay/iframe';
+import IntervalListener from '@/07-custom-components/utilities/intervallistener';
 import { Tabs, TabHeader, TabContent } from '@/07-custom-components/navigation/tabs';
 
 import Filters from '@custom-patterns/filters';
@@ -65,6 +67,7 @@ function init(): void {
 		installBodyPlatformClassStripper();
 		installClickCooldown();
 		SetApplicationLocale();
+		initSharedIntervals();
 
 		const style1 = 'color: #FFA500; font-weight: bold;';
 		console.log(`%cSapphireRWALibrary | ${__APP_VERSION__} | ${window.location.pathname}`, style1);
@@ -92,6 +95,8 @@ const SapphireRWALibrary = {
 	HourPicker,
 	Iframe,
 	InputWrapper,
+	Interval,
+	IntervalListener,
 	LabelValue,
 	LayoutBlank,
 	LayoutWrapper,
