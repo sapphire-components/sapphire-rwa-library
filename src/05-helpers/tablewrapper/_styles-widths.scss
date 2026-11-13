@@ -41,3 +41,46 @@
 		height: 50px;
 	}
 }
+
+// Width caps set by TableWrapper: a column whose body cells hold only a
+// checkbox, and the reorder column (its cells and the header above it).
+// A table cell ignores max-width on its own, so width is set to the cap too.
+.tablewrapper tr > :is(th, td) {
+	&.tablewrapper-checkbox-column {
+		--tablewrapper-column-cap: var(--tablewrapper-checkbox-column-max-width, 100px);
+	}
+	&.tablewrapper-reorder-column,
+	&.tablewrapper-reorder-cell {
+		--tablewrapper-column-cap: var(--tablewrapper-reorder-column-max-width, 120px);
+	}
+}
+
+.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
+	max-width: var(--tablewrapper-column-cap);
+	text-align: center;
+	width: var(--tablewrapper-column-cap);
+
+	// Block wrappers the platform puts around the control (e.g. a max-width
+	// div), and the checkbox itself, which the platform renders as a block.
+	> *,
+	input[type='checkbox'] {
+		margin-inline: auto;
+	}
+}
+
+// The pinned header clone lives outside the wrapper; its widths are copied inline.
+.tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) {
+	text-align: center;
+
+	// Block wrappers the platform puts around the control (e.g. a max-width
+	// div), and the checkbox itself, which the platform renders as a block.
+	> *,
+	input[type='checkbox'] {
+		margin-inline: auto;
+	}
+}
+
+.tablewrapper[data-columnfixedwidths='true'] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
+	flex: 0 0 var(--tablewrapper-column-cap);
+	min-width: 0;
+}

@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.144 2026-11-13T08:35:47.518Z */
+/*!  SapphireRWALibrary PROD v0.6.145 2026-11-13T16:59:45.199Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5811,6 +5811,36 @@ div[data-widthcomponent=auto] {
 .tablewrapper[data-columnfixedwidths=true] th {
   align-content: center;
   height: 50px;
+}
+
+.tablewrapper tr > :is(th, td).tablewrapper-checkbox-column {
+  --tablewrapper-column-cap: var(--tablewrapper-checkbox-column-max-width, 100px);
+}
+.tablewrapper tr > :is(th, td).tablewrapper-reorder-column, .tablewrapper tr > :is(th, td).tablewrapper-reorder-cell {
+  --tablewrapper-column-cap: var(--tablewrapper-reorder-column-max-width, 120px);
+}
+
+.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
+  max-width: var(--tablewrapper-column-cap);
+  text-align: center;
+  width: var(--tablewrapper-column-cap);
+}
+.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) > *,
+.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) input[type=checkbox] {
+  margin-inline: auto;
+}
+
+.tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) {
+  text-align: center;
+}
+.tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) > *,
+.tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) input[type=checkbox] {
+  margin-inline: auto;
+}
+
+.tablewrapper[data-columnfixedwidths=true] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
+  flex: 0 0 var(--tablewrapper-column-cap);
+  min-width: 0;
 }
 div[data-widthcomponent=auto] {
   width: fit-content;

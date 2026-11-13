@@ -9,6 +9,7 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 		OnReorderInput: (rowIds: string, newOrders: string) => void;
 		OnRowClick: (rowId: string) => void;
 	};
+	checkboxColumnMaxWidth: number;
 	clickableRows: boolean;
 	columnFixedWidths: boolean;
 	height: number;
@@ -18,6 +19,7 @@ interface TableWrapperConfigOptions extends BaseComponentInit {
 	maxHeight: number;
 	pageCount: number;
 	reorderColumn: number;
+	reorderColumnMaxWidth: number;
 	reorderImmediately: boolean;
 	reorderInputs: boolean;
 	reorderableRows: boolean;
@@ -59,6 +61,11 @@ export default class TableWrapper extends BaseComponent {
 	private tableHeaderEl?: HTMLElement;
 	private unsubscribeStickyOffset?: () => void;
 
+	private static readonly CHECKBOX_COLUMN_CLASS = 'tablewrapper-checkbox-column';
+	private static readonly CHECKBOX_SELECTOR = 'input[type="checkbox"]';
+	private static readonly DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH = 80;
+	private static readonly DEFAULT_REORDER_COLUMN_MAX_WIDTH = 120;
+	private static readonly REORDER_COLUMN_CLASS = 'tablewrapper-reorder-column';
 	private static readonly CONTENT_SELECTOR = 'img, svg, picture, video, audio, canvas, iframe, object, embed, input, select, textarea, button, progress, meter, [data-iconname], [role="img"]';
 	private static readonly DRAG_THRESHOLD_PX = 2;
 	private static readonly EMPTY_COLUMN_CLASS = 'tablewrapper-empty-column';
@@ -197,6 +204,8 @@ export default class TableWrapper extends BaseComponent {
 		this.reorderInputs = this.resolveReorderInputs(this.configOptions.reorderInputs);
 		this.reorderableRows = this.configOptions.reorderableRows;
 
+		this.applyColumnMaxWidths();
+
 		this.tableEl = this.widgetEl.querySelector<HTMLTableElement>('table')!;
 		this.bindTableElements();
 
@@ -242,6 +251,8 @@ export default class TableWrapper extends BaseComponent {
 			this.applyColumnWidths();
 			this.syncReorderUi();
 			this.hideEmptyColumns();
+			this.markCheckboxColumns();
+			this.markReorderHeaderCell();
 			this.scheduleStickyUpdate();
 		}, 0);
 	}
@@ -267,6 +278,7 @@ export default class TableWrapper extends BaseComponent {
 		this.widgetEl.dataset.reorderinputs = this.reorderInputs ? 'true' : 'false';
 		this.widgetEl.dataset.reorderondrop = this.reorderImmediately ? 'true' : 'false';
 		this.syncReorderUi();
+		this.markReorderHeaderCell();
 	}
 
 	private bindTableElements(): void {
@@ -539,6 +551,61 @@ export default class TableWrapper extends BaseComponent {
 		});
 	}
 
+	// Marks a column whose body cells hold only a checkbox, so CSS can cap its
+	// width. Body cells decide: each one is either empty or holds only a
+	// checkbox, and at least one has a checkbox. The header cell follows.
+	private markCheckboxColumns(): void {
+		const layout = this.getBodyRows().map((row) => this.getCellColumns(row));
+		const hasCheckbox: boolean[] = [];
+		const disqualified: boolean[] = [];
+		layout.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => {
+				const kind = this.getCheckboxCellKind(cell);
+				columns.forEach((column) => {
+					if (columns.length > 1 || kind === 'other') disqualified[column] = true;
+					else if (kind === 'checkbox') hasCheckbox[column] = true;
+				});
+			}),
+		);
+
+		const isCheckboxColumn = (columns: number[]) => columns.length === 1 && hasCheckbox[columns[0]] === true && !disqualified[columns[0]];
+		const headers = [this.tableHeaderEl, this.tableHeaderCloneEl].filter((header): header is HTMLElement => Boolean(header));
+		[...layout, ...headers.map((header) => this.getCellColumns(header))].forEach((cells) =>
+			cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.CHECKBOX_COLUMN_CLASS, isCheckboxColumn(columns))),
+		);
+	}
+
+	// 'checkbox' when the cell holds checkboxes and nothing else visible,
+	// 'empty' when it holds nothing, 'other' for any other content.
+	private getCheckboxCellKind(cell: HTMLTableCellElement): 'checkbox' | 'empty' | 'other' {
+		if (cell.classList.contains(TableWrapper.REORDER_CELL_CLASS)) return 'other';
+		if (cell.textContent?.trim()) return 'other';
+
+		const content = Array.from(cell.querySelectorAll(TableWrapper.CONTENT_SELECTOR));
+		if (content.length === 0) return 'empty';
+		return content.every((el) => el.matches(TableWrapper.CHECKBOX_SELECTOR)) ? 'checkbox' : 'other';
+	}
+
+	// Gives the header cell above the reorder column the same width cap as the
+	// reorder cells. Counts cells the same way as getReorderCell.
+	private markReorderHeaderCell(): void {
+		[this.tableHeaderEl, this.tableHeaderCloneEl].forEach((header) => {
+			if (!header) return;
+			const cells = Array.from(header.children).filter((cell): cell is HTMLTableCellElement => cell instanceof HTMLTableCellElement);
+			cells.forEach((cell, index) => cell.classList.toggle(TableWrapper.REORDER_COLUMN_CLASS, Boolean(this.reorderableRows) && index === this.reorderColumn - 1));
+		});
+	}
+
+	// Publishes the width caps as CSS variables. Missing, zero or negative
+	// values fall back to the defaults.
+	private applyColumnMaxWidths(): void {
+		const resolve = (value: number | undefined, fallback: number) => (typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : fallback);
+		const checkbox = resolve(this.configOptions.checkboxColumnMaxWidth, TableWrapper.DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH);
+		const reorder = resolve(this.configOptions.reorderColumnMaxWidth, TableWrapper.DEFAULT_REORDER_COLUMN_MAX_WIDTH);
+		this.widgetEl.style.setProperty('--tablewrapper-checkbox-column-max-width', `${checkbox}px`);
+		this.widgetEl.style.setProperty('--tablewrapper-reorder-column-max-width', `${reorder}px`);
+	}
+
 	// Maps each cell of a row to the column indexes it covers, following colspan.
 	private getCellColumns(row: HTMLElement): { cell: HTMLTableCellElement; columns: number[] }[] {
 		let column = 0;
@@ -610,6 +677,11 @@ export default class TableWrapper extends BaseComponent {
 		if (payload.height !== undefined || payload.maxHeight !== undefined) {
 			this.setWidgetRect();
 		}
+		if (payload.checkboxColumnMaxWidth !== undefined || payload.reorderColumnMaxWidth !== undefined) {
+			if (payload.checkboxColumnMaxWidth !== undefined) this.configOptions.checkboxColumnMaxWidth = payload.checkboxColumnMaxWidth;
+			if (payload.reorderColumnMaxWidth !== undefined) this.configOptions.reorderColumnMaxWidth = payload.reorderColumnMaxWidth;
+			this.applyColumnMaxWidths();
+		}
 
 		const nextSticky = Boolean(this.configOptions.isStickyHeader) && !this.configOptions.maxHeight;
 		if (nextSticky !== this.isStickyHeader) {
@@ -656,6 +728,7 @@ export default class TableWrapper extends BaseComponent {
 			if (nextColumn !== this.reorderColumn) {
 				this.reorderColumn = nextColumn;
 				this.syncReorderUi();
+				this.markReorderHeaderCell();
 			}
 		}
 
