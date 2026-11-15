@@ -5,6 +5,9 @@ A modal action popup with a backdrop that blocks interaction with the page. It r
 - When a button label is "", that button is not displayed.
 - The Positive button always shows a `check-bold` icon before its label.
 - Visibility is driven by the `IsOpen` input. On open, the dialog is teleported to `<body>`, page scroll is locked, focus moves into the dialog and Tab is trapped inside it.
+- Inside an iframe, the popup opens in the top window so it covers the whole page (the iframe must be same-origin). The popup's styles, design tokens and icons are copied there, so the top window can be a Reactive or Traditional app without this library.
+    - Whatever is in the `Content` placeholder moves to the top window with the popup and still displays and updates (text, expressions, images). Its Reactive interactions stop working there: `OnClick` and other events on buttons, links or inputs do not fire, and widgets such as date pickers or dropdowns do not open or position correctly. They also lose the iframe's OutSystems UI and theme styles.
+    - If the popup needs interactive content, use it only at the top level, not inside an iframe.
 - The close button (top-right) is only rendered when `HasClose` is `True`. The `Escape` key closes the popup only when `HasClose` AND `CloseOnEsc` are both `True`; when `HasClose` is `False` the popup can only be dismissed through the action buttons. Both the close button and `Escape` trigger the `Cancel` event. Clicking the backdrop never closes it.
 - The Cancel / Negative / Positive buttons raise their respective events and then close the popup.
 - The `Close` event fires whenever the popup closes, regardless of the trigger (any button, the close icon, `Escape`, or `IsOpen` being set to `False`). It is emitted after the specific button event.
@@ -31,9 +34,9 @@ A modal action popup with a backdrop that blocks interaction with the page. It r
 
 ###### Placeholders
 
-| Name      | Description                     |
-| --------- | ------------------------------- |
-| `Content` | Placeholder for custom content. |
+| Name      | Description                                                                                                                                |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Content` | Placeholder for custom content. Inside an iframe the content is shown in the top window, but its Reactive interactions do not work there. |
 
 <hr>
 

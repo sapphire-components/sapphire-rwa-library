@@ -402,7 +402,8 @@ function walkScss(dir, cb) {
 	for (const d of fs.readdirSync(dir, { withFileTypes: true })) {
 		const p = path.join(dir, d.name);
 		if (d.isDirectory()) walkScss(p, cb);
-		else if (p.endsWith('.scss')) cb(p);
+		// `.inline.scss` files are imported with `?inline` by a component, not bundled.
+		else if (p.endsWith('.scss') && !p.endsWith('.inline.scss')) cb(p);
 	}
 }
 

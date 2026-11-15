@@ -1,0 +1,48 @@
+@use 'sass:meta';
+
+// Styles injected into the top window when ActionPopup opens from inside an iframe
+// (see `ensureHostStyles` in index.ts). The top window may be a Traditional or
+// Reactive app without this library's CSS, so this carries everything the popup
+// itself needs. Design tokens are not here: they are copied from the iframe onto
+// the backdrop at open time.
+//
+// `.inline.scss` files are skipped by the main CSS bundle (see `walkScss` in
+// vite.config.js) and only reach the page through `?inline` imports.
+
+// The popup's own rules are already prefixed with `actionpopup`, so they load unscoped.
+@include meta.load-css('styles');
+
+// Shared rules are scoped under the backdrop so they cannot restyle the host app.
+.actionpopup-backdrop {
+	// Minimal reset: a Traditional host has no OutSystems UI base styles, and its
+	// theme may style elements globally.
+	box-sizing: border-box;
+	text-align: start;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	button {
+		cursor: pointer;
+		font: inherit;
+		margin: 0;
+
+		&:disabled {
+			cursor: default;
+		}
+	}
+
+	// Base of utilities/svgicon/_styles.scss, without its per-color variants.
+	.svg-icon {
+		align-items: center;
+		display: inline-flex;
+		justify-content: center;
+	}
+
+	@include meta.load-css('../../utilities/svgicon/styles-size');
+	@include meta.load-css('../../../04-outsystems/button/button');
+	@include meta.load-css('../../../04-outsystems/button/variations');
+}

@@ -1,6 +1,7 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
 import { tmplActionPopup } from './templates';
+import topWindowCss from './top-window.inline.scss?inline';
 
 export interface IActionPopup extends BaseComponentInit {
 	actions: {
@@ -24,6 +25,42 @@ export interface IActionPopup extends BaseComponentInit {
 }
 
 const FOCUSABLE_SELECTOR = 'button:not([hidden]):not(:disabled), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+const HOST_STYLE_ID = 'sapphire-actionpopup-host-styles';
+const ICON_SPRITE_SELECTOR = 'svg[data-svg-icon-sprite]';
+// Inherited text styles copied from the iframe so the popup reads the same in the top window.
+const INHERITED_TEXT_PROPS = ['color', 'font-family', 'font-size', 'font-weight', 'letter-spacing', 'line-height'];
+
+// Design tokens the injected stylesheet reads, so only those are copied from the
+// iframe. Variables the stylesheet declares itself (e.g. `--btn-ring`) are skipped.
+const HOST_TOKEN_NAMES = ((): string[] => {
+	const declared = new Set(Array.from(topWindowCss.matchAll(/(--[\w-]+)\s*:/g), (m) => m[1]));
+	const used = new Set(Array.from(topWindowCss.matchAll(/var\(\s*(--[\w-]+)/g), (m) => m[1]));
+	return [...used].filter((name) => !declared.has(name));
+})();
+
+// The top window may not load this library (e.g. a Traditional app), so it gets
+// the popup's own stylesheet once.
+function ensureHostStyles(hostDoc: Document): void {
+	if (hostDoc.getElementById(HOST_STYLE_ID)) return;
+	const style = hostDoc.createElement('style');
+	style.id = HOST_STYLE_ID;
+	style.textContent = topWindowCss;
+	hostDoc.head.appendChild(style);
+}
+
+// Icons are `<use>` references to the sprite, which only exists in the iframe's document.
+function ensureHostIconSprite(hostDoc: Document): void {
+	if (hostDoc.querySelector(ICON_SPRITE_SELECTOR)) return;
+	const sprite = document.querySelector(ICON_SPRITE_SELECTOR);
+	if (!sprite) return;
+
+	const container = hostDoc.createElement('div');
+	container.setAttribute('aria-hidden', 'true');
+	container.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;visibility:hidden';
+	container.appendChild(hostDoc.importNode(sprite, true));
+	hostDoc.body.prepend(container);
+}
 
 export default class ActionPopup extends BaseComponent {
 	#actions!: IActionPopup['actions'];
@@ -50,6 +87,11 @@ export default class ActionPopup extends BaseComponent {
 	#noEl!: HTMLButtonElement;
 	#yesEl!: HTMLButtonElement;
 	#lastFocusedEl: HTMLElement | null = null;
+
+	// The popup opens in the top window so it covers the whole page when this
+	// component runs inside an iframe (always same-origin). Outside an iframe the
+	// host is this window and nothing moves.
+	#hostDoc: Document = (window.top ?? window).document;
 
 	customContentEl!: HTMLDivElement;
 
@@ -102,7 +144,7 @@ export default class ActionPopup extends BaseComponent {
 
 		const first = focusables[0];
 		const last = focusables[focusables.length - 1];
-		const active = document.activeElement as HTMLElement | null;
+		const active = this.#hostDoc.activeElement as HTMLElement | null;
 
 		if (event.shiftKey && (active === first || !this.#dialogEl.contains(active))) {
 			event.preventDefault();
@@ -240,16 +282,73 @@ export default class ActionPopup extends BaseComponent {
 		this.#yesEl?.removeEventListener('click', this.onYes);
 	}
 
+	// Moves the backdrop into the top window while open. The Content placeholder
+	// moves with it and still renders, but its Reactive events do not fire there:
+	// React listens for events at its root in this document, and clicks in the top
+	// window never bubble up to it. Widgets that use this document or window
+	// (e.g. date pickers) break the same way.
+	// It lives in this document while closed, so nothing is left in the top window
+	// when the iframe goes away.
+	private mountInHost(): void {
+		if (this.#hostDoc === document) return;
+
+		ensureHostStyles(this.#hostDoc);
+		ensureHostIconSprite(this.#hostDoc);
+		this.copyOwnerContext();
+		this.#hostDoc.body.appendChild(this.#backdropEl);
+		window.addEventListener('pagehide', this.onOwnerPageHide);
+	}
+
+	private unmountFromHost(): void {
+		if (this.#hostDoc === document) return;
+
+		window.removeEventListener('pagehide', this.onOwnerPageHide);
+		document.body.appendChild(this.#backdropEl);
+	}
+
+	// Design tokens, text styles and direction come from this document; the top
+	// window may define them differently or not at all.
+	private copyOwnerContext(): void {
+		const bodyStyle = getComputedStyle(document.body);
+
+		for (const name of HOST_TOKEN_NAMES) {
+			const value = bodyStyle.getPropertyValue(name);
+			if (value) {
+				this.#backdropEl.style.setProperty(name, value);
+			}
+		}
+
+		for (const name of INHERITED_TEXT_PROPS) {
+			this.#backdropEl.style.setProperty(name, bodyStyle.getPropertyValue(name));
+		}
+
+		this.#backdropEl.dir = bodyStyle.direction;
+	}
+
+	// The iframe is unloading while the popup is open (Traditional postback,
+	// navigation, iframe removed): clean up the top window.
+	private readonly onOwnerPageHide = (): void => {
+		this.releaseHost();
+		this.#backdropEl.remove();
+	};
+
+	private releaseHost(): void {
+		this.#hostDoc.body.classList.remove('actionpopup-locked');
+		this.#hostDoc.removeEventListener('keydown', this.onDocumentKeydown);
+		window.removeEventListener('pagehide', this.onOwnerPageHide);
+	}
+
 	open(): void {
 		if (this.#isOpen) return;
 		this.#isOpen = true;
 
 		this.#lastFocusedEl = document.activeElement as HTMLElement | null;
 
+		this.mountInHost();
 		this.#backdropEl.hidden = false;
 		this.#backdropEl.dataset.open = 'true';
-		document.body.classList.add('actionpopup-locked');
-		document.addEventListener('keydown', this.onDocumentKeydown);
+		this.#hostDoc.body.classList.add('actionpopup-locked');
+		this.#hostDoc.addEventListener('keydown', this.onDocumentKeydown);
 
 		const firstFocusable = this.#dialogEl.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? this.#dialogEl;
 		firstFocusable.focus();
@@ -263,8 +362,8 @@ export default class ActionPopup extends BaseComponent {
 
 		this.#backdropEl.dataset.open = 'false';
 		this.#backdropEl.hidden = true;
-		document.body.classList.remove('actionpopup-locked');
-		document.removeEventListener('keydown', this.onDocumentKeydown);
+		this.releaseHost();
+		this.unmountFromHost();
 
 		this.#lastFocusedEl?.focus?.();
 		this.#lastFocusedEl = null;
@@ -350,8 +449,7 @@ export default class ActionPopup extends BaseComponent {
 	destroy(): void {
 		super.destroy();
 		this.unbindEvents();
-		document.removeEventListener('keydown', this.onDocumentKeydown);
-		document.body.classList.remove('actionpopup-locked');
+		this.releaseHost();
 		this.#backdropEl?.remove();
 	}
 }
