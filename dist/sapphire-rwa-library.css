@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.147 2026-11-16T10:32:08.829Z */
+/*!  SapphireRWALibrary PROD v0.6.148 2026-11-16T13:59:40.105Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5219,6 +5219,7 @@ sub,
   height: unset;
 }
 .tablewrapper[data-density=compact] .table-header th {
+  font-size: var(--font-size-s);
   height: unset;
   padding: var(--space-xs) var(--space-s);
 }
@@ -5814,7 +5815,7 @@ div[data-widthcomponent=auto] {
 }
 
 .tablewrapper tr > :is(th, td).tablewrapper-checkbox-column {
-  --tablewrapper-column-cap: var(--tablewrapper-checkbox-column-max-width, 100px);
+  --tablewrapper-column-cap: max(var(--tablewrapper-checkbox-column-max-width, 100px), var(--tablewrapper-header-min-width, 0px));
 }
 .tablewrapper tr > :is(th, td).tablewrapper-reorder-column, .tablewrapper tr > :is(th, td).tablewrapper-reorder-cell {
   --tablewrapper-column-cap: var(--tablewrapper-reorder-column-max-width, 120px);
@@ -5841,6 +5842,11 @@ div[data-widthcomponent=auto] {
 .tablewrapper[data-columnfixedwidths=true] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
   flex: 0 0 var(--tablewrapper-column-cap);
   min-width: 0;
+}
+
+:is(.tablewrapper, .tablewrapper-sticky-header) th.tablewrapper-checkbox-column {
+  white-space: normal;
+  word-break: normal;
 }
 div[data-widthcomponent=auto] {
   width: fit-content;
@@ -6290,6 +6296,7 @@ div[data-widthcomponent=auto] {
   height: unset;
 }
 .tablewrapper-sticky-header[data-density=compact] th {
+  font-size: var(--font-size-s);
   height: unset;
   padding: var(--space-xs) var(--space-s);
 }

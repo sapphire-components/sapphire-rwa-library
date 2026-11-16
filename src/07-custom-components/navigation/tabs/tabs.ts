@@ -29,6 +29,17 @@ export default class Tabs extends BaseComponent {
 	private tabsHeaderOverflow!: HTMLDivElement;
 	private tippyTooltipEl!: HTMLDivElement;
 
+	/*
+	 * When a tab navigates to another page, setTabIndex has already marked the clicked tab active
+	 * before the page unloads. On browser back, the page may be restored from the bfcache with that
+	 * state frozen, and no constructor or parametersChanged runs. Resync to the screen's ActiveTab.
+	 */
+	private readonly onPageShow = (event: PageTransitionEvent): void => {
+		if (!event.persisted) return;
+		this.activeTab = this.configOptions.activeTab;
+		this.render();
+	};
+
 	constructor(configOptions: TabsConfigOptions) {
 		super(configOptions);
 
@@ -36,6 +47,8 @@ export default class Tabs extends BaseComponent {
 			console.warn('Tabs: root element not found for runtimeId', configOptions.runtimeId);
 			return;
 		}
+
+		console.log('Tabs: constructor', configOptions);
 
 		this.configOptions = configOptions;
 		this.activeTab = configOptions.activeTab;
@@ -65,6 +78,8 @@ export default class Tabs extends BaseComponent {
 		this.observeLayoutResize(() => {
 			this.setTabsContentTop();
 		});
+
+		window.addEventListener('pageshow', this.onPageShow);
 	}
 
 	setCSSProperties(): void {
@@ -256,6 +271,7 @@ export default class Tabs extends BaseComponent {
 	}
 
 	destroy() {
+		window.removeEventListener('pageshow', this.onPageShow);
 		this.resizeObserver.disconnect();
 		super.destroy();
 	}

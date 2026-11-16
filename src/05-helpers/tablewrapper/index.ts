@@ -63,6 +63,7 @@ export default class TableWrapper extends BaseComponent {
 
 	private static readonly CHECKBOX_COLUMN_CLASS = 'tablewrapper-checkbox-column';
 	private static readonly CHECKBOX_SELECTOR = 'input[type="checkbox"]';
+	private static readonly HEADER_MIN_WIDTH_VAR = '--tablewrapper-header-min-width';
 	private static readonly DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH = 80;
 	private static readonly DEFAULT_REORDER_COLUMN_MAX_WIDTH = 120;
 	private static readonly REORDER_COLUMN_CLASS = 'tablewrapper-reorder-column';
@@ -570,9 +571,46 @@ export default class TableWrapper extends BaseComponent {
 
 		const isCheckboxColumn = (columns: number[]) => columns.length === 1 && hasCheckbox[columns[0]] === true && !disqualified[columns[0]];
 		const headers = [this.tableHeaderEl, this.tableHeaderCloneEl].filter((header): header is HTMLElement => Boolean(header));
-		[...layout, ...headers.map((header) => this.getCellColumns(header))].forEach((cells) =>
-			cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.CHECKBOX_COLUMN_CLASS, isCheckboxColumn(columns))),
+		const allRows = [...layout, ...headers.map((header) => this.getCellColumns(header))];
+		allRows.forEach((cells) => cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.CHECKBOX_COLUMN_CLASS, isCheckboxColumn(columns))));
+
+		// The cap must not be narrower than the header's longest word, or the
+		// header text spills into the next column. Measured on the real header.
+		const headerMinWidths: number[] = [];
+		if (this.tableHeaderEl) {
+			this.getCellColumns(this.tableHeaderEl).forEach(({ cell, columns }) => {
+				if (isCheckboxColumn(columns)) headerMinWidths[columns[0]] = this.measureHeaderMinWidth(cell);
+			});
+		}
+		allRows.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => {
+				const width = isCheckboxColumn(columns) ? headerMinWidths[columns[0]] : undefined;
+				if (width) cell.style.setProperty(TableWrapper.HEADER_MIN_WIDTH_VAR, `${width}px`);
+				else cell.style.removeProperty(TableWrapper.HEADER_MIN_WIDTH_VAR);
+			}),
 		);
+	}
+
+	// Narrowest width the header cell can take without breaking inside a word:
+	// the min-content width of its content plus horizontal padding and borders.
+	// The content is cloned into a hidden, out-of-flow box inside the cell, so it
+	// keeps the cell's font, and removed right after. 0 when nothing renders.
+	private measureHeaderMinWidth(cell: HTMLTableCellElement): number {
+		if (!cell.textContent?.trim()) return 0;
+
+		const probe = document.createElement('div');
+		probe.setAttribute('aria-hidden', 'true');
+		probe.style.cssText = 'position:absolute;top:0;left:0;visibility:hidden;pointer-events:none;width:min-content;white-space:normal;word-break:normal;overflow-wrap:normal;padding:0;margin:0;border:0;';
+		cell.childNodes.forEach((node) => probe.appendChild(node.cloneNode(true)));
+		probe.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+		cell.appendChild(probe);
+		const contentWidth = probe.getBoundingClientRect().width;
+		probe.remove();
+		if (!contentWidth) return 0;
+
+		const style = getComputedStyle(cell);
+		const box = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, prop) => sum + (parseFloat(style[prop as keyof CSSStyleDeclaration] as string) || 0), 0);
+		return Math.ceil(contentWidth + box);
 	}
 
 	// 'checkbox' when the cell holds checkboxes and nothing else visible,

@@ -45,9 +45,11 @@
 // Width caps set by TableWrapper: a column whose body cells hold only a
 // checkbox, and the reorder column (its cells and the header above it).
 // A table cell ignores max-width on its own, so width is set to the cap too.
+// A checkbox column never gets narrower than its header's longest word, which
+// TableWrapper measures and sets on each cell of the column.
 .tablewrapper tr > :is(th, td) {
 	&.tablewrapper-checkbox-column {
-		--tablewrapper-column-cap: var(--tablewrapper-checkbox-column-max-width, 100px);
+		--tablewrapper-column-cap: max(var(--tablewrapper-checkbox-column-max-width, 100px), var(--tablewrapper-header-min-width, 0px));
 	}
 	&.tablewrapper-reorder-column,
 	&.tablewrapper-reorder-cell {
@@ -83,4 +85,10 @@
 .tablewrapper[data-columnfixedwidths='true'] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
 	flex: 0 0 var(--tablewrapper-column-cap);
 	min-width: 0;
+}
+
+// Checkbox headers wrap between words only, matching the width measured for them.
+:is(.tablewrapper, .tablewrapper-sticky-header) th.tablewrapper-checkbox-column {
+	white-space: normal;
+	word-break: normal;
 }
