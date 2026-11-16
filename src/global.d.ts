@@ -1,4 +1,4 @@
-import type SapphireEventBus from '@/03-core/sapphireeventbus';
+import type SapphireEventBus from '@/03-core/eventbus';
 
 declare global {
 	const __APP_VERSION__: string;

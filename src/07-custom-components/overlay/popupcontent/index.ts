@@ -6,15 +6,18 @@ interface IPopupContent extends BaseComponentInit {
 		OnClose: () => void;
 	};
 	closeOnEsc: boolean;
-	extraParameters: string;
 	height: number;
 	minHeight: number;
-	theme: boolean;
+	theme: string;
+	url: string;
 }
+
+const FRAME_CLASS = 'popup-content-frame';
 
 export default class PopupContent extends BaseComponent {
 	private closeButton!: HTMLButtonElement;
 	private closeOnEsc!: boolean;
+	private frameEl: HTMLIFrameElement | null = null;
 	private height!: number;
 	private minHeight!: number;
 	private popupContentBody!: HTMLDivElement;
@@ -23,6 +26,7 @@ export default class PopupContent extends BaseComponent {
 	private readonly actions!: IPopupContent['actions'];
 	private resizeFrame = 0;
 	private resizeObserver!: ResizeObserver;
+	private url = '';
 
 	private readonly onClickClose = (): void => {
 		this.actions.OnClose();
@@ -51,12 +55,14 @@ export default class PopupContent extends BaseComponent {
 		this.height = init.height;
 		this.minHeight = init.minHeight;
 		this.closeOnEsc = init.closeOnEsc;
+		this.url = init.url ?? '';
 		this.closeButton = this.widgetEl.querySelector<HTMLButtonElement>('.popup-content-close button')!;
 		this.popupContentHeader = this.widgetEl.querySelector<HTMLDivElement>('.popup-content-header')!;
 		this.popupContentBody = this.widgetEl.querySelector<HTMLDivElement>('.popup-content-body')!;
 		this.popupContentFooter = this.widgetEl.querySelector<HTMLDivElement>('.popup-content-footer')!;
 
 		this.bindEvents();
+		this.renderUrl();
 		this.renderVariables();
 
 		setTimeout(() => {
@@ -98,6 +104,29 @@ export default class PopupContent extends BaseComponent {
 		}
 	}
 
+	renderUrl(): void {
+		const url = this.url.trim();
+
+		if (!url) {
+			this.frameEl?.remove();
+			this.frameEl = null;
+			this.widgetEl.removeAttribute('data-hasurl');
+			return;
+		}
+
+		if (!this.frameEl) {
+			this.frameEl = document.createElement('iframe');
+			this.frameEl.className = FRAME_CLASS;
+			this.widgetEl.append(this.frameEl);
+		}
+
+		if (this.frameEl.getAttribute('src') !== url) {
+			this.frameEl.setAttribute('src', url);
+		}
+
+		this.widgetEl.setAttribute('data-hasurl', 'true');
+	}
+
 	private setVariable(name: string, value: string): void {
 		if (this.widgetEl.style.getPropertyValue(name) === value) {
 			return;
@@ -107,7 +136,17 @@ export default class PopupContent extends BaseComponent {
 	}
 
 	parametersChanged(payload: IPopupContent): void {
-		console.log('PopupContent: parametersChanged', payload);
+		if (!this.widgetEl) {
+			return;
+		}
+
+		this.closeOnEsc = payload.closeOnEsc;
+		this.height = payload.height;
+		this.minHeight = payload.minHeight;
+		this.url = payload.url ?? '';
+
+		this.renderUrl();
+		this.renderVariables();
 	}
 
 	destroy(): void {
@@ -115,5 +154,8 @@ export default class PopupContent extends BaseComponent {
 		document.removeEventListener('keydown', this.onKeyDown);
 		cancelAnimationFrame(this.resizeFrame);
 		this.resizeObserver?.disconnect();
+		this.frameEl?.remove();
+		this.frameEl = null;
+		super.destroy();
 	}
 }

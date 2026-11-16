@@ -1,6 +1,6 @@
 // Standalone entry, so OutSystems Traditional apps can load it without the Reactive library.
 
-import SapphireEventBus from '@/03-core/sapphireeventbus';
+import SapphireEventBus from '@/03-core/eventbus';
 
 // Reuse the existing bus if the script is loaded twice in the same window.
 window.SapphireEventBus ??= new SapphireEventBus('sapphire-events');

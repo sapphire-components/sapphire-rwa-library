@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.146 2026-11-15T16:46:38.923Z */
+/*!  SapphireRWALibrary PROD v0.6.147 2026-11-16T10:32:08.829Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -11088,6 +11088,38 @@ div[data-block$=PopupContent] {
 .popup-content-footer:has(> .popup-content-footer-left:empty):has(> .popup-content-footer-center:empty):has(> .popup-content-footer-right:empty) {
   margin-top: 0;
   padding-top: 0;
+}
+
+.popup-content {
+  min-height: var(--popupcontent-min-height);
+}
+
+.popup-content-frame {
+  border: 0;
+  display: block;
+  flex: 1 1 auto;
+  margin: 0;
+  min-height: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.popup-content[data-hasurl=true] {
+  height: var(--popupcontent-height, calc(100vh - 48px));
+}
+.popup-content[data-hasurl=true] .popup-content-body,
+.popup-content[data-hasurl=true] .popup-content-footer {
+  display: none;
+}
+.popup-content[data-hasurl=true] .popup-content-header {
+  display: none;
+}
+.popup-content[data-hasurl=true] .popup-content-header > * {
+  display: none;
+}
+.popup-content[data-hasurl=true][data-hasclose=true] .popup-content-header {
+  border-bottom: 0;
+  display: block;
 }
 .popup-content[data-theme=printdocument] .popup-content-body {
   overflow-y: unset;
