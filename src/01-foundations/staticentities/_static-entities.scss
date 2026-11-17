@@ -30,7 +30,7 @@
 	border: solid 1px var(--color-border);
 	border-radius: 8px;
 	box-shadow: var(--box-shadow-md);
-	font-size: 14px;
+	font-size: var(--font-size-base);
 	padding: 16px;
 	scroll-margin-top: 16px;
 	&--highlight {

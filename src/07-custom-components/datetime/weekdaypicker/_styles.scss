@@ -19,7 +19,7 @@
 		cursor: pointer;
 		display: inline-flex;
 		flex: 0 0 auto;
-		font-size: 14px;
+		font-size: var(--font-size-base);
 		justify-content: center;
 		line-height: 1;
 		min-height: 55px;
@@ -58,7 +58,7 @@
 
 .weekdaypicker[data-density='compact'] {
 	.weekdaypicker-day {
-		font-size: 12px;
+		font-size: var(--font-size-s);
 		min-height: 40px;
 		min-width: 40px;
 	}
@@ -66,6 +66,6 @@
 
 .weekdaypicker[data-density='compact'][data-weekdayformat='short'] {
 	.weekdaypicker-day {
-		font-size: 11px;
+		font-size: var(--font-size-xs);
 	}
 }

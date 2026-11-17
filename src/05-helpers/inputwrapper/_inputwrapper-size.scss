@@ -2,7 +2,7 @@
 	--inputwrapper-control-height: 22px;
 
 	.form-control[data-input] {
-		font-size: 12px;
+		font-size: var(--font-size-s);
 		height: 22px;
 		padding-inline: 8px;
 	}

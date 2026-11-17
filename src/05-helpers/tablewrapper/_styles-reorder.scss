@@ -48,7 +48,7 @@
 		align-items: center;
 		color: var(--color-neutral-9);
 		display: inline-flex;
-		font-size: 15px;
+		font-size: var(--font-size-base);
 		font-variant-numeric: tabular-nums;
 		font-weight: 600;
 		gap: var(--space-xxs);
@@ -86,7 +86,7 @@
 			margin: 0;
 			min-width: 4ch;
 			outline: solid 1px var(--color-neutral-5);
-			padding: 8px;
+			padding: 6px;
 			pointer-events: auto;
 			text-align: center;
 			user-select: auto;

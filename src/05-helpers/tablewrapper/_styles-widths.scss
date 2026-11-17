@@ -42,6 +42,16 @@
 	}
 }
 
+// Default checkbox column cap by density. CheckboxColumnMaxWidth, when set,
+// overrides it through --tablewrapper-checkbox-column-max-width.
+:is(.tablewrapper, .tablewrapper-sticky-header) {
+	--tablewrapper-checkbox-column-default-width: 80px;
+
+	&[data-density='compact'] {
+		--tablewrapper-checkbox-column-default-width: 60px;
+	}
+}
+
 // Width caps set by TableWrapper: a column whose body cells hold only a
 // checkbox, and the reorder column (its cells and the header above it).
 // A table cell ignores max-width on its own, so width is set to the cap too.
@@ -49,7 +59,12 @@
 // TableWrapper measures and sets on each cell of the column.
 .tablewrapper tr > :is(th, td) {
 	&.tablewrapper-checkbox-column {
-		--tablewrapper-column-cap: max(var(--tablewrapper-checkbox-column-max-width, 100px), var(--tablewrapper-header-min-width, 0px));
+		--tablewrapper-column-cap: max(var(--tablewrapper-checkbox-column-max-width, var(--tablewrapper-checkbox-column-default-width)), var(--tablewrapper-header-min-width, 0px));
+	}
+	// Same default as the checkbox column. TableWrapper also widens it to the
+	// widest item, so a button with a long label is not cut.
+	&.tablewrapper-single-item-column {
+		--tablewrapper-column-cap: max(var(--tablewrapper-checkbox-column-default-width), var(--tablewrapper-header-min-width, 0px));
 	}
 	&.tablewrapper-reorder-column,
 	&.tablewrapper-reorder-cell {
@@ -57,7 +72,7 @@
 	}
 }
 
-.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
+.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
 	max-width: var(--tablewrapper-column-cap);
 	text-align: center;
 	width: var(--tablewrapper-column-cap);
@@ -82,13 +97,39 @@
 	}
 }
 
-.tablewrapper[data-columnfixedwidths='true'] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
+.tablewrapper[data-columnfixedwidths='true'] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) {
 	flex: 0 0 var(--tablewrapper-column-cap);
 	min-width: 0;
 }
 
-// Checkbox headers wrap between words only, matching the width measured for them.
-:is(.tablewrapper, .tablewrapper-sticky-header) th.tablewrapper-checkbox-column {
+// A column whose body cells hold only one button or one icon (or nothing) is
+// centered, header included; its width cap is set above. Wrappers the platform
+// puts around the item (block or flex) are centered too.
+:is(.tablewrapper, .tablewrapper-sticky-header) tr > :is(th, td).tablewrapper-single-item-column {
+	text-align: center;
+
+	> * {
+		justify-content: center;
+		margin-inline: auto;
+	}
+}
+
+// A column whose body cells hold only a number (or nothing) is right-aligned,
+// header included, with tabular figures so digits line up. Wrappers the
+// platform puts around the text (block or flex) are pushed right too.
+:is(.tablewrapper, .tablewrapper-sticky-header) tr > :is(th, td).tablewrapper-numeric-column {
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+
+	> * {
+		justify-content: flex-end;
+		margin-inline-start: auto;
+	}
+}
+
+// Checkbox and single-item headers wrap between words only, matching the width
+// measured for them.
+:is(.tablewrapper, .tablewrapper-sticky-header) th:is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column) {
 	white-space: normal;
 	word-break: normal;
 }

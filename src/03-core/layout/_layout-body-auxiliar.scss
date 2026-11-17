@@ -7,7 +7,7 @@
 	border-radius: 8px;
 	box-shadow: var(--box-shadow-lg);
 	flex: 0 0 600px;
-	font-size: 13px;
+	font-size: var(--font-size-s);
 	overflow: auto;
 	padding: 12px 2px;
 	scrollbar-gutter: stable both-edges;
@@ -57,12 +57,8 @@
 		padding: 0 8px;
 		text-align: left;
 		&:first-child {
-			// min-width: 150px;
 			padding-inline-start: 0;
 		}
-	}
-	h6 {
-		font-size: 15px;
 	}
 }
 

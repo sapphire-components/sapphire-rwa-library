@@ -193,7 +193,7 @@ div[data-block$='AlertBar'] {
 }
 
 .alertbar[data-size~='s'] {
-	font-size: 14px;
+	font-size: var(--font-size-base);
 	padding: 8px;
 
 	&[data-hasclose='true'] {

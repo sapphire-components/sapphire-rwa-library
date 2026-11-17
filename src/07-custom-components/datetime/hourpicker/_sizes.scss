@@ -5,7 +5,7 @@
 	.hourpicker-input,
 	.hourpicker-select {
 		border-radius: 4px;
-		font-size: 12px;
+		font-size: var(--font-size-s);
 		height: 22px;
 		min-height: 22px;
 		padding-inline: 6px;

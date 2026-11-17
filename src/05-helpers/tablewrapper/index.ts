@@ -64,8 +64,7 @@ export default class TableWrapper extends BaseComponent {
 	private static readonly CHECKBOX_COLUMN_CLASS = 'tablewrapper-checkbox-column';
 	private static readonly CHECKBOX_SELECTOR = 'input[type="checkbox"]';
 	private static readonly HEADER_MIN_WIDTH_VAR = '--tablewrapper-header-min-width';
-	private static readonly DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH = 80;
-	private static readonly DEFAULT_REORDER_COLUMN_MAX_WIDTH = 120;
+	private static readonly DEFAULT_REORDER_COLUMN_MAX_WIDTH = 110;
 	private static readonly REORDER_COLUMN_CLASS = 'tablewrapper-reorder-column';
 	private static readonly CONTENT_SELECTOR = 'img, svg, picture, video, audio, canvas, iframe, object, embed, input, select, textarea, button, progress, meter, [data-iconname], [role="img"]';
 	private static readonly DRAG_THRESHOLD_PX = 2;
@@ -79,6 +78,21 @@ export default class TableWrapper extends BaseComponent {
 	private static readonly REORDER_CELL_CLASS = 'tablewrapper-reorder-cell';
 	private static readonly ROW_SELECTOR = ':scope > tbody > tr';
 	private static readonly STASH_CLASS = 'tablewrapper-reorder-stashed';
+	private static readonly SINGLE_ITEM_COLUMN_CLASS = 'tablewrapper-single-item-column';
+	private static readonly SINGLE_ITEM_SELECTOR = 'button, .btn, [role="button"], [data-iconname], svg, img, [role="img"]';
+	private static readonly NUMERIC_COLUMN_CLASS = 'tablewrapper-numeric-column';
+	// One number: an integer or decimal, with optional sign, thousands
+	// separators (`,` `.` `'` or a space) and decimal part (`.` or `,`), and an
+	// optional currency symbol or 3-letter code before or after it. Accounting
+	// negatives in parentheses count too. E.g. 42, -3.5, 1,234.56, 1 234,56,
+	// €12.50, 12,50 €, USD 1,000, (250.00).
+	private static readonly NUMBER_PATTERN = (() => {
+		const sign = String.raw`[+\-−]?`;
+		const currency = String.raw`(?:\p{Sc}|[A-Z]{3})`;
+		const digits = String.raw`(?:\d{1,3}(?:[.,'   ]\d{3})+|\d+)(?:[.,]\d+)?|[.,]\d+`;
+		const amount = String.raw`${sign}\s*(?:${currency}\s*)?${sign}\s*(?:${digits})(?:\s*${currency})?`;
+		return new RegExp(String.raw`^(?:${amount}|\(\s*${amount}\s*\))$`, 'u');
+	})();
 
 	private handleRowClick = (event: Event): void => {
 		if (this.ignoreNextClick) return;
@@ -253,6 +267,8 @@ export default class TableWrapper extends BaseComponent {
 			this.syncReorderUi();
 			this.hideEmptyColumns();
 			this.markCheckboxColumns();
+			this.markSingleItemColumns();
+			this.markNumericColumns();
 			this.markReorderHeaderCell();
 			this.scheduleStickyUpdate();
 		}, 0);
@@ -608,9 +624,7 @@ export default class TableWrapper extends BaseComponent {
 		probe.remove();
 		if (!contentWidth) return 0;
 
-		const style = getComputedStyle(cell);
-		const box = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, prop) => sum + (parseFloat(style[prop as keyof CSSStyleDeclaration] as string) || 0), 0);
-		return Math.ceil(contentWidth + box);
+		return Math.ceil(contentWidth + this.getHorizontalBox(cell));
 	}
 
 	// 'checkbox' when the cell holds checkboxes and nothing else visible,
@@ -624,6 +638,152 @@ export default class TableWrapper extends BaseComponent {
 		return content.every((el) => el.matches(TableWrapper.CHECKBOX_SELECTOR)) ? 'checkbox' : 'other';
 	}
 
+	// Marks a column whose body cells each hold one button or one icon, or
+	// nothing, so CSS can center it and cap its width like a checkbox column.
+	// At least one body cell must hold the item.
+	// Hidden content (e.g. an icon with display:none) counts as nothing. The
+	// header cell follows. Checkbox and reorder columns are left to their rules.
+	private markSingleItemColumns(): void {
+		const layout = this.getBodyRows().map((row) => this.getCellColumns(row));
+		const hasItem: boolean[] = [];
+		const disqualified: boolean[] = [];
+		layout.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => {
+				const kind = this.getSingleItemCellKind(cell);
+				columns.forEach((column) => {
+					if (columns.length > 1 || kind === 'other') disqualified[column] = true;
+					else if (kind === 'item') hasItem[column] = true;
+				});
+			}),
+		);
+
+		const isSingleItemColumn = (columns: number[]) => columns.length === 1 && hasItem[columns[0]] === true && !disqualified[columns[0]];
+		const headers = [this.tableHeaderEl, this.tableHeaderCloneEl].filter((header): header is HTMLElement => Boolean(header));
+		const allRows = [...layout, ...headers.map((header) => this.getCellColumns(header))];
+		allRows.forEach((cells) => cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.SINGLE_ITEM_COLUMN_CLASS, isSingleItemColumn(columns))));
+
+		// Like the checkbox cap, the cap must not be narrower than the header's
+		// longest word. Nor narrower than the widest item, so a button with a long
+		// label is not cut.
+		const minWidths: number[] = [];
+		const widen = (column: number, width: number) => (minWidths[column] = Math.max(minWidths[column] ?? 0, width));
+		if (this.tableHeaderEl) {
+			this.getCellColumns(this.tableHeaderEl).forEach(({ cell, columns }) => {
+				if (isSingleItemColumn(columns)) widen(columns[0], this.measureHeaderMinWidth(cell));
+			});
+		}
+		layout.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => {
+				if (isSingleItemColumn(columns)) widen(columns[0], this.measureSingleItemWidth(cell));
+			}),
+		);
+		// Checkbox cells keep the value markCheckboxColumns set on them.
+		allRows.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => {
+				if (cell.classList.contains(TableWrapper.CHECKBOX_COLUMN_CLASS)) return;
+				const width = isSingleItemColumn(columns) ? minWidths[columns[0]] : undefined;
+				if (width) cell.style.setProperty(TableWrapper.HEADER_MIN_WIDTH_VAR, `${width}px`);
+				else cell.style.removeProperty(TableWrapper.HEADER_MIN_WIDTH_VAR);
+			}),
+		);
+	}
+
+	// Width of the cell's visible item plus horizontal padding and borders.
+	// 0 when nothing renders (e.g. the table is in a hidden tab).
+	private measureSingleItemWidth(cell: HTMLTableCellElement): number {
+		const items = Array.from(cell.querySelectorAll<Element>(TableWrapper.SINGLE_ITEM_SELECTOR)).filter((el) => {
+			const outer = el.parentElement?.closest(TableWrapper.SINGLE_ITEM_SELECTOR);
+			return !(outer && cell.contains(outer));
+		});
+		const itemWidth = Math.max(0, ...items.map((el) => el.getBoundingClientRect().width));
+		return itemWidth ? Math.ceil(itemWidth + this.getHorizontalBox(cell)) : 0;
+	}
+
+	// Horizontal padding plus borders of a cell, in pixels.
+	private getHorizontalBox(cell: HTMLTableCellElement): number {
+		const style = getComputedStyle(cell);
+		return ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, prop) => sum + (parseFloat(style[prop as keyof CSSStyleDeclaration] as string) || 0), 0);
+	}
+
+	// 'item' when the cell's only visible content is one button or one icon
+	// (whatever is inside that button, label included), 'empty' when nothing in
+	// it is visible, 'other' for anything else.
+	private getSingleItemCellKind(cell: HTMLTableCellElement): 'item' | 'empty' | 'other' {
+		if (cell.classList.contains(TableWrapper.REORDER_CELL_CLASS)) return 'other';
+
+		const isShown = this.createVisibilityCheck(cell);
+		const items = Array.from(cell.querySelectorAll<Element>(TableWrapper.SINGLE_ITEM_SELECTOR)).filter((el) => {
+			const outer = el.parentElement?.closest(TableWrapper.SINGLE_ITEM_SELECTOR);
+			return !(outer && cell.contains(outer)) && isShown(el);
+		});
+		const insideItem = (node: Node) => items.some((item) => item.contains(node));
+
+		const otherContent = Array.from(cell.querySelectorAll(TableWrapper.CONTENT_SELECTOR)).some((el) => !insideItem(el) && !el.matches(TableWrapper.SINGLE_ITEM_SELECTOR) && isShown(el));
+		if (otherContent) return 'other';
+
+		const walker = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT);
+		for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+			if (node.textContent?.trim() && !insideItem(node) && node.parentElement && isShown(node.parentElement)) return 'other';
+		}
+
+		if (items.length === 0) return 'empty';
+		return items.length === 1 ? 'item' : 'other';
+	}
+
+	// Marks a column whose body cells each hold only a number, or nothing, so CSS
+	// can right-align it. At least one body cell must hold a number. Integers,
+	// decimals and currency amounts count. The header cell follows.
+	private markNumericColumns(): void {
+		const layout = this.getBodyRows().map((row) => this.getCellColumns(row));
+		const hasNumber: boolean[] = [];
+		const disqualified: boolean[] = [];
+		layout.forEach((cells) =>
+			cells.forEach(({ cell, columns }) => {
+				const kind = this.getNumericCellKind(cell);
+				columns.forEach((column) => {
+					if (columns.length > 1 || kind === 'other') disqualified[column] = true;
+					else if (kind === 'number') hasNumber[column] = true;
+				});
+			}),
+		);
+
+		const isNumericColumn = (columns: number[]) => columns.length === 1 && hasNumber[columns[0]] === true && !disqualified[columns[0]];
+		const headers = [this.tableHeaderEl, this.tableHeaderCloneEl].filter((header): header is HTMLElement => Boolean(header));
+		[...layout, ...headers.map((header) => this.getCellColumns(header))].forEach((cells) =>
+			cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.NUMERIC_COLUMN_CLASS, isNumericColumn(columns))),
+		);
+	}
+
+	// 'number' when the cell's visible text is one number (see NUMBER_PATTERN)
+	// and it holds no icon, image or control, 'empty' when nothing in it is
+	// visible, 'other' for anything else.
+	private getNumericCellKind(cell: HTMLTableCellElement): 'number' | 'empty' | 'other' {
+		if (cell.classList.contains(TableWrapper.REORDER_CELL_CLASS)) return 'other';
+
+		const isShown = this.createVisibilityCheck(cell);
+		if (Array.from(cell.querySelectorAll(TableWrapper.CONTENT_SELECTOR)).some(isShown)) return 'other';
+
+		let text = '';
+		const walker = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT);
+		for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+			if (node.parentElement && isShown(node.parentElement)) text += node.textContent ?? '';
+		}
+		text = text.trim();
+		if (!text) return 'empty';
+		return TableWrapper.NUMBER_PATTERN.test(text) ? 'number' : 'other';
+	}
+
+	// Whether an element inside the cell renders. When the table itself is not
+	// rendered (e.g. in a hidden tab), layout says nothing, so only the
+	// `hidden` attribute and the platform's `.hidden` class are trusted.
+	private createVisibilityCheck(cell: HTMLTableCellElement): (el: Element) => boolean {
+		if (cell.getClientRects().length > 0) return (el) => el.getClientRects().length > 0;
+		return (el) => {
+			const hidden = el.closest('[hidden], .hidden');
+			return !hidden || !cell.contains(hidden);
+		};
+	}
+
 	// Gives the header cell above the reorder column the same width cap as the
 	// reorder cells. Counts cells the same way as getReorderCell.
 	private markReorderHeaderCell(): void {
@@ -635,12 +795,14 @@ export default class TableWrapper extends BaseComponent {
 	}
 
 	// Publishes the width caps as CSS variables. Missing, zero or negative
-	// values fall back to the defaults.
+	// values fall back to the defaults. The checkbox cap is only set when given:
+	// its default depends on density, so CSS supplies it.
 	private applyColumnMaxWidths(): void {
-		const resolve = (value: number | undefined, fallback: number) => (typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : fallback);
-		const checkbox = resolve(this.configOptions.checkboxColumnMaxWidth, TableWrapper.DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH);
-		const reorder = resolve(this.configOptions.reorderColumnMaxWidth, TableWrapper.DEFAULT_REORDER_COLUMN_MAX_WIDTH);
-		this.widgetEl.style.setProperty('--tablewrapper-checkbox-column-max-width', `${checkbox}px`);
+		const isSet = (value: number | undefined): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0;
+		const { checkboxColumnMaxWidth, reorderColumnMaxWidth } = this.configOptions;
+		if (isSet(checkboxColumnMaxWidth)) this.widgetEl.style.setProperty('--tablewrapper-checkbox-column-max-width', `${checkboxColumnMaxWidth}px`);
+		else this.widgetEl.style.removeProperty('--tablewrapper-checkbox-column-max-width');
+		const reorder = isSet(reorderColumnMaxWidth) ? reorderColumnMaxWidth : TableWrapper.DEFAULT_REORDER_COLUMN_MAX_WIDTH;
 		this.widgetEl.style.setProperty('--tablewrapper-reorder-column-max-width', `${reorder}px`);
 	}
 

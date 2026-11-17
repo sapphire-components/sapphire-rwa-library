@@ -10,6 +10,10 @@
 	font-weight: var(--font-light);
 }
 
+.font-size-l {
+	font-size: var(--font-size-l);
+}
+
 .font-size-s {
 	font-size: var(--font-size-s);
 }
@@ -59,5 +63,15 @@ sub,
 
 .heading4 {
 	font-size: var(--font-size-h4);
+	font-weight: 700;
+}
+
+.heading5 {
+	font-size: var(--font-size-h5);
+	font-weight: 700;
+}
+
+.heading6 {
+	font-size: var(--font-size-h6);
 	font-weight: 700;
 }

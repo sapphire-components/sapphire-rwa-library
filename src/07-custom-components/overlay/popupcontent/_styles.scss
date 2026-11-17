@@ -94,6 +94,10 @@ div[data-block$='PopupContent'] {
 	border: 0;
 	display: block;
 	flex: 1 1 auto;
+	// Height of the loaded page's content, measured by PopupContent when the
+	// page can be read. The iframe still grows to a fixed or minimum height,
+	// and shrinks (scrolling inside) when the popup hits its max-height.
+	height: var(--popupcontent-frame-height, 150px);
 	margin: 0;
 	min-height: 0;
 	padding: 0;
@@ -102,6 +106,10 @@ div[data-block$='PopupContent'] {
 
 .popup-content[data-hasurl='true'] {
 	height: var(--popupcontent-height, calc(100vh - 48px));
+	// The page's content height is known, so the popup follows it.
+	&[data-frameautoheight='true'] {
+		height: var(--popupcontent-height, auto);
+	}
 	.popup-content-body,
 	.popup-content-footer {
 		display: none;

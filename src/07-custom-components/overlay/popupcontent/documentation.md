@@ -9,7 +9,10 @@ Structured content layout for the **Popup** widget from Service Studio. Use it w
 - When `HasClose` is `True`, a close button is shown in the top-right corner and the **Header** keeps a minimum height even when empty, so the close button does not overlap the body.
 - When `HasSeparators` is `True`, horizontal separators are drawn between the header and body and between the body and footer.
 - `Height` takes precedence over `MinHeight`. When both are `0`, the height follows the content.
-- When `URL` is set, the component shows that page in an iframe that fills the popup, and the content of all placeholders is hidden. The close button stays. Without a fixed `Height`, the popup uses the full available height (`calc(100vh - 48px)`). Clearing `URL` removes the iframe and shows the placeholders again.
+- When `URL` is set, the component shows that page in an iframe, and the content of all placeholders is hidden. The close button stays. Clearing `URL` removes the iframe and shows the placeholders again.
+  - When the page is on the same origin, the iframe takes the height of the page's content, so the popup height follows the content like it does for placeholders. `MinHeight` and `Height` still apply, and the iframe fills them. When the content is taller than the viewport limit, the popup stops there and the page scrolls inside the iframe.
+  - The height is measured again whenever the page changes: DOM changes, images or fonts finishing loading, transitions and animations ending, the popup width changing, and navigation inside the iframe. The page's scroll position is kept.
+  - When the page is on another origin, its content cannot be read. Without a fixed `Height`, the popup then uses the full available height (`calc(100vh - 48px)`).
 - `CloseOnEsc`, `Height`, `MinHeight`, and `URL` are applied again whenever they change at runtime.
 - Only one popup is expected to be open at a time: the `Escape` key is listened for on the whole page.
 - While focus is inside the iframe, `Escape` is handled by the loaded page and does not close the popup.

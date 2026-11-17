@@ -19,7 +19,7 @@ div[data-block$='ButtonChoice'].buttonchoice,
 		color: var(--color-neutral-8);
 		cursor: pointer;
 		display: inline-flex;
-		font-size: 14px;
+		font-size: var(--font-size-base);
 		gap: 8px;
 		height: auto;
 		min-height: 36px;

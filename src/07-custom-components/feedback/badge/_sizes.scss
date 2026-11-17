@@ -1,5 +1,5 @@
 .badge[data-size='s'] {
-	font-size: 12px;
+	font-size: var(--font-size-s);
 	gap: 4px;
 	height: 20px;
 	line-height: 20px;
@@ -7,7 +7,7 @@
 }
 
 .badge[data-size='m'] {
-	font-size: 14px;
+	font-size: var(--font-size-base);
 	gap: 6px;
 	height: 30px;
 	line-height: 30px;

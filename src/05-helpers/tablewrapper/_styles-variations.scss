@@ -23,7 +23,7 @@
 			display: none;
 		}
 		.pagination-button {
-			font-size: 14px;
+			font-size: var(--font-size-base);
 			height: 24px;
 			min-width: 24px;
 		}

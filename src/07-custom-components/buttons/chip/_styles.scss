@@ -12,7 +12,7 @@ div[data-block$='Chip2'] {
 	border-radius: 4px;
 	box-shadow: var(--box-shadow-sm);
 	display: inline-flex;
-	font-size: 14px;
+	font-size: var(--font-size-base);
 	gap: 8px;
 	line-height: 20px;
 	padding-block: 2px;

@@ -13,13 +13,12 @@ div[data-block$='DropdownMenu'] {
 		cursor: pointer;
 		display: flex;
 		gap: 8px;
-		height: 26px;
 		margin-bottom: 2px;
 		&:hover {
 			border-inline-start-color: var(--color-primary);
 		}
 		&-icon {
-			padding-top: 2px;
+			padding-top: 6px;
 		}
 		&-label {
 			flex: 1 1 auto;
@@ -29,7 +28,7 @@ div[data-block$='DropdownMenu'] {
 			color: var(--color-neutral-6);
 			display: grid;
 			height: 16px;
-			margin-top: 6px;
+			margin-top: 4px;
 			place-items: center;
 			width: 16px;
 		}
@@ -40,9 +39,8 @@ div[data-block$='DropdownMenu'] {
 			@include focus-visible();
 			color: var(--color-neutral-9);
 			display: block;
-			font-size: 14px;
-			line-height: 26px;
-			min-height: 26px;
+			font-size: var(--font-size-base);
+			line-height: 24px;
 			&:hover {
 				font-weight: 700;
 				text-decoration: none;
@@ -61,7 +59,7 @@ div[data-block$='DropdownMenu'] {
 		padding-inline-start: 8px;
 		.dropdownmenu-header-label {
 			color: var(--color-neutral-9);
-			font-size: 16px;
+			font-size: var(--font-size-l);
 			font-weight: 600;
 		}
 	}
