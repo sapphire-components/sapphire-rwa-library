@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.150 2026-11-17T18:27:15.807Z */
+/*!  SapphireRWALibrary PROD v0.6.151 2026-11-17T18:48:01.092Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -6314,6 +6314,7 @@ div[data-widthcomponent=auto] {
 }
 .tablewrapper table thead th {
   background-color: var(--color-neutral-0);
+  padding: 8px 16px;
 }
 .tablewrapper table thead th > span,
 .tablewrapper table thead th > .sortable-icon {
