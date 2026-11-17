@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.149 2026-11-17T17:33:20.081Z */
+/*!  SapphireRWALibrary PROD v0.6.150 2026-11-17T18:27:15.807Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -6322,7 +6322,7 @@ div[data-widthcomponent=auto] {
 }
 .tablewrapper .table-row td {
   height: unset;
-  padding: var(--space-s) var(--space-m);
+  padding: 8px 16px;
 }
 .tablewrapper .pagination {
   left: 0;
