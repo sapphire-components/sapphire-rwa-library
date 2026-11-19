@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.153 2026-11-19T14:41:03.871Z */
+/*!  SapphireRWALibrary PROD v0.6.154 2026-11-19T16:49:38.056Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -10456,6 +10456,11 @@ div[data-block$=MasterDetail] {
   text-decoration: none;
 }
 .dropdownmenu-items a.active {
+  background-color: var(--color-primary-lighter);
+  font-weight: 700;
+}
+
+.dropdownmenu-items div[data-parentid].active a {
   background-color: var(--color-primary-lighter);
   font-weight: 700;
 }

@@ -49,6 +49,15 @@
 	}
 }
 
+.dropdownmenu-items {
+	div[data-parentid].active {
+		a {
+			background-color: var(--color-primary-lighter);
+			font-weight: 700;
+		}
+	}
+}
+
 .dropdownmenu[data-rootlevel='true'] {
 	margin-bottom: 12px;
 	> .dropdownmenu-header {

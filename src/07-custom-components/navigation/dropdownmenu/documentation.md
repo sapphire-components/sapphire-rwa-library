@@ -5,7 +5,9 @@ A collapsible menu section for side navigation. A clickable header (optional ico
 - Clicking the header (`.dropdownmenu-header`) or pressing `Enter` on it toggles the menu. The header is focusable (`tabindex="0"`). Open state is reflected as `data-isopen` on the root, which shows `.dropdownmenu-items` and rotates the chevron.
 - Open state is saved per instance in local storage (`sph-dropdownmenu-{runtimeId}`) and restored on init, so menus keep their state across page navigation. With no saved value the menu starts closed.
 - Menus can be nested. The script sets `data-rootlevel` on init: `true` for a menu that is not inside another `.dropdownmenu`, `false` otherwise. Root menus get a bold 16px label, a left accent border on hover, and extra bottom spacing. Nested menus hide the icon, drop the border, and indent their items less.
-- If an `a.active` link is inside the menu after render, the menu is marked `data-isactive='true'` and forced open. A root menu with an active link also gets a primary accent border, icon, and bold label, and scrolls the active link into view (centered) when it is outside the visible area of `.layoutaside-body` (or the viewport).
+- Links to the traditional (`.aspx`) version of the current screen are also marked active. Any link whose path ends in `{ScreenName}.aspx` (case-insensitive, query string and hash ignored) gets the `active` class. `ScreenName` comes from the optional `screenName` init value, or the last segment of the current URL when it is empty, so screen `EmergencyArticle_Screen` activates a link to `.../EmergencyArticle_Screen.aspx`.
+- Menu items are often loaded asynchronously, after the menu initializes. The active check runs on init and then through a `MutationObserver` on the menu, which disconnects once an `a.active` link is found or on `destroy()`.
+- If an `a.active` link is inside the menu, the menu is marked `data-isactive='true'` and forced open. A root menu with an active link also gets a primary accent border, icon, and bold label, and scrolls the active link into view (centered) when it is outside the visible area of `.layoutaside-body` (or the viewport).
 - Links (`a`) inside `.dropdownmenu-items` are styled as 26px menu rows; `a.active` gets a light primary background and bold text.
 - `DesignSystemMenu` uses `open()` / `close()` for its expand all, collapse all, and filter actions.
 
@@ -39,3 +41,4 @@ A collapsible menu section for side navigation. A clickable header (optional ico
 | --------- | ----------------------------------------------------- |
 | `open()`  | Opens the menu and saves the state to local storage.  |
 | `close()` | Closes the menu and saves the state to local storage. |
+| `markTraditionalLinksActive(screenName)` | Adds `active` to links in the menu whose path ends in `{screenName}.aspx`. Called on init. |
