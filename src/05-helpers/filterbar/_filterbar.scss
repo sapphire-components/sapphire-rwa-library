@@ -1,9 +1,5 @@
 @use '../../01-foundations/_colors.scss' as *;
 
-div[data-block$='FilterBar'] {
-	display: contents;
-}
-
 .filterbar {
 	position: relative;
 	width: 100%;

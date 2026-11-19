@@ -2,6 +2,7 @@
 .form-control[data-textarea],
 .vscomp-toggle-button {
 	border-color: var(--color-border);
+	font-size: var(--font-size-base);
 	&:hover {
 		border-color: var(--color-neutral-6);
 	}

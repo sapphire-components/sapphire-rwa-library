@@ -1,9 +1,5 @@
 @use '../../../01-foundations/_mixins.scss' as *;
 
-div[data-block$='DropdownMenu'] {
-	display: contents;
-}
-
 .dropdownmenu {
 	user-select: none;
 	&-header {

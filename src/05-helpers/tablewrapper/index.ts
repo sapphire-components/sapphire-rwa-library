@@ -79,7 +79,11 @@ export default class TableWrapper extends BaseComponent {
 	private static readonly ROW_SELECTOR = ':scope > tbody > tr';
 	private static readonly STASH_CLASS = 'tablewrapper-reorder-stashed';
 	private static readonly SINGLE_ITEM_COLUMN_CLASS = 'tablewrapper-single-item-column';
-	private static readonly SINGLE_ITEM_SELECTOR = 'button, .btn, [role="button"], [data-iconname], svg, img, [role="img"]';
+	// An empty data-iconname is not an icon: wrappers such as InputWrapper carry
+	// it (data-iconname="") around a field.
+	private static readonly SINGLE_ITEM_SELECTOR = 'button, .btn, [role="button"], [data-iconname]:not([data-iconname=""]), svg, img, [role="img"]';
+	// A cell with a visible form field never counts as one button or one icon.
+	private static readonly FORM_FIELD_SELECTOR = 'input:not([type="hidden"]), select, textarea, [contenteditable="true"], [role="combobox"], [role="textbox"]';
 	private static readonly NUMERIC_COLUMN_CLASS = 'tablewrapper-numeric-column';
 	// One number: an integer or decimal, with optional sign, thousands
 	// separators (`,` `.` `'` or a space) and decimal part (`.` or `,`), and an
@@ -712,6 +716,8 @@ export default class TableWrapper extends BaseComponent {
 		if (cell.classList.contains(TableWrapper.REORDER_CELL_CLASS)) return 'other';
 
 		const isShown = this.createVisibilityCheck(cell);
+		if (Array.from(cell.querySelectorAll(TableWrapper.FORM_FIELD_SELECTOR)).some(isShown)) return 'other';
+
 		const items = Array.from(cell.querySelectorAll<Element>(TableWrapper.SINGLE_ITEM_SELECTOR)).filter((el) => {
 			const outer = el.parentElement?.closest(TableWrapper.SINGLE_ITEM_SELECTOR);
 			return !(outer && cell.contains(outer)) && isShown(el);

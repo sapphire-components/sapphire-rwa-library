@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.151 2026-11-17T18:48:01.092Z */
+/*!  SapphireRWALibrary PROD v0.6.152 2026-11-19T10:12:00.297Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1336,7 +1336,7 @@ sub,
   display: flex;
   gap: 8px;
   height: 43px;
-  inset-inline-start: -205px;
+  inset-inline-start: -195px;
   overflow: hidden;
   padding: 12px;
   position: fixed;
@@ -1346,14 +1346,14 @@ sub,
 }
 .configuration-selector:hover {
   height: unset;
-  transform: translateX(200px);
+  transform: translateX(190px);
 }
 
 :dir(rtl) .configuration-selector {
-  inset-inline-start: -195px;
+  inset-inline-start: -185px;
 }
 :dir(rtl) .configuration-selector:hover {
-  transform: translateX(-190px);
+  transform: translateX(-180px);
 }
 
 .colors-list {
@@ -2887,6 +2887,7 @@ i.fa {
 .form-control[data-textarea],
 .vscomp-toggle-button {
   border-color: var(--color-border);
+  font-size: var(--font-size-base);
 }
 .form-control[data-input]:hover,
 .form-control[data-textarea]:hover,
@@ -4221,10 +4222,6 @@ div[data-block$=CheckboxLabel] {
 
 .border-transparent {
   border-color: transparent;
-}
-
-div[data-block$=FilterBar] {
-  display: contents;
 }
 
 .filterbar {
@@ -5916,7 +5913,7 @@ div[data-widthcomponent=auto] {
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
-:is(.tablewrapper, .tablewrapper-sticky-header) tr > :is(th, td).tablewrapper-numeric-column > * {
+:is(.tablewrapper, .tablewrapper-sticky-header) tr > :is(th, td).tablewrapper-numeric-column > :not(.sortable-icon) {
   justify-content: flex-end;
   margin-inline-start: auto;
 }
@@ -9922,6 +9919,7 @@ div[data-block$=SapphireInput] {
 }
 .sapphireinput .form-control[data-input] {
   border-color: var(--color-border);
+  font-size: var(--font-size-base);
   padding-block: 0;
   padding-inline-end: 16px;
   padding-inline-start: 36px;
@@ -10375,10 +10373,6 @@ div[data-block$=MasterDetail] {
 .masterdetail[data-asidewidth=xl] .masterdetail-aside {
   max-width: 320px;
 }
-div[data-block$=DropdownMenu] {
-  display: contents;
-}
-
 .dropdownmenu {
   user-select: none;
 }

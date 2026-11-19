@@ -5,7 +5,7 @@
 	display: flex;
 	gap: 8px;
 	height: 43px;
-	inset-inline-start: -205px;
+	inset-inline-start: -195px;
 	overflow: hidden;
 	padding: 12px;
 	position: fixed;
@@ -14,14 +14,14 @@
 	z-index: 1;
 	&:hover {
 		height: unset;
-		transform: translateX(200px);
+		transform: translateX(190px);
 	}
 }
 
 :dir(rtl) .configuration-selector {
-	inset-inline-start: -195px;
+	inset-inline-start: -185px;
 	&:hover {
-		transform: translateX(-190px);
+		transform: translateX(-180px);
 	}
 }
 

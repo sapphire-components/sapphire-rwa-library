@@ -51,6 +51,7 @@ div[data-block$='SapphireInput'] {
 	}
 	.form-control[data-input] {
 		border-color: var(--color-border);
+		font-size: var(--font-size-base);
 		padding-block: 0;
 		padding-inline-end: 16px;
 		padding-inline-start: 36px;

@@ -121,7 +121,8 @@
 	font-variant-numeric: tabular-nums;
 	text-align: right;
 
-	> * {
+	// The sort icon keeps its own left margin so it stays spaced from the label.
+	> :not(.sortable-icon) {
 		justify-content: flex-end;
 		margin-inline-start: auto;
 	}
