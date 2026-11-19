@@ -69,6 +69,9 @@ export default class TableWrapper extends BaseComponent {
 	private static readonly CONTENT_SELECTOR = 'img, svg, picture, video, audio, canvas, iframe, object, embed, input, select, textarea, button, progress, meter, [data-iconname], [role="img"]';
 	private static readonly DRAG_THRESHOLD_PX = 2;
 	private static readonly EMPTY_COLUMN_CLASS = 'tablewrapper-empty-column';
+	// Kill switch: a header cell with this class opts its column out of the
+	// automatic rules (empty, checkbox, single item and numeric columns).
+	private static readonly IGNORE_RULES_CLASS = 'ignore-component-rules';
 	private static readonly INHERITED_WIDTH_ATTR = 'inheritedwidth';
 	private static readonly OWN_WIDTH_ATTR = 'ownwidth';
 	private static readonly WIDTH_CLASS_PATTERN = /^(?:min-|max-)?width-/;
@@ -563,7 +566,8 @@ export default class TableWrapper extends BaseComponent {
 			}),
 		);
 
-		const isEmpty = (columns: number[]) => rows.length > 0 && columns.every((column) => !filled[column]);
+		const ignored = this.getIgnoredColumns();
+		const isEmpty = (columns: number[]) => rows.length > 0 && columns.every((column) => !filled[column] && !ignored[column]);
 		layout.forEach((cells) => cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.EMPTY_COLUMN_CLASS, isEmpty(columns))));
 
 		[this.tableHeaderEl, this.tableHeaderCloneEl].forEach((header) => {
@@ -589,7 +593,8 @@ export default class TableWrapper extends BaseComponent {
 			}),
 		);
 
-		const isCheckboxColumn = (columns: number[]) => columns.length === 1 && hasCheckbox[columns[0]] === true && !disqualified[columns[0]];
+		const ignored = this.getIgnoredColumns();
+		const isCheckboxColumn = (columns: number[]) => columns.length === 1 && hasCheckbox[columns[0]] === true && !disqualified[columns[0]] && !ignored[columns[0]];
 		const headers = [this.tableHeaderEl, this.tableHeaderCloneEl].filter((header): header is HTMLElement => Boolean(header));
 		const allRows = [...layout, ...headers.map((header) => this.getCellColumns(header))];
 		allRows.forEach((cells) => cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.CHECKBOX_COLUMN_CLASS, isCheckboxColumn(columns))));
@@ -661,7 +666,8 @@ export default class TableWrapper extends BaseComponent {
 			}),
 		);
 
-		const isSingleItemColumn = (columns: number[]) => columns.length === 1 && hasItem[columns[0]] === true && !disqualified[columns[0]];
+		const ignored = this.getIgnoredColumns();
+		const isSingleItemColumn = (columns: number[]) => columns.length === 1 && hasItem[columns[0]] === true && !disqualified[columns[0]] && !ignored[columns[0]];
 		const headers = [this.tableHeaderEl, this.tableHeaderCloneEl].filter((header): header is HTMLElement => Boolean(header));
 		const allRows = [...layout, ...headers.map((header) => this.getCellColumns(header))];
 		allRows.forEach((cells) => cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.SINGLE_ITEM_COLUMN_CLASS, isSingleItemColumn(columns))));
@@ -753,7 +759,8 @@ export default class TableWrapper extends BaseComponent {
 			}),
 		);
 
-		const isNumericColumn = (columns: number[]) => columns.length === 1 && hasNumber[columns[0]] === true && !disqualified[columns[0]];
+		const ignored = this.getIgnoredColumns();
+		const isNumericColumn = (columns: number[]) => columns.length === 1 && hasNumber[columns[0]] === true && !disqualified[columns[0]] && !ignored[columns[0]];
 		const headers = [this.tableHeaderEl, this.tableHeaderCloneEl].filter((header): header is HTMLElement => Boolean(header));
 		[...layout, ...headers.map((header) => this.getCellColumns(header))].forEach((cells) =>
 			cells.forEach(({ cell, columns }) => cell.classList.toggle(TableWrapper.NUMERIC_COLUMN_CLASS, isNumericColumn(columns))),
@@ -810,6 +817,16 @@ export default class TableWrapper extends BaseComponent {
 		else this.widgetEl.style.removeProperty('--tablewrapper-checkbox-column-max-width');
 		const reorder = isSet(reorderColumnMaxWidth) ? reorderColumnMaxWidth : TableWrapper.DEFAULT_REORDER_COLUMN_MAX_WIDTH;
 		this.widgetEl.style.setProperty('--tablewrapper-reorder-column-max-width', `${reorder}px`);
+	}
+
+	// Columns whose header cell has the kill-switch class, following colspan.
+	private getIgnoredColumns(): boolean[] {
+		const ignored: boolean[] = [];
+		if (!this.tableHeaderEl) return ignored;
+		this.getCellColumns(this.tableHeaderEl).forEach(({ cell, columns }) => {
+			if (cell.classList.contains(TableWrapper.IGNORE_RULES_CLASS)) columns.forEach((column) => (ignored[column] = true));
+		});
+		return ignored;
 	}
 
 	// Maps each cell of a row to the column indexes it covers, following colspan.

@@ -79,7 +79,8 @@
 
 	// Block wrappers the platform puts around the control (e.g. a max-width
 	// div), and the checkbox itself, which the platform renders as a block.
-	> *,
+	// The sort icon keeps its own left margin so it stays spaced from the label.
+	> :not(.sortable-icon),
 	input[type='checkbox'] {
 		margin-inline: auto;
 	}
@@ -91,7 +92,7 @@
 
 	// Block wrappers the platform puts around the control (e.g. a max-width
 	// div), and the checkbox itself, which the platform renders as a block.
-	> *,
+	> :not(.sortable-icon),
 	input[type='checkbox'] {
 		margin-inline: auto;
 	}
@@ -133,4 +134,18 @@
 :is(.tablewrapper, .tablewrapper-sticky-header) th:is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column) {
 	white-space: normal;
 	word-break: normal;
+
+	// These columns are only as wide as the header's longest word, so an inline
+	// sort icon wraps onto a line of its own. Put it in the right padding instead.
+	&.sortable {
+		position: relative;
+
+		> .sortable-icon {
+			margin: 0;
+			position: absolute;
+			right: 4px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+	}
 }

@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.152 2026-11-19T10:12:00.297Z */
+/*!  SapphireRWALibrary PROD v0.6.153 2026-11-19T14:41:03.871Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -2746,8 +2746,18 @@ body.layout.blank.layout-inside-iframe {
   color: var(--color-neutral-10);
   text-decoration: underline;
 }
-div[data-block$=BreadcrumbsItem] {
-  display: contents;
+.breadcrumbs-content {
+  flex-wrap: wrap;
+  row-gap: var(--space-xs);
+}
+
+.breadcrumbs-item {
+  max-width: 100%;
+  min-width: 0;
+}
+.breadcrumbs-item .title {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .button-group {
   display: inline-flex;
@@ -3679,9 +3689,9 @@ input.not-valid + span.validation-message {
   font-size: var(--font-size-h1);
   font-weight: 600;
 }
-.backofficeheader-head-actions > div,
-.backofficeheader-head-actions button {
-  vertical-align: middle;
+.backofficeheader-head-actions {
+  align-items: center;
+  display: flex;
 }
 
 .backofficeheader-placeholder {
@@ -5883,7 +5893,7 @@ div[data-widthcomponent=auto] {
   text-align: center;
   width: var(--tablewrapper-column-cap);
 }
-.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) > *,
+.tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) > :not(.sortable-icon),
 .tablewrapper[data-columnfixedwidths] tr > :is(th, td):is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column, .tablewrapper-reorder-column, .tablewrapper-reorder-cell) input[type=checkbox] {
   margin-inline: auto;
 }
@@ -5891,7 +5901,7 @@ div[data-widthcomponent=auto] {
 .tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) {
   text-align: center;
 }
-.tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) > *,
+.tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) > :not(.sortable-icon),
 .tablewrapper-sticky-header th:is(.tablewrapper-checkbox-column, .tablewrapper-reorder-column) input[type=checkbox] {
   margin-inline: auto;
 }
@@ -5921,6 +5931,16 @@ div[data-widthcomponent=auto] {
 :is(.tablewrapper, .tablewrapper-sticky-header) th:is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column) {
   white-space: normal;
   word-break: normal;
+}
+:is(.tablewrapper, .tablewrapper-sticky-header) th:is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column).sortable {
+  position: relative;
+}
+:is(.tablewrapper, .tablewrapper-sticky-header) th:is(.tablewrapper-checkbox-column, .tablewrapper-single-item-column).sortable > .sortable-icon {
+  margin: 0;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 div[data-widthcomponent=auto] {
   width: fit-content;
@@ -12647,6 +12667,9 @@ div[data-block$=SVGIcon] {
 .filters > :is(.filters-always, .filters-maybe) > [data-block] > [data-widthcomponent=full] {
   flex: 1 0 var(--filters-fill-min-width);
   min-width: min(var(--filters-fill-min-width), 100%);
+}
+.filters:has(> .filters-always:empty):has(> .filters-maybe:empty):has(> .filters-actions:empty) {
+  display: none;
 }
 .filters[data-filtersmeasuring=true] > :is(.filters-always, .filters-maybe) > [data-widthcomponent=full], .filters[data-filtersmeasuring=true] > :is(.filters-always, .filters-maybe) > [data-block] > [data-widthcomponent=full] {
   flex-grow: 0;

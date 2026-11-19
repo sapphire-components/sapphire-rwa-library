@@ -57,6 +57,11 @@ $filters-panel-layer: 402;
 		min-width: min(var(--filters-fill-min-width), 100%);
 	}
 
+	// Nothing to show (no filters, no actions such as bulk actions on selected rows): hide the empty bar.
+	&:has(> .filters-always:empty):has(> .filters-maybe:empty):has(> .filters-actions:empty) {
+		display: none;
+	}
+
 	&[data-filtersmeasuring='true'] > :is(.filters-always, .filters-maybe) > [data-widthcomponent='full'],
 	&[data-filtersmeasuring='true'] > :is(.filters-always, .filters-maybe) > [data-block] > [data-widthcomponent='full'] {
 		flex-grow: 0;

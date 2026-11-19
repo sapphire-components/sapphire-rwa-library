@@ -22,10 +22,8 @@
 		font-weight: 600;
 	}
 	&-actions {
-		> div,
-		button {
-			vertical-align: middle;
-		}
+		align-items: center;
+		display: flex;
 	}
 }
 
