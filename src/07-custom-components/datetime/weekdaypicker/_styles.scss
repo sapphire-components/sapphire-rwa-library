@@ -64,7 +64,8 @@
 	}
 }
 
-.weekdaypicker[data-density='compact'][data-weekdayformat='short'] {
+// JS falls back to `short` for empty or unknown formats, so match everything that isn't narrow/long.
+.weekdaypicker[data-density='compact']:not([data-weekdayformat='narrow' i]):not([data-weekdayformat='long' i]) {
 	.weekdaypicker-day {
 		font-size: var(--font-size-xs);
 	}

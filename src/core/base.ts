@@ -37,6 +37,18 @@ export class BaseComponent {
 		}
 	}
 
+	/** Points the instance at a new host element (e.g. after OutSystems replaces the node) and keeps the registry in sync. */
+	protected setWidgetEl(element: HTMLElement): void {
+		if (element === this.widgetEl) return;
+
+		const registry = BaseComponent.getRegistry(this.constructor as BaseComponentConstructor<this>);
+		if (this.widgetEl) {
+			registry.delete(this.widgetEl);
+		}
+		this.widgetEl = element;
+		registry.set(element, this);
+	}
+
 	protected observeLayoutResize(handler: ResizeObserverCallback, debounceMs?: number): void {
 		if (this.layoutResizeObserver) {
 			return;

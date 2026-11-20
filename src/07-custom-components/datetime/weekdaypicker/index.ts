@@ -26,6 +26,8 @@ export default class WeekDayPicker extends BaseComponent {
 	#locale = 'en-US';
 	#selectableCount = 1;
 	#selected: number[] = [];
+	/** Last `Selected` value received from OutSystems (normalised), so an unchanged value doesn't overwrite local clicks. */
+	#lastSelectedInput: string | null = null;
 	#weekDayFormat: WeekDayFormat = 'short';
 	#weekStart = 1;
 
@@ -48,6 +50,7 @@ export default class WeekDayPicker extends BaseComponent {
 		}
 
 		this.#actions = config.actions;
+		this.widgetEl.setAttribute('role', 'group');
 		this.applyConfig(config, { rebuild: true, syncSelected: true });
 	}
 
@@ -57,13 +60,17 @@ export default class WeekDayPicker extends BaseComponent {
 
 		// OutSystems may replace the host node or wipe JS-generated children on refresh.
 		if (this.widgetEl !== liveEl) {
-			this.widgetEl = liveEl;
+			this.unbindEvents();
+			this.setWidgetEl(liveEl);
+			this.widgetEl.setAttribute('role', 'group');
 			this.#buttonByDay.clear();
 		}
 
 		this.applyConfig(payload, {
 			rebuild: this.needsRebuild(payload) || !this.hasLiveButtons(),
-			syncSelected: payload.selected !== undefined,
+			// Only re-apply Selected when the parent actually changed it. Otherwise a change to any other
+			// parameter would undo the user's clicks when the parent doesn't bind Change back to Selected.
+			syncSelected: payload.selected !== undefined && this.selectedKey(payload.selected) !== this.#lastSelectedInput,
 		});
 	}
 
@@ -97,18 +104,26 @@ export default class WeekDayPicker extends BaseComponent {
 			this.#weekStart = this.normalizeWeekStart(payload.weekStart);
 		}
 
+		let requested = this.#selected;
 		if (options.syncSelected && payload.selected !== undefined) {
-			this.#selected = this.normalizeSelected(payload.selected);
-		} else {
-			// Clamp local selection when SelectableCount shrinks (or after other param-only updates).
-			this.#selected = this.normalizeSelected(this.#selected);
+			requested = this.parseDays(payload.selected);
+			this.#lastSelectedInput = JSON.stringify(requested);
 		}
+
+		// Clamp to SelectableCount (it may have shrunk, or the incoming list may be too long).
+		this.#selected = requested.slice(0, this.#selectableCount);
+		const clamped = this.#selected.length < requested.length;
 
 		if (options.rebuild || this.#buttonByDay.size === 0) {
 			this.rebuild();
 		} else {
 			this.refreshLabels();
 			this.refreshDayState();
+		}
+
+		// Days dropped by the clamp must reach the parent, or its Selected stays out of sync with the UI.
+		if (clamped) {
+			this.emitChange();
 		}
 	}
 
@@ -151,8 +166,10 @@ export default class WeekDayPicker extends BaseComponent {
 	}
 
 	private applyDayLabels(button: HTMLButtonElement, isoDay: number): void {
+		const longLabel = this.labelForDay(isoDay, 'long');
 		button.textContent = this.labelForDay(isoDay, this.#weekDayFormat);
-		button.title = this.labelForDay(isoDay, 'long');
+		button.title = longLabel;
+		button.setAttribute('aria-label', longLabel);
 	}
 
 	private refreshDayState(): void {
@@ -186,7 +203,11 @@ export default class WeekDayPicker extends BaseComponent {
 		}
 
 		this.refreshDayState();
-		this.#actions.OnChange(JSON.stringify(this.#selected));
+		this.emitChange();
+	}
+
+	private emitChange(): void {
+		this.#actions?.OnChange(JSON.stringify(this.#selected));
 	}
 
 	private orderedDays(): number[] {
@@ -240,24 +261,25 @@ export default class WeekDayPicker extends BaseComponent {
 		return Math.min(7, Math.floor(count));
 	}
 
-	private normalizeSelected(value: number[] | string | null | undefined): number[] {
-		const incoming = this.parseSelectedInput(value);
+	/** Valid, unique ISO days in input order. Not clamped to SelectableCount. */
+	private parseDays(value: number[] | string | null | undefined): number[] {
 		const seen = new Set<number>();
 		const result: number[] = [];
 
-		for (const item of incoming) {
+		for (const item of this.parseSelectedInput(value)) {
 			const day = Number(item);
 			if (!Number.isInteger(day) || day < 1 || day > 7 || seen.has(day)) {
 				continue;
 			}
 			seen.add(day);
 			result.push(day);
-			if (result.length >= this.#selectableCount) {
-				break;
-			}
 		}
 
 		return result;
+	}
+
+	private selectedKey(value: number[] | string | null | undefined): string {
+		return JSON.stringify(this.parseDays(value));
 	}
 
 	private parseSelectedInput(value: number[] | string | null | undefined): unknown[] {

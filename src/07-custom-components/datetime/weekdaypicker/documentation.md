@@ -7,9 +7,10 @@ A compact control that renders seven rounded weekday buttons for picking one or 
 - Button labels use `Intl.DateTimeFormat` with `WeekDayFormat` (`narrow`, `short`, or `long`). Each button also has a `title` with the `long` weekday name for hover clarity.
 - `Locale` drives formatting. When it is empty / nullish, the component falls back to `SapphireRWALibrary.State.locale`, then to `en-US`.
 - The user can select up to `SelectableCount` days. When that count is reached, unselected days become disabled; deselecting a selected day re-enables them.
-- `SelectableCount` updates from outside (via `parametersChanged`) are applied immediately: selection is clamped to the new cap and disabled state is refreshed.
-- `Selected` seeds or updates the active days from outside (via init / `parametersChanged`). Extra values beyond `SelectableCount` are ignored.
-- `Change` fires on every user toggle (select or deselect), passing `Identifier` and the current selected ISO days (in selection order).
+- All parameters (`Enabled`, `Locale`, `SelectableCount`, `Selected`, `WeekDayFormat`, `WeekStart`) are applied when they change after the first render.
+- When `SelectableCount` shrinks below the current selection, the extra days are dropped and `Change` fires with the clamped selection, so the parent stays in sync.
+- `Selected` seeds or updates the active days from outside. It is only re-applied when its value actually changes, so changing another parameter never undoes the user's clicks. Extra values beyond `SelectableCount` are dropped and `Change` fires with the clamped selection.
+- `Change` fires on every user toggle (select or deselect), passing `Identifier` and the current selected ISO days (in selection order). Bind it back to `Selected` to keep the parent and the component in sync.
 - `Density` controls button size. Only `Compact` and `Default` from `SapphireDensity` are supported; other density values are not applied.
 
 <hr>
@@ -22,7 +23,7 @@ A compact control that renders seven rounded weekday buttons for picking one or 
 | `Enabled`         | `Boolean`         | Enables or disables all interaction. Disabled pickers ignore clicks and use disabled styling (`data-enabled` on the root is typically set by the platform).                                                                                              |
 | `Locale`          | `Text`            | BCP 47 locale code (for example `en-US`, `pt-PT`) used for weekday labels. Empty / nullish falls back to `SapphireRWALibrary.State.locale`, then `en-US`.                                                                                                |
 | `SelectableCount` | `Integer`         | Maximum number of weekdays the user can select (`0`–`7`). When the current selection reaches this count, remaining unselected days are disabled until one is deselected. Updates via `parametersChanged` clamp the selection and refresh disabled state. |
-| `Selected`        | `Text`            | Currently selected ISO weekdays. Accepts a JSON array string such as `"[1,3,5]"` (same shape as the serialized selection), or an equivalent list of integers `1`–`7`. Values outside that range are ignored.                                             |
+| `Selected`        | `Integer List`    | Currently selected ISO weekdays (`1`–`7`). The block serializes it to JSON (for example `[1,3,5]`) before passing it to the component. Values outside that range and duplicates are ignored.                                                          |
 | `WeekDayFormat`   | `Text`            | Visible label length passed to `Intl`. Supported values: `narrow` (e.g. `M`), `short` (e.g. `Mon`), `long` (e.g. `Monday`). Invalid values default to `short`. Hover `title` always uses `long`.                                                         |
 | `WeekStart`       | `Integer`         | First day shown in the row, using ISO numbering (`1` = Monday … `7` = Sunday). Only affects display order; selected values stay ISO-stable. Invalid values default to `1`.                                                                               |
 
