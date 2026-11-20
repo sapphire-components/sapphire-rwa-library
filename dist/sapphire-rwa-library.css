@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.155 2026-11-20T11:52:17.156Z */
+/*!  SapphireRWALibrary PROD v0.6.156 2026-11-20T14:33:31.652Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -10939,6 +10939,7 @@ a.overlay-item.sapphire-tabheader {
 a.overlay-item .sapphire-tabheader-content {
   border: none;
   color: inherit;
+  font-size: var(--font-size-base);
   padding: 0;
 }
 

@@ -13,6 +13,10 @@ export default class DropdownMenu extends BaseComponent {
 	private screenName = '';
 	private itemsObserver?: MutationObserver;
 
+	/** Marks a link made active only because no link on the page matched the current module (yet). */
+	private static readonly FALLBACK_ATTR = 'data-screen-fallback';
+	private static readonly instances = new Set<DropdownMenu>();
+
 	private readonly onClickHeader = (): void => {
 		if (this.isOpen) {
 			this.close();
@@ -66,11 +70,14 @@ export default class DropdownMenu extends BaseComponent {
 
 		this.screenName = init.screenName || DropdownMenu.getCurrentScreenName();
 
+		DropdownMenu.instances.add(this);
+
 		setTimeout(() => {
 			if (this.applyActiveState()) return;
 
 			// Items links are often loaded asynchronously (after this menu initializes),
-			// so keep watching until an active link shows up.
+			// so keep watching until an active link shows up. A link marked only as a fallback
+			// (no current-module match on the page yet) keeps the observer running.
 			this.itemsObserver = new MutationObserver(() => {
 				if (this.applyActiveState()) {
 					this.itemsObserver?.disconnect();
@@ -83,12 +90,32 @@ export default class DropdownMenu extends BaseComponent {
 		this.bindEvents();
 	}
 
-	/** Marks `.aspx` links for the current screen, then opens/highlights the menu if it has an `a.active`. Returns true when one was found. */
+	/**
+	 * Marks `.aspx` links for the current screen, then opens/highlights the menu if it has an `a.active`.
+	 * Returns true when the active link is final, i.e. not a fallback mark that may still be removed.
+	 */
 	private applyActiveState(): boolean {
 		this.markTraditionalLinksActive(this.screenName);
 
 		const activeChild = this.widgetEl.querySelector<HTMLAnchorElement>('a.active');
 		if (!activeChild) return false;
+
+		if (this.widgetEl.dataset.isactive !== 'true') {
+			this.highlight(activeChild);
+		}
+
+		return !this.widgetEl.querySelector(`a.active[${DropdownMenu.FALLBACK_ATTR}]`);
+	}
+
+	/** Undoes `highlight()` when the menu no longer has an `a.active` link (its fallback marks were removed). */
+	private syncActiveState(): void {
+		if (this.widgetEl.querySelector('a.active')) return;
+
+		this.widgetEl.dataset.isactive = 'false';
+		this.widgetEl.dataset.isopen = this.isOpen ? 'true' : 'false';
+	}
+
+	private highlight(activeChild: HTMLAnchorElement): void {
 
 		this.widgetEl.dataset.isactive = 'true';
 		this.widgetEl.dataset.isopen = 'true';
@@ -100,8 +127,6 @@ export default class DropdownMenu extends BaseComponent {
 				}
 			});
 		}
-
-		return true;
 	}
 
 	/**
@@ -113,13 +138,57 @@ export default class DropdownMenu extends BaseComponent {
 		if (!screenName) return;
 
 		const target = `${screenName}.aspx`.toLowerCase();
+		const isScreenMatch = (link: HTMLAnchorElement) => link.pathname.split('/').pop()?.toLowerCase() === target;
+
+		// Several modules can have a screen with the same name (e.g. `Sapphire_BO/Hospital_Show.aspx` and
+		// `PharmaStocks_BO/Hospital_Show.aspx`). When any link on the page also matches the current module,
+		// only those links are marked, so other menus don't light up too. Menus load their items
+		// asynchronously, so a menu may mark a link before the current-module link exists: such links are
+		// tagged as fallback and unmarked (in every menu) once a current-module link shows up.
+		const currentModule = DropdownMenu.normalizeModule(DropdownMenu.getModuleName(window.location.pathname));
+		const isModuleMatch = (link: HTMLAnchorElement) =>
+			!!currentModule && DropdownMenu.normalizeModule(DropdownMenu.getModuleName(link.pathname)) === currentModule;
+
+		const pageHasModuleMatch = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href]')).some(
+			(link) => isScreenMatch(link) && isModuleMatch(link),
+		);
+
+		if (pageHasModuleMatch) {
+			DropdownMenu.clearFallbackLinks();
+		}
 
 		this.widgetEl.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
-			const lastSegment = link.pathname.split('/').pop()?.toLowerCase();
-			if (lastSegment === target) {
+			if (!isScreenMatch(link) || link.classList.contains('active')) return;
+
+			if (isModuleMatch(link)) {
 				link.classList.add('active');
+			} else if (!pageHasModuleMatch) {
+				link.classList.add('active');
+				link.setAttribute(DropdownMenu.FALLBACK_ATTR, '');
 			}
 		});
+	}
+
+	/** Removes `active` from fallback-marked links in every menu and resets menus left without an active link. */
+	private static clearFallbackLinks(): void {
+		const links = document.querySelectorAll<HTMLAnchorElement>(`a[${DropdownMenu.FALLBACK_ATTR}]`);
+		if (links.length === 0) return;
+
+		links.forEach((link) => {
+			link.classList.remove('active');
+			link.removeAttribute(DropdownMenu.FALLBACK_ATTR);
+		});
+		DropdownMenu.instances.forEach((menu) => menu.syncActiveState());
+	}
+
+	/** First path segment, e.g. `/Sapphire_RBO/Hospital_Show` → `Sapphire_RBO`. */
+	private static getModuleName(pathname: string): string {
+		return decodeURIComponent(pathname.split('/').filter(Boolean)[0] ?? '');
+	}
+
+	/** Lowercases and maps the Reactive `_RBO` suffix to the traditional `_BO`, so `Sapphire_RBO` matches `sapphire_bo`. */
+	private static normalizeModule(moduleName: string): string {
+		return moduleName.toLowerCase().replace(/_rbo$/, '_bo');
 	}
 
 	/** Last segment of the current Reactive URL, e.g. `/App/EmergencyArticle_Screen` → `EmergencyArticle_Screen`. */
@@ -148,6 +217,7 @@ export default class DropdownMenu extends BaseComponent {
 	parametersChanged(): void {}
 
 	destroy() {
+		DropdownMenu.instances.delete(this);
 		this.itemsObserver?.disconnect();
 		this.itemsObserver = undefined;
 		this.headerEl.removeEventListener('click', this.onClickHeader);
