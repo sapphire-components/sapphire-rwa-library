@@ -4,6 +4,7 @@ import { LocalStorageKeys } from '@utils/local-storage-keys';
 
 interface DropdownMenuInit extends BaseComponentInit {
 	isOpen: boolean;
+	itemId?: string;
 	screenName?: string;
 }
 
@@ -11,6 +12,7 @@ export default class DropdownMenu extends BaseComponent {
 	private headerEl!: HTMLElement;
 	private isOpen!: boolean;
 	private screenName = '';
+	private storageKey = '';
 	private itemsObserver?: MutationObserver;
 
 	/** Marks a link made active only because no link on the page matched the current module (yet). */
@@ -37,7 +39,7 @@ export default class DropdownMenu extends BaseComponent {
 
 		this.isOpen = isOpen;
 		this.widgetEl.dataset.isopen = isOpen ? 'true' : 'false';
-		Helpers.writeToLocalStorage(LocalStorageKeys.dropdownMenu(this.runtimeId), isOpen);
+		Helpers.writeToLocalStorage(this.storageKey, isOpen);
 	}
 
 	open(): void {
@@ -62,7 +64,8 @@ export default class DropdownMenu extends BaseComponent {
 		const isRootLevel = this.widgetEl.parentElement?.closest('.dropdownmenu') === null;
 		this.widgetEl.dataset.rootlevel = isRootLevel ? 'true' : 'false';
 
-		this.isOpen = Helpers.readFromLocalStorage<boolean>(LocalStorageKeys.dropdownMenu(this.runtimeId)) ?? false;
+		this.storageKey = LocalStorageKeys.dropdownMenu(DropdownMenu.getStorageId(init));
+		this.isOpen = Helpers.readFromLocalStorage<boolean>(this.storageKey) ?? false;
 
 		if (this.isOpen) {
 			this.widgetEl.dataset.isopen = 'true';
@@ -179,6 +182,18 @@ export default class DropdownMenu extends BaseComponent {
 			link.removeAttribute(DropdownMenu.FALLBACK_ATTR);
 		});
 		DropdownMenu.instances.forEach((menu) => menu.syncActiveState());
+	}
+
+	/**
+	 * Stable id for the saved open state: `identifier`, else `item-{itemId}`, else the runtime id without
+	 * the List render counter. OutSystems builds List row ids as `l{n}-{counter}_{index}`, and the counter
+	 * changes between page loads (it depends on how often the List re-rendered), so the raw runtime id
+	 * is not stable: `b3-b2-l1-17_0-b1-DropdownMenu` → `b3-b2-l1-0-b1-DropdownMenu`.
+	 */
+	private static getStorageId(init: DropdownMenuInit): string {
+		if (init.identifier) return init.identifier;
+		if (init.itemId) return `item-${init.itemId}`;
+		return (init.runtimeId ?? '').replace(/(^|-)(l\d+)-\d+_(\d+)(?=-|$)/g, '$1$2-$3');
 	}
 
 	/** First path segment, e.g. `/Sapphire_RBO/Hospital_Show` → `Sapphire_RBO`. */
