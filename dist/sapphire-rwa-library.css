@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.157 2026-11-23T12:28:26.895Z */
+/*!  SapphireRWALibrary PROD v0.6.158 2026-11-25T08:33:03.120Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -1296,6 +1296,16 @@ sub,
   --color-warning: #E9A100;
   --color-warning-dark: #AF7900;
   --color-warning-light: #FBECCC;
+  --component-font-size-large: 14px;
+  --component-font-size-medium: 14px;
+  --component-font-size-small: 13px;
+  --component-font-size-xlarge: 16px;
+  --component-font-size-xsmall: 12px;
+  --component-height-large: 44px;
+  --component-height-medium: 36px;
+  --component-height-small: 32px;
+  --component-height-xlarge: 54px;
+  --component-height-xsmall: 28px;
   --focus-ring-outer: color-mix(in srgb, var(--color-primary) 35%, white);
   --font-size-base: 14px;
   --font-size-h1: 30px;
@@ -1350,7 +1360,7 @@ sub,
 }
 
 :dir(rtl) .configuration-selector {
-  inset-inline-start: -185px;
+  inset-inline-start: -192px;
 }
 :dir(rtl) .configuration-selector:hover {
   transform: translateX(-180px);
@@ -2766,7 +2776,11 @@ body.layout.blank.layout-inside-iframe {
   flex-wrap: wrap;
 }
 .button-group .button-group-item {
+  box-sizing: border-box;
   flex: 0 0 auto;
+  font-size: var(--component-font-size-medium);
+  height: var(--component-height-medium);
+  min-height: var(--component-height-medium);
   overflow-wrap: normal;
   white-space: nowrap;
   word-break: normal;
@@ -2801,12 +2815,15 @@ body.layout.blank.layout-inside-iframe {
 }
 
 .button-group.small .button-group-item {
-  height: 30px;
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
+  min-height: var(--component-height-small);
 }
 
 .button-group.xsmall .button-group-item {
-  font-size: var(--font-size-xs);
-  height: 20px;
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
+  min-height: var(--component-height-xsmall);
   padding-inline: var(--space-s);
 }
 input[data-checkbox]:focus-visible,
@@ -2862,7 +2879,10 @@ input[data-checkbox]:is(:disabled, [disabled]):checked:after, input[data-checkbo
   color: #222;
 }
 .dropdown-container > select.dropdown-display {
-  font-size: var(--font-size-base);
+  box-sizing: border-box;
+  font-size: var(--component-font-size-medium);
+  height: var(--component-height-medium);
+  min-height: var(--component-height-medium);
   padding-right: 28px;
 }
 .dropdown-container > select.dropdown-display::-webkit-scrollbar {
@@ -2876,11 +2896,17 @@ input[data-checkbox]:is(:disabled, [disabled]):checked:after, input[data-checkbo
   background: transparent;
 }
 .dropdown-container > select.dropdown-display.small {
-  height: 30px;
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
+  min-height: var(--component-height-small);
+}
+
+.dropdown-container:after {
+  top: calc(var(--component-height-medium) / 2 - 6px);
 }
 
 .dropdown-container:has(.dropdown-display.small):after {
-  top: 9px;
+  top: calc(var(--component-height-small) / 2 - 6px);
 }
 
 .dropdown-container > select.dropdown-display {
@@ -2897,7 +2923,7 @@ i.fa {
 .form-control[data-textarea],
 .vscomp-toggle-button {
   border-color: var(--color-border);
-  font-size: var(--font-size-base);
+  font-size: var(--component-font-size-medium);
 }
 .form-control[data-input]:hover,
 .form-control[data-textarea]:hover,
@@ -2905,10 +2931,21 @@ i.fa {
   border-color: var(--color-neutral-6);
 }
 
+.form-control[data-input],
+.vscomp-toggle-button {
+  box-sizing: border-box;
+  height: var(--component-height-medium);
+}
+
 .form-control.input-xsmall[data-input] {
-  font-size: var(--font-size-xs);
-  height: 22px;
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
   padding: var(--space-none) var(--space-s);
+}
+
+.form-control.input-small[data-input] {
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
 }
 
 .form-control[data-input][disabled],
@@ -3496,10 +3533,10 @@ input.not-valid + span.validation-message {
   box-shadow: inset 0 0 0 1px var(--btn-ring);
   color: var(--color-neutral-8);
   display: inline-flex;
-  font-size: var(--font-size-base);
+  font-size: var(--component-font-size-medium);
   gap: 8px;
   height: auto;
-  min-height: 36px;
+  min-height: var(--component-height-medium);
   padding-block: 0;
   padding-inline: 12px;
 }
@@ -3548,8 +3585,8 @@ input.not-valid + span.validation-message {
   border-radius: 100px;
 }
 .btn-xsmall {
-  font-size: var(--font-size-s);
-  min-height: 24px;
+  font-size: var(--component-font-size-xsmall);
+  min-height: var(--component-height-xsmall);
   padding-inline: 8px;
 }
 .btn-xsmall .svg-icon[data-size] {
@@ -3562,8 +3599,8 @@ input.not-valid + span.validation-message {
 }
 
 .btn-small {
-  font-size: var(--font-size-s);
-  min-height: 32px;
+  font-size: var(--component-font-size-small);
+  min-height: var(--component-height-small);
   padding-inline: 16px;
 }
 .btn-small .svg-icon[data-size] {
@@ -3576,14 +3613,14 @@ input.not-valid + span.validation-message {
 }
 
 .btn-large {
-  font-size: var(--font-size-l);
-  min-height: 48px;
+  font-size: var(--component-font-size-large);
+  min-height: var(--component-height-large);
   padding-inline: 24px;
 }
 .btn-large.btn-icon {
-  height: 48px;
+  height: var(--component-height-large);
   padding: 0;
-  width: 48px;
+  width: var(--component-height-large);
 }
 .btn-large .svg-icon[data-size] {
   height: 24px;
@@ -4734,145 +4771,235 @@ div[data-widthcomponent=m] {
 }
 
 div[data-widthcomponent=l] {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 .max-width-l {
-  max-width: 240px;
+  max-width: 200px;
 }
 
 .min-width-l {
-  min-width: 240px;
+  min-width: 200px;
 }
 
 .width-l {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl] {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 .max-width-xl {
-  max-width: 320px;
+  max-width: 240px;
 }
 
 .min-width-xl {
-  min-width: 320px;
+  min-width: 240px;
 }
 
 .width-xl {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl2] {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 .max-width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
 }
 
 .min-width-xl2 {
-  min-width: 480px;
+  min-width: 280px;
 }
 
 .width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl3] {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 .max-width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
 }
 
 .min-width-xl3 {
-  min-width: 640px;
+  min-width: 320px;
 }
 
 .width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl4] {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 .max-width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
 }
 
 .min-width-xl4 {
-  min-width: 800px;
+  min-width: 360px;
 }
 
 .width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl5] {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 .max-width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
 }
 
 .min-width-xl5 {
-  min-width: 960px;
+  min-width: 400px;
 }
 
 .width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl6] {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 .max-width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
 }
 
 .min-width-xl6 {
-  min-width: 1120px;
+  min-width: 480px;
 }
 
 .width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl7] {
-  max-width: 1280px;
+  max-width: 560px;
   width: 100%;
 }
 
 .max-width-xl7 {
-  max-width: 1280px;
+  max-width: 560px;
 }
 
 .min-width-xl7 {
-  min-width: 1280px;
+  min-width: 560px;
 }
 
 .width-xl7 {
+  max-width: 560px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl8] {
+  max-width: 640px;
+  width: 100%;
+}
+
+.max-width-xl8 {
+  max-width: 640px;
+}
+
+.min-width-xl8 {
+  min-width: 640px;
+}
+
+.width-xl8 {
+  max-width: 640px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl9] {
+  max-width: 800px;
+  width: 100%;
+}
+
+.max-width-xl9 {
+  max-width: 800px;
+}
+
+.min-width-xl9 {
+  min-width: 800px;
+}
+
+.width-xl9 {
+  max-width: 800px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl10] {
+  max-width: 960px;
+  width: 100%;
+}
+
+.max-width-xl10 {
+  max-width: 960px;
+}
+
+.min-width-xl10 {
+  min-width: 960px;
+}
+
+.width-xl10 {
+  max-width: 960px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl11] {
+  max-width: 1120px;
+  width: 100%;
+}
+
+.max-width-xl11 {
+  max-width: 1120px;
+}
+
+.min-width-xl11 {
+  min-width: 1120px;
+}
+
+.width-xl11 {
+  max-width: 1120px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl12] {
+  max-width: 1280px;
+  width: 100%;
+}
+
+.max-width-xl12 {
+  max-width: 1280px;
+}
+
+.min-width-xl12 {
+  min-width: 1280px;
+}
+
+.width-xl12 {
   max-width: 1280px;
   width: 100%;
 }
@@ -4949,6 +5076,21 @@ div[data-widthcomponent=auto] {
 .tablewrapper[data-columnfixedwidths=false] .width-xl7 {
   width: unset;
 }
+.tablewrapper[data-columnfixedwidths=false] .width-xl8 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl9 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl10 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl11 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl12 {
+  width: unset;
+}
 .tablewrapper[data-columnfixedwidths=false] .width-full {
   width: unset;
 }
@@ -4978,41 +5120,66 @@ div[data-widthcomponent=auto] {
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-l,
 .tablewrapper[data-columnfixedwidths=true] td.width-l {
-  min-width: 240px;
-  width: 240px;
+  min-width: 200px;
+  width: 200px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl {
-  min-width: 320px;
-  width: 320px;
+  min-width: 240px;
+  width: 240px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl2,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl2 {
-  min-width: 480px;
-  width: 480px;
+  min-width: 280px;
+  width: 280px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl3,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl3 {
-  min-width: 640px;
-  width: 640px;
+  min-width: 320px;
+  width: 320px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl4,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl4 {
-  min-width: 800px;
-  width: 800px;
+  min-width: 360px;
+  width: 360px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl5,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl5 {
-  min-width: 960px;
-  width: 960px;
+  min-width: 400px;
+  width: 400px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl6,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl6 {
-  min-width: 1120px;
-  width: 1120px;
+  min-width: 480px;
+  width: 480px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl7,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl7 {
+  min-width: 560px;
+  width: 560px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl8,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl8 {
+  min-width: 640px;
+  width: 640px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl9,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl9 {
+  min-width: 800px;
+  width: 800px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl10,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl10 {
+  min-width: 960px;
+  width: 960px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl11,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl11 {
+  min-width: 1120px;
+  width: 1120px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl12,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl12 {
   min-width: 1280px;
   width: 1280px;
 }
@@ -5093,34 +5260,54 @@ body .labelvalue-mandatory {
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=l] .labelvalue-label {
-  flex: 0 0 240px;
+  flex: 0 0 200px;
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=xl] .labelvalue-label {
-  flex: 0 0 320px;
+  flex: 0 0 240px;
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=xl2] .labelvalue-label {
-  flex: 0 0 480px;
+  flex: 0 0 280px;
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=xl3] .labelvalue-label {
-  flex: 0 0 640px;
+  flex: 0 0 320px;
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=xl4] .labelvalue-label {
-  flex: 0 0 800px;
+  flex: 0 0 360px;
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=xl5] .labelvalue-label {
-  flex: 0 0 960px;
+  flex: 0 0 400px;
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=xl6] .labelvalue-label {
-  flex: 0 0 1120px;
+  flex: 0 0 480px;
 }
 
 .labelvalue[data-orientation=horizontal][data-labelwidth=xl7] .labelvalue-label {
+  flex: 0 0 560px;
+}
+
+.labelvalue[data-orientation=horizontal][data-labelwidth=xl8] .labelvalue-label {
+  flex: 0 0 640px;
+}
+
+.labelvalue[data-orientation=horizontal][data-labelwidth=xl9] .labelvalue-label {
+  flex: 0 0 800px;
+}
+
+.labelvalue[data-orientation=horizontal][data-labelwidth=xl10] .labelvalue-label {
+  flex: 0 0 960px;
+}
+
+.labelvalue[data-orientation=horizontal][data-labelwidth=xl11] .labelvalue-label {
+  flex: 0 0 1120px;
+}
+
+.labelvalue[data-orientation=horizontal][data-labelwidth=xl12] .labelvalue-label {
   flex: 0 0 1280px;
 }
 
@@ -5509,145 +5696,235 @@ div[data-widthcomponent=m] {
 }
 
 div[data-widthcomponent=l] {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 .max-width-l {
-  max-width: 240px;
+  max-width: 200px;
 }
 
 .min-width-l {
-  min-width: 240px;
+  min-width: 200px;
 }
 
 .width-l {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl] {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 .max-width-xl {
-  max-width: 320px;
+  max-width: 240px;
 }
 
 .min-width-xl {
-  min-width: 320px;
+  min-width: 240px;
 }
 
 .width-xl {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl2] {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 .max-width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
 }
 
 .min-width-xl2 {
-  min-width: 480px;
+  min-width: 280px;
 }
 
 .width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl3] {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 .max-width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
 }
 
 .min-width-xl3 {
-  min-width: 640px;
+  min-width: 320px;
 }
 
 .width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl4] {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 .max-width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
 }
 
 .min-width-xl4 {
-  min-width: 800px;
+  min-width: 360px;
 }
 
 .width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl5] {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 .max-width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
 }
 
 .min-width-xl5 {
-  min-width: 960px;
+  min-width: 400px;
 }
 
 .width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl6] {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 .max-width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
 }
 
 .min-width-xl6 {
-  min-width: 1120px;
+  min-width: 480px;
 }
 
 .width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl7] {
-  max-width: 1280px;
+  max-width: 560px;
   width: 100%;
 }
 
 .max-width-xl7 {
-  max-width: 1280px;
+  max-width: 560px;
 }
 
 .min-width-xl7 {
-  min-width: 1280px;
+  min-width: 560px;
 }
 
 .width-xl7 {
+  max-width: 560px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl8] {
+  max-width: 640px;
+  width: 100%;
+}
+
+.max-width-xl8 {
+  max-width: 640px;
+}
+
+.min-width-xl8 {
+  min-width: 640px;
+}
+
+.width-xl8 {
+  max-width: 640px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl9] {
+  max-width: 800px;
+  width: 100%;
+}
+
+.max-width-xl9 {
+  max-width: 800px;
+}
+
+.min-width-xl9 {
+  min-width: 800px;
+}
+
+.width-xl9 {
+  max-width: 800px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl10] {
+  max-width: 960px;
+  width: 100%;
+}
+
+.max-width-xl10 {
+  max-width: 960px;
+}
+
+.min-width-xl10 {
+  min-width: 960px;
+}
+
+.width-xl10 {
+  max-width: 960px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl11] {
+  max-width: 1120px;
+  width: 100%;
+}
+
+.max-width-xl11 {
+  max-width: 1120px;
+}
+
+.min-width-xl11 {
+  min-width: 1120px;
+}
+
+.width-xl11 {
+  max-width: 1120px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl12] {
+  max-width: 1280px;
+  width: 100%;
+}
+
+.max-width-xl12 {
+  max-width: 1280px;
+}
+
+.min-width-xl12 {
+  min-width: 1280px;
+}
+
+.width-xl12 {
   max-width: 1280px;
   width: 100%;
 }
@@ -5726,6 +6003,21 @@ div[data-widthcomponent=auto] {
 .tablewrapper[data-columnfixedwidths=false] .width-xl7 {
   width: unset;
 }
+.tablewrapper[data-columnfixedwidths=false] .width-xl8 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl9 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl10 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl11 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl12 {
+  width: unset;
+}
 .tablewrapper[data-columnfixedwidths=false] .width-full {
   width: unset;
 }
@@ -5756,41 +6048,66 @@ div[data-widthcomponent=auto] {
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-l,
 .tablewrapper[data-columnfixedwidths=true] td.width-l {
-  min-width: 240px;
-  width: 240px;
+  min-width: 200px;
+  width: 200px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl {
-  min-width: 320px;
-  width: 320px;
+  min-width: 240px;
+  width: 240px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl2,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl2 {
-  min-width: 480px;
-  width: 480px;
+  min-width: 280px;
+  width: 280px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl3,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl3 {
-  min-width: 640px;
-  width: 640px;
+  min-width: 320px;
+  width: 320px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl4,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl4 {
-  min-width: 800px;
-  width: 800px;
+  min-width: 360px;
+  width: 360px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl5,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl5 {
-  min-width: 960px;
-  width: 960px;
+  min-width: 400px;
+  width: 400px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl6,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl6 {
-  min-width: 1120px;
-  width: 1120px;
+  min-width: 480px;
+  width: 480px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl7,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl7 {
+  min-width: 560px;
+  width: 560px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl8,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl8 {
+  min-width: 640px;
+  width: 640px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl9,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl9 {
+  min-width: 800px;
+  width: 800px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl10,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl10 {
+  min-width: 960px;
+  width: 960px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl11,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl11 {
+  min-width: 1120px;
+  width: 1120px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl12,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl12 {
   min-width: 1280px;
   width: 1280px;
 }
@@ -6019,145 +6336,235 @@ div[data-widthcomponent=m] {
 }
 
 div[data-widthcomponent=l] {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 .max-width-l {
-  max-width: 240px;
+  max-width: 200px;
 }
 
 .min-width-l {
-  min-width: 240px;
+  min-width: 200px;
 }
 
 .width-l {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl] {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 .max-width-xl {
-  max-width: 320px;
+  max-width: 240px;
 }
 
 .min-width-xl {
-  min-width: 320px;
+  min-width: 240px;
 }
 
 .width-xl {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl2] {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 .max-width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
 }
 
 .min-width-xl2 {
-  min-width: 480px;
+  min-width: 280px;
 }
 
 .width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl3] {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 .max-width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
 }
 
 .min-width-xl3 {
-  min-width: 640px;
+  min-width: 320px;
 }
 
 .width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl4] {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 .max-width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
 }
 
 .min-width-xl4 {
-  min-width: 800px;
+  min-width: 360px;
 }
 
 .width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl5] {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 .max-width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
 }
 
 .min-width-xl5 {
-  min-width: 960px;
+  min-width: 400px;
 }
 
 .width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl6] {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 .max-width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
 }
 
 .min-width-xl6 {
-  min-width: 1120px;
+  min-width: 480px;
 }
 
 .width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl7] {
-  max-width: 1280px;
+  max-width: 560px;
   width: 100%;
 }
 
 .max-width-xl7 {
-  max-width: 1280px;
+  max-width: 560px;
 }
 
 .min-width-xl7 {
-  min-width: 1280px;
+  min-width: 560px;
 }
 
 .width-xl7 {
+  max-width: 560px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl8] {
+  max-width: 640px;
+  width: 100%;
+}
+
+.max-width-xl8 {
+  max-width: 640px;
+}
+
+.min-width-xl8 {
+  min-width: 640px;
+}
+
+.width-xl8 {
+  max-width: 640px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl9] {
+  max-width: 800px;
+  width: 100%;
+}
+
+.max-width-xl9 {
+  max-width: 800px;
+}
+
+.min-width-xl9 {
+  min-width: 800px;
+}
+
+.width-xl9 {
+  max-width: 800px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl10] {
+  max-width: 960px;
+  width: 100%;
+}
+
+.max-width-xl10 {
+  max-width: 960px;
+}
+
+.min-width-xl10 {
+  min-width: 960px;
+}
+
+.width-xl10 {
+  max-width: 960px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl11] {
+  max-width: 1120px;
+  width: 100%;
+}
+
+.max-width-xl11 {
+  max-width: 1120px;
+}
+
+.min-width-xl11 {
+  min-width: 1120px;
+}
+
+.width-xl11 {
+  max-width: 1120px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl12] {
+  max-width: 1280px;
+  width: 100%;
+}
+
+.max-width-xl12 {
+  max-width: 1280px;
+}
+
+.min-width-xl12 {
+  min-width: 1280px;
+}
+
+.width-xl12 {
   max-width: 1280px;
   width: 100%;
 }
@@ -6234,6 +6641,21 @@ div[data-widthcomponent=auto] {
 .tablewrapper[data-columnfixedwidths=false] .width-xl7 {
   width: unset;
 }
+.tablewrapper[data-columnfixedwidths=false] .width-xl8 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl9 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl10 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl11 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl12 {
+  width: unset;
+}
 .tablewrapper[data-columnfixedwidths=false] .width-full {
   width: unset;
 }
@@ -6263,41 +6685,66 @@ div[data-widthcomponent=auto] {
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-l,
 .tablewrapper[data-columnfixedwidths=true] td.width-l {
-  min-width: 240px;
-  width: 240px;
+  min-width: 200px;
+  width: 200px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl {
-  min-width: 320px;
-  width: 320px;
+  min-width: 240px;
+  width: 240px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl2,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl2 {
-  min-width: 480px;
-  width: 480px;
+  min-width: 280px;
+  width: 280px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl3,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl3 {
-  min-width: 640px;
-  width: 640px;
+  min-width: 320px;
+  width: 320px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl4,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl4 {
-  min-width: 800px;
-  width: 800px;
+  min-width: 360px;
+  width: 360px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl5,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl5 {
-  min-width: 960px;
-  width: 960px;
+  min-width: 400px;
+  width: 400px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl6,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl6 {
-  min-width: 1120px;
-  width: 1120px;
+  min-width: 480px;
+  width: 480px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl7,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl7 {
+  min-width: 560px;
+  width: 560px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl8,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl8 {
+  min-width: 640px;
+  width: 640px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl9,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl9 {
+  min-width: 800px;
+  width: 800px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl10,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl10 {
+  min-width: 960px;
+  width: 960px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl11,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl11 {
+  min-width: 1120px;
+  width: 1120px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl12,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl12 {
   min-width: 1280px;
   width: 1280px;
 }
@@ -6462,10 +6909,10 @@ div[data-block$=ButtonChoice].buttonchoice-wrapper,
   color: var(--color-neutral-8);
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--font-size-base);
+  font-size: var(--component-font-size-medium);
   gap: 8px;
   height: auto;
-  min-height: 36px;
+  min-height: var(--component-height-medium);
   padding-block: 0;
   padding-inline: 12px;
   user-select: none;
@@ -6509,6 +6956,50 @@ div[data-block$=ButtonChoice].buttonchoice[data-type] .buttonchoice-wrapper:focu
     outline: 2px solid CanvasText;
     outline-offset: -3px;
   }
+}
+
+/* Size presets from the SapphireSize input (data-size set by the block), matching
+   .btn-xsmall/.btn-small/.btn-large. 'm' (and any unsupported value) keeps the defaults above. */
+.buttonchoice[data-size=xs] .buttonchoice-wrapper {
+  font-size: var(--component-font-size-xsmall);
+  min-height: var(--component-height-xsmall);
+  padding-inline: 8px;
+}
+.buttonchoice[data-size=xs] .buttonchoice-wrapper .svg-icon[data-size] {
+  height: 12px;
+  width: 12px;
+}
+.buttonchoice[data-size=xs] .buttonchoice-wrapper .svg-icon[data-size] svg {
+  height: 12px;
+  width: 12px;
+}
+
+.buttonchoice[data-size=s] .buttonchoice-wrapper {
+  font-size: var(--component-font-size-small);
+  min-height: var(--component-height-small);
+  padding-inline: 16px;
+}
+.buttonchoice[data-size=s] .buttonchoice-wrapper .svg-icon[data-size] {
+  height: 16px;
+  width: 16px;
+}
+.buttonchoice[data-size=s] .buttonchoice-wrapper .svg-icon[data-size] svg {
+  height: 16px;
+  width: 16px;
+}
+
+.buttonchoice[data-size=l] .buttonchoice-wrapper {
+  font-size: var(--component-font-size-large);
+  min-height: var(--component-height-large);
+  padding-inline: 24px;
+}
+.buttonchoice[data-size=l] .buttonchoice-wrapper .svg-icon[data-size] {
+  height: 24px;
+  width: 24px;
+}
+.buttonchoice[data-size=l] .buttonchoice-wrapper .svg-icon[data-size] svg {
+  height: 24px;
+  width: 24px;
 }
 
 .buttonchoice[data-isselected=true] .buttonchoice-wrapper {
@@ -6664,22 +7155,78 @@ div[data-block$=ButtonChoice].buttonchoice[data-type] .buttonchoice-wrapper:focu
   box-shadow: inset 1px 0 0 0 var(--color-error), inset 0 1px 0 0 var(--color-error), inset 0 -1px 0 0 var(--color-error);
 }
 
-.buttondropdown[data-size=xsmall] .btn {
-  height: 22px;
-  padding-inline-end: var(--space-s);
-  padding-inline-start: var(--space-s);
+/* Size presets from the SapphireSize input, matching .btn-xsmall/.btn-small/.btn-large.
+   'm' (and any unsupported value) keeps the default .btn metrics, so it has no rule. */
+.buttondropdown[data-size=xs] .btn {
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
+  min-height: var(--component-height-xsmall);
+  padding-inline: 8px;
 }
-.buttondropdown[data-size=xsmall] .btn.btn-icon {
-  width: 22px !important;
+.buttondropdown[data-size=xs] .btn .svg-icon[data-size] {
+  height: 12px;
+  width: 12px;
+}
+.buttondropdown[data-size=xs] .btn .svg-icon[data-size] svg {
+  height: 12px;
+  width: 12px;
+}
+.buttondropdown[data-size=xs] {
+  /* Icon-only label and the split chevron stay square at every height. */
+}
+.buttondropdown[data-size=xs] .btn.btn-icon,
+.buttondropdown[data-size=xs] .btn.buttondropdown-arrow {
+  justify-content: center;
+  padding-inline: 0;
+  width: var(--component-height-xsmall) !important;
 }
 
-.buttondropdown[data-size=small] .btn {
-  height: 30px;
-  padding-inline-end: var(--space-s);
-  padding-inline-start: var(--space-s);
+.buttondropdown[data-size=s] .btn {
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
+  min-height: var(--component-height-small);
+  padding-inline: 16px;
 }
-.buttondropdown[data-size=small] .btn.btn-icon {
-  width: 30px !important;
+.buttondropdown[data-size=s] .btn .svg-icon[data-size] {
+  height: 16px;
+  width: 16px;
+}
+.buttondropdown[data-size=s] .btn .svg-icon[data-size] svg {
+  height: 16px;
+  width: 16px;
+}
+.buttondropdown[data-size=s] {
+  /* Icon-only label and the split chevron stay square at every height. */
+}
+.buttondropdown[data-size=s] .btn.btn-icon,
+.buttondropdown[data-size=s] .btn.buttondropdown-arrow {
+  justify-content: center;
+  padding-inline: 0;
+  width: var(--component-height-small) !important;
+}
+
+.buttondropdown[data-size=l] .btn {
+  font-size: var(--component-font-size-large);
+  height: var(--component-height-large);
+  min-height: var(--component-height-large);
+  padding-inline: 24px;
+}
+.buttondropdown[data-size=l] .btn .svg-icon[data-size] {
+  height: 24px;
+  width: 24px;
+}
+.buttondropdown[data-size=l] .btn .svg-icon[data-size] svg {
+  height: 24px;
+  width: 24px;
+}
+.buttondropdown[data-size=l] {
+  /* Icon-only label and the split chevron stay square at every height. */
+}
+.buttondropdown[data-size=l] .btn.btn-icon,
+.buttondropdown[data-size=l] .btn.buttondropdown-arrow {
+  justify-content: center;
+  padding-inline: 0;
+  width: var(--component-height-large) !important;
 }
 
 /* Later and more specific than the split, invalid, and disabled borders. */
@@ -6765,6 +7312,7 @@ div[data-block$=ButtonDropdown] {
 }
 
 .buttondropdown-item {
+  font-size: inherit;
   min-width: 100%;
   padding: 4px 8px;
 }
@@ -6784,10 +7332,29 @@ div[data-block$=ButtonDropdown] {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  /* Menu text follows the component font-size token of the trigger's Size
+     (mirrored on the tippy root as data-size). Rows keep their padding, so
+     their height follows the font size, not the component height. */
+  font-size: var(--component-font-size-medium);
   max-width: 350px;
   min-width: var(--trigger-width, auto);
   overflow: hidden;
   width: max-content;
+}
+.buttondropdown-actions .overlay-item {
+  font-size: inherit;
+}
+
+[data-tippy-root][data-size=xs] .buttondropdown-actions {
+  font-size: var(--component-font-size-xsmall);
+}
+
+[data-tippy-root][data-size=s] .buttondropdown-actions {
+  font-size: var(--component-font-size-small);
+}
+
+[data-tippy-root][data-size=l] .buttondropdown-actions {
+  font-size: var(--component-font-size-large);
 }
 div[data-block$=Chip2] {
   display: contents;
@@ -6800,11 +7367,13 @@ div[data-block$=Chip2] {
   border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: var(--box-shadow-sm);
+  box-sizing: border-box;
   display: inline-flex;
-  font-size: var(--font-size-base);
-  gap: 8px;
-  line-height: 20px;
-  padding-block: 2px;
+  font-size: var(--component-font-size-xsmall);
+  gap: 4px;
+  line-height: 16px;
+  min-height: var(--component-height-xsmall);
+  padding-block: 0;
   padding-inline: 8px;
 }
 .chip-icon {
@@ -6843,6 +7412,49 @@ div[data-block$=Chip2] {
 .chip-clear:disabled {
   color: var(--color-text-disabled);
   cursor: not-allowed;
+}
+
+/* Size presets from the SapphireSize input (data-size set by the block).
+   'xs' is the default and the fallback for any unsupported value. */
+.chip :is(.chip-icon, .chip-clear) .svg-icon[data-size] svg {
+  height: 12px;
+  width: 12px;
+}
+
+.chip[data-size=s] {
+  font-size: var(--component-font-size-small);
+  gap: 6px;
+  line-height: 18px;
+  min-height: var(--component-height-small);
+  padding-inline: 10px;
+}
+.chip[data-size=s] :is(.chip-icon, .chip-clear) .svg-icon[data-size] svg {
+  height: 16px;
+  width: 16px;
+}
+
+.chip[data-size=m] {
+  font-size: var(--component-font-size-medium);
+  gap: 8px;
+  line-height: 20px;
+  min-height: var(--component-height-medium);
+  padding-inline: 12px;
+}
+.chip[data-size=m] :is(.chip-icon, .chip-clear) .svg-icon[data-size] svg {
+  height: 16px;
+  width: 16px;
+}
+
+.chip[data-size=l] {
+  font-size: var(--component-font-size-large);
+  gap: 8px;
+  line-height: 20px;
+  min-height: var(--component-height-large);
+  padding-inline: 16px;
+}
+.chip[data-size=l] :is(.chip-icon, .chip-clear) .svg-icon[data-size] svg {
+  height: 20px;
+  width: 20px;
 }
 
 .chip[data-isselectable=true]:not([data-enabled=false]):focus-visible {
@@ -7098,16 +7710,16 @@ div[data-block$=SapphireCard] {
   align-items: flex-start;
 }
 .datetimepicker[data-density=compact] .datetimepicker-trigger {
-  font-size: var(--font-size-s);
+  font-size: var(--component-font-size-small);
   gap: 6px;
-  height: 32px;
-  min-height: 32px;
+  height: var(--component-height-small);
+  min-height: var(--component-height-small);
   padding-inline: 10px;
 }
 
 .datetimepicker-panel[data-density=compact] {
   --dtp-cell: 30px;
-  font-size: var(--font-size-s);
+  font-size: var(--component-font-size-small);
   gap: 6px;
   padding: 8px;
   width: calc(var(--dtp-cell) * 7 + 16px);
@@ -7138,7 +7750,7 @@ div[data-block$=SapphireCard] {
   padding-top: 8px;
 }
 .datetimepicker-panel[data-density=compact] .datetimepicker-select {
-  font-size: var(--font-size-s);
+  font-size: var(--component-font-size-small);
   height: 26px;
   min-height: 26px;
   padding-inline: 4px;
@@ -7161,6 +7773,144 @@ div[data-block$=SapphireCard] {
 }
 .datetimepicker-panel[data-density=compact][data-dual=true][data-view=days] .datetimepicker-title {
   margin-inline: 30px;
+}
+
+.datetimepicker[data-density=dense] .datetimepicker-trigger {
+  font-size: var(--component-font-size-xsmall);
+  gap: 4px;
+  height: var(--component-height-xsmall);
+  min-height: var(--component-height-xsmall);
+  padding-inline: 8px;
+}
+.datetimepicker[data-density=dense] .datetimepicker-trigger .svg-icon[data-size] svg {
+  height: 12px;
+  width: 12px;
+}
+
+.datetimepicker-panel[data-density=dense] {
+  --dtp-cell: 26px;
+  font-size: var(--component-font-size-xsmall);
+  gap: 4px;
+  padding: 6px;
+  width: calc(var(--dtp-cell) * 7 + 12px);
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-nav {
+  height: 22px;
+  width: 22px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-title {
+  height: 22px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-weekday {
+  line-height: 18px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-day[data-today=true]::after {
+  bottom: 2px;
+  height: 3px;
+  width: 3px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-grid {
+  min-height: calc(var(--dtp-cell) * 6 + 18px);
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-cell {
+  min-height: 26px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-time {
+  gap: 4px;
+  padding-top: 6px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-select {
+  font-size: var(--component-font-size-xsmall);
+  height: 22px;
+  min-height: 22px;
+  padding-inline: 4px;
+  width: 3.25rem;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-footer {
+  padding-top: 6px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-apply {
+  min-height: 22px;
+  padding-inline: 10px;
+}
+.datetimepicker-panel[data-density=dense] .datetimepicker-footer-clear {
+  min-height: 22px;
+  padding-inline: 6px;
+}
+.datetimepicker-panel[data-density=dense][data-dual=true] {
+  --dtp-gap: 12px;
+  width: calc(var(--dtp-cell) * 14 + var(--dtp-gap) + 12px);
+}
+.datetimepicker-panel[data-density=dense][data-dual=true][data-view=days] .datetimepicker-title {
+  margin-inline: 26px;
+}
+
+.datetimepicker[data-density=comfortable] .datetimepicker-trigger {
+  font-size: var(--component-font-size-large);
+  gap: 8px;
+  height: var(--component-height-large);
+  min-height: var(--component-height-large);
+  padding-inline: 16px;
+}
+.datetimepicker[data-density=comfortable] .datetimepicker-trigger .svg-icon[data-size] svg {
+  height: 20px;
+  width: 20px;
+}
+
+.datetimepicker-panel[data-density=comfortable] {
+  --dtp-cell: 40px;
+  font-size: var(--component-font-size-large);
+  gap: 10px;
+  padding: 16px;
+  width: calc(var(--dtp-cell) * 7 + 32px);
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-nav {
+  height: 36px;
+  width: 36px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-title {
+  height: 36px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-weekday {
+  line-height: 32px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-day[data-today=true]::after {
+  bottom: 6px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-grid {
+  min-height: calc(var(--dtp-cell) * 6 + 32px);
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-cell {
+  min-height: 44px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-time {
+  gap: 8px;
+  padding-top: 12px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-select {
+  font-size: var(--component-font-size-large);
+  height: 36px;
+  min-height: 36px;
+  padding-inline: 8px;
+  width: 4.5rem;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-footer {
+  padding-top: 12px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-apply {
+  min-height: 36px;
+  padding-inline: 20px;
+}
+.datetimepicker-panel[data-density=comfortable] .datetimepicker-footer-clear {
+  min-height: 36px;
+  padding-inline: 14px;
+}
+.datetimepicker-panel[data-density=comfortable][data-dual=true] {
+  --dtp-gap: 32px;
+  width: calc(var(--dtp-cell) * 14 + var(--dtp-gap) + 32px);
+}
+.datetimepicker-panel[data-density=comfortable][data-dual=true][data-view=days] .datetimepicker-title {
+  margin-inline: 40px;
 }
 div[data-block$=DateTimePicker] {
   display: contents;
@@ -7188,11 +7938,13 @@ div[data-block$=DateTimePicker] {
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-soft);
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
+  font-size: var(--component-font-size-medium);
   gap: 8px;
-  height: 40px;
-  min-height: 40px;
+  height: var(--component-height-medium);
+  min-height: var(--component-height-medium);
   padding-block: 0;
   padding-inline: 12px;
   transition: all 180ms linear;
@@ -7265,6 +8017,7 @@ div[data-block$=DateTimePicker] {
 .datetimepicker-panel {
   --dtp-cell: 36px;
   display: flex;
+  font-size: var(--component-font-size-medium);
   flex-direction: column;
   gap: 8px;
   padding: 12px;
@@ -7663,31 +8416,60 @@ div[data-block$=DateTimePicker] {
 .datetimepicker[data-isvalid=false][data-inline=true] .datetimepicker-panel {
   border-color: var(--color-error);
 }
+.hourpicker[data-size=xs] {
+  --hourpicker-icon: 12px;
+  --hourpicker-icon-gap: 4px;
+  --hourpicker-input-pad: 8px;
+}
 .hourpicker[data-size=xs] .hourpicker-component {
   gap: 4px;
 }
 .hourpicker[data-size=xs] .hourpicker-input,
 .hourpicker[data-size=xs] .hourpicker-select {
   border-radius: 4px;
-  font-size: var(--font-size-s);
-  height: 22px;
-  min-height: 22px;
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
+  min-height: var(--component-height-xsmall);
   padding-inline: 6px;
-}
-.hourpicker[data-size=xs] .hourpicker-input {
-  padding-inline: 8px;
 }
 
 .hourpicker[data-size=s] .hourpicker-input,
 .hourpicker[data-size=s] .hourpicker-select {
-  height: 32px;
-  min-height: 32px;
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
+  min-height: var(--component-height-small);
+}
+
+.hourpicker[data-size=l] {
+  --hourpicker-icon: 20px;
+  --hourpicker-input-pad: 16px;
+}
+.hourpicker[data-size=l] .hourpicker-component {
+  gap: 8px;
+}
+.hourpicker[data-size=l] .hourpicker-input,
+.hourpicker[data-size=l] .hourpicker-select {
+  font-size: var(--component-font-size-large);
+  height: var(--component-height-large);
+  min-height: var(--component-height-large);
+}
+.hourpicker[data-size=l] .hourpicker-select {
+  padding-inline: 12px;
+  width: 5rem;
+}
+.hourpicker[data-size=l] .hourpicker-period {
+  width: 5.25rem;
 }
 div[data-block$=HourPicker] {
   display: contents;
 }
 
 .hourpicker {
+  /* Input-mode metrics; the size presets in _sizes.scss override them. */
+  --hourpicker-icon: 16px;
+  --hourpicker-icon-gap: 8px;
+  --hourpicker-input-pad: 12px;
+  --hourpicker-input-width: 6.5rem;
   display: inline-flex;
   flex-direction: column;
   gap: 4px;
@@ -7713,10 +8495,12 @@ div[data-block$=HourPicker] {
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-soft);
+  box-sizing: border-box;
   color: var(--color-text);
+  font-size: var(--component-font-size-medium);
   font-variant-numeric: tabular-nums;
-  height: 40px;
-  min-height: 40px;
+  height: var(--component-height-medium);
+  min-height: var(--component-height-medium);
   text-align: center;
   transition: all 180ms linear;
 }
@@ -7726,10 +8510,29 @@ div[data-block$=HourPicker] {
 .hourpicker-input::placeholder, .hourpicker-select::placeholder {
   color: var(--color-text-disabled);
 }
+.hourpicker-field {
+  display: inline-flex;
+  position: relative;
+}
+.hourpicker {
+  /* Leading clock icon inside the input. Clicks pass through to the input. */
+}
+.hourpicker-icon {
+  color: var(--color-neutral-6);
+  display: grid;
+  inset-inline-start: var(--hourpicker-input-pad);
+  place-items: center;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.hourpicker-icon .svg-icon[data-size] svg {
+  height: var(--hourpicker-icon);
+  width: var(--hourpicker-icon);
+}
 .hourpicker-input {
-  padding-block: 0;
-  padding-inline: 12px;
-  width: 6.5rem;
+  width: calc(var(--hourpicker-input-width) + var(--hourpicker-icon) + var(--hourpicker-icon-gap));
 }
 .hourpicker-select {
   padding-block: 0;
@@ -7747,12 +8550,21 @@ div[data-block$=HourPicker] {
   user-select: none;
 }
 
-.hourpicker[data-timeprecision=hour] .hourpicker-input {
-  width: 4.5rem;
+/* Raised specificity: OutSystems UI's .form-control[data-input] padding and the
+   size presets' shared input/select padding would otherwise win. The start side
+   leaves room for the clock icon. */
+.hourpicker[data-useinput=true] .hourpicker-field .hourpicker-input {
+  padding-block: 0;
+  padding-inline: var(--hourpicker-input-pad);
+  padding-inline-start: calc(var(--hourpicker-input-pad) + var(--hourpicker-icon) + var(--hourpicker-icon-gap));
 }
 
-.hourpicker[data-timeprecision=second] .hourpicker-input {
-  width: 8.5rem;
+.hourpicker[data-timeprecision=hour] {
+  --hourpicker-input-width: 4.5rem;
+}
+
+.hourpicker[data-timeprecision=second] {
+  --hourpicker-input-width: 8.5rem;
 }
 
 .hourpicker[data-theme=filter] .hourpicker-input,
@@ -7770,7 +8582,8 @@ div[data-block$=HourPicker] {
   color: var(--color-text-disabled);
   pointer-events: none;
 }
-.hourpicker[data-enabled=false] .hourpicker-sep {
+.hourpicker[data-enabled=false] .hourpicker-sep,
+.hourpicker[data-enabled=false] .hourpicker-icon {
   color: var(--color-text-disabled);
 }
 
@@ -8068,37 +8881,63 @@ div[data-block$=AlertBar] {
   --badge-theme-label: var(--color-error-dark);
   --badge-theme-dot: var(--color-error);
 }
-.badge[data-size=s] {
-  font-size: var(--font-size-s);
-  gap: 4px;
-  height: 20px;
-  line-height: 20px;
-  padding-inline: 6px;
+/* Size presets from the SapphireSize input (data-size set by the block).
+   's' (32px) is the default and the fallback for any unsupported value; it lives in _styles.scss. */
+.badge[data-size=xs] {
+  --badge-gap: 4px;
+  --badge-icon: 12px;
+  --badge-pad: 8px;
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
 }
 
 .badge[data-size=m] {
-  font-size: var(--font-size-base);
-  gap: 6px;
-  height: 30px;
-  line-height: 30px;
-  padding-inline: 12px;
+  --badge-gap: 6px;
+  --badge-icon: 16px;
+  --badge-pad: 12px;
+  font-size: var(--component-font-size-medium);
+  height: var(--component-height-medium);
+}
+
+.badge[data-size=l] {
+  --badge-gap: 8px;
+  --badge-icon: 20px;
+  --badge-pad: 16px;
+  font-size: var(--component-font-size-large);
+  height: var(--component-height-large);
 }
 div[data-block$=Badge] {
   display: contents;
 }
 
 .badge {
+  /* Default size 's'; _sizes.scss overrides these per data-size. */
+  --badge-dot: 6px;
+  --badge-gap: 6px;
+  --badge-icon: 16px;
+  --badge-pad: 10px;
   --iconcolor: var(--badge-icon-color);
   align-items: center;
   background-color: var(--badge-bg-color, var(--badge-theme-bg));
   border-radius: 999px;
+  box-sizing: border-box;
   color: var(--badge-label-color, var(--badge-theme-label));
   display: inline-flex;
+  font-size: var(--component-font-size-small);
+  gap: var(--badge-gap);
+  height: var(--component-height-small);
+  line-height: 1;
   min-width: 0;
+  padding-inline: var(--badge-pad);
+  white-space: nowrap;
+}
+.badge .svg-icon[data-size] svg {
+  height: var(--badge-icon);
+  width: var(--badge-icon);
 }
 
 .badge[data-hasdot=true] {
-  padding-inline-start: 18px;
+  padding-inline-start: calc(var(--badge-pad) + var(--badge-dot) + var(--badge-gap));
   position: relative;
 }
 .badge[data-hasdot=true]::before {
@@ -8106,12 +8945,12 @@ div[data-block$=Badge] {
   border-radius: 50%;
   content: "";
   display: flex;
-  height: 6px;
-  left: 8px;
+  height: var(--badge-dot);
+  inset-inline-start: var(--badge-pad);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 6px;
+  width: var(--badge-dot);
 }
 
 .badge[data-haslabeltext=true] > .badge-content {
@@ -8462,10 +9301,12 @@ div[data-block$=Status] {
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-soft);
+  box-sizing: border-box;
   color: var(--color-neutral-9);
   font: inherit;
-  min-height: 40px;
-  padding-block: 6px;
+  font-size: var(--component-font-size-medium);
+  height: var(--component-height-medium);
+  padding-block: 0;
   padding-inline: 12px 36px;
   transition: all 180ms linear;
   width: 100%;
@@ -8680,8 +9521,10 @@ div[data-block$=Status] {
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-soft);
+  box-sizing: border-box;
   display: flex;
-  min-height: 40px;
+  font-size: var(--component-font-size-medium);
+  height: var(--component-height-medium);
   min-width: 0;
   overflow: hidden;
   transition: all 180ms linear;
@@ -8812,9 +9655,13 @@ div[data-block$=Status] {
   padding: 0;
 }
 
+/* Panel text follows the component font-size token of the field's Size
+   (mirrored on the tippy root as data-size). Rows keep their padding, so
+   their height follows the font size, not the component height. */
 .phoneinput-panel {
   display: flex;
   flex-direction: column;
+  font-size: var(--component-font-size-medium);
   max-height: 320px;
   min-width: max(280px, var(--trigger-width, 280px));
   width: max(280px, var(--trigger-width, 280px));
@@ -8943,15 +9790,40 @@ div[data-block$=Status] {
   display: none;
 }
 
+/* Size presets from the SapphireSize input (data-size set by the block).
+   'm' (and any unsupported value) keeps the default field metrics. */
+.phoneinput[data-size=xs] .phoneinput-field {
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
+}
+
+[data-tippy-root][data-size=xs] .phoneinput-panel {
+  font-size: var(--component-font-size-xsmall);
+}
+
 .phoneinput[data-size=s] .phoneinput-field {
-  font-size: var(--font-size-s);
-  min-height: 32px;
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
 }
-.phoneinput[data-size=s] .phoneinput-field .phoneinput-input {
-  padding-block: 4px;
-  padding-inline: 8px;
+
+[data-tippy-root][data-size=s] .phoneinput-panel {
+  font-size: var(--component-font-size-small);
 }
-.phoneinput[data-size=s] .phoneinput-country {
+
+.phoneinput[data-size=l] .phoneinput-field {
+  font-size: var(--component-font-size-large);
+  height: var(--component-height-large);
+}
+
+[data-tippy-root][data-size=l] .phoneinput-panel {
+  font-size: var(--component-font-size-large);
+}
+
+/* Compact paddings for the smaller fields. */
+.phoneinput[data-size=xs] .phoneinput-country,
+.phoneinput[data-size=xs] .phoneinput-input,
+.phoneinput[data-size=s] .phoneinput-country,
+.phoneinput[data-size=s] .phoneinput-input {
   padding-block: 4px;
   padding-inline: 8px;
 }
@@ -9005,11 +9877,13 @@ div[data-block$=SapphireDropdown] {
   background-color: var(--color-neutral-0);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-soft);
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
+  font-size: var(--component-font-size-medium);
   gap: 8px;
-  min-height: 40px;
-  padding-block: 6px;
+  height: var(--component-height-medium);
+  padding-block: 0;
   padding-inline: 12px;
   transition: all 180ms linear;
   user-select: none;
@@ -9096,9 +9970,13 @@ div[data-block$=SapphireDropdown] {
   padding: 0;
 }
 
+/* Panel text follows the component font-size token of the trigger's Size
+   (mirrored on the tippy root as data-size). Rows keep their padding, so
+   their height follows the font size, not the component height. */
 .sapphiredropdown-panel {
   display: flex;
   flex-direction: column;
+  font-size: var(--component-font-size-medium);
   max-height: 320px;
   min-width: var(--trigger-width, 200px);
   width: var(--trigger-width, auto);
@@ -9354,6 +10232,50 @@ div[data-block$=SapphireDropdown] {
 }
 .sapphiredropdown-loading[hidden] {
   display: none;
+}
+
+/* Size presets from the SapphireSize input (data-size set by the block).
+   'm' (and any unsupported value) keeps the default trigger metrics. */
+.sapphiredropdown[data-size=xs] .sapphiredropdown-trigger {
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
+  padding-inline: 8px;
+}
+.sapphiredropdown[data-size=xs] .sapphiredropdown-trigger :is(.sapphiredropdown-clear, .sapphiredropdown-chevron) .svg-icon[data-size] svg {
+  height: 12px;
+  width: 12px;
+}
+
+[data-tippy-root][data-size=xs] .sapphiredropdown-panel {
+  font-size: var(--component-font-size-xsmall);
+}
+
+.sapphiredropdown[data-size=s] .sapphiredropdown-trigger {
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
+  padding-inline: 8px;
+}
+.sapphiredropdown[data-size=s] .sapphiredropdown-trigger :is(.sapphiredropdown-clear, .sapphiredropdown-chevron) .svg-icon[data-size] svg {
+  height: 16px;
+  width: 16px;
+}
+
+[data-tippy-root][data-size=s] .sapphiredropdown-panel {
+  font-size: var(--component-font-size-small);
+}
+
+.sapphiredropdown[data-size=l] .sapphiredropdown-trigger {
+  font-size: var(--component-font-size-large);
+  height: var(--component-height-large);
+  padding-inline: 12px;
+}
+.sapphiredropdown[data-size=l] .sapphiredropdown-trigger :is(.sapphiredropdown-clear, .sapphiredropdown-chevron) .svg-icon[data-size] svg {
+  height: 20px;
+  width: 20px;
+}
+
+[data-tippy-root][data-size=l] .sapphiredropdown-panel {
+  font-size: var(--component-font-size-large);
 }
 .sapphireinput[data-enabled=false][data-theme] {
   cursor: not-allowed;
@@ -9875,7 +10797,17 @@ div[data-block$=SapphireInput] {
   display: contents;
 }
 
+/* Slot metrics, overridden per Size below. Defaults are the 'm' values:
+   inset = distance from the field edge to the first slot, slot = icon/stepper
+   box, gap = space between the last slot and the text, pad = text padding
+   when there is no slot on that side. */
 .sapphireinput {
+  --sapphireinput-gap: 6px;
+  --sapphireinput-inset: 10px;
+  --sapphireinput-pad: 16px;
+  --sapphireinput-slot: 20px;
+  --sapphireinput-one-slot: calc(var(--sapphireinput-inset) + var(--sapphireinput-slot) + var(--sapphireinput-gap));
+  --sapphireinput-two-slots: calc(var(--sapphireinput-inset) + 2 * var(--sapphireinput-slot) + var(--sapphireinput-gap));
   display: inline-flex;
   flex-direction: column;
   gap: 4px;
@@ -9893,28 +10825,28 @@ div[data-block$=SapphireInput] {
 .sapphireinput-minus, .sapphireinput-plus {
   cursor: pointer;
   display: grid;
-  height: 20px;
+  height: var(--sapphireinput-slot);
   place-items: center;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
+  width: var(--sapphireinput-slot);
 }
 .sapphireinput-minus {
-  inset-inline-start: 10px;
+  inset-inline-start: var(--sapphireinput-inset);
 }
 .sapphireinput-plus {
-  inset-inline-end: 10px;
+  inset-inline-end: var(--sapphireinput-inset);
 }
 .sapphireinput-icon {
   display: grid;
-  height: 20px;
-  inset-inline-start: 10px;
+  height: var(--sapphireinput-slot);
+  inset-inline-start: var(--sapphireinput-inset);
   place-items: center;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
+  width: var(--sapphireinput-slot);
 }
 .sapphireinput-clear:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-primary-dark);
@@ -9929,20 +10861,22 @@ div[data-block$=SapphireInput] {
 .sapphireinput-clear {
   cursor: pointer;
   display: none;
-  height: 20px;
-  inset-inline-end: 10px;
+  height: var(--sapphireinput-slot);
+  inset-inline-end: var(--sapphireinput-inset);
   place-items: center;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
+  width: var(--sapphireinput-slot);
 }
 .sapphireinput .form-control[data-input] {
   border-color: var(--color-border);
-  font-size: var(--font-size-base);
+  box-sizing: border-box;
+  font-size: var(--component-font-size-medium);
+  height: var(--component-height-medium);
   padding-block: 0;
-  padding-inline-end: 16px;
-  padding-inline-start: 36px;
+  padding-inline-end: var(--sapphireinput-pad);
+  padding-inline-start: var(--sapphireinput-one-slot);
   text-align: end;
   width: 100%;
 }
@@ -9972,30 +10906,30 @@ div[data-block$=SapphireInput] {
 }
 
 .sapphireinput[data-iconname=""] .form-control[data-input] {
-  padding-inline-start: var(--space-base);
+  padding-inline-start: var(--sapphireinput-pad);
 }
 
 .sapphireinput[data-hassteps=true] .sapphireinput-icon {
-  inset-inline-start: 30px;
+  inset-inline-start: calc(var(--sapphireinput-inset) + var(--sapphireinput-slot));
 }
 .sapphireinput[data-hassteps=true] .form-control[data-input] {
-  padding-inline-end: 36px;
-  padding-inline-start: 36px;
+  padding-inline-end: var(--sapphireinput-one-slot);
+  padding-inline-start: var(--sapphireinput-one-slot);
 }
 .sapphireinput[data-hassteps=true] .sapphireinput-clear {
-  inset-inline-end: 30px;
+  inset-inline-end: calc(var(--sapphireinput-inset) + var(--sapphireinput-slot));
 }
 
 .sapphireinput[data-hassteps=true][data-hasicon=true] .form-control[data-input] {
-  padding-inline-start: 56px;
+  padding-inline-start: var(--sapphireinput-two-slots);
 }
 
 .sapphireinput[data-hasclear=true] .form-control[data-input] {
-  padding-inline-end: 36px;
+  padding-inline-end: var(--sapphireinput-one-slot);
 }
 
 .sapphireinput[data-hassteps=true][data-hasclear=true] .form-control[data-input] {
-  padding-inline-end: 56px;
+  padding-inline-end: var(--sapphireinput-two-slots);
 }
 
 .sapphireinput[data-hascontent=true][data-hasclear=true] .sapphireinput-clear {
@@ -10009,6 +10943,53 @@ div[data-block$=SapphireInput] {
 
 .sapphireinput[data-type=text] .form-control[data-input] {
   text-align: start;
+}
+
+/* Size presets from the SapphireSize input (data-size set by the block).
+   'm' (and any unsupported value) keeps the defaults above. */
+.sapphireinput[data-size=xs] {
+  --sapphireinput-gap: 4px;
+  --sapphireinput-inset: 6px;
+  --sapphireinput-pad: 8px;
+  --sapphireinput-slot: 16px;
+}
+.sapphireinput[data-size=xs] .form-control[data-input] {
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
+}
+.sapphireinput[data-size=xs] :is(.sapphireinput-minus, .sapphireinput-plus, .sapphireinput-icon, .sapphireinput-clear) .svg-icon[data-size] svg {
+  height: 12px;
+  width: 12px;
+}
+
+.sapphireinput[data-size=s] {
+  --sapphireinput-gap: 4px;
+  --sapphireinput-inset: 8px;
+  --sapphireinput-pad: 12px;
+  --sapphireinput-slot: 18px;
+}
+.sapphireinput[data-size=s] .form-control[data-input] {
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
+}
+.sapphireinput[data-size=s] :is(.sapphireinput-minus, .sapphireinput-plus, .sapphireinput-icon, .sapphireinput-clear) .svg-icon[data-size] svg {
+  height: 16px;
+  width: 16px;
+}
+
+.sapphireinput[data-size=l] {
+  --sapphireinput-gap: 8px;
+  --sapphireinput-inset: 12px;
+  --sapphireinput-pad: 16px;
+  --sapphireinput-slot: 24px;
+}
+.sapphireinput[data-size=l] .form-control[data-input] {
+  font-size: var(--component-font-size-large);
+  height: var(--component-height-large);
+}
+.sapphireinput[data-size=l] :is(.sapphireinput-minus, .sapphireinput-plus, .sapphireinput-icon, .sapphireinput-clear) .svg-icon[data-size] svg {
+  height: 20px;
+  width: 20px;
 }
 .texteditor {
   background-color: var(--color-neutral-0);
@@ -14023,145 +15004,235 @@ div[data-widthcomponent=m] {
 }
 
 div[data-widthcomponent=l] {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 .max-width-l {
-  max-width: 240px;
+  max-width: 200px;
 }
 
 .min-width-l {
-  min-width: 240px;
+  min-width: 200px;
 }
 
 .width-l {
-  max-width: 240px;
+  max-width: 200px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl] {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 .max-width-xl {
-  max-width: 320px;
+  max-width: 240px;
 }
 
 .min-width-xl {
-  min-width: 320px;
+  min-width: 240px;
 }
 
 .width-xl {
-  max-width: 320px;
+  max-width: 240px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl2] {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 .max-width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
 }
 
 .min-width-xl2 {
-  min-width: 480px;
+  min-width: 280px;
 }
 
 .width-xl2 {
-  max-width: 480px;
+  max-width: 280px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl3] {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 .max-width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
 }
 
 .min-width-xl3 {
-  min-width: 640px;
+  min-width: 320px;
 }
 
 .width-xl3 {
-  max-width: 640px;
+  max-width: 320px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl4] {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 .max-width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
 }
 
 .min-width-xl4 {
-  min-width: 800px;
+  min-width: 360px;
 }
 
 .width-xl4 {
-  max-width: 800px;
+  max-width: 360px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl5] {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 .max-width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
 }
 
 .min-width-xl5 {
-  min-width: 960px;
+  min-width: 400px;
 }
 
 .width-xl5 {
-  max-width: 960px;
+  max-width: 400px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl6] {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 .max-width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
 }
 
 .min-width-xl6 {
-  min-width: 1120px;
+  min-width: 480px;
 }
 
 .width-xl6 {
-  max-width: 1120px;
+  max-width: 480px;
   width: 100%;
 }
 
 div[data-widthcomponent=xl7] {
-  max-width: 1280px;
+  max-width: 560px;
   width: 100%;
 }
 
 .max-width-xl7 {
-  max-width: 1280px;
+  max-width: 560px;
 }
 
 .min-width-xl7 {
-  min-width: 1280px;
+  min-width: 560px;
 }
 
 .width-xl7 {
+  max-width: 560px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl8] {
+  max-width: 640px;
+  width: 100%;
+}
+
+.max-width-xl8 {
+  max-width: 640px;
+}
+
+.min-width-xl8 {
+  min-width: 640px;
+}
+
+.width-xl8 {
+  max-width: 640px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl9] {
+  max-width: 800px;
+  width: 100%;
+}
+
+.max-width-xl9 {
+  max-width: 800px;
+}
+
+.min-width-xl9 {
+  min-width: 800px;
+}
+
+.width-xl9 {
+  max-width: 800px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl10] {
+  max-width: 960px;
+  width: 100%;
+}
+
+.max-width-xl10 {
+  max-width: 960px;
+}
+
+.min-width-xl10 {
+  min-width: 960px;
+}
+
+.width-xl10 {
+  max-width: 960px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl11] {
+  max-width: 1120px;
+  width: 100%;
+}
+
+.max-width-xl11 {
+  max-width: 1120px;
+}
+
+.min-width-xl11 {
+  min-width: 1120px;
+}
+
+.width-xl11 {
+  max-width: 1120px;
+  width: 100%;
+}
+
+div[data-widthcomponent=xl12] {
+  max-width: 1280px;
+  width: 100%;
+}
+
+.max-width-xl12 {
+  max-width: 1280px;
+}
+
+.min-width-xl12 {
+  min-width: 1280px;
+}
+
+.width-xl12 {
   max-width: 1280px;
   width: 100%;
 }
@@ -14238,6 +15309,21 @@ div[data-widthcomponent=auto] {
 .tablewrapper[data-columnfixedwidths=false] .width-xl7 {
   width: unset;
 }
+.tablewrapper[data-columnfixedwidths=false] .width-xl8 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl9 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl10 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl11 {
+  width: unset;
+}
+.tablewrapper[data-columnfixedwidths=false] .width-xl12 {
+  width: unset;
+}
 .tablewrapper[data-columnfixedwidths=false] .width-full {
   width: unset;
 }
@@ -14267,41 +15353,66 @@ div[data-widthcomponent=auto] {
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-l,
 .tablewrapper[data-columnfixedwidths=true] td.width-l {
-  min-width: 240px;
-  width: 240px;
+  min-width: 200px;
+  width: 200px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl {
-  min-width: 320px;
-  width: 320px;
+  min-width: 240px;
+  width: 240px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl2,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl2 {
-  min-width: 480px;
-  width: 480px;
+  min-width: 280px;
+  width: 280px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl3,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl3 {
-  min-width: 640px;
-  width: 640px;
+  min-width: 320px;
+  width: 320px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl4,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl4 {
-  min-width: 800px;
-  width: 800px;
+  min-width: 360px;
+  width: 360px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl5,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl5 {
-  min-width: 960px;
-  width: 960px;
+  min-width: 400px;
+  width: 400px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl6,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl6 {
-  min-width: 1120px;
-  width: 1120px;
+  min-width: 480px;
+  width: 480px;
 }
 .tablewrapper[data-columnfixedwidths=true] th.width-xl7,
 .tablewrapper[data-columnfixedwidths=true] td.width-xl7 {
+  min-width: 560px;
+  width: 560px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl8,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl8 {
+  min-width: 640px;
+  width: 640px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl9,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl9 {
+  min-width: 800px;
+  width: 800px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl10,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl10 {
+  min-width: 960px;
+  width: 960px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl11,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl11 {
+  min-width: 1120px;
+  width: 1120px;
+}
+.tablewrapper[data-columnfixedwidths=true] th.width-xl12,
+.tablewrapper[data-columnfixedwidths=true] td.width-xl12 {
   min-width: 1280px;
   width: 1280px;
 }

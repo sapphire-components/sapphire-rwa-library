@@ -5,6 +5,11 @@ div[data-block$='HourPicker'] {
 }
 
 .hourpicker {
+	/* Input-mode metrics; the size presets in _sizes.scss override them. */
+	--hourpicker-icon: 16px;
+	--hourpicker-icon-gap: 8px;
+	--hourpicker-input-pad: 12px;
+	--hourpicker-input-width: 6.5rem;
 	display: inline-flex;
 	flex-direction: column;
 	gap: 4px;
@@ -23,10 +28,12 @@ div[data-block$='HourPicker'] {
 		background-color: var(--color-neutral-0);
 		border: 1px solid var(--color-border);
 		border-radius: var(--border-radius-soft);
+		box-sizing: border-box;
 		color: var(--color-text);
+		font-size: var(--component-font-size-medium);
 		font-variant-numeric: tabular-nums;
-		height: 40px;
-		min-height: 40px;
+		height: var(--component-height-medium);
+		min-height: var(--component-height-medium);
 		text-align: center;
 		transition: all 180ms linear;
 
@@ -39,10 +46,30 @@ div[data-block$='HourPicker'] {
 		}
 	}
 
+	&-field {
+		display: inline-flex;
+		position: relative;
+	}
+
+	/* Leading clock icon inside the input. Clicks pass through to the input. */
+	&-icon {
+		color: var(--color-neutral-6);
+		display: grid;
+		inset-inline-start: var(--hourpicker-input-pad);
+		place-items: center;
+		pointer-events: none;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+
+		.svg-icon[data-size] svg {
+			height: var(--hourpicker-icon);
+			width: var(--hourpicker-icon);
+		}
+	}
+
 	&-input {
-		padding-block: 0;
-		padding-inline: 12px;
-		width: 6.5rem;
+		width: calc(var(--hourpicker-input-width) + var(--hourpicker-icon) + var(--hourpicker-icon-gap));
 	}
 
 	&-select {
@@ -64,16 +91,21 @@ div[data-block$='HourPicker'] {
 	}
 }
 
+/* Raised specificity: OutSystems UI's .form-control[data-input] padding and the
+   size presets' shared input/select padding would otherwise win. The start side
+   leaves room for the clock icon. */
+.hourpicker[data-useinput='true'] .hourpicker-field .hourpicker-input {
+	padding-block: 0;
+	padding-inline: var(--hourpicker-input-pad);
+	padding-inline-start: calc(var(--hourpicker-input-pad) + var(--hourpicker-icon) + var(--hourpicker-icon-gap));
+}
+
 .hourpicker[data-timeprecision='hour'] {
-	.hourpicker-input {
-		width: 4.5rem;
-	}
+	--hourpicker-input-width: 4.5rem;
 }
 
 .hourpicker[data-timeprecision='second'] {
-	.hourpicker-input {
-		width: 8.5rem;
-	}
+	--hourpicker-input-width: 8.5rem;
 }
 
 .hourpicker[data-theme='filter'] {
@@ -94,7 +126,8 @@ div[data-block$='HourPicker'] {
 		pointer-events: none;
 	}
 
-	.hourpicker-sep {
+	.hourpicker-sep,
+	.hourpicker-icon {
 		color: var(--color-text-disabled);
 	}
 }

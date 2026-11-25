@@ -9,8 +9,10 @@
 		background-color: var(--color-neutral-0);
 		border: 1px solid var(--color-border);
 		border-radius: var(--border-radius-soft);
+		box-sizing: border-box;
 		display: flex;
-		min-height: 40px;
+		font-size: var(--component-font-size-medium);
+		height: var(--component-height-medium);
 		min-width: 0;
 		overflow: hidden;
 		transition: all 180ms linear;
@@ -144,9 +146,13 @@
 	}
 }
 
+/* Panel text follows the component font-size token of the field's Size
+   (mirrored on the tippy root as data-size). Rows keep their padding, so
+   their height follows the font size, not the component height. */
 .phoneinput-panel {
 	display: flex;
 	flex-direction: column;
+	font-size: var(--component-font-size-medium);
 	max-height: 320px;
 	min-width: max(280px, var(--trigger-width, 280px));
 	width: max(280px, var(--trigger-width, 280px));
@@ -271,17 +277,24 @@
 	}
 }
 
-.phoneinput[data-size='s'] {
-	.phoneinput-field {
-		font-size: var(--font-size-s);
-		min-height: 32px;
-		.phoneinput-input {
-			padding-block: 4px;
-			padding-inline: 8px;
-		}
+/* Size presets from the SapphireSize input (data-size set by the block).
+   'm' (and any unsupported value) keeps the default field metrics. */
+@each $size, $token in ('xs', 'xsmall'), ('s', 'small'), ('l', 'large') {
+	.phoneinput[data-size='#{$size}'] .phoneinput-field {
+		font-size: var(--component-font-size-#{$token});
+		height: var(--component-height-#{$token});
 	}
 
-	.phoneinput-country {
+	[data-tippy-root][data-size='#{$size}'] .phoneinput-panel {
+		font-size: var(--component-font-size-#{$token});
+	}
+}
+
+/* Compact paddings for the smaller fields. */
+.phoneinput[data-size='xs'],
+.phoneinput[data-size='s'] {
+	.phoneinput-country,
+	.phoneinput-input {
 		padding-block: 4px;
 		padding-inline: 8px;
 	}

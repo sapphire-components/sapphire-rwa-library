@@ -19,10 +19,10 @@ div[data-block$='ButtonChoice'].buttonchoice,
 		color: var(--color-neutral-8);
 		cursor: pointer;
 		display: inline-flex;
-		font-size: var(--font-size-base);
+		font-size: var(--component-font-size-medium);
 		gap: 8px;
 		height: auto;
-		min-height: 36px;
+		min-height: var(--component-height-medium);
 		padding-block: 0;
 		padding-inline: 12px;
 		user-select: none;
@@ -64,6 +64,24 @@ div[data-block$='ButtonChoice'].buttonchoice,
 		@media (forced-colors: active) {
 			outline: 2px solid CanvasText;
 			outline-offset: -3px;
+		}
+	}
+}
+
+/* Size presets from the SapphireSize input (data-size set by the block), matching
+   .btn-xsmall/.btn-small/.btn-large. 'm' (and any unsupported value) keeps the defaults above. */
+@each $size, $token, $padding, $icon in ('xs', 'xsmall', 8px, 12px), ('s', 'small', 16px, 16px), ('l', 'large', 24px, 24px) {
+	.buttonchoice[data-size='#{$size}'] .buttonchoice-wrapper {
+		font-size: var(--component-font-size-#{$token});
+		min-height: var(--component-height-#{$token});
+		padding-inline: $padding;
+		.svg-icon[data-size] {
+			height: $icon;
+			width: $icon;
+			svg {
+				height: $icon;
+				width: $icon;
+			}
 		}
 	}
 }

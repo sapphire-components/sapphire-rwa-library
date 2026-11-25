@@ -6,7 +6,11 @@
 	}
 
 	.button-group-item {
+		box-sizing: border-box;
 		flex: 0 0 auto;
+		font-size: var(--component-font-size-medium);
+		height: var(--component-height-medium);
+		min-height: var(--component-height-medium);
 		overflow-wrap: normal;
 		white-space: nowrap;
 		word-break: normal;
@@ -53,14 +57,17 @@
 
 .button-group.small {
 	.button-group-item {
-		height: 30px;
+		font-size: var(--component-font-size-small);
+		height: var(--component-height-small);
+		min-height: var(--component-height-small);
 	}
 }
 
 .button-group.xsmall {
 	.button-group-item {
-		font-size: var(--font-size-xs);
-		height: 20px;
+		font-size: var(--component-font-size-xsmall);
+		height: var(--component-height-xsmall);
+		min-height: var(--component-height-xsmall);
 		padding-inline: var(--space-s);
 	}
 }

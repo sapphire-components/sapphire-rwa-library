@@ -1,6 +1,7 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
 import { createSpinner } from '@utils/loader';
+import { resolveSapphireSize } from '@utils/size';
 import { ValidationMessage } from '@utils/validation-message';
 import { tmplOption, tmplPanel } from './templates';
 
@@ -770,6 +771,7 @@ export default class SapphireDropdown extends BaseComponent {
 					this.applyOverlayFlip(true, placement);
 				}
 
+				this.syncPanelSize(instance);
 				this.syncPanelWidth();
 				this.alignToRowsOnOpen = true;
 				this.scheduleVirtualLayout();
@@ -779,6 +781,18 @@ export default class SapphireDropdown extends BaseComponent {
 				this.close();
 			},
 		});
+	}
+
+	// The panel is mounted on <body>; mirror the field's Size (set on the widget
+	// by the block) on the tippy root so the panel text follows it. A new size
+	// changes the row height, so drop the locked virtual-list row measurement.
+	private syncPanelSize(instance: TippyInstance): void {
+		const size = resolveSapphireSize(this.widgetEl.dataset.size);
+		if (instance.popper.dataset.size === size) return;
+		instance.popper.dataset.size = size;
+		this.avgLocked = false;
+		this.avgRowHeight = 0;
+		this.measureAttempts = 0;
 	}
 
 	private bindEvents(): void {

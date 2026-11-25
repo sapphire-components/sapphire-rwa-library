@@ -26,7 +26,7 @@ A layout helper that wraps a platform `Input` placed in a placeholder. The input
 | `HasPasswordStrength` | `Boolean` | When `True`, shows a password strength meter under the input for any input type in the placeholder.               |
 | `IconName`   | `Text`          | Optional leading icon name. Empty string hides the icon.                                                            |
 | `Size`       | `SapphireSize`  | Height / padding preset for the input. Supported overrides: `xs`, `s`. Other values keep the platform default size. |
-| `Width`      | `SapphireScale` | Width preset for the wrapper (`auto`, `xs`–`xl7`, `full`, etc.).                                                    |
+| `Width`      | `SapphireScale` | Width preset for the wrapper (`auto`, `xs`–`xl12`, `full`, etc.).                                                    |
 
 <hr>
 

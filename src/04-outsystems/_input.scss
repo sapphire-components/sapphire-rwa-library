@@ -2,16 +2,27 @@
 .form-control[data-textarea],
 .vscomp-toggle-button {
 	border-color: var(--color-border);
-	font-size: var(--font-size-base);
+	font-size: var(--component-font-size-medium);
 	&:hover {
 		border-color: var(--color-neutral-6);
 	}
 }
 
+.form-control[data-input],
+.vscomp-toggle-button {
+	box-sizing: border-box;
+	height: var(--component-height-medium);
+}
+
 .form-control.input-xsmall[data-input] {
-	font-size: var(--font-size-xs);
-	height: 22px;
+	font-size: var(--component-font-size-xsmall);
+	height: var(--component-height-xsmall);
 	padding: var(--space-none) var(--space-s);
+}
+
+.form-control.input-small[data-input] {
+	font-size: var(--component-font-size-small);
+	height: var(--component-height-small);
 }
 
 .form-control[data-input][disabled],

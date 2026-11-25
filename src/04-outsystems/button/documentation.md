@@ -21,9 +21,9 @@ Add these on the Button **Style Classes** property together with `btn`. Omit app
 | `btn-transparent`           | Ghost with a `currentColor` border. Inherits text colour. Hover tints with 10% of the current colour.            |
 | `btn-destructive`           | Filled danger. White label and icon. Hover uses `--color-red-dark`.                                              |
 | `btn-destructive-secondary` | Outlined danger: white fill, red border and text. Hover uses `--color-red-lightest`.                             |
-| `btn-icon`                  | Icon-only padding (`8px`; `4px` with `btn-xsmall`). With `btn-large`, the control is a 48×48px square.           |
-| `btn-xsmall`                | 24px min-height, 12px type, 12px icons, 8px inline padding.                                                      |
-| `btn-small`                 | 32px min-height, 12px type, 16px icons, 16px inline padding.                                                      |
-| `btn-large`                 | 48px min-height, 16px type, 24px icons, 24px inline padding.                                                      |
+| `btn-icon`                  | Icon-only padding (`8px`; `4px` with `btn-xsmall`). With `btn-large`, the control is a 44×44px square.           |
+| `btn-xsmall`                | 28px min-height, 12px type, 12px icons, 8px inline padding.                                                      |
+| `btn-small`                 | 32px min-height, 13px type, 16px icons, 16px inline padding.                                                      |
+| `btn-large`                 | 44px min-height, 14px type, 24px icons, 24px inline padding.                                                      |
 | `btn-sharp`                 | Square corners (`border-radius: 0`).                                                                             |
 | `btn-rounded`               | Pill corners (`border-radius: 100px`).                                                                           |

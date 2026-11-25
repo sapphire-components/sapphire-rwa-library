@@ -1,6 +1,7 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import ButtonDropdown, { type IButtonDropdown } from '@custom-components/buttons/buttondropdown';
 import Helpers from '@utils/helpers';
+import { SapphireSizes } from '@utils/size';
 
 interface IMultiLevel extends BaseComponentInit {
 	actions: {
@@ -293,6 +294,7 @@ export default class MultiLevel extends BaseComponent {
 			isValid: true,
 			placement: 'bottom-end',
 			runtimeId: this.addDropdownId(),
+			size: SapphireSizes.M,
 			validationMessage: '',
 		};
 	}
@@ -345,6 +347,7 @@ export default class MultiLevel extends BaseComponent {
 			isValid: true,
 			placement: 'bottom-start',
 			runtimeId,
+			size: SapphireSizes.M,
 			validationMessage: '',
 		};
 	}

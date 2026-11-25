@@ -1,6 +1,7 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import type { CountryCode } from 'libphonenumber-js';
 import Helpers from '@utils/helpers';
+import { resolveSapphireSize } from '@utils/size';
 import {
 	countryByCode,
 	countryName,
@@ -475,6 +476,9 @@ export default class PhoneInput extends BaseComponent {
 					placement = 'bottom-end';
 				}
 				instance.setProps({ placement });
+				// The panel is mounted on <body>; mirror the field's Size (set on the
+				// widget by the block) on the tippy root so the panel text follows it.
+				instance.popper.dataset.size = resolveSapphireSize(this.widgetEl.dataset.size);
 				this.syncPanelWidth();
 			},
 			onClickOutside: () => {

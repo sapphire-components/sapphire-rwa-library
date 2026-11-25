@@ -15,11 +15,13 @@ div[data-block$='SapphireDropdown'] {
 		background-color: var(--color-neutral-0);
 		border: 1px solid var(--color-border);
 		border-radius: var(--border-radius-soft);
+		box-sizing: border-box;
 		cursor: pointer;
 		display: flex;
+		font-size: var(--component-font-size-medium);
 		gap: 8px;
-		min-height: 40px;
-		padding-block: 6px;
+		height: var(--component-height-medium);
+		padding-block: 0;
 		padding-inline: 12px;
 		transition: all 180ms linear;
 		user-select: none;
@@ -100,9 +102,13 @@ div[data-block$='SapphireDropdown'] {
 	}
 }
 
+/* Panel text follows the component font-size token of the trigger's Size
+   (mirrored on the tippy root as data-size). Rows keep their padding, so
+   their height follows the font size, not the component height. */
 .sapphiredropdown-panel {
 	display: flex;
 	flex-direction: column;
+	font-size: var(--component-font-size-medium);
 	max-height: 320px;
 	min-width: var(--trigger-width, 200px);
 	width: var(--trigger-width, auto);
@@ -350,5 +356,23 @@ div[data-block$='SapphireDropdown'] {
 	padding: 24px;
 	&[hidden] {
 		display: none;
+	}
+}
+
+/* Size presets from the SapphireSize input (data-size set by the block).
+   'm' (and any unsupported value) keeps the default trigger metrics. */
+@each $size, $token, $padding, $icon in ('xs', 'xsmall', 8px, 12px), ('s', 'small', 8px, 16px), ('l', 'large', 12px, 20px) {
+	.sapphiredropdown[data-size='#{$size}'] .sapphiredropdown-trigger {
+		font-size: var(--component-font-size-#{$token});
+		height: var(--component-height-#{$token});
+		padding-inline: $padding;
+		:is(.sapphiredropdown-clear, .sapphiredropdown-chevron) .svg-icon[data-size] svg {
+			height: $icon;
+			width: $icon;
+		}
+	}
+
+	[data-tippy-root][data-size='#{$size}'] .sapphiredropdown-panel {
+		font-size: var(--component-font-size-#{$token});
 	}
 }

@@ -1,18 +1,18 @@
-// Density variations (SapphireDensity). `default` is the base look in _styles.scss.
+// Density variations (SapphireDensity): dense = xs, compact = s, default = m (base look in _styles.scss), comfortable = l.
 // The calendar panel is rendered in <body> when it pops up, so it carries its own
 // data-density copy and is targeted separately from the trigger.
 
 .datetimepicker[data-density='compact'] .datetimepicker-trigger {
-	font-size: var(--font-size-s);
+	font-size: var(--component-font-size-small);
 	gap: 6px;
-	height: 32px;
-	min-height: 32px;
+	height: var(--component-height-small);
+	min-height: var(--component-height-small);
 	padding-inline: 10px;
 }
 
 .datetimepicker-panel[data-density='compact'] {
 	--dtp-cell: 30px;
-	font-size: var(--font-size-s);
+	font-size: var(--component-font-size-small);
 	gap: 6px;
 	padding: 8px;
 	width: calc(var(--dtp-cell) * 7 + 16px);
@@ -50,7 +50,7 @@
 	}
 
 	.datetimepicker-select {
-		font-size: var(--font-size-s);
+		font-size: var(--component-font-size-small);
 		height: 26px;
 		min-height: 26px;
 		padding-inline: 4px;
@@ -77,6 +77,174 @@
 
 		&[data-view='days'] .datetimepicker-title {
 			margin-inline: 30px;
+		}
+	}
+}
+
+// dense (xs): 28px trigger, 12px type, 26px day cells.
+.datetimepicker[data-density='dense'] .datetimepicker-trigger {
+	font-size: var(--component-font-size-xsmall);
+	gap: 4px;
+	height: var(--component-height-xsmall);
+	min-height: var(--component-height-xsmall);
+	padding-inline: 8px;
+
+	.svg-icon[data-size] svg {
+		height: 12px;
+		width: 12px;
+	}
+}
+
+.datetimepicker-panel[data-density='dense'] {
+	--dtp-cell: 26px;
+	font-size: var(--component-font-size-xsmall);
+	gap: 4px;
+	padding: 6px;
+	width: calc(var(--dtp-cell) * 7 + 12px);
+
+	.datetimepicker-nav {
+		height: 22px;
+		width: 22px;
+	}
+
+	.datetimepicker-title {
+		height: 22px;
+	}
+
+	.datetimepicker-weekday {
+		line-height: 18px;
+	}
+
+	.datetimepicker-day[data-today='true']::after {
+		bottom: 2px;
+		height: 3px;
+		width: 3px;
+	}
+
+	.datetimepicker-grid {
+		min-height: calc(var(--dtp-cell) * 6 + 18px);
+	}
+
+	.datetimepicker-cell {
+		min-height: 26px;
+	}
+
+	.datetimepicker-time {
+		gap: 4px;
+		padding-top: 6px;
+	}
+
+	.datetimepicker-select {
+		font-size: var(--component-font-size-xsmall);
+		height: 22px;
+		min-height: 22px;
+		padding-inline: 4px;
+		width: 3.25rem;
+	}
+
+	.datetimepicker-footer {
+		padding-top: 6px;
+	}
+
+	.datetimepicker-apply {
+		min-height: 22px;
+		padding-inline: 10px;
+	}
+
+	.datetimepicker-footer-clear {
+		min-height: 22px;
+		padding-inline: 6px;
+	}
+
+	&[data-dual='true'] {
+		--dtp-gap: 12px;
+		width: calc(var(--dtp-cell) * 14 + var(--dtp-gap) + 12px);
+
+		&[data-view='days'] .datetimepicker-title {
+			margin-inline: 26px;
+		}
+	}
+}
+
+// comfortable (l): 44px trigger, 14px type, 40px day cells.
+.datetimepicker[data-density='comfortable'] .datetimepicker-trigger {
+	font-size: var(--component-font-size-large);
+	gap: 8px;
+	height: var(--component-height-large);
+	min-height: var(--component-height-large);
+	padding-inline: 16px;
+
+	.svg-icon[data-size] svg {
+		height: 20px;
+		width: 20px;
+	}
+}
+
+.datetimepicker-panel[data-density='comfortable'] {
+	--dtp-cell: 40px;
+	font-size: var(--component-font-size-large);
+	gap: 10px;
+	padding: 16px;
+	width: calc(var(--dtp-cell) * 7 + 32px);
+
+	.datetimepicker-nav {
+		height: 36px;
+		width: 36px;
+	}
+
+	.datetimepicker-title {
+		height: 36px;
+	}
+
+	.datetimepicker-weekday {
+		line-height: 32px;
+	}
+
+	.datetimepicker-day[data-today='true']::after {
+		bottom: 6px;
+	}
+
+	.datetimepicker-grid {
+		min-height: calc(var(--dtp-cell) * 6 + 32px);
+	}
+
+	.datetimepicker-cell {
+		min-height: 44px;
+	}
+
+	.datetimepicker-time {
+		gap: 8px;
+		padding-top: 12px;
+	}
+
+	.datetimepicker-select {
+		font-size: var(--component-font-size-large);
+		height: 36px;
+		min-height: 36px;
+		padding-inline: 8px;
+		width: 4.5rem;
+	}
+
+	.datetimepicker-footer {
+		padding-top: 12px;
+	}
+
+	.datetimepicker-apply {
+		min-height: 36px;
+		padding-inline: 20px;
+	}
+
+	.datetimepicker-footer-clear {
+		min-height: 36px;
+		padding-inline: 14px;
+	}
+
+	&[data-dual='true'] {
+		--dtp-gap: 32px;
+		width: calc(var(--dtp-cell) * 14 + var(--dtp-gap) + 32px);
+
+		&[data-view='days'] .datetimepicker-title {
+			margin-inline: 40px;
 		}
 	}
 }

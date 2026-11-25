@@ -48,7 +48,7 @@ import {
 
 type View = 'days' | 'months' | 'years';
 
-/** Ids of the SapphireDensity static entity (RW_Core_Lib). Only `default` and `compact` are styled for now. */
+/** Ids of the SapphireDensity static entity (RW_Core_Lib). All four are styled (dense = xs, compact = s, default = m, comfortable = l). */
 const DENSITIES = ['dense', 'compact', 'default', 'comfortable'] as const;
 type Density = (typeof DENSITIES)[number];
 

@@ -51,25 +51,31 @@
 	}
 }
 
-.buttondropdown[data-size='xsmall'] {
-	.btn {
-		height: 22px;
-		padding-inline-end: var(--space-s);
-		padding-inline-start: var(--space-s);
-	}
-	.btn.btn-icon {
-		width: 22px !important;
-	}
-}
-
-.buttondropdown[data-size='small'] {
-	.btn {
-		height: 30px;
-		padding-inline-end: var(--space-s);
-		padding-inline-start: var(--space-s);
-	}
-	.btn.btn-icon {
-		width: 30px !important;
+/* Size presets from the SapphireSize input, matching .btn-xsmall/.btn-small/.btn-large.
+   'm' (and any unsupported value) keeps the default .btn metrics, so it has no rule. */
+@each $size, $token, $padding, $icon in ('xs', 'xsmall', 8px, 12px), ('s', 'small', 16px, 16px), ('l', 'large', 24px, 24px) {
+	.buttondropdown[data-size='#{$size}'] {
+		.btn {
+			font-size: var(--component-font-size-#{$token});
+			height: var(--component-height-#{$token});
+			min-height: var(--component-height-#{$token});
+			padding-inline: $padding;
+			.svg-icon[data-size] {
+				height: $icon;
+				width: $icon;
+				svg {
+					height: $icon;
+					width: $icon;
+				}
+			}
+		}
+		/* Icon-only label and the split chevron stay square at every height. */
+		.btn.btn-icon,
+		.btn.buttondropdown-arrow {
+			justify-content: center;
+			padding-inline: 0;
+			width: var(--component-height-#{$token}) !important;
+		}
 	}
 }
 

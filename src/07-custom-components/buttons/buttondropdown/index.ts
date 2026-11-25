@@ -1,5 +1,6 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
 import Helpers from '@utils/helpers';
+import { resolveSapphireSize, SapphireSizes, type SapphireSize } from '@utils/size';
 import { ValidationMessage } from '@utils/validation-message';
 
 export interface IButtonDropdown extends BaseComponentInit {
@@ -11,6 +12,7 @@ export interface IButtonDropdown extends BaseComponentInit {
 	isValid: boolean;
 	placement: string;
 	runtimeId: string;
+	size: SapphireSize;
 	validationMessage: string;
 }
 
@@ -19,22 +21,21 @@ const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled
 
 export default class ButtonDropdown extends BaseComponent {
 	#actions!: IButtonDropdown['actions'];
+	#actionsEl!: HTMLElement;
+	#actionsId = '';
+	#arrowEl: HTMLButtonElement | null = null;
 	#enabled = true;
+	#isOpen = false;
 	#isSplitButton = false;
 	#isValid = true;
-	#placement = DEFAULT_PLACEMENT;
-	#validationMessage = '';
-
 	#labelEl!: HTMLElement;
-	#actionsEl!: HTMLElement;
-	#arrowEl: HTMLButtonElement | null = null;
-	#triggerEl!: HTMLElement;
-	#validationMessageCtrl!: ValidationMessage;
-	#actionsId = '';
-
-	#tippyInstance: TippyInstance | null = null;
-	#isOpen = false;
 	#openWithKeyboard = false;
+	#placement = DEFAULT_PLACEMENT;
+	#size: SapphireSize = SapphireSizes.M;
+	#tippyInstance: TippyInstance | null = null;
+	#triggerEl!: HTMLElement;
+	#validationMessage = '';
+	#validationMessageCtrl!: ValidationMessage;
 
 	constructor(config: IButtonDropdown) {
 		super(config);
@@ -49,6 +50,7 @@ export default class ButtonDropdown extends BaseComponent {
 		this.#isSplitButton = config.isSplitButton;
 		this.#isValid = config.isValid;
 		this.#placement = config.placement || DEFAULT_PLACEMENT;
+		this.#size = resolveSapphireSize(config.size);
 		this.#validationMessage = config.validationMessage ?? '';
 
 		this.#labelEl = this.widgetEl.querySelector('.buttondropdown-label') as HTMLElement;
@@ -71,11 +73,12 @@ export default class ButtonDropdown extends BaseComponent {
 		this.#bindEvents();
 	}
 
-	// enabled/isValid are always mirrored as data attributes on the widget so the
-	// SCSS state variations (disabled, invalid) apply, matching the other components.
+	// enabled/isValid/size are always mirrored as data attributes on the widget so
+	// the SCSS variations (disabled, invalid, size) apply, matching the other components.
 	#reflectStateAttributes(): void {
 		this.widgetEl.dataset.enabled = this.#enabled ? 'true' : 'false';
 		this.widgetEl.dataset.isvalid = this.#isValid ? 'true' : 'false';
+		this.widgetEl.dataset.size = this.#size;
 	}
 
 	// The disabled styling only blocks the pointer, so also take the label and the
@@ -156,6 +159,14 @@ export default class ButtonDropdown extends BaseComponent {
 				this.#triggerEl.setAttribute('aria-expanded', 'false');
 			},
 		});
+		this.#syncPopperSize();
+	}
+
+	// The panel is mounted on <body>, outside the widget, so the widget's
+	// data-size cannot reach it. Mirror it on the tippy root for the SCSS.
+	#syncPopperSize(): void {
+		const popper = this.#tippyInstance?.popper;
+		if (popper) popper.dataset.size = this.#size;
 	}
 
 	// Drives the panel's min-width (as a CSS var). Non-split pins to the label
@@ -373,6 +384,16 @@ export default class ButtonDropdown extends BaseComponent {
 			this.widgetEl.dataset.enabled = this.#enabled ? 'true' : 'false';
 			if (!this.#enabled) this.#close(false);
 			this.#syncInteractivity();
+		}
+
+		if (payload.size !== undefined) {
+			const size = resolveSapphireSize(payload.size);
+			if (size !== this.#size) {
+				this.#size = size;
+				this.widgetEl.dataset.size = this.#size;
+				this.#syncPopperSize();
+				this.#tippyInstance?.popperInstance?.update?.();
+			}
 		}
 
 		let needsValidationRefresh = false;

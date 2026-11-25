@@ -19,4 +19,4 @@ A horizontal rule. Color, thickness, vertical margins, and width come from input
 | `MarginTop`     | `SapphireSize`  | Space above the line. Defaults to `base`.                                                                  |
 | `Theme`         | `Text`          | Optional space-separated theme tokens written to `data-theme`.                                             |
 | `Thickness`     | `Integer`       | Line height in pixels. Defaults to `1`.                                                                    |
-| `Width`         | `SapphireScale` | Width preset (`auto`, `xs`–`xl7`, `full`, etc.) applied through `data-widthcomponent`. Defaults to `full`. |
+| `Width`         | `SapphireScale` | Width preset (`auto`, `xs`–`xl12`, `full`, etc.) applied through `data-widthcomponent`. Defaults to `full`. |

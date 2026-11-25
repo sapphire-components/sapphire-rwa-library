@@ -17,11 +17,13 @@ div[data-block$='DateTimePicker'] {
 		background-color: var(--color-neutral-0);
 		border: 1px solid var(--color-border);
 		border-radius: var(--border-radius-soft);
+		box-sizing: border-box;
 		cursor: pointer;
 		display: flex;
+		font-size: var(--component-font-size-medium);
 		gap: 8px;
-		height: 40px;
-		min-height: 40px;
+		height: var(--component-height-medium);
+		min-height: var(--component-height-medium);
 		padding-block: 0;
 		padding-inline: 12px;
 		transition: all 180ms linear;
@@ -94,6 +96,7 @@ div[data-block$='DateTimePicker'] {
 .datetimepicker-panel {
 	--dtp-cell: 36px;
 	display: flex;
+	font-size: var(--component-font-size-medium);
 	flex-direction: column;
 	gap: 8px;
 	padding: 12px;

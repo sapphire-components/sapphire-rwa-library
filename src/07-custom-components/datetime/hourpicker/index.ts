@@ -1,4 +1,5 @@
 import { BaseComponent, type BaseComponentInit } from '@core/base';
+import Helpers from '@utils/helpers';
 import { resolveSapphireSize, SapphireSizes, type SapphireSize } from '@utils/size';
 import { ValidationMessage } from '@utils/validation-message';
 import {
@@ -350,7 +351,7 @@ export default class HourPicker extends BaseComponent {
 
 		if (this.#useInput) {
 			this.#inputEl = this.createInput();
-			this.#componentEl.append(this.#inputEl);
+			this.#componentEl.append(this.createInputField(this.#inputEl));
 		} else {
 			this.#hoursEl = this.createSelect('hours', 'Hours');
 			this.#componentEl.append(this.#hoursEl);
@@ -377,6 +378,18 @@ export default class HourPicker extends BaseComponent {
 		this.syncEnabled();
 		this.syncValueToDom();
 		this.reflectState();
+	}
+
+	/** Wraps the time input with a leading clock icon (decorative; clicks pass through to the input). */
+	private createInputField(input: HTMLInputElement): HTMLElement {
+		const field = document.createElement('span');
+		field.className = 'hourpicker-field';
+		const icon = document.createElement('span');
+		icon.className = 'hourpicker-icon';
+		icon.setAttribute('aria-hidden', 'true');
+		icon.innerHTML = Helpers.placeIcon('clock', 's');
+		field.append(icon, input);
+		return field;
 	}
 
 	private createInput(): HTMLInputElement {

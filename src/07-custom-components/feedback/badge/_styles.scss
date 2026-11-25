@@ -3,29 +3,46 @@ div[data-block$='Badge'] {
 }
 
 .badge {
+	/* Default size 's'; _sizes.scss overrides these per data-size. */
+	--badge-dot: 6px;
+	--badge-gap: 6px;
+	--badge-icon: 16px;
+	--badge-pad: 10px;
 	--iconcolor: var(--badge-icon-color);
 	align-items: center;
 	background-color: var(--badge-bg-color, var(--badge-theme-bg));
 	border-radius: 999px;
+	box-sizing: border-box;
 	color: var(--badge-label-color, var(--badge-theme-label));
 	display: inline-flex;
+	font-size: var(--component-font-size-small);
+	gap: var(--badge-gap);
+	height: var(--component-height-small);
+	line-height: 1;
 	min-width: 0;
+	padding-inline: var(--badge-pad);
+	white-space: nowrap;
+
+	.svg-icon[data-size] svg {
+		height: var(--badge-icon);
+		width: var(--badge-icon);
+	}
 }
 
 .badge[data-hasdot='true'] {
-	padding-inline-start: 18px;
+	padding-inline-start: calc(var(--badge-pad) + var(--badge-dot) + var(--badge-gap));
 	position: relative;
 	&::before {
 		background-color: var(--badge-icon-color, var(--badge-theme-dot));
 		border-radius: 50%;
 		content: '';
 		display: flex;
-		height: 6px;
-		left: 8px;
+		height: var(--badge-dot);
+		inset-inline-start: var(--badge-pad);
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 6px;
+		width: var(--badge-dot);
 	}
 }
 

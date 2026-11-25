@@ -1,6 +1,6 @@
 .btn-xsmall {
-	font-size: var(--font-size-s);
-	min-height: 24px;
+	font-size: var(--component-font-size-xsmall);
+	min-height: var(--component-height-xsmall);
 	padding-inline: 8px;
 	.svg-icon[data-size] {
 		height: 12px;
@@ -13,8 +13,8 @@
 }
 
 .btn-small {
-	font-size: var(--font-size-s);
-	min-height: 32px;
+	font-size: var(--component-font-size-small);
+	min-height: var(--component-height-small);
 	padding-inline: 16px;
 	.svg-icon[data-size] {
 		height: 16px;
@@ -27,13 +27,13 @@
 }
 
 .btn-large {
-	font-size: var(--font-size-l);
-	min-height: 48px;
+	font-size: var(--component-font-size-large);
+	min-height: var(--component-height-large);
 	padding-inline: 24px;
 	&.btn-icon {
-		height: 48px;
+		height: var(--component-height-large);
 		padding: 0;
-		width: 48px;
+		width: var(--component-height-large);
 	}
 	.svg-icon[data-size] {
 		height: 24px;

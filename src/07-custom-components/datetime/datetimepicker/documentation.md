@@ -24,7 +24,7 @@ A calendar date picker, with optional time, that generates its UI inside the wid
 | ------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `Config`            | `DateTimePickerConfig`     | Selection, navigation and display options. See the structure below.                                                 |
 | `ConfigTime`        | `DateTimePickerConfigTime` | Time options. See the structure below.                                                                              |
-| `Density`           | `SapphireDensity`          | Spacing preset for the trigger and the calendar. `Default` (40px trigger, 36px day cells) or `Compact` (32px trigger, 30px cells, smaller controls). `Dense` / `Comfortable` look like `Default` for now. |
+| `Density`           | `SapphireDensity`          | Spacing preset for the trigger and the calendar. `Dense` (xs: 28px trigger, 12px type, 26px day cells), `Compact` (s: 32px trigger, 13px type, 30px cells), `Default` (m: 36px trigger, 14px type, 36px cells) or `Comfortable` (l: 44px trigger, 14px type, 40px cells). Panel controls scale with the cells. |
 | `Disabled`          | `DateTime List`            | Days that are shown but cannot be selected. Only the date part is used; `NullDate` items are ignored.              |
 | `Enabled`           | `Boolean`                  | Enables or disables interaction.                                                                                    |
 | `IsValid`           | `Boolean`                  | When `False`, marks the component invalid and shows `ValidationMessage`.                                            |
@@ -33,7 +33,7 @@ A calendar date picker, with optional time, that generates its UI inside the wid
 | `Selected`          | `DateTime List`            | Current value. Single mode uses the first item; multiple mode uses one item per day; range mode uses the earliest and latest items. Empty list means no value. |
 | `SelectedText`      | `Text`                     | Multiple only. When set and more than one date is picked, the trigger shows `"<count> <SelectedText>"` (e.g. `3 dates`). |
 | `ValidationMessage` | `Text`                     | Message shown below the component while `IsValid` is `False`.                                                       |
-| `Width`             | `SapphireScale`            | Width preset for the trigger (`auto`, `xs`–`xl7`, `full`, etc.).                                                    |
+| `Width`             | `SapphireScale`            | Width preset for the trigger (`auto`, `xs`–`xl12`, `full`, etc.).                                                    |
 
 <hr>
 

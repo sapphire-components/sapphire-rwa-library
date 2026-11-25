@@ -5,7 +5,7 @@ A full-height panel that slides in from the trailing edge of the viewport (the r
 - The block wrapper uses `display: contents`. On init the panel moves to `<body>`, so it covers the viewport, and it is marked as a dialog.
 - `IsOpen` `False` (the default) hides the panel and marks it `inert`. `IsOpen` `True` shows it at full height, above the page.
 - Opening plays a 200ms slide. `prefers-reduced-motion: reduce` skips the animation.
-- `Width` is a `SapphireSize` preset written to `data-widthcomponent`. The panel is as wide as the viewport, up to that preset. The default is `xl2` (480px).
+- `Width` is a `SapphireSize` preset written to `data-widthcomponent`. The panel is as wide as the viewport, up to that preset. The default is `xl2` (280px).
 - `HasOverlay` `True` (the default) adds a backdrop, locks page scroll, sets `aria-modal="true"` while the panel is open, and traps Tab inside it.
 - `HasClose` `True` (the default) shows a close button (`x`) in the top trailing corner. Clicking it closes the panel.
 - `CloseOnEsc` `True` (the default) closes the panel on `Escape` and on a backdrop click. The backdrop uses a pointer cursor in that case. The close button still closes the panel when `CloseOnEsc` is `False`.
@@ -29,7 +29,7 @@ A full-height panel that slides in from the trailing edge of the viewport (the r
 | `IsOpen`        | `Boolean`      | Controls visibility. Defaults to `False`. A change from the parent updates the panel without firing `Toggle`.                                       |
 | `Padding`       | `SapphireSize` | Padding of the header, body, and footer, written to `data-padding`. Defaults to `base` (16px). The body end padding is 8px.                         |
 | `Theme`         | `Text`         | Optional space-separated theme tokens, written to `data-theme`.                                                                                     |
-| `Width`         | `SapphireSize` | Width preset (`auto`, `xs`–`xl7`, `full`, and so on) written to `data-widthcomponent`. The panel grows up to that width. Defaults to `xl2` (480px). |
+| `Width`         | `SapphireSize` | Width preset (`auto`, `xs`–`xl12`, `full`, and so on) written to `data-widthcomponent`. The panel grows up to that width. Defaults to `xl2` (280px). |
 
 <hr>
 

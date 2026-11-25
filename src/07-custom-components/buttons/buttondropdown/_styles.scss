@@ -55,6 +55,7 @@ div[data-block$='ButtonDropdown'] {
 }
 
 .buttondropdown-item {
+	font-size: inherit;
 	min-width: 100%;
 	padding: 4px 8px;
 }
@@ -74,8 +75,21 @@ div[data-block$='ButtonDropdown'] {
 	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
+	/* Menu text follows the component font-size token of the trigger's Size
+	   (mirrored on the tippy root as data-size). Rows keep their padding, so
+	   their height follows the font size, not the component height. */
+	font-size: var(--component-font-size-medium);
 	max-width: 350px;
 	min-width: var(--trigger-width, auto);
 	overflow: hidden;
 	width: max-content;
+	.overlay-item {
+		font-size: inherit;
+	}
+}
+
+@each $size, $token in ('xs', 'xsmall'), ('s', 'small'), ('l', 'large') {
+	[data-tippy-root][data-size='#{$size}'] .buttondropdown-actions {
+		font-size: var(--component-font-size-#{$token});
+	}
 }

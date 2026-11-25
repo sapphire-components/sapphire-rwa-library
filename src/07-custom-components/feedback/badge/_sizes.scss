@@ -1,15 +1,11 @@
-.badge[data-size='s'] {
-	font-size: var(--font-size-s);
-	gap: 4px;
-	height: 20px;
-	line-height: 20px;
-	padding-inline: 6px;
-}
-
-.badge[data-size='m'] {
-	font-size: var(--font-size-base);
-	gap: 6px;
-	height: 30px;
-	line-height: 30px;
-	padding-inline: 12px;
+/* Size presets from the SapphireSize input (data-size set by the block).
+   's' (32px) is the default and the fallback for any unsupported value; it lives in _styles.scss. */
+@each $size, $token, $pad, $gap, $icon in ('xs', 'xsmall', 8px, 4px, 12px), ('m', 'medium', 12px, 6px, 16px), ('l', 'large', 16px, 8px, 20px) {
+	.badge[data-size='#{$size}'] {
+		--badge-gap: #{$gap};
+		--badge-icon: #{$icon};
+		--badge-pad: #{$pad};
+		font-size: var(--component-font-size-#{$token});
+		height: var(--component-height-#{$token});
+	}
 }

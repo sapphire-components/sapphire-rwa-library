@@ -25,6 +25,7 @@ A phone field with a country dropdown and a number input. The closed dropdown sh
 | `FavoriteCountries` | `Text`    | Countries pinned to the top. Comma, space, or semicolon separated (`PT, US, GB`), or a JSON array (`["PT","US","GB"]`). Unknown codes are ignored.                   |
 | `Locale`            | `Text`    | BCP 47 locale for country names and list order (for example `en-US`, `pt-PT`). Empty or invalid values fall back to `SapphireRWALibrary.State.locale`, then `en-US`. |
 | `PhoneNumber`       | `Text`    | National digits for the selected country. An international value (`+351912345678` or `00351912345678`) selects the country and stores the national digits.           |
+| `Size`              | `SapphireSize` | Height and type preset for the field. Supported: `xs` (28px, 12px type), `s` (32px, 13px type), `m` / `base` (36px, 14px type, default), `l` (44px, 14px type). The country panel text uses the same type size; its rows keep their padding, so their height follows the type, not the field height. Other values fall back to `m`. |
 
 <hr>
 

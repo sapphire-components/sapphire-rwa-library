@@ -99,5 +99,21 @@
 	},
 	"focus-ring": {
 		"outer": "color-mix(in srgb, var(--color-primary) 35%, white)"
+	},
+	"component": {
+		"font-size": {
+			"xsmall": "12px",
+			"small": "13px",
+			"medium": "14px",
+			"large": "14px",
+			"xlarge": "16px"
+		},
+		"height": {
+			"xsmall": "28px",
+			"small": "32px",
+			"medium": "36px",
+			"large": "44px",
+			"xlarge": "54px"
+		}
 	}
 }

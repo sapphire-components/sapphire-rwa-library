@@ -5,7 +5,17 @@ div[data-block$='SapphireInput'] {
 	display: contents;
 }
 
+/* Slot metrics, overridden per Size below. Defaults are the 'm' values:
+   inset = distance from the field edge to the first slot, slot = icon/stepper
+   box, gap = space between the last slot and the text, pad = text padding
+   when there is no slot on that side. */
 .sapphireinput {
+	--sapphireinput-gap: 6px;
+	--sapphireinput-inset: 10px;
+	--sapphireinput-pad: 16px;
+	--sapphireinput-slot: 20px;
+	--sapphireinput-one-slot: calc(var(--sapphireinput-inset) + var(--sapphireinput-slot) + var(--sapphireinput-gap));
+	--sapphireinput-two-slots: calc(var(--sapphireinput-inset) + 2 * var(--sapphireinput-slot) + var(--sapphireinput-gap));
 	display: inline-flex;
 	flex-direction: column;
 	gap: 4px;
@@ -14,47 +24,49 @@ div[data-block$='SapphireInput'] {
 		@include focus-visible();
 		cursor: pointer;
 		display: grid;
-		height: 20px;
+		height: var(--sapphireinput-slot);
 		place-items: center;
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 20px;
+		width: var(--sapphireinput-slot);
 	}
 	&-minus {
-		inset-inline-start: 10px;
+		inset-inline-start: var(--sapphireinput-inset);
 	}
 	&-plus {
-		inset-inline-end: 10px;
+		inset-inline-end: var(--sapphireinput-inset);
 	}
 	&-icon {
 		display: grid;
-		height: 20px;
-		inset-inline-start: 10px;
+		height: var(--sapphireinput-slot);
+		inset-inline-start: var(--sapphireinput-inset);
 		place-items: center;
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 20px;
+		width: var(--sapphireinput-slot);
 	}
 	&-clear {
 		@include focus-visible();
 		cursor: pointer;
 		display: none;
-		height: 20px;
-		inset-inline-end: 10px;
+		height: var(--sapphireinput-slot);
+		inset-inline-end: var(--sapphireinput-inset);
 		place-items: center;
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 20px;
+		width: var(--sapphireinput-slot);
 	}
 	.form-control[data-input] {
 		border-color: var(--color-border);
-		font-size: var(--font-size-base);
+		box-sizing: border-box;
+		font-size: var(--component-font-size-medium);
+		height: var(--component-height-medium);
 		padding-block: 0;
-		padding-inline-end: 16px;
-		padding-inline-start: 36px;
+		padding-inline-end: var(--sapphireinput-pad);
+		padding-inline-start: var(--sapphireinput-one-slot);
 		text-align: end;
 		width: 100%;
 		&:hover {
@@ -86,39 +98,39 @@ div[data-block$='SapphireInput'] {
 
 .sapphireinput[data-iconname=''] {
 	.form-control[data-input] {
-		padding-inline-start: var(--space-base);
+		padding-inline-start: var(--sapphireinput-pad);
 	}
 }
 
 .sapphireinput[data-hassteps='true'] {
 	.sapphireinput-icon {
-		inset-inline-start: 30px;
+		inset-inline-start: calc(var(--sapphireinput-inset) + var(--sapphireinput-slot));
 	}
 	.form-control[data-input] {
-		padding-inline-end: 36px;
-		padding-inline-start: 36px;
+		padding-inline-end: var(--sapphireinput-one-slot);
+		padding-inline-start: var(--sapphireinput-one-slot);
 	}
 
 	.sapphireinput-clear {
-		inset-inline-end: 30px;
+		inset-inline-end: calc(var(--sapphireinput-inset) + var(--sapphireinput-slot));
 	}
 }
 
 .sapphireinput[data-hassteps='true'][data-hasicon='true'] {
 	.form-control[data-input] {
-		padding-inline-start: 56px;
+		padding-inline-start: var(--sapphireinput-two-slots);
 	}
 }
 
 .sapphireinput[data-hasclear='true'] {
 	.form-control[data-input] {
-		padding-inline-end: 36px;
+		padding-inline-end: var(--sapphireinput-one-slot);
 	}
 }
 
 .sapphireinput[data-hassteps='true'][data-hasclear='true'] {
 	.form-control[data-input] {
-		padding-inline-end: 56px;
+		padding-inline-end: var(--sapphireinput-two-slots);
 	}
 }
 
@@ -138,5 +150,24 @@ div[data-block$='SapphireInput'] {
 .sapphireinput[data-type='text'] {
 	.form-control[data-input] {
 		text-align: start;
+	}
+}
+
+/* Size presets from the SapphireSize input (data-size set by the block).
+   'm' (and any unsupported value) keeps the defaults above. */
+@each $size, $token, $inset, $slot, $gap, $pad, $icon in ('xs', 'xsmall', 6px, 16px, 4px, 8px, 12px), ('s', 'small', 8px, 18px, 4px, 12px, 16px), ('l', 'large', 12px, 24px, 8px, 16px, 20px) {
+	.sapphireinput[data-size='#{$size}'] {
+		--sapphireinput-gap: #{$gap};
+		--sapphireinput-inset: #{$inset};
+		--sapphireinput-pad: #{$pad};
+		--sapphireinput-slot: #{$slot};
+		.form-control[data-input] {
+			font-size: var(--component-font-size-#{$token});
+			height: var(--component-height-#{$token});
+		}
+		:is(.sapphireinput-minus, .sapphireinput-plus, .sapphireinput-icon, .sapphireinput-clear) .svg-icon[data-size] svg {
+			height: $icon;
+			width: $icon;
+		}
 	}
 }

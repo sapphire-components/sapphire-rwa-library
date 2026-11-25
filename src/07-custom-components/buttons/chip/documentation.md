@@ -16,6 +16,7 @@ The `Chip` enhances a root element containing a `.chip-content` node. Based on i
 | `IsClickable`  | `Boolean` | Makes the whole chip act as a button firing `Click`.                   |
 | `IsSelectable` | `Boolean` | Makes the chip a toggle that fires `Toggle` and tracks selected state. |
 | `IsSelected`   | `Boolean` | Initial selected state (only meaningful when `IsSelectable`).          |
+| `Size`         | `SapphireSize` | Height, type, padding and icon preset. `xs` (28px, 12px type, 12px icons, default), `s` (32px, 13px type), `m` (36px, 14px type) or `l` (44px, 14px type, 20px icons). Other values fall back to `xs`. |
 
 <hr>
 

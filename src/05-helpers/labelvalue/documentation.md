@@ -15,7 +15,7 @@ The `LabelValue` helper does not own field logic or validation. It only handles 
 | `LabelTopPadding` | `Integer`      | Top padding of the label in pixels when `Orientation` is `Horizontal`, to align it with the control. Use `2` for a checkbox and `6` for an input (default). |
 | `LabelWidth`      | `SapphireSize` | Width of the label column when `Orientation` is `Horizontal`. Ignored when `Vertical`. Defaults to `M` (160px).                                             |
 | `Orientation`     | `Orientation`  | Layout direction. `Horizontal` places the label beside the control; `Vertical` stacks the label above it. Defaults to `Horizontal`.                         |
-| `Width`           | `SapphireSize` | Width preset for the helper (`auto`, `xs`–`xl7`, `full`, and so on), written to `data-widthcomponent`. Defaults to `XL2` (480px).                          |
+| `Width`           | `SapphireSize` | Width preset for the helper (`auto`, `xs`–`xl12`, `full`, and so on), written to `data-widthcomponent`. Defaults to `XL2` (280px).                          |
 
 <hr>
 

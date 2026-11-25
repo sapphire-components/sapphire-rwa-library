@@ -22,8 +22,9 @@ A combobox-style dropdown for selecting one or many options from a list. It supp
 | `IsValid`           | `Boolean`                | When `False`, marks the component invalid and shows `ValidationMessage`.                                                               |
 | `OptionsList`       | `SapphireDropdownOption` | Available options to render in the list. A search refresh replaces this list and scrolls to the top. Selected items whose `Value` is not in this list are prepended above it. |
 | `SelectedList`      | `SapphireDropdownOption` | Currently selected options. Single-select keeps at most one entry; missing labels/icons are hydrated from `OptionsList` when possible. Selected items not present in `OptionsList` are prepended at the top, including on a virtual list. |
+| `Size`              | `SapphireSize`           | Height, type, padding and icon preset for the trigger. Supported: `xs` (28px, 12px type), `s` (32px, 13px type), `m` / `base` (36px, 14px type, default), `l` (44px, 14px type). The panel text uses the same type size; its rows keep their padding, so their height follows the type, not the trigger height. Other values fall back to `m`. |
 | `ValidationMessage` | `Text`                   | Message shown below the trigger while `IsValid` is `False`.                                                                            |
-| `Width`             | `SapphireScale`          | Width preset for the dropdown (`auto`, `xs`–`xl7`, `full`, etc.). The open panel matches the trigger width.                            |
+| `Width`             | `SapphireScale`          | Width preset for the dropdown (`auto`, `xs`–`xl12`, `full`, etc.). The open panel matches the trigger width.                            |
 
 <hr>
 

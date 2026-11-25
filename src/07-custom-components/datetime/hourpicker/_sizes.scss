@@ -1,24 +1,48 @@
 .hourpicker[data-size='xs'] {
+	--hourpicker-icon: 12px;
+	--hourpicker-icon-gap: 4px;
+	--hourpicker-input-pad: 8px;
+
 	.hourpicker-component {
 		gap: 4px;
 	}
 	.hourpicker-input,
 	.hourpicker-select {
 		border-radius: 4px;
-		font-size: var(--font-size-s);
-		height: 22px;
-		min-height: 22px;
+		font-size: var(--component-font-size-xsmall);
+		height: var(--component-height-xsmall);
+		min-height: var(--component-height-xsmall);
 		padding-inline: 6px;
-	}
-	.hourpicker-input {
-		padding-inline: 8px;
 	}
 }
 
 .hourpicker[data-size='s'] {
 	.hourpicker-input,
 	.hourpicker-select {
-		height: 32px;
-		min-height: 32px;
+		font-size: var(--component-font-size-small);
+		height: var(--component-height-small);
+		min-height: var(--component-height-small);
+	}
+}
+
+.hourpicker[data-size='l'] {
+	--hourpicker-icon: 20px;
+	--hourpicker-input-pad: 16px;
+
+	.hourpicker-component {
+		gap: 8px;
+	}
+	.hourpicker-input,
+	.hourpicker-select {
+		font-size: var(--component-font-size-large);
+		height: var(--component-height-large);
+		min-height: var(--component-height-large);
+	}
+	.hourpicker-select {
+		padding-inline: 12px;
+		width: 5rem;
+	}
+	.hourpicker-period {
+		width: 5.25rem;
 	}
 }

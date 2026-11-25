@@ -23,6 +23,7 @@ A button-styled toggle used to pick one or more options. The widget root (`.butt
 | `GroupName`         | `Text`    | Groups ButtonChoices on the same document. Empty means the button is not grouped.                                                         |
 | `IsSelected`        | `Boolean` | Selected state. Without a `Type`, selected buttons use the primary background and white text.                                             |
 | `IsValid`           | `Boolean` | When `False`, marks the component invalid and shows `ValidationMessage`.                                                                  |
+| `Size`              | `SapphireSize` | Height, type, padding and icon preset. Supported: `xs` (28px, 12px type, 12px icon), `s` (32px, 13px type, 16px icon), `m` / `base` (36px, 14px type, 20px icon, default), `l` (44px, 14px type, 24px icon). Other values fall back to `m`. |
 | `Type`              | `Alert`   | Optional semantic variant. Empty / `null` leaves the default colours. Valid values: `alert-info`, `alert-warning`, `alert-success`, `alert-error`. |
 | `ValidationMessage` | `Text`    | Message shown below the wrapper while `IsValid` is `False`.                                                                               |
 

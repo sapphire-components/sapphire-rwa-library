@@ -18,7 +18,8 @@ A compact status label for short text such as a category, state, or tag. It is a
 | `Enabled` | `Boolean`       | Enables or disables the badge visually / interactively as configured in the widget.                  |
 | `HasDot`  | `Boolean`       | When `True`, shows a leading status dot tinted to match `Color`.                                     |
 | `Shape`   | `Shape`         | Corner style. Omit or leave default for a pill; `soft` uses a small radius; `none` removes rounding. |
-| `Width`   | `SapphireScale` | Width preset for the badge container (`auto`, `xs`–`xl7`, `full`, etc.).                             |
+| `Size`    | `SapphireSize`  | Height, type, padding and icon preset. `xs` (28px, 12px type, 12px icon), `s` (32px, 13px type, 16px icon, default), `m` (36px, 14px type, 16px icon) or `l` (44px, 14px type, 20px icon). Other values fall back to `s`. |
+| `Width`   | `SapphireScale` | Width preset for the badge container (`auto`, `xs`–`xl12`, `full`, etc.).                             |
 
 <hr>
 

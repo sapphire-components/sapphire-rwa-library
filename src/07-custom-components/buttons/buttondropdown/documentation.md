@@ -19,6 +19,7 @@ A button that reveals a dropdown panel of actions. It supports two modes: a regu
 | `IsSplitButton`     | `Boolean`       | When `True`, renders a separate chevron trigger and the label fires `Click` instead of opening. |
 | `IsValid`           | `Boolean`       | When `False`, marks the component invalid and shows `ValidationMessage` below it.               |
 | `Placement`         | `Text`        | Preferred placement of the actions panel relative to the trigger. Defaults to `bottom-start`.   |
+| `Size`              | `SapphireSize`  | Height, type, padding and icon preset for the label and chevron. Supported: `xs` (28px, 12px type), `s` (32px, 13px type), `m` / `base` (36px, 14px type, default), `l` (44px, 14px type). The actions panel text uses the same type size; its rows keep their padding, so their height follows the type, not the button height. Other values fall back to `m`. |
 | `ValidationMessage` | `Text`        | Message shown below the widget while `IsValid` is `False`.                                      |
 | `Width`             | `SapphireScale` | Sets the width of the component.                                                                |
 

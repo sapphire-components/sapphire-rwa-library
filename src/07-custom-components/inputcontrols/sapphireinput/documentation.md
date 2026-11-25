@@ -24,10 +24,11 @@ A text / numeric input with optional clear button, leading icon, validation mess
 | `MaxLength`         | `Integer`                     | Maximum character length. `0` (or less) means no limit. Applies to typing and truncates externally set values.             |
 | `NumericOptions`    | `SapphireInputNumericOptions` | Bounds and precision for numeric types. See the structure below. Ignored for `text`.                                       |
 | `Placeholder`       | `Text`                        | Placeholder text shown when the field is empty.                                                                            |
+| `Size`              | `SapphireSize`                | Height, type, padding and icon preset. Supported: `xs` (28px, 12px type, 12px icons), `s` (32px, 13px type), `m` / `base` (36px, 14px type, default), `l` (44px, 14px type, 20px icons). Other values fall back to `m`. |
 | `Type`              | `SapphireInputType`           | Input mode: `text`, `integer`, or `decimal`.                                                                               |
 | `ValidationMessage` | `Text`                        | Message shown below the field while `IsValid` is `False`.                                                                  |
 | `Value`             | `Text`                        | Current value. Numeric consumers should treat the emitted value as using `.` as the decimal separator.                     |
-| `Width`             | `SapphireScale`               | Width preset for the input container (`auto`, `xs`–`xl7`, `full`, etc.).                                                   |
+| `Width`             | `SapphireScale`               | Width preset for the input container (`auto`, `xs`–`xl12`, `full`, etc.).                                                   |
 
 <hr>
 

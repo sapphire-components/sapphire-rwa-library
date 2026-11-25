@@ -16,7 +16,7 @@ A vertical content layout with a fixed header, a scrollable body, and an optiona
 | `Enabled`   | `Boolean`       | Enables or disables the component visually / interactively as configured in the widget.                             |
 | `Height`    | `Text`          | Fixed height of the container in pixels. When empty / unset, height is not forced and content can grow naturally.   |
 | `MaxHeight` | `Integer`       | Maximum height of the container in pixels. When `0`, no max-height is applied.                                      |
-| `Width`     | `SapphireScale` | Width preset for the container (`auto`, `xs`–`xl7`, `full`, etc.).                                                  |
+| `Width`     | `SapphireScale` | Width preset for the container (`auto`, `xs`–`xl12`, `full`, etc.).                                                  |
 
 <hr>
 
