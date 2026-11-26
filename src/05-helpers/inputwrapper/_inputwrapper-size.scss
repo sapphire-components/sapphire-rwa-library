@@ -1,9 +1,12 @@
+// Heights and font sizes follow the component tokens:
+// xs → xsmall, s → small, default → medium, l → large.
+
 .inputwrapper[data-size='xs'] {
-	--inputwrapper-control-height: 22px;
+	--inputwrapper-control-height: var(--component-height-xsmall);
 
 	.form-control[data-input] {
-		font-size: var(--font-size-s);
-		height: 22px;
+		font-size: var(--component-font-size-xsmall);
+		height: var(--component-height-xsmall);
 		padding-inline: 8px;
 	}
 	.inputwrapper-icon {
@@ -18,13 +21,13 @@
 .inputwrapper[data-size='xs'][data-hasclear='true'],
 .inputwrapper[data-size='xs'][data-haspassword='true'] {
 	.form-control[data-input] {
-		padding-inline-end: 24px;
+		padding-inline-end: 28px;
 	}
 }
 
 .inputwrapper[data-size='xs'][data-haspassword='true'][data-hasclear='true'] {
 	.form-control[data-input] {
-		padding-inline-end: 44px;
+		padding-inline-end: 48px;
 	}
 
 	.inputwrapper-clear {
@@ -39,10 +42,11 @@
 }
 
 .inputwrapper[data-size='s'] {
-	--inputwrapper-control-height: 32px;
+	--inputwrapper-control-height: var(--component-height-small);
 
 	.form-control[data-input] {
-		height: 32px;
+		font-size: var(--component-font-size-small);
+		height: var(--component-height-small);
 		padding-inline: 12px;
 	}
 	.inputwrapper-icon {
@@ -74,5 +78,45 @@
 .inputwrapper[data-size='s'][data-hasicon='true'] {
 	.form-control[data-input] {
 		padding-inline-start: 36px;
+	}
+}
+
+.inputwrapper[data-size='l'] {
+	--inputwrapper-control-height: var(--component-height-large);
+
+	.form-control[data-input] {
+		font-size: var(--component-font-size-large);
+		height: var(--component-height-large);
+		padding-inline: 16px;
+	}
+	.inputwrapper-icon {
+		inset-inline-start: 16px;
+	}
+	.inputwrapper-clear,
+	.inputwrapper-password {
+		inset-inline-end: 16px;
+	}
+}
+
+.inputwrapper[data-size='l'][data-hasclear='true'],
+.inputwrapper[data-size='l'][data-haspassword='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 40px;
+	}
+}
+
+.inputwrapper[data-size='l'][data-haspassword='true'][data-hasclear='true'] {
+	.form-control[data-input] {
+		padding-inline-end: 60px;
+	}
+
+	.inputwrapper-clear {
+		inset-inline-end: 40px;
+	}
+}
+
+.inputwrapper[data-size='l'][data-hasicon='true'] {
+	.form-control[data-input] {
+		padding-inline-start: 40px;
 	}
 }

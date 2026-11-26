@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.158 2026-11-25T08:33:03.120Z */
+/*!  SapphireRWALibrary PROD v0.6.159 2026-11-26T10:10:31.565Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -4314,11 +4314,11 @@ div[data-block$=CheckboxLabel] {
   z-index: 3;
 }
 .inputwrapper[data-size=xs] {
-  --inputwrapper-control-height: 22px;
+  --inputwrapper-control-height: var(--component-height-xsmall);
 }
 .inputwrapper[data-size=xs] .form-control[data-input] {
-  font-size: var(--font-size-s);
-  height: 22px;
+  font-size: var(--component-font-size-xsmall);
+  height: var(--component-height-xsmall);
   padding-inline: 8px;
 }
 .inputwrapper[data-size=xs] .inputwrapper-icon {
@@ -4331,11 +4331,11 @@ div[data-block$=CheckboxLabel] {
 
 .inputwrapper[data-size=xs][data-hasclear=true] .form-control[data-input],
 .inputwrapper[data-size=xs][data-haspassword=true] .form-control[data-input] {
-  padding-inline-end: 24px;
+  padding-inline-end: 28px;
 }
 
 .inputwrapper[data-size=xs][data-haspassword=true][data-hasclear=true] .form-control[data-input] {
-  padding-inline-end: 44px;
+  padding-inline-end: 48px;
 }
 .inputwrapper[data-size=xs][data-haspassword=true][data-hasclear=true] .inputwrapper-clear {
   inset-inline-end: 28px;
@@ -4346,10 +4346,11 @@ div[data-block$=CheckboxLabel] {
 }
 
 .inputwrapper[data-size=s] {
-  --inputwrapper-control-height: 32px;
+  --inputwrapper-control-height: var(--component-height-small);
 }
 .inputwrapper[data-size=s] .form-control[data-input] {
-  height: 32px;
+  font-size: var(--component-font-size-small);
+  height: var(--component-height-small);
   padding-inline: 12px;
 }
 .inputwrapper[data-size=s] .inputwrapper-icon {
@@ -4375,6 +4376,38 @@ div[data-block$=CheckboxLabel] {
 .inputwrapper[data-size=s][data-hasicon=true] .form-control[data-input] {
   padding-inline-start: 36px;
 }
+
+.inputwrapper[data-size=l] {
+  --inputwrapper-control-height: var(--component-height-large);
+}
+.inputwrapper[data-size=l] .form-control[data-input] {
+  font-size: var(--component-font-size-large);
+  height: var(--component-height-large);
+  padding-inline: 16px;
+}
+.inputwrapper[data-size=l] .inputwrapper-icon {
+  inset-inline-start: 16px;
+}
+.inputwrapper[data-size=l] .inputwrapper-clear,
+.inputwrapper[data-size=l] .inputwrapper-password {
+  inset-inline-end: 16px;
+}
+
+.inputwrapper[data-size=l][data-hasclear=true] .form-control[data-input],
+.inputwrapper[data-size=l][data-haspassword=true] .form-control[data-input] {
+  padding-inline-end: 40px;
+}
+
+.inputwrapper[data-size=l][data-haspassword=true][data-hasclear=true] .form-control[data-input] {
+  padding-inline-end: 60px;
+}
+.inputwrapper[data-size=l][data-haspassword=true][data-hasclear=true] .inputwrapper-clear {
+  inset-inline-end: 40px;
+}
+
+.inputwrapper[data-size=l][data-hasicon=true] .form-control[data-input] {
+  padding-inline-start: 40px;
+}
 .inputwrapper[data-enabled=false] span.input-text,
 .inputwrapper[data-enabled=false] span.input-search {
   cursor: not-allowed;
@@ -4395,7 +4428,7 @@ div[data-block$=InputWrapper] {
 button.inputwrapper,
 span.inputwrapper,
 div.inputwrapper {
-  --inputwrapper-control-height: 40px;
+  --inputwrapper-control-height: var(--component-height-medium);
   align-items: center;
   display: inline-flex;
   gap: var(--space-xs);

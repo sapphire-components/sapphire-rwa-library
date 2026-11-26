@@ -7,7 +7,7 @@ div[data-block$='InputWrapper'] {
 button.inputwrapper,
 span.inputwrapper,
 div.inputwrapper {
-	--inputwrapper-control-height: 40px;
+	--inputwrapper-control-height: var(--component-height-medium);
 	align-items: center;
 	display: inline-flex;
 	gap: var(--space-xs);
