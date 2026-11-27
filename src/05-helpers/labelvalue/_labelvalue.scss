@@ -12,6 +12,7 @@ body .labelvalue {
 		color: var(--color-neutral-10);
 		font-size: var(--font-size-s);
 		font-weight: 600;
+		&:empty,
 		&:has(label:empty) {
 			display: none !important;
 		}

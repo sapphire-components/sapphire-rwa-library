@@ -1,4 +1,4 @@
-/*!  SapphireRWALibrary PROD v0.6.159 2026-11-26T10:10:31.565Z */
+/*!  SapphireRWALibrary PROD v0.6.160 2026-11-27T17:27:03.554Z */
 a:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
@@ -5240,7 +5240,7 @@ body .labelvalue-label {
   font-size: var(--font-size-s);
   font-weight: 600;
 }
-body .labelvalue-label:has(label:empty) {
+body .labelvalue-label:empty, body .labelvalue-label:has(label:empty) {
   display: none !important;
 }
 body .labelvalue-body {
